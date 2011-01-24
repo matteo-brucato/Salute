@@ -1,0 +1,5 @@
+436490796;Musa;Rayyan;;635492165;1988-12-1;male;19096936527;19093428463;Rayyan Medical Center;15632 Frederic Ave, Riverside, CA 92521
+972387934;Matteo;Brucato;;234567891;1985-5-12;male;19517253847;19519776537;Matteo's Family Clinic;1298 Orange St, Colton, CA 92324
+647584893;Nada;Hashem;;567390804;1989-10-19;female;17028335678;17022349876;Hashem's Medical Center; 9345 Hashem St, Reno, NV 89501
+848943874;Aswhin;Gopalakrishnan;;876976546;1965-9-24;male;14803491203;14808451298;Ashwin Medical Center; 2342 Saint St, Springfield, AR 85640
+\.

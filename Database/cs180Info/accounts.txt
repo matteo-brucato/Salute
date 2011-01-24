@@ -1,0 +1,14 @@
+794786543;patient1@yahoo.com;cameraman
+873947364;patient2@gmail.com;chiken
+737493474;patient3@gmail.com;skyblue
+982532435;patient4@hotmail.com;74wx23eightyfo
+782893498;patient5@gmail.com;test
+854459854;patient6@gmail.com;black98
+987875489;patient7@gmail.com;adkjfsj
+769887548;patient8@yahoo.com;abc123
+893489439;patient9@hotmail.com;123123abcd
+436490796;doctor1@yahoo.com;password
+972387934;doctor2@hotmail.com;goooool
+647584893;doctor3@gmail.com;website
+848943874;doctor4@hotmail.com;interesting
+\.
