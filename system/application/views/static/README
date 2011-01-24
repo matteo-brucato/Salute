@@ -1,0 +1,7 @@
+-- static views
+
+These are the views that are supposed to be identical in every page.
+Every page will have a header, a navigation bar (navbar) and a footer
+and they will not change.
+
+Dynamic views are all in the /view folder.
