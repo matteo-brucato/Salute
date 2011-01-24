@@ -71,6 +71,7 @@ CREATE TABLE HCP_Account(
 	sex CHAR(6) NOT NULL,
 	tel_number VARCHAR(11),
 	fax_number VARCHAR(11),
+	specialization text,
 	org_name VARCHAR(30),
 	address TEXT,
 	PRIMARY KEY(account_id),

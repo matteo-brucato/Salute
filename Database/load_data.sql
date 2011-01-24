@@ -67,6 +67,7 @@ COPY HCP_Account(
 	sex,
 	tel_number,
 	fax_number,
+	specialization,
 	org_name,
 	address
 )
