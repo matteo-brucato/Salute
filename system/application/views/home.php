@@ -35,3 +35,10 @@
 	<a href="/home/different" class="ajaxlink">Change the content</a>
 	 of the left column
 </div>
+
+<div>
+	<br/>
+	Now try this:
+	<a href="/home/comments" class="ajaxlink">Change only right</a>
+</div>
+
