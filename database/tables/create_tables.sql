@@ -11,6 +11,7 @@ DROP TABLE Payment CASCADE;
 DROP TABLE P_D_Connection CASCADE;
 DROP TABLE D_D_Connection CASCADE;
 DROP TABLE Permission CASCADE;
+DROP TABLE ci_sessions CASCADE;
 
 
 --
@@ -160,4 +161,13 @@ CREATE TABLE Permission(
 	FOREIGN KEY (medical_record_id) REFERENCES Medical_Record(medical_rec_id),
 	FOREIGN KEY (account_id) REFERENCES Accounts(account_id)
 
+);
+
+CREATE TABLE ci_sessions (
+	session_id varchar(40) DEFAULT '0' NOT NULL,
+	ip_address varchar(16) DEFAULT '0' NOT NULL,
+	user_agent varchar(50) NOT NULL,
+	last_activity integer DEFAULT 0 NOT NULL,
+	user_data text NOT NULL,
+	PRIMARY KEY (session_id)
 );
