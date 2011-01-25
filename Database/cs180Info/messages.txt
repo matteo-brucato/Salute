@@ -1,0 +1,4 @@
+182892387;737493474;647584893;Bad Headache; Hello Doctor! My head hurts real bad.  What do u sugest I do?
+189328943;647584893;737493474;Re:Bad Headache; I suggest you take some advil and to to sleep.  I think I have told you this before.
+128973287;873947364;972387934;Arm Cast;Hello Doctor! When can I expect to get my cast taken off?
+\.
