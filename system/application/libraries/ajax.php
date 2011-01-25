@@ -32,8 +32,8 @@ class Ajax {
 			//	$j = 0;
 			//}
 			echo json_encode(array (
-				'mainpane'	=> ($views[0] != ''? $this->CI->load->view($views[0], '', true) : ''),
-				'sidepane'	=> ($views[1] != ''? $this->CI->load->view($views[1], '', true) : '')
+				'mainpane'	=> ($views[0] != ''? $views[0] : ''),
+				'sidepane'	=> ($views[1] != ''? $views[1] : '')
 			));
 		} else {
 			// View the previously specified layout
@@ -42,7 +42,6 @@ class Ajax {
 			$this->CI->layout->view($views);
 		}
 	}
-	
 	
 }
 

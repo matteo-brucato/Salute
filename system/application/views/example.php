@@ -25,20 +25,20 @@
 <div>
 	<br/>
 	Now try this: Access resource 
-	<a href="/home" class="ajaxlink">localhost/home</a>
+	<a href="/example" class="ajaxlink">localhost/home</a>
 	 via Ajax and see the difference.
 </div>
 
 <div>
 	<br/>
 	Now try this:
-	<a href="/home/different" class="ajaxlink">Change the content</a>
+	<a href="/example/different" class="ajaxlink">Change the content</a>
 	 of the left column
 </div>
 
 <div>
 	<br/>
 	Now try this:
-	<a href="/home/comments" class="ajaxlink">Change only right</a>
+	<a href="/example/comments" class="ajaxlink">Change only right</a>
 </div>
 

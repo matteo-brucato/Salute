@@ -13,7 +13,7 @@
 
 class Layout {
 	private $defined_layouts = array (
-		0	=>	'faux-8-2-col.xhtml'
+		'faux-8-2-col.xhtml'
 	);
 	const default_layout = 0;
 	
@@ -51,7 +51,7 @@ class Layout {
 		
 		// Applicatoin needs 2 dynamic views
 		if (count($views) < 2) {
-			$views = array('static/error','static/error');
+			$views = array('static/app_error','static/app_error');
 		}
 		
 		switch ($this->active_layout) {
@@ -61,15 +61,13 @@ class Layout {
 					'navbar' => $CI->load->view('static/navbar', '', TRUE),
 					'footer' => $CI->load->view('static/footer', '', TRUE),
 					// The following is the dynamic content of this layout
-					'left_column' => ($views[0] != '' ?
-						$CI->load->view($views[0], '', TRUE) :
+					'left_column'	=> ($views[0] != '' ? $views[0] :
 						$CI->load->view('default_mainpane', '', TRUE)),
-					'right_column' => ($views[1] != '' ?
-						$CI->load->view($views[1], '', TRUE) : 
+					'right_column'	=> ($views[1] != '' ? $views[1] : 
 						$CI->load->view('default_sidepane', '', TRUE))
 				);
 				break;
-			default:
+			/*default:
 				// This is the view for the default layout, if no
 				// action for it has been specified before
 				$data = array (
@@ -79,7 +77,7 @@ class Layout {
 					'left_column' => $CI->load->view('static/error', '', TRUE),
 					'right_column' => $CI->load->view('static/error', '', TRUE)
 				);
-				break;
+				break;*/
 		}
 		
 		$CI->load->library('parser');

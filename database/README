@@ -1,0 +1,17 @@
+** To start and load the database **
+cd into script/ directory and run ./start_database.sh
+Before doing this operation it is necessary to change the file 
+tables/load_data.sql, modifying the paths in which every data file
+actually resides.
+
+** PLEASE NOTE **
+Since we all have different content inside load_data.sql, let's
+remove it from our repository. You can still keel this file into
+your local copy of the repository, but don't add it to git. Instead,
+do "git rm" to removit from the tracked files.
+
+** To drop and stop the database **
+cd into script/ directory and run ./delete_database.sh
+** NOTE: If you are using a virtual machine and you don't turn it off,
+but save the session with VirtualBox, you can skip this passage and
+leave your database always alive!

@@ -1,0 +1,18 @@
+Information about the files that you find into this folder:
+
+** dbfolder
+This file contains the folder in which your database will be created
+and loaded.
+If you are running tests or debugging you would want to choose a 
+temporary folder.
+
+** port
+This file contains the port number in which your database daemon will
+work.
+
+** start_database.sh
+Script to start the database daemon, to create your database and to
+load all the tables and data, functions, triggers and indexes.
+
+** delete_database.sh
+Script to drop all the tables, delete the database and stop the daemon.

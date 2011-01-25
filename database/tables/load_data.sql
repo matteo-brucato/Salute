@@ -21,7 +21,7 @@ COPY Accounts(
 	email,
 	password
 )
-FROM '/home/csmajs/rayyanm/cs180Info/accounts.txt'
+FROM '/home/matteo/Desktop/salute/database/data/accounts.txt'
 WITH DELIMITER ';';
 
 
@@ -33,7 +33,7 @@ COPY Messages(
 	subject,
 	content
 )
-FROM '/home/csmajs/rayyanm/cs180Info/messages.txt'
+FROM '/home/matteo/Desktop/salute/database/data/messages.txt'
 WITH DELIMITER ';';
 
 
@@ -51,7 +51,7 @@ COPY Patient_Account(
 	fax_number,
 	address
 )
-FROM '/home/csmajs/rayyanm/cs180Info/patient_account.txt'
+FROM '/home/matteo/Desktop/salute/database/data/patient_account.txt'
 WITH DELIMITER ';';
 
 
@@ -71,7 +71,7 @@ COPY HCP_Account(
 	org_name,
 	address
 )
-FROM '/home/csmajs/rayyanm/cs180Info/hcp_account.txt'
+FROM '/home/matteo/Desktop/salute/database/data/hcp_account.txt'
 WITH DELIMITER ';';
 
 
@@ -84,7 +84,7 @@ COPY Appointments(
 	date_time,
 	approved
 )
-FROM '/home/csmajs/rayyanm/cs180Info/appointments.txt'
+FROM '/home/matteo/Desktop/salute/database/data/appointments.txt'
 WITH DELIMITER ';';
 
 --Copy Medical_Record Information
@@ -96,7 +96,7 @@ COPY Medical_Record(
 	suplementary_info,
 	file_path
 )
-FROM '/home/csmajs/rayyanm/cs180Info/medical_records.txt'
+FROM '/home/matteo/Desktop/salute/database/data/medical_records.txt'
 WITH DELIMITER ';';
 
 
@@ -110,7 +110,7 @@ Copy Payment(
 	due_date,
 	cleared
 )
-FROM '/home/csmajs/rayyanm/cs180Info/payment.txt'
+FROM '/home/matteo/Desktop/salute/database/data/payment.txt'
 WITH DELIMITER ';';
 
 
@@ -121,7 +121,7 @@ COPY P_D_Connection(
 	accepted,
 	date_connected
 )
-FROM '/home/csmajs/rayyanm/cs180Info/p_d_connection.txt'
+FROM '/home/matteo/Desktop/salute/database/data/p_d_connection.txt'
 WITH DELIMITER ';';
 
 
@@ -132,7 +132,7 @@ COPY D_D_Connection(
 	aceepted,
 	date_connected
 )
-FROM '/home/csmajs/rayyanm/cs180Info/d_d_connection.txt'
+FROM '/home/matteo/Desktop/salute/database/data/d_d_connection.txt'
 WITH DELIMITER ';';
 
 
@@ -142,5 +142,5 @@ Copy Permission(
 	account_id,
 	date_created
 )
-FROM '/home/csmajs/rayyanm/cs180Info/permissions.txt'
+FROM '/home/matteo/Desktop/salute/database/data/permissions.txt'
 WITH DELIMITER ';';

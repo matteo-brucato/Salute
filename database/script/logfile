@@ -1,0 +1,729 @@
+sh:  8000: not found
+sh:  8000: not found
+LOG:  database system was shut down at 2011-01-24 21:28:22 PST
+LOG:  autovacuum launcher started
+LOG:  database system is ready to accept connections
+FATAL:  could not open file "global/pg_database": No such file or directory
+FATAL:  could not open file "global/pg_database": No such file or directory
+FATAL:  could not open file "global/pg_database": No such file or directory
+LOG:  autovacuum launcher process (PID 5165) exited with exit code 1
+LOG:  terminating any other active server processes
+LOG:  could not open temporary statistics file "global/pgstat.tmp": No such file or directory
+LOG:  all server processes terminated; reinitializing
+LOG:  could not open file "postmaster.pid": No such file or directory
+FATAL:  could not stat data directory "/tmp/cs166_project": No such file or directory
+LOG:  database system was shut down at 2011-01-24 21:33:10 PST
+LOG:  autovacuum launcher started
+LOG:  database system is ready to accept connections
+ERROR:  table "accounts" does not exist
+STATEMENT:  DROP TABLE Accounts CASCADE;
+ERROR:  table "messages" does not exist
+STATEMENT:  DROP TABLE Messages CASCADE;
+ERROR:  table "patient_account" does not exist
+STATEMENT:  DROP TABLE Patient_Account CASCADE;
+ERROR:  table "hcp_account" does not exist
+STATEMENT:  DROP TABLE HCP_Account CASCADE;
+ERROR:  table "appointments" does not exist
+STATEMENT:  DROP TABLE Appointments CASCADE;
+ERROR:  table "medical_record" does not exist
+STATEMENT:  DROP TABLE Medical_Record CASCADE;
+ERROR:  table "payment" does not exist
+STATEMENT:  DROP TABLE Payment CASCADE;
+ERROR:  table "p_d_connection" does not exist
+STATEMENT:  DROP TABLE P_D_Connection CASCADE;
+ERROR:  table "d_d_connection" does not exist
+STATEMENT:  DROP TABLE D_D_Connection CASCADE;
+ERROR:  table "permission" does not exist
+STATEMENT:  DROP TABLE Permission CASCADE;
+ERROR:  could not open file "/home/csmajs/rayyanm/cs180Info/accounts.txt" for reading: No such file or directory
+STATEMENT:  COPY Accounts(
+		account_id,
+		email,
+		password
+	)
+	FROM '/home/csmajs/rayyanm/cs180Info/accounts.txt'
+	WITH DELIMITER ';';
+ERROR:  could not open file "/home/csmajs/rayyanm/cs180Info/messages.txt" for reading: No such file or directory
+STATEMENT:  COPY Messages(
+		message_id,
+		sender_id,
+		receiver_id,
+		subject,
+		content
+	)
+	FROM '/home/csmajs/rayyanm/cs180Info/messages.txt'
+	WITH DELIMITER ';';
+ERROR:  could not open file "/home/csmajs/rayyanm/cs180Info/patient_account.txt" for reading: No such file or directory
+STATEMENT:  COPY Patient_Account(
+		account_id,
+		
+		first_name,
+		last_name,
+		middle_name,
+		ssn,
+		dob,
+		sex,
+		tel_number,
+		fax_number,
+		address
+	)
+	FROM '/home/csmajs/rayyanm/cs180Info/patient_account.txt'
+	WITH DELIMITER ';';
+ERROR:  could not open file "/home/csmajs/rayyanm/cs180Info/hcp_account.txt" for reading: No such file or directory
+STATEMENT:  COPY HCP_Account(
+		account_id,
+		
+		first_name,
+		last_name,
+		middle_name,
+		ssn,
+		dob,
+		sex,
+		tel_number,
+		fax_number,
+		specialization,
+		org_name,
+		address
+	)
+	FROM '/home/csmajs/rayyanm/cs180Info/hcp_account.txt'
+	WITH DELIMITER ';';
+ERROR:  could not open file "/home/csmajs/rayyanm/cs180Info/appointments.txt" for reading: No such file or directory
+STATEMENT:  COPY Appointments(
+		appointment_id,
+		patient_id,
+		hcp_id,
+		descryption,
+		date_time,
+		approved
+	)
+	FROM '/home/csmajs/rayyanm/cs180Info/appointments.txt'
+	WITH DELIMITER ';';
+ERROR:  could not open file "/home/csmajs/rayyanm/cs180Info/medical_records.txt" for reading: No such file or directory
+STATEMENT:  COPY Medical_Record(
+		medical_rec_id,
+		patient_id,
+		account_id, 
+		issue,
+		suplementary_info,
+		file_path
+	)
+	FROM '/home/csmajs/rayyanm/cs180Info/medical_records.txt'
+	WITH DELIMITER ';';
+ERROR:  could not open file "/home/csmajs/rayyanm/cs180Info/payment.txt" for reading: No such file or directory
+STATEMENT:  Copy Payment(
+		bill_id,
+		patient_id,
+		hcp_id,
+		amount,
+		descryption,
+		due_date,
+		cleared
+	)
+	FROM '/home/csmajs/rayyanm/cs180Info/payment.txt'
+	WITH DELIMITER ';';
+ERROR:  could not open file "/home/csmajs/rayyanm/cs180Info/p_d_connection.txt" for reading: No such file or directory
+STATEMENT:  COPY P_D_Connection(
+		patient_id,
+		hcp_id,
+		accepted,
+		date_connected
+	)
+	FROM '/home/csmajs/rayyanm/cs180Info/p_d_connection.txt'
+	WITH DELIMITER ';';
+ERROR:  could not open file "/home/csmajs/rayyanm/cs180Info/d_d_connection.txt" for reading: No such file or directory
+STATEMENT:  COPY D_D_Connection(
+		requester_id,
+		accepter_id,
+		aceepted,
+		date_connected
+	)
+	FROM '/home/csmajs/rayyanm/cs180Info/d_d_connection.txt'
+	WITH DELIMITER ';';
+ERROR:  could not open file "/home/csmajs/rayyanm/cs180Info/permissions.txt" for reading: No such file or directory
+STATEMENT:  Copy Permission(
+		medical_record_id,
+		account_id,
+		date_created
+	)
+	FROM '/home/csmajs/rayyanm/cs180Info/permissions.txt'
+	WITH DELIMITER ';';
+FATAL:  database "matteo" does not exist
+ERROR:  relation "pg_catalog.pg_" does not exist at character 15
+STATEMENT:  SELECT * FROM pg_catalog.pg_
+	;
+ERROR:  syntax error at or near ":" at character 34
+STATEMENT:  SELECT * FROM information_schema.:
+	;
+ERROR:  syntax error at or near ";" at character 34
+STATEMENT:  SELECT * FROM information_schema.;
+ERROR:  syntax error at or near ";" at character 34
+STATEMENT:  SELECT * FROM information_schema.;
+ERROR:  syntax error at or near ";" at character 30
+STATEMENT:  INSERT INTO accounts VALUES 
+	;
+ERROR:  column "mattfeel" does not exist at character 30
+STATEMENT:  INSERT INTO accounts VALUES (mattfeel@gmail.com, mypass);
+ERROR:  invalid input syntax for integer: "mattfeel@gmail.com" at character 30
+STATEMENT:  INSERT INTO accounts VALUES ('mattfeel@gmail.com', 'mypass');
+FATAL:  database "load_data.sql" does not exist
+FATAL:  database "matteo" does not exist
+ERROR:  database "cs180db" is being accessed by other users
+DETAIL:  There are 11 other session(s) using the database.
+STATEMENT:  DROP DATABASE cs180db;
+	
+LOG:  received smart shutdown request
+LOG:  autovacuum launcher shutting down
+FATAL:  the database system is shutting down
+FATAL:  the database system is shutting down
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.
+ERROR:  could not access status of transaction 0
+DETAIL:  Could not open file "pg_clog/0000": No such file or directory.

@@ -38,10 +38,10 @@ $active_group = "default";
 $active_record = TRUE;
 
 $db['default']['hostname'] = "localhost";
-$db['default']['username'] = "";
+$db['default']['username'] = "matteo";
 $db['default']['password'] = "";
-$db['default']['database'] = "";
-$db['default']['dbdriver'] = "mysql";
+$db['default']['database'] = "cs180db";
+$db['default']['dbdriver'] = "postgre";
 $db['default']['dbprefix'] = "";
 $db['default']['pconnect'] = TRUE;
 $db['default']['db_debug'] = TRUE;
@@ -49,6 +49,7 @@ $db['default']['cache_on'] = FALSE;
 $db['default']['cachedir'] = "";
 $db['default']['char_set'] = "utf8";
 $db['default']['dbcollat'] = "utf8_general_ci";
+$db['default']['port'] = 8000;
 
 
 /* End of file database.php */

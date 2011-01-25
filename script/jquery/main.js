@@ -3,7 +3,7 @@
 $(document).ready(function() {			// Wait for the document to be able to be manipulated
 	
 	// First thing... hide everything... then show it slowly
-	$("#wrapper").hide().animate({"height": "toggle", "opacity": "toggle"}, 1500);
+	$("#wrapper").hide().animate({"height": "toggle", "opacity": "toggle"}, 700);
 	
 	// Get the current page
 	var curpage = window.location.pathname;
