@@ -1,5 +1,6 @@
 <?php
 class Homepage extends Controller {
+<<<<<<< HEAD
 	
 	function __construct() {
 		parent::Controller();
@@ -7,6 +8,9 @@ class Homepage extends Controller {
 	}
 	
 	// Default function: loads Default Home Page
+=======
+
+>>>>>>> 8f0e681b3e5b1439e0268d54e223cd37cb5728e6
 	function index()
 	{
 		// Main Panel: Welcome Statements
