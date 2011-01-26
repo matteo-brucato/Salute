@@ -1,39 +1,50 @@
 <?php
 class Profile extends Controller {
 
-	function __constructor(){
+	public $type;
+
+	function __construct(){
 		parent::Controller();
 		$this->load->library('ajax');	
-		//check if you're logged in	
+		$this->type = $this->session->userdata('type');
 	}
 
-	// Default
 	function index() {
-		// if patient_login -> load view of patient main panel + side panel + navbar
-		$this->ajax->view(array(
-			$this->load->view('mainpane/patient-profile', '', TRUE),
-			$this->load->view('sidepane/patient-profile', '', TRUE)
-		));
-		// if doctor_login -> load view of doctor main panel + side panel + navbar
-		$this->ajax->view(array(
-			$this->load->view('mainpane/doctor-profile', '', TRUE),
-			$this->load->view('sidepane/doctor-profile', '', TRUE)
-		));
+		if ($this->type === 'patient') {
+			$this->ajax->view(array(
+				$this->load->view('mainpane/patient-profile', '', TRUE),
+				$this->load->view('sidepane/patient-profile', '', TRUE)
+			));
+		echo "I am a patient!";
+		}
+
+		else if ($this->type === 'doctor') {
+			$this->ajax->view(array(
+				$this->load->view('mainpane/doctor-profile', '', TRUE),
+				$this->load->view('sidepane/doctor-profile', '', TRUE)
+			));
+		echo "I am a doctor!";
+		}
+
+		else {
+			echo "Do some error"; 
+		}
 	}
 
-	// My info... Name, Weight, Date of Birth, Height...	
 	function myinfo()
 	{
-		// if patient_login -> load view of patient main panel + side panel + navbar
-		$this->ajax->view(array(
-			$this->load->view('mainpane/patient-profile', '', TRUE),
-			$this->load->view('sidepane/patient-profile', '', TRUE)
-		));
-		// if doctor_login -> load view of doctor main panel + side panel + navbar
-		$this->ajax->view(array(
-			$this->load->view('mainpane/doctor-profile', '', TRUE),
-			$this->load->view('sidepane/doctor-profile', '', TRUE)
-		));		
+		if ($this->type === 'patient') {
+			$this->ajax->view(array(
+				$this->load->view('mainpane/patient-info', '', TRUE),
+				$this->load->view('sidepane/patient-profile', '', TRUE)
+			));
+		}
+		else if ($this->type === 'doctor') {		
+			$this->ajax->view(array(
+				$this->load->view('mainpane/doctor-info', '', TRUE),
+				$this->load->view('sidepane/doctor-profile', '', TRUE)
+			));		
+		}	
 	}
 
 	
