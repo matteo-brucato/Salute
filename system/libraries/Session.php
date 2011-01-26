@@ -310,7 +310,8 @@ class CI_Session {
 							'session_id' 	=> md5(uniqid($sessid, TRUE)),
 							'ip_address' 	=> $this->CI->input->ip_address(),
 							'user_agent' 	=> substr($this->CI->input->user_agent(), 0, 50),
-							'last_activity'	=> $this->now
+							'last_activity'	=> $this->now,
+							'user_data'		=> ''
 							);
 
 

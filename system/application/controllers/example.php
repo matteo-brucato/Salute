@@ -10,8 +10,8 @@ class Example extends Controller {
 	{
 		// Example of changing both panels (main AND side)
 		$this->ajax->view(array(
-			$this->load->view('example', '' , TRUE),
-			$this->load->view('login', '', TRUE)
+			$this->load->view('mainpane/welcome', '' , TRUE),
+			$this->load->view('sidepane/login', '', TRUE)
 		));
 	}
 	
@@ -19,7 +19,7 @@ class Example extends Controller {
 	{
 		// Example of changing ONLY main panel
 		$this->ajax->view(array(
-			$this->load->view('try.html', '', TRUE),
+			$this->load->view('mainpane/try.html', '', TRUE),
 			''
 		));
 	}
@@ -33,7 +33,7 @@ class Example extends Controller {
 		// to a view some data result retriven from a database
 		$this->ajax->view(array(
 			'',
-			$this->load->view('show_account', array('users' => $results), TRUE)
+			$this->load->view('sidepane/show_account', array('users' => $results), TRUE)
 		));
 	}
 	

@@ -62,9 +62,9 @@ class Layout {
 					'footer' => $CI->load->view('static/footer', '', TRUE),
 					// The following is the dynamic content of this layout
 					'left_column'	=> ($views[0] != '' ? $views[0] :
-						$CI->load->view('default_mainpane', '', TRUE)),
+						$CI->load->view('mainpane/default', '', TRUE)),
 					'right_column'	=> ($views[1] != '' ? $views[1] : 
-						$CI->load->view('default_sidepane', '', TRUE))
+						$CI->load->view('sidepane/default', '', TRUE))
 				);
 				break;
 			/*default:
@@ -82,7 +82,7 @@ class Layout {
 		
 		$CI->load->library('parser');
 		$CI->parser->parse(
-			'layout/'.$this->defined_layouts[$this->active_layout],
+			'layouts/'.$this->defined_layouts[$this->active_layout],
 			$data);
 		
 		/** @todo Append all the others views on the input array */

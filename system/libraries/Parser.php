@@ -29,7 +29,8 @@ class CI_Parser {
 	var $l_delim = '{';
 	var $r_delim = '}';
 	var $object;
-		
+	
+	
 	/**
 	 *  Parse a template
 	 *

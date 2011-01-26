@@ -12,8 +12,8 @@ class Homepage extends Controller {
 		// Main Panel: Welcome Statements
 		// Side Panel: Login/Password Fields, Forgot Pwd, Register
 		$this->ajax->view(array(
-		$this->load->view('welcome', '', TRUE),
-		$this->load->view('login', '', TRUE)
+			$this->load->view('mainpane/welcome', '', TRUE),
+			$this->load->view('sidepane/login', '', TRUE)
 		));
 	}
 
@@ -27,14 +27,14 @@ class Homepage extends Controller {
 //		echo "$email $password";
 
 		$this->load->model('login');
-		$results = $this->login->authorize(array("email" => $email,"password" => $password); // <-- this will be an array
+		$results = $this->login->authorize(array("email" => $email,"password" => $password)); // <-- this will be an array
 
 //		$results = NULL;
 		// if login fails, only change side panel w/ login failed message
 		if ($results === NULL) {
 			$this->ajax->view(array(
-			'',
-			$this->load->view('login_failed', '', TRUE)
+				'',
+				$this->load->view('sidepane/login_failed', '', TRUE)
 			));
 		}
 
@@ -57,12 +57,14 @@ class Homepage extends Controller {
 
 	function retrieve_password()
 	{
-		echo "Your password has been emailed to you.";
+		/** @todo Change */
+		$this->ajax->view(array("Your password has been emailed to you.",""));
 	}
 
 	function register()
 	{
-
+		/** @todo Change */
+		$this->ajax->view(array("Register here!",""));
 	}
 
 }

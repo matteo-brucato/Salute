@@ -1,0 +1,12 @@
+/* Styles needed by the application */
+
+#email-input, #password-input {
+	width: 150px;
+}
+
+#submit-button {
+	padding: 1px 10px;
+	text-align: center;
+	display: block;
+	margin: 10px auto 0 auto;
+}
