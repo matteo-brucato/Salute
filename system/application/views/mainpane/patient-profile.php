@@ -7,6 +7,6 @@
 
 <div id="profile-log-actions">
 	<ul>
-		<li><a href="">Log out</a></li>
+		<li><a href="/homepage/logout">Log out</a></li>
 	</ul>
 </div>
