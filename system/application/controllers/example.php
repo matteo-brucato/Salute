@@ -11,7 +11,7 @@ class Example extends Controller {
 		// Example of changing both panels (main AND side)
 		$this->ajax->view(array(
 			$this->load->view('example', '' , TRUE),
-			$this->load->view('lorem-ipsum', '', TRUE)
+			$this->load->view('login', '', TRUE)
 		));
 	}
 	
