@@ -22,16 +22,16 @@ class Homepage extends Controller {
 		// get email & password
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
-
+		
 		$this->load->model('login');
 
 		// verify login
 		//returns array: of an array that has : 1st element = type, 2nd element= whole user's tuple
 		$results = $this->login->authorize(array("email" => $email,"password" => $password)); // <-- this will be an array
-		$type = ($results[0]);
+
 		
 		// login fails : error view
-		if ($results === NULL || ($type != 'patient' && $type != 'doctor') 
+		if ($results === NULL)
 		{
 			$this->ajax->view(array(
 				'',
@@ -42,9 +42,20 @@ class Homepage extends Controller {
 		// login successful : store info for session id, go to user profile
 		else
 		{
-			$login_data = array('account_id'=> $results[1]["account_id"] , 'email' => $results[1]["email"], 'type' => $type);
-			$this->session->set_userdata($login_data);
-			redirect('profile/index','location');
+			if ($results[0] != 'patient' && $results[0] != 'doctor') {
+				$this->ajax->view(array(
+					'',
+					$this->load->view('sidepane/login_failed', '', TRUE)
+				));
+			} else {
+				$login_data = array(
+					'account_id' => $results[1]["account_id"],
+					'email' => $results[1]["email"],
+					'type' => $results[0]
+				);
+				$this->session->set_userdata($login_data);
+				header ("Location: /profile/index");
+			}
 		}
 
 	}
@@ -52,15 +63,14 @@ class Homepage extends Controller {
 	// Logout User: Clear session id, redirect to default view
 	function logout()
 	{
-		$array = array('account_id' => '', 'email' => '' , 'type' => '');
-		$this->session->unset_userdata($array);
-		redirect('homepage/index','location');
+		$this->session->sess_destroy();
+		header ("Location: /");
 	}
 
-	// Fancy Feature?
+	/* Fancy Feature?
 	function retrieve_password()
 	{
-		/** @todo Change */
+		/** @todo Change *
 		// need a retrieve password form(user should input email address)
 		$this->load->view('mainpane/retrieve_password', '', TRUE);
 		$email = $this->input->post('email');
@@ -76,12 +86,12 @@ class Homepage extends Controller {
 
 	function register()
 	{
-		/** @todo Change */
+		/** @todo Change *
 		$this->ajax->view(array("Register here!",""));
 		$this->load->view('mainpane/register_form', '', TRUE);
 
 		// Fancy Feature later: upon completion, email the user a confirmation report. 
-	}
+	}*/
 
 }
 ?>
