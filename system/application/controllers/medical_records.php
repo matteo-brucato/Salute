@@ -1,22 +1,48 @@
 <?php
 class MedicalRecords extends Controller {
 
-//	public $type;
+	private $type;
+	private $account_id;
 
 	function __construct(){
 		parent::Controller();
 		$this->load->library('ajax');	
-		//check if you're logged in
-		// $this->type = $this->session->userdata('type');	
+		$this->type = $this->session->userdata('type');	
+		$this->account_id = $this->session->userdata('account_id');	
 	}
+
 	// Default: call list_my_med_recs function
 	function index()
-	{}
+	{
+		header ("Location: /medical_records/list_med_recs");
+	}
 
-	// list all my medical records
-	// List Format: Date, Name, Category, Permissions Link
-	function list_my_med_recs()
-	{}
+	// list all medical records
+	function list_med_recs()
+	{
+
+		$this->load->model('medical_record');
+
+		// if patient, show all their med recs
+		if ($this->type === 'patient') {
+			$results = $this->medical_record->list_all(array('account_id' => $this->account_id,'type' => $this->type)); 
+			$this->ajax->view(array(
+					'',
+					$this->load->view('mainpane/list_patient_recs', $results , TRUE)
+				));
+		}
+	
+		// if doctor, redirect to My Patients search List
+		else if ( $this->type === 'doctor') {
+			header ("Location: /search/patient");
+		}
+
+		// you are not logged in, redirect to login page
+		else{
+			$this->session->sess_destroy(); // just in case something fishy was going on.
+			header ("Location: /");
+		}		
+	}
 
 	// Add/Upload new medical record
 	function add()

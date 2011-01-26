@@ -1,7 +1,7 @@
 <?php
 class Profile extends Controller {
 
-	public $type;
+	private $type;
 
 	function __construct(){
 		parent::Controller();
@@ -29,6 +29,8 @@ class Profile extends Controller {
 		else {
 			echo "Do some error"; 
 		}
+
+		// Fancy Features: pass notifications from model to view via the 2nd parameter in the load->view call. 
 	}
 
 	function myinfo()

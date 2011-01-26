@@ -1,7 +1,7 @@
 <?php
 class Settings extends Controller {
 
-//	public $type;
+//	private $type;
 
 	function __construct(){
 		parent::Controller();

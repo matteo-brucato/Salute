@@ -1,22 +1,30 @@
 <?php
 class Connection extends Controller {
 
-// 	public $type;
+ 	private $type;
+	private $account_id;
 
 	function __construct(){
 		parent::Controller();
 		$this->load->library('ajax');	
-		//check if you're logged in	
-		// $this->type = $this->session->userdata('type');
+		$this->type = $this->session->userdata('type');
+		$this->account_id = $this->session->userdata('account_id');	
 	}
 
 	// Default: call list_all
 	function index()
-	{}
+	{
+		header ("Location: /connection/list_all");
+	}
 
 	// list all my connections
 	function list_all()
-	{}
+	{
+		$this->load->model('connections');
+		$results = $this->connections->list_all(array('account_id' => $this->account_id,'type' => $this->type)); 
+		$this->ajax->view(array($this->load->view('mainpane/list_connections', $results , TRUE)));
+
+	}
 
 	// list all my pending connections
 	function pending() 

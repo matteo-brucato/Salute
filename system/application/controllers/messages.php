@@ -1,7 +1,7 @@
 <?php
 class Messages extends Controller {
 
-// 	public $type;
+// 	private $type;
 
 	function __construct(){
 		parent::Controller();

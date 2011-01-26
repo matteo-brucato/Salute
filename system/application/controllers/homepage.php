@@ -1,20 +1,29 @@
 <?php
 class Homepage extends Controller {
 
+	private $account_id;
+
 	function __construct() {
 		parent::Controller();
 		$this->load->library('ajax');
+		$this->account_id = $this->session->userdata('account_id');	
 	}
 	
 	// Default function: loads Default Home Page
 	function index()
 	{
-		// Main Panel: Welcome Statements
-		// Side Panel: Login/Password Fields, Forgot Pwd, Register
-		$this->ajax->view(array(
-			$this->load->view('mainpane/welcome', '', TRUE),
-			$this->load->view('sidepane/login', '', TRUE)
-		));
+		// Not logged in
+		if(!account_id){		
+			$this->ajax->view(array(
+				$this->load->view('mainpane/welcome', '', TRUE),
+				$this->load->view('sidepane/login', '', TRUE)
+			));
+		}
+
+		// Logged in
+		else{
+			header ("Location: /profile/index");
+		}
 	}
 
 	function login()
