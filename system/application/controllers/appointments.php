@@ -1,6 +1,12 @@
 <?php
 class Appointments extends Controller {
 
+	function __constructor(){
+		parent::Controller();
+		$this->load->library('ajax');	
+		//check if you're logged in	
+	}
+
 	// Default: load upcoming function
 	function index()
 	{}  	

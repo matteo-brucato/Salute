@@ -1,9 +1,9 @@
 <?php
 class Connection extends Controller {
 
-	function __constructor()
-	{
+	function __constructor(){
 		parent::Controller();
+		$this->load->library('ajax');	
 		//check if you're logged in	
 	}
 

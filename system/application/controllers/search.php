@@ -1,10 +1,10 @@
 <?php
 class Search extends Controller {
 
-	function __constructor()
-	{
+	function __constructor(){
 		parent::Controller();
 		//check if you're logged in	
+		$this->load->library('ajax');	
 	}
 
 	// Default to the advanced search

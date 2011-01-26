@@ -1,16 +1,16 @@
 <?php
 class Profile extends Controller {
 
-	function __constructor()
-	{
+	function __constructor(){
 		parent::Controller();
+		$this->load->library('ajax');	
 		//check if you're logged in	
 	}
 
 	// Default
-	function index()
-	{
+	function index() {
 		// if patient_login -> load view of patient main panel + side panel
+		
 		// if doctor_login -> load view of doctor main panel + side panel
 	}
 

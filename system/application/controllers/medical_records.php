@@ -1,9 +1,9 @@
 <?php
 class MedicalRecords extends Controller {
 
-	function __constructor()
-	{
+	function __constructor(){
 		parent::Controller();
+		$this->load->library('ajax');	
 		//check if you're logged in	
 	}
 	// Default: call list_my_med_recs function
