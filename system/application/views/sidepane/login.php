@@ -1,12 +1,12 @@
 <form method="post" action="/homepage/login" id="login-form">
 	<fieldset>
 	<legend>Login</legend>
-	<label for="firstname">E-mail</label><br />
-	<input type="text" name="email" id="email-input" /><br />
-	<label for="lastname">Pasword</label><br />
-	<input type="password" name="password" id="password-input" />
+	<label for="email-input">E-mail</label><br />
+	<input type="text" name="email" id="email-input" class="input-field" /><br />
+	<label for="password-input">Pasword</label><br />
+	<input type="password" name="password" id="password-input" class="input-field" />
 	<p>
-		<input type="submit" name="submit" value="Submit" id="submit-button" />
+		<input type="submit" name="submit" value="Submit" class="submit-button" />
 	</p>
 	</fieldset>
 </form>

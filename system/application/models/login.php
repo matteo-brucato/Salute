@@ -6,23 +6,23 @@ class Login extends Model {
 		$this->load->database();
 	}
 	
-	function login_authorization($inputs) {
+	function authorize($inputs) {
 		$sql = "SELECT * 
 			FROM Accounts A, Patient_Account P 
-			WHERE A.account_id = P.account_id AND email = ? AND password = ?";
-		$query = $this->db->query($sql, array($inputs);
+			WHERE A.account_id = P.account_id AND A.email = ? AND A.password = ?;";
+		$query = $this->db->query($sql, $inputs);
 		$result = $query->result_array();
 		if( count($result) >= 1 ){
-			return array("Patient", $result[0]);
+			return array("patient", $result[0]);
 		}
 			
 		$sql = "SELECT * 
 			FROM Accounts A, HCP_Account H
-			WHERE A.account_id = H.account_id AND email = ? AND password = ?";
-		$query = $this->db->query($sql, array($inputs);
+			WHERE A.account_id = H.account_id AND A.email = ? AND A.password = ?;";
+		$query = $this->db->query($sql, $inputs);
 		$result = $query->result_array();
 		if( count($result) >= 1 ){
-			return array("Doctor", $result[0]);
+			return array("doctor", $result[0]);
 		}
 		
 		return NULL;
