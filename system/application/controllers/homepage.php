@@ -44,6 +44,7 @@ class Homepage extends Controller {
 			// $array = ( $results[0].email, $results[0].password, $results[0].type ); 
 			// $this->session->set_userdata(array);
 			// redirect to profile page. 
+			// redirect('profile/index','location')
 		}
 
 	}
