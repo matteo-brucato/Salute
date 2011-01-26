@@ -26,22 +26,25 @@ class Homepage extends Controller {
 		$password = $this->input->post('password');
 //		echo "$email $password";
 
-		$this->load->model('login_model');
-		$results = $this->login_model->try_login(array("email" => $email,"password" => $password); // <-- this will be an array
+		$this->load->model('login');
+		$results = $this->login->authorize(array("email" => $email,"password" => $password); // <-- this will be an array
 
+//		$results = NULL;
 		// if login fails, only change side panel w/ login failed message
 		if ($results === NULL) {
 			$this->ajax->view(array(
 			'',
 			$this->load->view('login_failed', '', TRUE)
+			));
 		}
 
 		// login successful, store info for session id, go to user profile
 		else{
-
+			// parse out the email, password, type from $results and store in an array to pass into session class fn
+			// $array = ( $results[0].email, $results[0].password, $results[0].type ); 
+			// $this->session->set_userdata(array);
+			// redirect to profile page. 
 		}
-
-		));
 
 	}
 
@@ -49,6 +52,16 @@ class Homepage extends Controller {
 	{
 		// returns to index/Default home page view	
 		// clear session id (cookie of info)	
+	}
+
+	function retrieve_password()
+	{
+		echo "Your password has been emailed to you.";
+	}
+
+	function register()
+	{
+
 	}
 
 }
