@@ -19,52 +19,68 @@ class Homepage extends Controller {
 
 	function login()
 	{
-		// if login/password // aka call a model that accesses database, returns ID and type of user(patient||doctor), store in a session_id(private)
-		//	if success -> load profile view
-		// 	else -> load error view
+		// get email & password
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
-//		echo "$email $password";
 
 		$this->load->model('login');
-		$results = $this->login->authorize(array("email" => $email,"password" => $password)); // <-- this will be an array
 
-//		$results = NULL;
-		// if login fails, only change side panel w/ login failed message
-		if ($results === NULL) {
+		// verify login
+		//returns array: of an array that has : 1st element = type, 2nd element= whole user's tuple
+		$results = $this->login->authorize(array("email" => $email,"password" => $password)); // <-- this will be an array
+		$type = ($results[0])
+		
+		// login fails : error view
+		if ($results === NULL || ($type != 'patient' && $type != 'doctor') 
+		{
 			$this->ajax->view(array(
 				'',
 				$this->load->view('sidepane/login_failed', '', TRUE)
 			));
 		}
 
-		// login successful, store info for session id, go to user profile
-		else{
-			// parse out the email, password, type from $results and store in an array to pass into session class fn
-			// $array = ( $results[0].email, $results[0].password, $results[0].type ); 
-			// $this->session->set_userdata(array);
-			// redirect to profile page. 
-			// redirect('profile/index','location')
+		// login successful : store info for session id, go to user profile
+		else
+		{
+			$login_data = array('account_id'=> $results[1]["account_id"] , 'email' => $results[1]["email"], 'type' => $type);
+			$this->session->set_userdata(array);
+			redirect('profile/index','location');
 		}
 
 	}
 
+	// Logout User: Clear session id, redirect to default view
 	function logout()
 	{
-		// returns to index/Default home page view	
-		// clear session id (cookie of info)	
+		$array = array('account_id' => '', 'email' => '' , 'type' => '');
+		$this->session->unset_userdata($array);
+		redirect('homepage/index','location');
 	}
 
+	// Fancy Feature?
 	function retrieve_password()
 	{
 		/** @todo Change */
+		// need a retrieve password form(user should input email address)
+		$this->load->view('mainpane/retrieve_password', '', TRUE);
+		$email = $this->input->post('email');
+
+		// need a retrieve password function in login model
+		$this->load->model('login');
+		$password = this->login->get_password($email); 
+		
 		$this->ajax->view(array("Your password has been emailed to you.",""));
+
+		// Fancy Feature later: actually email the password to the user.
 	}
 
 	function register()
 	{
 		/** @todo Change */
 		$this->ajax->view(array("Register here!",""));
+		$this->load->view('mainpane/register_form', '', TRUE);
+
+		// Fancy Feature later: upon completion, email the user a confirmation report. 
 	}
 
 }
