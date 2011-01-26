@@ -36,7 +36,7 @@ function layout_bindings() {
 			//$("#leftcolumn").append("<center>Loading...</center>").delay(600, "beenslow").slideToggle(1000, function() {
 			//	beenslow = true;
 			//});
-			$.get(href, function(data) {
+			$.get(href, function(data, status) {
 				//$("#leftcolumn").dequeue("beenslow");
 				//$("#leftcolumn").stop();
 				//$("#leftcolumn").hide();
@@ -44,6 +44,13 @@ function layout_bindings() {
 				//if (beenslow) {
 					//$("#leftcolumn").slideToggle(1);
 				//}
+				
+				if (data.redirect) {
+					// data.redirect contains the string URL to redirect to
+					window.location.href = data.redirect;
+					return;
+				}
+				
 				if (data.sidepane != "") {
 					$("#rightcolumn").slideUp(20).empty().append(data.sidepane);
 					$("#rightcolumn").animate({"height": "toggle", "opacity": "toggle"}, 200);

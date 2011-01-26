@@ -1,5 +1,5 @@
 <?php
-class Homepage extends Controller {
+class Home extends Controller {
 
 	private $account_id;
 
@@ -13,16 +13,16 @@ class Homepage extends Controller {
 	function index()
 	{
 		// Not logged in
-		if(!account_id){		
+		if (!$this->account_id) {
 			$this->ajax->view(array(
 				$this->load->view('mainpane/welcome', '', TRUE),
 				$this->load->view('sidepane/login', '', TRUE)
 			));
 		}
 
-		// Logged in
-		else{
-			header ("Location: /profile/index");
+		// Already logged in
+		else {
+			$this->ajax->redirect('/profile');
 		}
 	}
 
@@ -32,12 +32,16 @@ class Homepage extends Controller {
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
 		
+		if ($email == FALSE || $password == FALSE) {
+			show_error('Access to this page not allowed', 500);
+			return;
+		}
+		
 		$this->load->model('login');
-
+		
 		// verify login
 		//returns array: of an array that has : 1st element = type, 2nd element= whole user's tuple
-		$results = $this->login->authorize(array("email" => $email,"password" => $password)); // <-- this will be an array
-
+		$results = $this->login->authorize(array("email" => $email,"password" => $password));
 		
 		// login fails : error view
 		if ($results === NULL)

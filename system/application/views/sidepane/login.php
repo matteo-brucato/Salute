@@ -1,4 +1,4 @@
-<form method="post" action="/homepage/login" id="login-form">
+<form method="post" action="/home/login" id="login-form">
 	<fieldset>
 	<legend>Login</legend>
 	<label for="email-input">E-mail</label><br />
@@ -10,5 +10,5 @@
 	</p>
 	</fieldset>
 </form>
-<div><a href="/homepage/retrieve_password" class="ajaxlink">Forgot your password?</a></div>
-<div>Don't have an account? <a href="/homepage/register" class="ajaxlink">Register</a></div>
+<div><a href="/home/retrieve_password" class="ajaxlink">Forgot your password?</a></div>
+<div>Don't have an account? <a href="/home/register" class="ajaxlink">Register</a></div>

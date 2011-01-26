@@ -1,4 +1,5 @@
-<div id="welcome-profile">
+<div id="profile-welcome">
+<h5>Patient Application</h5>
 <h1>Welcome <?php
 	echo $this->session->userdata('first_name').' '
 	.$this->session->userdata('last_name');
@@ -7,6 +8,13 @@
 
 <div id="profile-log-actions">
 	<ul>
-		<li><a href="/homepage/logout">Log out</a></li>
+		<li><a href="/home/logout">Log out</a></li>
 	</ul>
 </div>
+
+<!--div id="notifications">
+	<h2>Notifications</h2>
+	<ul>
+		<li><a href=""></a></li>
+	</ul>
+</div-->

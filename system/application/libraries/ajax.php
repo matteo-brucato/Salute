@@ -19,6 +19,7 @@ class Ajax {
 		$this->CI =& get_instance();
 		$this->CI->load->library('layout');
 		$this->CI->load->library('parser');
+		$this->CI->load->helper('url');
 		
 		// The actual layout to use can be set differently, for
 		// instance, reading it from a cookie or a global variable
@@ -40,6 +41,16 @@ class Ajax {
 			// You must know how many views it needs and pass them
 			// in an array
 			$this->CI->layout->view($views);
+		}
+	}
+	
+	function redirect($url) {
+		if (IS_AJAX) {
+			echo json_encode(array (
+				'redirect'	=> $url
+			));
+		} else {
+			redirect($url, 'location', 301);
 		}
 	}
 	
