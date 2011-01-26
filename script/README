@@ -1,0 +1,3 @@
+This folder will contain all the executable scripts that will be run
+on the CLIENT side (no php, no cgi-bin, ...). In other words, it is
+for Javascript and its libraries (as JQuery).

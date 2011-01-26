@@ -41,4 +41,3 @@
 	Now try this:
 	<a href="/example/comments" class="ajaxlink">Change only right</a>
 </div>
-
