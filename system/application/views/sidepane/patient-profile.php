@@ -32,9 +32,12 @@
 			<legend>Quick Serach</legend>
 			<label for="quick-search-field"></label><br />
 			<input type="text" name="quick-search-field" id="quick-search-field" class="input-field" /><br />
-			<input type ="radio" name="asd" />
-			<input type ="radio" />
-			<input type ="radio" />
+			<label for="radio-medical">Medical Record</label>
+			<input type ="radio" name="quick-search-radio" value="medical-record" id="radio-medical" checked="checked" /><br />
+			<label for="radio-doctor">Doctor</label>
+			<input type ="radio" name="quick-search-radio" value="doctor" id="radio-doctor" /><br />
+			<label for="radio-message">Message</label>
+			<input type ="radio" name="quick-search-radio" value="message" id="radio-message" /><br />
 			<p>
 				<input type="submit" name="submit" value="Search" class="submit-button" />
 			</p>
