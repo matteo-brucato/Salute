@@ -51,7 +51,9 @@ class Homepage extends Controller {
 				$login_data = array(
 					'account_id' => $results[1]["account_id"],
 					'email' => $results[1]["email"],
-					'type' => $results[0]
+					'type' => $results[0],
+					'first_name' => $results[1]["first_name"],
+					'last_name' => $results[1]["last_name"]
 				);
 				$this->session->set_userdata($login_data);
 				header ("Location: /profile/index");

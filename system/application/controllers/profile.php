@@ -1,39 +1,45 @@
 <?php
 class Profile extends Controller {
 
-	private
-		$type;
+	public $type;
 
-	function __constructor(){
+	function __construct(){
 		parent::Controller();
 		$this->load->library('ajax');	
 		$this->type = $this->session->userdata('type');
 	}
 
 	function index() {
-		if ($type === 'patient') {
+		if ($this->type === 'patient') {
 			$this->ajax->view(array(
 				$this->load->view('mainpane/patient-profile', '', TRUE),
 				$this->load->view('sidepane/patient-profile', '', TRUE)
 			));
+		echo "I am a patient!";
 		}
-		else if ($type === 'doctor') {
+
+		else if ($this->type === 'doctor') {
 			$this->ajax->view(array(
 				$this->load->view('mainpane/doctor-profile', '', TRUE),
 				$this->load->view('sidepane/doctor-profile', '', TRUE)
 			));
+		echo "I am a doctor!";
+		}
+
+		else {
+			echo "Do some error"; 
 		}
 	}
 
 	function myinfo()
 	{
-		if ($type === 'patient') {
+		if ($this->type === 'patient') {
 			$this->ajax->view(array(
 				$this->load->view('mainpane/patient-info', '', TRUE),
 				$this->load->view('sidepane/patient-profile', '', TRUE)
 			));
 		}
-		else if ($type === 'doctor') {		
+		else if ($this->type === 'doctor') {		
 			$this->ajax->view(array(
 				$this->load->view('mainpane/doctor-info', '', TRUE),
 				$this->load->view('sidepane/doctor-profile', '', TRUE)

@@ -1,10 +1,13 @@
 <?php
 class Settings extends Controller {
 
-	function __constructor(){
+//	public $type;
+
+	function __construct(){
 		parent::Controller();
 		$this->load->library('ajax');	
 		//check if you're logged in	
+		//$this->type = $this->session->userdata('type');
 	}
 
 	// Default
