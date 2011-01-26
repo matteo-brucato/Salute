@@ -26,12 +26,12 @@ class Profile extends Controller {
 	{
 		// if patient_login -> load view of patient main panel + side panel + navbar
 		$this->ajax->view(array(
-			$this->load->view('mainpane/patient-profile', '', TRUE),
+			$this->load->view('mainpane/patient-info', '', TRUE),
 			$this->load->view('sidepane/patient-profile', '', TRUE)
 		));
 		// if doctor_login -> load view of doctor main panel + side panel + navbar
 		$this->ajax->view(array(
-			$this->load->view('mainpane/doctor-profile', '', TRUE),
+			$this->load->view('mainpane/doctor-info', '', TRUE),
 			$this->load->view('sidepane/doctor-profile', '', TRUE)
 		));		
 	}

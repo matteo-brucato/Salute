@@ -28,7 +28,7 @@ class Homepage extends Controller {
 		// verify login
 		//returns array: of an array that has : 1st element = type, 2nd element= whole user's tuple
 		$results = $this->login->authorize(array("email" => $email,"password" => $password)); // <-- this will be an array
-		$type = ($results[0])
+		$type = ($results[0]);
 		
 		// login fails : error view
 		if ($results === NULL || ($type != 'patient' && $type != 'doctor') 
@@ -43,7 +43,7 @@ class Homepage extends Controller {
 		else
 		{
 			$login_data = array('account_id'=> $results[1]["account_id"] , 'email' => $results[1]["email"], 'type' => $type);
-			$this->session->set_userdata(array);
+			$this->session->set_userdata($login_data);
 			redirect('profile/index','location');
 		}
 
