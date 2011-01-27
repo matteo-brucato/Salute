@@ -69,7 +69,7 @@ class Home extends Controller {
 					'last_name' => $results[1]["last_name"]
 				);
 				$this->session->set_userdata($login_data);
-				header ("Location: /profile/index");
+				$this->ajax->redirect('/profile');
 			}
 		}
 

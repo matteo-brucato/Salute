@@ -15,7 +15,6 @@ class Profile extends Controller {
 				$this->load->view('mainpane/patient-profile', '', TRUE),
 				$this->load->view('sidepane/patient-profile', '', TRUE)
 			));
-		echo "I am a patient!";
 		}
 
 		else if ($this->type === 'doctor') {
@@ -23,11 +22,11 @@ class Profile extends Controller {
 				$this->load->view('mainpane/doctor-profile', '', TRUE),
 				$this->load->view('sidepane/doctor-profile', '', TRUE)
 			));
-		echo "I am a doctor!";
 		}
 
 		else {
-			echo "Do some error"; 
+			show_error('Access to this page not allowed', 500);
+			return;
 		}
 
 		// Fancy Features: pass notifications from model to view via the 2nd parameter in the load->view call. 
