@@ -105,15 +105,12 @@ class Home extends Controller {
 					$this->load->view('mainpane/registration', '', TRUE),
 					$this->load->view('sidepane/default', '', TRUE)
 				));
-
-		// Fancy Feature later: upon completion, email the user a confirmation report. 
 	}
 
 	function register_do()
 	{
-		// 
+		echo "Your Registration has been submitted"; 
 	}
 
 }
 ?>
-
