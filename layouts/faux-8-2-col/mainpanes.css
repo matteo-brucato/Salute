@@ -10,3 +10,8 @@
 	display: block;
 	margin: 10px auto 0 auto;
 }
+
+/* Registration */
+#registration-patient-form, #registration-hcp-form {
+	display: none;
+}

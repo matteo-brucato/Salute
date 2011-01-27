@@ -67,3 +67,15 @@ function layout_bindings() {
 		});
 	});
 }
+
+function show_patient_form() {
+	//$("#type-selection").fadeOut(400);
+	$("#registration-hcp-form").hide();
+	$("#registration-patient-form").fadeIn(400);
+}
+
+function show_hcp_form() {
+	//$("#type-selection").fadeOut(400);
+	$("#registration-patient-form").hide();
+	$("#registration-hcp-form").fadeIn(400);
+}
