@@ -23,7 +23,7 @@
 	
 	<li><a href="">My Patients</a>
 	
-	<li><a href="">My Collegues</a>
+	<li><a href="/connection/list_doctors">My Collegues</a>
 	
 	<li><a href="">Advanced Search</a>
 	<form method="post" action="/" id="quick-search-form">

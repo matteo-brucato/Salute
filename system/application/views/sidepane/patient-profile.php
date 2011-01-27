@@ -21,7 +21,7 @@
 			<li href="#may"><a href="">Past</a></li>
 		</ul>
 	
-	<li><a href="">My Doctors</a>
+	<li><a href="/connection/list_doctors">My Doctors</a>
 	
 	<li><a href="">Medical Records</a>
 	

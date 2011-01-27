@@ -15,3 +15,27 @@
 #registration-patient-form, #registration-hcp-form {
 	display: none;
 }
+
+/* MyDoctors */
+#mydoctors-table, #mydoctors-table th, #mydoctors-table td {
+	border: 1px solid black;
+}
+#mydoctors-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+#mydoctors-table th {
+	height: 22px;
+	background-color: #ABBEBE;
+	color: black;
+	padding: 2px 4px;
+	margin: 0;
+}
+
+#mydoctors-table td
+{
+	height: 20px;
+	vertical-align: middle;
+	padding: 2px 5px;
+	margin: 0;
+}
