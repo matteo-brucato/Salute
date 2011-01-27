@@ -14,7 +14,7 @@ class MedicalRecords extends Controller {
 	// Default: call list_my_med_recs function
 	function index()
 	{
-		header ("Location: /medical_records/list_med_recs");
+		$this->ajax->redirect('/medical_records/list_med_recs');
 	}
 
 	// list all medical records
@@ -34,13 +34,13 @@ class MedicalRecords extends Controller {
 	
 		// if doctor, redirect to My Patients search List
 		else if ( $this->type === 'doctor') {
-			header ("Location: /search/patient");
+			$this->ajax->redirect('/search/patient');
 		}
 
 		// you are not logged in, redirect to login page
 		else{
 			$this->session->sess_destroy(); // just in case something fishy was going on.
-			header ("Location: /");
+			$this->ajax->redirect('/');
 		}		
 	}
 
