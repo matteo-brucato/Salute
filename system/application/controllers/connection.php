@@ -28,16 +28,21 @@ class Connection extends Controller {
 	function list_doctors()
 	{
 		$this->load->model('connections');
-		$results = $this->connections->list_all(array('account_id' => $this->account_id,'type' => $this->type)); 
-		$this->ajax->view(array($this->load->view('mainpane/list_connections', $results , TRUE)));
+		$results = $this->connections->list_doctors(array('account_id' => $this->account_id)); 
+		$this->ajax->view(array($this->load->view('mainpane/list_mydoctors', $results , TRUE)));
 	}
 
 	//TODO: fix this to make it only list patients
 	function list_patients()
 	{
+		if ($this->type !== 'doctor'){
+			show_error('Permission Denied', 500);
+			return;
+		}
+
 		$this->load->model('connections');
-		$results = $this->connections->list_all(array('account_id' => $this->account_id,'type' => $this->type)); 
-		$this->ajax->view(array($this->load->view('mainpane/list_connections', $results , TRUE)));
+		$results = $this->connections->list_patients(array('account_id' => $this->account_id)); 
+		$this->ajax->view(array($this->load->view('mainpane/list_mypatients', $results , TRUE)));
 	}
 
 	// Request a connection ( aka request to be friends with a doctor )
