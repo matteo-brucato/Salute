@@ -69,7 +69,7 @@ class Home extends Controller {
 					'last_name' => $results[1]["last_name"]
 				);
 				$this->session->set_userdata($login_data);
-				header ("Location: /profile/index");
+				$this->ajax->redirect('/profile');
 			}
 		}
 
@@ -105,13 +105,11 @@ class Home extends Controller {
 					$this->load->view('mainpane/registration', '', TRUE),
 					$this->load->view('sidepane/default', '', TRUE)
 				));
-
-		// Fancy Feature later: upon completion, email the user a confirmation report. 
 	}
 
 	function register_do()
 	{
-		// 
+		echo "Your Registration has been submitted"; 
 	}
 
 }

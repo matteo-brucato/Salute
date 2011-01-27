@@ -17,69 +17,98 @@ class Connection extends Controller {
 		$this->first_name = $this->session->userdata('first_name');		
 	}
 
-	// Default: call list_all
+
 	function index()
 	{
-		header ("Location: /connection/list_all");
+		show_error('This is not a valid call.', 500);
+		return;
 	}
 
-	// list all my connections
-	function list_all()
+	//TODO: fix this to make it only list docs
+	function list_doctors()
 	{
 		$this->load->model('connections');
-		$results = $this->connections->list_all(array('account_id' => $this->account_id,'type' => $this->type)); 
-		$this->ajax->view(array($this->load->view('mainpane/list_connections', $results , TRUE)));
+		$results = $this->connections->list_doctors(array('account_id' => $this->account_id)); 
+		$this->ajax->view(array($this->load->view('mainpane/list_mydoctors', $results , TRUE)));
+	}
+
+	//TODO: fix this to make it only list patients
+	function list_patients()
+	{
+		if ($this->type !== 'doctor'){
+			show_error('Permission Denied', 500);
+			return;
+		}
+
+		$this->load->model('connections');
+		$results = $this->connections->list_patients(array('account_id' => $this->account_id)); 
+		$this->ajax->view(array($this->load->view('mainpane/list_mypatients', $results , TRUE)));
 	}
 
 	// Request a connection ( aka request to be friends with a doctor )
 	function request($id)
 	{
-		// TODO: model to check that $id is a doctor, returns boolean
-		$this->load->model(Doctor); 
-		$check = $this->Doctor->isDoctor(array('id' => $id)); 
+		// TODO: model to check that $id is a patient, returns boolean
+		$this->load->model(search); 
+		$check = $this->search->is_patient(array('id' => $id)); 
+		$check2 = $this->search->is_doctor(array('id' => $id)); 
 
-		if (!$check || $this->type === 'patient'){
-			// error: Only Doctors can establish connections
-			// 	  Only Doctors can be connected to. 
+		// if the id you are requesting is a patient, not allowed
+		if (!$check){
 			show_error('Permission Denied.', 500);
 			return;
 		}
 
-		else if{}
-
-		else{
-			// You are not logged in. redirect!
-			$this->ajax->redirect('/');
+		// the id requested is a doctor
+		else if($check2){
+			// Send default friend request email to doctor
+			$this->load->library('email');
+			$this->email->from($this->email, $this->first_name $this->last_name);
+			$this->email->to('someone@example.com'); // need the email!
+			$this->email->subject('New Connection Request');
+			
+			// need to put a link in here to 'accept' connection, 
+			$this->email->message('You have a new connection request from [first name] [Last name]. Click here to accept.');
+			$this->email->send();
 		}
 
-					
-		// Send default friend request email to doctor
-		$this->load->library('email');
-		$this->email->from($this->email, $this->first_name $this->last_name);
-		$this->email->to('someone@example.com'); // need the email!
-		$this->email->subject('New Connection Request');
-		
-		// need to put a link in here to 'accept' connection, 
-		$this->email->message('You have a new connection request from [first name] [Last name]. Click here to accept.');
-		$this->email->send();
+		else{
+			show_error('Unexpected Errors have occured.', 500);
+			return;
+		}			
 	}
 
 	// Establish Connection ( aka accept friend request )
 	// Only Doctors do this 
 	function establish($id) // this needs to take in an account id as an argument. 
 	{
+		$this->load->model('connections');
 		// doctor is connecting with a doctor
-		else if ($this->type === 'doctor' && $check){
-			// TODO: model, insert a connection
-			$this->load->model('connections');
-			$results = $this->connections->connect(array('account_id' => $this->account_id)); 
-			// expecting a bool from $results
-			if($results){
-				// TODO: main panel view that says "Your connection has been successfully requested, you will receive an email upon confirmation"
-				$this->ajax->view(array($this->load->view('mainpane/connection_requested', '' , TRUE)));
-			}		
+		if ($this->type === 'doctor'){
+			// TODO: model, insert a connection b/w doc - doc
+			$results = $this->connections->connect_doc(array('account_id' => $this->account_id, 'account_id_2' => $id )); 
 		}
 
+		// patient is connecting with doctor		
+		else if ($this->type === 'patient') {
+			// TODO: model, insert a connection b/w patient - doc
+			$results = $this->connections->connect_pat(array('account_id' => $this->account_id, 'account_id_2' => $id )); 
+		}
+		else {
+			// you are not logged in
+			$this->ajax->redirect('/');
+		}
+			
+		// expecting a bool from $results
+		if($results){
+			// TODO: main panel view that says "Your connection has been successfully requested, you will receive an email upon confirmation"
+			// $this->ajax->view(array($this->load->view('mainpane/_______', '' , TRUE)));
+			echo "success";
+		}
+		else{
+			show_error('Connection Establishment Failed.', 500);
+			return;
+		}		
 	}
 
 	// destroy connection (un-friend someone)
