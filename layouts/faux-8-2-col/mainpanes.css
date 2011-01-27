@@ -16,26 +16,30 @@
 	display: none;
 }
 
-/* MyDoctors */
-#mydoctors-table, #mydoctors-table th, #mydoctors-table td {
+/* Tables */
+table.tables-1, .tables-1 th, .tables-1 td {
 	border: 1px solid black;
 }
-#mydoctors-table {
+table.tables-1 {
 	width: 100%;
 	border-collapse: collapse;
 }
-#mydoctors-table th {
+.tables-1 th {
 	height: 22px;
-	background-color: #ABBEBE;
+	background-color: #abbebe;
 	color: black;
 	padding: 2px 4px;
 	margin: 0;
 }
-
-#mydoctors-table td
+.tables-1 td
 {
 	height: 20px;
 	vertical-align: middle;
 	padding: 2px 5px;
 	margin: 0;
+	background-color: #ffffff;
+}
+td.tables-1-selected-tds {
+	background-color: #aabbcc;
+	cursor: pointer;
 }

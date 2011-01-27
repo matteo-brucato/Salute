@@ -33,4 +33,4 @@ psql -p $dbport -f tables/triggers_functions.sql $dbname
 psql -p $dbport -f tables/load_data.sql $dbname
 
 # Create indexes
-psql -p $port -f tables/indexes.sql $dbname
+psql -p $dbport -f tables/indexes.sql $dbname

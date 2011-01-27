@@ -12,6 +12,7 @@ class Home extends Controller {
 	// Default function: loads Default Home Page
 	function index()
 	{
+		$this->output->enable_profiler(TRUE);
 		// Not logged in
 		if (!$this->account_id) {
 			$this->ajax->view(array(

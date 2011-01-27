@@ -1,20 +1,21 @@
 <?php
 class Connection extends Controller {
 
- 	private $type;
+	/*private $type;
 	private $account_id;
 	private $email;
 	private $first_name;
-	private $last_name;
+	private $last_name;*/
 
 	function __construct(){
 		parent::Controller();
-		$this->load->library('ajax');	
-		$this->type = $this->session->userdata('type');
+		$this->load->library('ajax');
+		$this->load->library('auth');
+		/*$this->type = $this->session->userdata('type');
 		$this->account_id = $this->session->userdata('account_id');	
 		$this->email = $this->session->userdata('email');
 		$this->last_name = $this->session->userdata('last_name');	
-		$this->first_name = $this->session->userdata('first_name');		
+		$this->first_name = $this->session->userdata('first_name');		*/
 	}
 
 
@@ -27,22 +28,37 @@ class Connection extends Controller {
 	//TODO: fix this to make it only list docs
 	function list_doctors()
 	{
+		$this->output->enable_profiler(TRUE);
+		$this->auth->check_logged_in();		/** @attention Put this function in each
+												controller function that needs authorization
+												to be executed */
 		$this->load->model('connections');
-		$results = $this->connections->list_doctors(array('account_id' => $this->account_id)); 
-		$this->ajax->view(array($this->load->view('mainpane/list_mydoctors', $results , TRUE)));
+		//$results = $this->connections->list_doctors(array('account_id' => $this->account_id)); 
+		$results = array(); /** @todo Remove this and uncomment above, when Model is done */
+		$this->ajax->view(array(
+			$this->load->view('mainpane/mydoctors', $results , TRUE),
+			''	/** @note Remember to specify always 2 views... 
+					What view do you want to give as sidepanel? 
+					I put '', just to fix the error. */
+		));
 	}
 
 	//TODO: fix this to make it only list patients
 	function list_patients()
 	{
-		if ($this->type !== 'doctor'){
+		if ($this->auth->get_type() !== 'doctor'){
 			show_error('Permission Denied', 500);
 			return;
 		}
 
 		$this->load->model('connections');
 		$results = $this->connections->list_patients(array('account_id' => $this->account_id)); 
-		$this->ajax->view(array($this->load->view('mainpane/list_mypatients', $results , TRUE)));
+		$this->ajax->view(array(
+			$this->load->view('mainpane/list_mypatients', $results , TRUE),
+			''	/** @note Remember to specify always 2 views... 
+					What view do you want to give as sidepanel? 
+					I put '', just to fix the error. */
+		));
 	}
 
 	// Request a connection ( aka request to be friends with a doctor )
@@ -62,8 +78,10 @@ class Connection extends Controller {
 		// the id requested is a doctor
 		else if($check2){
 			// Send default friend request email to doctor
+			echo "$this->first_name $this->last_name";
+			return;
 			$this->load->library('email');
-			$this->email->from($this->email, $this->first_name $this->last_name);
+			$this->email->from($this->email, "$this->auth->first_name $this->auth->last_name");
 			$this->email->to('someone@example.com'); // need the email!
 			$this->email->subject('New Connection Request');
 			
@@ -84,13 +102,13 @@ class Connection extends Controller {
 	{
 		$this->load->model('connections');
 		// doctor is connecting with a doctor
-		if ($this->type === 'doctor'){
+		if ($this->auth->type === 'doctor'){
 			// TODO: model, insert a connection b/w doc - doc
 			$results = $this->connections->connect_doc(array('account_id' => $this->account_id, 'account_id_2' => $id )); 
 		}
 
 		// patient is connecting with doctor		
-		else if ($this->type === 'patient') {
+		else if ($this->auth->type === 'patient') {
 			// TODO: model, insert a connection b/w patient - doc
 			$results = $this->connections->connect_pat(array('account_id' => $this->account_id, 'account_id_2' => $id )); 
 		}
