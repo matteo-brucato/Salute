@@ -39,5 +39,7 @@ define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 define('IS_AJAX', isset($_SERVER['HTTP_X_REQUESTED_WITH'])
 	&& strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest');
 
+define('SITENAME', "Salute");
+
 /* End of file constants.php */
 /* Location: ./system/application/config/constants.php */
