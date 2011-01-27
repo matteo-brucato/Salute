@@ -79,7 +79,7 @@ class Home extends Controller {
 	function logout()
 	{
 		$this->session->sess_destroy();
-		header ("Location: /");
+		$this->ajax->redirect('/');
 	}
 
 	/* Fancy Feature?
@@ -98,15 +98,22 @@ class Home extends Controller {
 
 		// Fancy Feature later: actually email the password to the user.
 	}
-
+*/
 	function register()
 	{
-		/** @todo Change *
-		$this->ajax->view(array("Register here!",""));
-		$this->load->view('mainpane/register_form', '', TRUE);
+		$this->ajax->view(array(
+					$this->load->view('mainpane/registration', '', TRUE),
+					$this->load->view('sidepane/default', '', TRUE)
+				));
 
 		// Fancy Feature later: upon completion, email the user a confirmation report. 
-	}*/
+	}
+
+	function register_do()
+	{
+		// 
+	}
 
 }
 ?>
+
