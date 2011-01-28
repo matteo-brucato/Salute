@@ -8,9 +8,12 @@ class Appointments_model extends Model {
 
 
 	//patient requests an appointment with a doctor
-	//I assume $inputs will be of the form (patient_id, doctor_id, date_time)
-	//NOTE: NEED TO ADD TO HCP_ACCOUNT (open, close, day_off (if any))
+	//I assume $inputs will be of the form (patient_id, doctor_id, descryption, date_time (YY-MM-DD HH-MM-SS))
+	//inserts an entry into the Appointments table
+	//NOTE: AS OF RIGHT NOW IT DOES NOT HANDLE ERROR CHECKING TO SEE IF THE date_time SPECIFIED CONFLICTS WITH ANOTHER APPOINTMENT
 	function request($inputs){
+	
+		/*FOR LATER, WHEN WE HAVE TO MANAGE TIMES, NOT COMPLETE
 		$sql = "SELECT date_time + cast('30 minute' as interval)";
 		$uper_bound = $this->db->query
 		
@@ -18,6 +21,10 @@ class Appointments_model extends Model {
 			FROM Appointment A, HCP_Account H
 			WHERE A.hcp_id = ? AND A.hcp_id == H.account_id
 			AND ( EXTRACT(?) BETWEEN H.open AND H.close) AND ( ? NOT BETWEEN A.date_time AND )";
+		*/
+
+		$data = array( 'patient_id' => $inputs[0], 'hcp_id' => $inputs[1], 'descryption' => $inputs[2], 'date_time' => $inputs[3]);
+		this->db->insert('Appointments', $data);
 	}
 	
 	//view all appointments a patient has ever had OR all appointments a doctor has ever issued (approved as well as not approved)
@@ -118,21 +125,25 @@ class Appointments_model extends Model {
 	function approve($inputs){
 		
 		$data = array('approved' => TRUE);
-		$this->db->update('Appointments', $data, array('appointment_id' => $inputs[0]));
+		$this->db->update('Appointments', $data, array('appointment_id' => $inputs));
 	}
 	
-	//patient cancels appointment with doctor
+	//patient OR doctor cancels appointment
 	//I assume $inputs will be of the form (appointment_id)
-	//updates appointment cancel to TRUE
-	//NOTE: I NEED TO ADD AN ATTRIBUTE TO THE APPOINTMENTS TABLE CALLED cancel.  BY DEFAULT TI WILL BE FALSE
+	//deletes the apointment fromt the Appointments table
 	function cancel($inputs){
 		
-		$data = array('cancel' => TRUE);
-		$this->db->update('Appointments', $data, array('appointment_id' => $inputs[0]));
+		$this->db->delete('Appointments', array('appointment_id' == $inputs));
 	}
 	
-	//
+	//patient reschedules appointment with the doctor
+	//I assume $inputs will be of the form (appointment_id, date_time (YY-MM-DD HH-MM-SS))
+	//updates date_time to new date and time
+	//NOTE: AS OF RIGHT NOW IT DOES NOT HANDLE ERROR CHECKING TO SEE IF THE date_time SPECIFIED CONFLICTS WITH ANOTHER APPOINTMENT
 	function reschedule($inputs){
+	
+		$data = array('date_time' => $inputs[1]);
+		this->db-update('Appointments', $data, array('appointment_id' => $inputs));
 	}
 
 
