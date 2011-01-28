@@ -6,36 +6,43 @@ class Messages extends Controller {
 	function __construct(){
 		parent::Controller();
 		$this->load->library('ajax');	
-		//check if you're logged in
+		$this->load->library('auth');
 		// $this->type = $this->session->userdata('type');	
 	}
 
 	// Default: call inbox function
-	function index()
-	{}
+	function index(){
+		$this->auth->check_logged_in();
+	}
 
   	/* List all messages in Inbox */      	   
-	function inbox()
-	{}
+	function inbox() { 
+		$this->auth->check_logged_in();
+	}
 
 	/*View only sent messages*/
-	function sent()
-	{}
+	function sent() {
+		$this->auth->check_logged_in();
+	}
 
 	/*View only messages saved as a draft*/	
-	function drafts()
-	{}
+	function drafts(){
+		$this->auth->check_logged_in();
+	}
 	
 	/*Compose an email*/
-	function compose()
-	{}
+	function compose() {
+		$this->auth->check_logged_in();
+	}
 	
 	/*Send the email (called from compose function) */
-	function send()
-	{}	
+	function send() {
+		$this->auth->check_logged_in();
+	}	
 
 	// Delete an email
-	function delete()
-	{}
+	function delete() {
+		$this->auth->check_logged_in();
+	}
 }
 ?>

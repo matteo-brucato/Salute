@@ -8,35 +8,34 @@ class Connections extends Controller {
 	}
 
 
-	function index()
-	{
+	function index() {
 		show_error('Direct access to this resource is forbidden', 500);
 		return;
 	}
 
-	//TODO: fix this to make it only list docs
-	function list_doctors()
-	{
-		$this->auth->check_logged_in();		/** @attention Put this function in each
-												controller function that needs authorization
-												to be executed */
+	function list_doctors()	{
+		$this->auth->check_logged_in();		
+
 		$this->load->model('connections_model');
 		
 		if ($this->auth->get_type() === 'patient') {
 			$results = $this->connections_model->list_my_doctors($this->auth->get_account_id()); 
-		} else {
+
+			$this->ajax->view(array(
+				$this->load->view('mainpane/mydoctors', array('hcp_list' => $results) , TRUE),
+				$this->load->view('sidepane/patient-profile', '', TRUE)
+			));
+		} 
+
+		else {
 			$results = $this->connections_model->list_my_colleagues($this->auth->get_account_id()); 
+			$this->ajax->view(array(
+				$this->load->view('mainpane/mydoctors', array('hcp_list' => $results) , TRUE),
+				$this->load->view('sidepane/doctor-profile', '', TRUE)
+			));	
 		}
-		
-		$this->ajax->view(array(
-			$this->load->view('mainpane/mydoctors', array('hcp_list' => $results) , TRUE),
-			''	/** @note Remember to specify always 2 views... 
-					What view do you want to give as sidepanel? 
-					I put '', just to fix the error. */
-		));
 	}
 
-	//TODO: fix this to make it only list patients
 	function list_patients()
 	{
 		$this->auth->check_logged_in();
@@ -48,15 +47,16 @@ class Connections extends Controller {
 
 		$this->load->model('connections_model');
 		$results = $this->connections_model->list_my_patients($this->auth->get_account_id()); 
+
 		/*$results = array(
 			array('first_name' => 'Mario', 'last_name' => 'Rossi', 'specialty' => 'Murderer'),
 			array('first_name' => 'Matteo', 'last_name' => 'Brucato', 'specialty' => 'Surgeon')
 		); /** @todo Remove this and uncomment above, when Model is available */
+		
+
 		$this->ajax->view(array(
 			$this->load->view('mainpane/mypatients', array('pat_list' => $results) , TRUE),
-			''	/** @note Remember to specify always 2 views... 
-					What view do you want to give as sidepanel? 
-					I put '', just to fix the error. */
+			$this->load->view('sidepane/doctor-profile', '', TRUE)
 		));
 	}
 
@@ -81,6 +81,7 @@ class Connections extends Controller {
 			// Send default friend request email to doctor
 			echo "$this->first_name $this->last_name";
 			return;
+
 			$this->load->library('email');
 			$this->email->from($this->email, "$this->auth->first_name $this->auth->last_name");
 			$this->email->to('someone@example.com'); // need the email!
@@ -105,21 +106,21 @@ class Connections extends Controller {
 		
 		$this->load->model('connections');
 		// doctor is connecting with a doctor
-		if ($this->auth->type === 'doctor'){
+		if ($this->auth->get_type() === 'doctor'){
 			// TODO: model, insert a connection b/w doc - doc
 			$results = $this->connections->connect_doc(array('account_id' => $this->account_id, 'account_id_2' => $id )); 
 		}
 
 		// patient is connecting with doctor		
-		else if ($this->auth->type === 'patient') {
+		else if ($this->auth->get_type() === 'patient') {
 			// TODO: model, insert a connection b/w patient - doc
 			$results = $this->connections->connect_pat(array('account_id' => $this->account_id, 'account_id_2' => $id )); 
 		}
 		else {
-			// you are not logged in
-			$this->ajax->redirect('/');
-		}
-			
+			show_error('Unexpected Errors have occured.', 500);
+			return;
+		}		
+	
 		// expecting a bool from $results
 		if($results){
 			// TODO: main panel view that says "Your connection has been successfully requested, you will receive an email upon confirmation"

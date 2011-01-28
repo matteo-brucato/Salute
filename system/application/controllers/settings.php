@@ -6,13 +6,13 @@ class Settings extends Controller {
 	function __construct(){
 		parent::Controller();
 		$this->load->library('ajax');	
-		//check if you're logged in	
+		$this->load->library('auth');
 		//$this->type = $this->session->userdata('type');
 	}
 
 	// Default
-	function index()
-	{
+	function index(){
+		$this->auth->check_logged_in();
 		// load view that provides the following links: 
 		//	deactivate account(link to fn below)
 		//	edit my info(link to profile controller fn called 'edit_info')
@@ -20,7 +20,8 @@ class Settings extends Controller {
 	}
 
 	// Deactivate Account
-	function deactivate()
-	{}
+	function deactivate() {
+		$this->auth->check_logged_in();
+	}
 }
 ?>
