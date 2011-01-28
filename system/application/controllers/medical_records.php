@@ -65,6 +65,7 @@ class MedicalRecords extends Controller {
 										'file_path' => $file,
 			)); 
 		}
+
 		// Case 2: Doctor adds medical record of a specific patient 
 		// 		Note: should the patient approve this first before having it added to their list of records?
 		// DEFAULT permission: set_hidden
@@ -86,7 +87,9 @@ class MedicalRecords extends Controller {
 										'file_path' => $file,
 			)); 
 		}
-		else {}
+		else {		
+			show_error('Unknown Error.', 500);
+			return;}
 	}
 
 	// gets called when an individual medical record is selected to be viewed
