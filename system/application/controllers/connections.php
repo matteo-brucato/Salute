@@ -1,42 +1,34 @@
 <?php
-class Connection extends Controller {
-
-	/*private $type;
-	private $account_id;
-	private $email;
-	private $first_name;
-	private $last_name;*/
+class Connections extends Controller {
 
 	function __construct(){
 		parent::Controller();
 		$this->load->library('ajax');
 		$this->load->library('auth');
-		/*$this->type = $this->session->userdata('type');
-		$this->account_id = $this->session->userdata('account_id');	
-		$this->email = $this->session->userdata('email');
-		$this->last_name = $this->session->userdata('last_name');	
-		$this->first_name = $this->session->userdata('first_name');		*/
 	}
 
 
 	function index()
 	{
-		show_error('This is not a valid call.', 500);
+		show_error('Direct access to this resource is forbidden', 500);
 		return;
 	}
 
 	//TODO: fix this to make it only list docs
 	function list_doctors()
 	{
-		$this->output->enable_profiler(TRUE);
+		//$this->output->enable_profiler(TRUE); // Nice debug feature
 		$this->auth->check_logged_in();		/** @attention Put this function in each
 												controller function that needs authorization
 												to be executed */
-		$this->load->model('connections');
+		$this->load->model('connections_model');
 		//$results = $this->connections->list_doctors(array('account_id' => $this->account_id)); 
-		$results = array(); /** @todo Remove this and uncomment above, when Model is done */
+		$results = array(
+			array('first_name' => 'Mario', 'last_name' => 'Rossi', 'specialty' => 'Murderer'),
+			array('first_name' => 'Matteo', 'last_name' => 'Brucato', 'specialty' => 'Surgeon')
+		); /** @todo Remove this and uncomment above, when Model is available */
 		$this->ajax->view(array(
-			$this->load->view('mainpane/mydoctors', $results , TRUE),
+			$this->load->view('mainpane/mydoctors', array('hcp_list' => $results) , TRUE),
 			''	/** @note Remember to specify always 2 views... 
 					What view do you want to give as sidepanel? 
 					I put '', just to fix the error. */
@@ -46,15 +38,22 @@ class Connection extends Controller {
 	//TODO: fix this to make it only list patients
 	function list_patients()
 	{
+		//$this->output->enable_profiler(TRUE); // Nice debug feature
+		$this->auth->check_logged_in();
+		
 		if ($this->auth->get_type() !== 'doctor'){
-			show_error('Permission Denied', 500);
+			show_error($this->load->view('errors/not_hcp', '', TRUE));
 			return;
 		}
 
-		$this->load->model('connections');
-		$results = $this->connections->list_patients(array('account_id' => $this->account_id)); 
+		$this->load->model('connections_model');
+		//$results = $this->connections->list_patients(array('account_id' => $this->account_id)); 
+		$results = array(
+			array('first_name' => 'Mario', 'last_name' => 'Rossi', 'specialty' => 'Murderer'),
+			array('first_name' => 'Matteo', 'last_name' => 'Brucato', 'specialty' => 'Surgeon')
+		); /** @todo Remove this and uncomment above, when Model is available */
 		$this->ajax->view(array(
-			$this->load->view('mainpane/list_mypatients', $results , TRUE),
+			$this->load->view('mainpane/mypatients', array('pat_list' => $results) , TRUE),
 			''	/** @note Remember to specify always 2 views... 
 					What view do you want to give as sidepanel? 
 					I put '', just to fix the error. */
@@ -64,8 +63,11 @@ class Connection extends Controller {
 	// Request a connection ( aka request to be friends with a doctor )
 	function request($id)
 	{
+		//$this->output->enable_profiler(TRUE); // Nice debug feature
+		$this->auth->check_logged_in();
+		
 		// TODO: model to check that $id is a patient, returns boolean
-		$this->load->model(search); 
+		$this->load->model('connections'); 
 		$check = $this->search->is_patient(array('id' => $id)); 
 		$check2 = $this->search->is_doctor(array('id' => $id)); 
 

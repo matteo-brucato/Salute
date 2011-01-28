@@ -21,9 +21,9 @@
 			<li href="#may"><a href="">Past</a></li>
 		</ul>
 	
-	<li><a href="">My Patients</a>
+	<li><a href="/connections/list_patients" class="ajaxlink">My Patients</a>
 	
-	<li><a href="/connection/list_doctors">My Collegues</a>
+	<li><a href="/connections/list_doctors" class="ajaxlink">My Collegues</a>
 	
 	<li><a href="">Advanced Search</a>
 	<form method="post" action="/" id="quick-search-form">

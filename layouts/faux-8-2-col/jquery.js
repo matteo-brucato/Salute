@@ -62,11 +62,14 @@ function show_hcp_form() {
 function execute_ajax(href) {
 	//if (href == curpage) return;
 	$("#leftcolumn").slideUp(50, function() {
-		var beenslow = false;
+		//var beenslow = false;
 		//$("#leftcolumn").empty();
 		//$("#leftcolumn").append("<center>Loading...</center>").delay(600, "beenslow").slideToggle(1000, function() {
 		//	beenslow = true;
 		//});
+		$.get(href, function(data, status, request) {
+			alert(request.getResponseHeader(1));
+		});
 		$.get(href, function(data, status) {
 			//$("#leftcolumn").dequeue("beenslow");
 			//$("#leftcolumn").stop();
@@ -75,6 +78,8 @@ function execute_ajax(href) {
 			//if (beenslow) {
 				//$("#leftcolumn").slideToggle(1);
 			//}
+			alert(data);
+			//alert(data.redirect);
 			
 			if (data.redirect) {
 				// data.redirect contains the string URL to redirect to

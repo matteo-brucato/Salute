@@ -1,5 +1,5 @@
 <?php
-class Login extends Model {
+class Login_model extends Model {
 	
 	function __construct() {
 		parent::Model();

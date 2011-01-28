@@ -1,5 +1,5 @@
 <?php
-class Bills extends Model {
+class Appointments_model extends Model {
 	
 	function __construct() {
 		parent::Model();

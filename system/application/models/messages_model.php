@@ -1,5 +1,5 @@
 <?php
-class Messages extends Model{
+class Messages_model extends Model{
 	
 	function __construct() {
 		parent::Model();

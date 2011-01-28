@@ -7,12 +7,8 @@ else
 ?>
 </h1>
 
-<?php $hcp_list = array(
-	array('first_name' => 'Mario', 'last_name' => 'Rossi', 'specialty' => 'Murderer'),
-	array('first_name' => 'Matteo', 'last_name' => 'Brucato', 'specialty' => 'Surgeon')
-); ?>
 
-<table class="tables-1" cellpadding="0" cellspacing="0">
+<table class="tables-1" id="mydoctors-table" cellpadding="0" cellspacing="0">
 	<tr>
 		<th>First Name</th>
 		<th>Last Name</th>

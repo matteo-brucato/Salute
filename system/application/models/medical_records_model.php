@@ -1,5 +1,5 @@
 <?php
-class Medical_Records extends Model {
+class Medical_Records_model extends Model {
 	
 
 

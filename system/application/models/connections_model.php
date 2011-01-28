@@ -1,5 +1,5 @@
 <?php
-class Connections extends Model {
+class Connections_model extends Model {
 	function __construct() {
 		parent::Model();
 		$this->load->database();

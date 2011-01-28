@@ -1,6 +1,6 @@
 <h1>My Patients</h1>
 
-<?php $hcp_list = array(
+<?php $pat_list = array(
 	array('account_id' => 0, 'first_name' => 'Mario', 'last_name' => 'Rossi', 'specialty' => 'Murderer'),
 	array('account_id' => 1, 'first_name' => 'Matteo', 'last_name' => 'Brucato', 'specialty' => 'Surgeon')
 ); ?>
@@ -11,7 +11,7 @@
 		<th>Last Name</th>
 		<th>Actions</th>
 	</tr>
-	<?php foreach ($hcp_list as $hcp) : ?>
+	<?php foreach ($pat_list as $hcp) : ?>
 	<tr>
 		<td><a class="ajaxlink" href="/profile/view_patient/<?php echo $hcp['account_id']; ?>"><?php echo $hcp['first_name']; ?></a></td>
 		<td><?php echo $hcp['last_name']; ?></td>

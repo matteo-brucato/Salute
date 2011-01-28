@@ -18,6 +18,7 @@ class Auth {
 	private $email;
 	private $first_name;
 	private $last_name;
+	private $CI;
 	
 	function __construct() {
 		$CI =& get_instance();
@@ -26,6 +27,7 @@ class Auth {
 		$this->email		= $CI->session->userdata('email');
 		$this->first_name	= $CI->session->userdata('first_name');
 		$this->last_name	= $CI->session->userdata('last_name');
+		$this->CI = $CI;
 	}
 	
 	function is_logged_in() {
@@ -44,7 +46,8 @@ class Auth {
 	 * */
 	function check_logged_in() {
 		if (!$this->is_logged_in()) {
-			show_error('You are not logged in');
+			$error_view = $this->CI->load->view('errors/not_logged_in', '', TRUE);
+			show_error($error_view);
 		}
 	}
 	
