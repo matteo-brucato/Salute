@@ -43,3 +43,8 @@ td.tables-1-selected-tds {
 	background-color: #aabbcc;
 	cursor: pointer;
 }
+
+
+.id_keeper {
+	display: none;
+}

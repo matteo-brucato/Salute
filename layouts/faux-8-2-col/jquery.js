@@ -32,7 +32,7 @@ function layout_bindings() {
 		execute_ajax(href);
 	});
 	
-	/*$("#mypatients-table tr").hover(
+	$("#mypatients-table tr, #mydoctors-table tr").live("hover",
 	function() {
 		$(this).children().toggleClass("tables-1-selected-tds");
 	},
@@ -40,11 +40,12 @@ function layout_bindings() {
 		$(this).children().toggleClass("tables-1-selected-tds");
 	});
 	
-	$("#mypatients-table tr").live("click", function(event) {
-		var href = $(this).find("a:first").attr('href');
-		alert(href);
-		execute_ajax(href);
-	});*/
+	$("#mypatients-table tr, #mydoctors-table tr").live("click", function(event) {
+		//var href = $(this).find("a:first").attr('href');
+		var account_id = $(this).find('.id_keeper:first').html();
+		alert(account_id);
+		execute_ajax('/profile/user/' + account_id);
+	});
 }
 
 function show_patient_form() {

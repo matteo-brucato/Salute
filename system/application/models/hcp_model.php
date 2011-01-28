@@ -35,15 +35,29 @@ class Hcp_model extends Model {
 		return FALSE;
 	}
 
-	//gets all of the doctor information
-	//$inputs is of the form( account_id)
-	//returns array with all of the doctor information
+	/**
+	 * Gets all of the doctor information
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id)
+	 * @return
+	 *   Array with all of the doctor information
+	 * */
 	function get_doctor($inputs) {
 		$sql = "SELECT *
 			FROM HCP_Account H
 			WHERE H.account_id = ?";
 		$query = $this->db->query($sql, $inputs);
-		return $query->result_array();		
+		return $query->result_array();
+	}
+	
+	/**
+	 * @return
+	 *   Array with all the existing doctors in the database
+	 * */
+	function get_doctors() {
+		$sql = "SELECT * FROM HCP_Account";
+		return $this->db->query($sql)->result_array();
 	}
 	
 	//registers a doctor
@@ -65,7 +79,7 @@ class Hcp_model extends Model {
 	
 		$data = array( 'first_name' => $inputs[1], 'last_name' => $inputs[2], 'middle_name' => $inputs[3], 'tel_number' => $inputs[4], 
 			       'fax_number' => $inputs[5], 'specialization' => $inputs[6], 'org_name' => $inputs[7], 'address' => $inputs[8]);
-		$this->db->update('HCP_Account', $data, array('account_id' => $inputs[0]);
+		$this->db->update('HCP_Account', $data, array('account_id' => $inputs[0]));
 	}
 }
 ?>
