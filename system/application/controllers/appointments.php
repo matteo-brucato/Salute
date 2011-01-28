@@ -1,13 +1,10 @@
 <?php
 class Appointments extends Controller {
 
-// 	private $type;
-
 	function __construct(){
 		parent::Controller();
 		$this->load->library('ajax');	
-		//check if you're logged in	
-		//$this->type = $this->session->userdata('type');
+		$this->load->library('auth');
 	}
 
 	// Default: load upcoming function
@@ -15,28 +12,33 @@ class Appointments extends Controller {
 	{}  	
 
 	/* request an appointment */      	   
-	function request()
-	{}
+	function request(){
+		$this->auth->check_logged_in();
+	}
 
 	/* List all Appointments */
-	function all()
-	{}
+	function all() {
+		$this->auth->check_logged_in();
+	}
 
 	/* List Upcoming Appointments */
-	function upcoming()
-	{}
+	function upcoming(){
+		$this->auth->check_logged_in();
+	}
 
 	/* List Past Appointments */
-	function past()
-	{}
+	function past(){
+		$this->auth->check_logged_in();
+	}
 
 	/*Cancel an existing appointment */	
-	function cancel()
-	{}
+	function cancel() {
+		$this->auth->check_logged_in();
+	}
 	
 	/*Reschedule an existing appointment (date/time) */
-	function reschedule()
-	{}
-	
+	function reschedule(){
+		$this->auth->check_logged_in();
+	}
 }
 ?>

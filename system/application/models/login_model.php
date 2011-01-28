@@ -43,4 +43,3 @@ class Login_model extends Model {
 	
 }
 ?>
-

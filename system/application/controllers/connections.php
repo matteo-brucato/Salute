@@ -8,37 +8,36 @@ class Connections extends Controller {
 	}
 
 
-	function index()
-	{
+	function index() {
 		show_error('Direct access to this resource is forbidden', 500);
 		return;
 	}
 
-	//TODO: fix this to make it only list docs
-	function list_doctors()
-	{
-		//$this->output->enable_profiler(TRUE); // Nice debug feature
-		$this->auth->check_logged_in();		/** @attention Put this function in each
-												controller function that needs authorization
-												to be executed */
+	function list_doctors()	{
+		$this->auth->check_logged_in();		
+
 		$this->load->model('connections_model');
-		//$results = $this->connections->list_doctors(array('account_id' => $this->account_id)); 
-		$results = array(
-			array('first_name' => 'Mario', 'last_name' => 'Rossi', 'specialty' => 'Murderer'),
-			array('first_name' => 'Matteo', 'last_name' => 'Brucato', 'specialty' => 'Surgeon')
-		); /** @todo Remove this and uncomment above, when Model is available */
-		$this->ajax->view(array(
-			$this->load->view('mainpane/mydoctors', array('hcp_list' => $results) , TRUE),
-			''	/** @note Remember to specify always 2 views... 
-					What view do you want to give as sidepanel? 
-					I put '', just to fix the error. */
-		));
+		
+		if ($this->auth->get_type() === 'patient') {
+			$results = $this->connections_model->list_my_doctors($this->auth->get_account_id()); 
+
+			$this->ajax->view(array(
+				$this->load->view('mainpane/mydoctors', array('hcp_list' => $results) , TRUE),
+				$this->load->view('sidepane/patient-profile', '', TRUE)
+			));
+		} 
+
+		else {
+			$results = $this->connections_model->list_my_colleagues($this->auth->get_account_id()); 
+			$this->ajax->view(array(
+				$this->load->view('mainpane/mydoctors', array('hcp_list' => $results) , TRUE),
+				$this->load->view('sidepane/doctor-profile', '', TRUE)
+			));	
+		}
 	}
 
-	//TODO: fix this to make it only list patients
 	function list_patients()
 	{
-		//$this->output->enable_profiler(TRUE); // Nice debug feature
 		$this->auth->check_logged_in();
 		
 		if ($this->auth->get_type() !== 'doctor'){
@@ -47,41 +46,43 @@ class Connections extends Controller {
 		}
 
 		$this->load->model('connections_model');
-		//$results = $this->connections->list_patients(array('account_id' => $this->account_id)); 
-		$results = array(
+		$results = $this->connections_model->list_my_patients($this->auth->get_account_id()); 
+
+		/*$results = array(
 			array('first_name' => 'Mario', 'last_name' => 'Rossi', 'specialty' => 'Murderer'),
 			array('first_name' => 'Matteo', 'last_name' => 'Brucato', 'specialty' => 'Surgeon')
 		); /** @todo Remove this and uncomment above, when Model is available */
+		
+
 		$this->ajax->view(array(
 			$this->load->view('mainpane/mypatients', array('pat_list' => $results) , TRUE),
-			''	/** @note Remember to specify always 2 views... 
-					What view do you want to give as sidepanel? 
-					I put '', just to fix the error. */
+			$this->load->view('sidepane/doctor-profile', '', TRUE)
 		));
 	}
 
 	// Request a connection ( aka request to be friends with a doctor )
 	function request($id)
 	{
-		//$this->output->enable_profiler(TRUE); // Nice debug feature
 		$this->auth->check_logged_in();
 		
-		// TODO: model to check that $id is a patient, returns boolean
-		$this->load->model('connections'); 
-		$check = $this->search->is_patient(array('id' => $id)); 
-		$check2 = $this->search->is_doctor(array('id' => $id)); 
+		$this->load->model('patient_model'); 
+		$this->load->model('hcp_model'); 
+		$is_pat = $this->search->is_patient(array('id' => $id)); 
+		$is_doc = $this->search->is_doctor(array('id' => $id)); 
 
 		// if the id you are requesting is a patient, not allowed
-		if (!$check){
+		if (!$is_pat){
 			show_error('Permission Denied.', 500);
 			return;
 		}
 
 		// the id requested is a doctor
-		else if($check2){
+		/* TODO: Get the email working */
+		else if($is_doc){
 			// Send default friend request email to doctor
 			echo "$this->first_name $this->last_name";
 			return;
+
 			$this->load->library('email');
 			$this->email->from($this->email, "$this->auth->first_name $this->auth->last_name");
 			$this->email->to('someone@example.com'); // need the email!
@@ -102,24 +103,25 @@ class Connections extends Controller {
 	// Only Doctors do this 
 	function establish($id) // this needs to take in an account id as an argument. 
 	{
-		$this->load->model('connections');
+		$this->auth->check_logged_in();
+		
+		$this->load->model('connections_model');
+
 		// doctor is connecting with a doctor
-		if ($this->auth->type === 'doctor'){
-			// TODO: model, insert a connection b/w doc - doc
-			$results = $this->connections->connect_doc(array('account_id' => $this->account_id, 'account_id_2' => $id )); 
+		if ($this->auth->get_type() === 'doctor'){
+			$results = $this->connections_model->accept_doctor_doctor(array('account_id' => $this->auth->get_account_id(), 'account_id_2' => $id )); 
 		}
 
 		// patient is connecting with doctor		
-		else if ($this->auth->type === 'patient') {
-			// TODO: model, insert a connection b/w patient - doc
-			$results = $this->connections->connect_pat(array('account_id' => $this->account_id, 'account_id_2' => $id )); 
+		else if ($this->auth->get_type() === 'patient') {
+			$results = $this->connections_model->accept_patient_doctor(array('account_id' => $this->auth->get_account_id(), 'account_id_2' => $id )); 
 		}
 		else {
-			// you are not logged in
-			$this->ajax->redirect('/');
-		}
-			
-		// expecting a bool from $results
+			show_error('Unknown Error.', 500);
+			return;
+		}		
+	
+		/* Waiting on model functions to make sure connection establishment is success or fail ; expecting a bool from $results
 		if($results){
 			// TODO: main panel view that says "Your connection has been successfully requested, you will receive an email upon confirmation"
 			// $this->ajax->view(array($this->load->view('mainpane/_______', '' , TRUE)));
@@ -128,21 +130,27 @@ class Connections extends Controller {
 		else{
 			show_error('Connection Establishment Failed.', 500);
 			return;
-		}		
+		}
+		*/		
 	}
 
 	// destroy connection (un-friend someone)
-	function destroy($id) // TODO: needs to take in an id.
+	function destroy($id)
 	{
+		$this->auth->check_logged_in();
+		
 		// TODO: need model to delete connection
-		$this->load->model('connections');
-		$delete = $this->connections->remove(array('account_id_1' => $this->account_id , 'account_id_2' => $id )); // expecting boolean
+		$this->load->model('connections_model');
+		$delete = $this->connections_model->remove(array('account_id_1' => $this->auth->get_account_id() , 'account_id_2' => $id )); // expecting boolean
+
+		/*	
 		if ($delete){
 			echo "Success";
 		}
 		else {
 			echo "Unable to remove connection";
 		}
+		*/
 	}
 
 	/* Fancy Feature: list all my pending connections

@@ -1,20 +1,17 @@
 <?php
 class Home extends Controller {
 
-	private $account_id;
-
 	function __construct() {
 		parent::Controller();
 		$this->load->library('ajax');
-		$this->account_id = $this->session->userdata('account_id');	
+		$this->load->library('auth');
 	}
 	
 	// Default function: loads Default Home Page
 	function index()
 	{
-		//$this->output->enable_profiler(TRUE);
 		// Not logged in
-		if (!$this->account_id) {
+		if (!$this->auth->is_logged_in()) {
 			$this->ajax->view(array(
 				$this->load->view('mainpane/welcome', '', TRUE),
 				$this->load->view('sidepane/login', '', TRUE)
@@ -29,6 +26,11 @@ class Home extends Controller {
 
 	function login()
 	{
+		if ($this->auth->is_logged_in()) {
+			show_error('You are already logged in', 200);
+			return;
+		}
+		
 		// get email & password
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
@@ -38,11 +40,11 @@ class Home extends Controller {
 			return;
 		}
 		
-		$this->load->model('login');
+		$this->load->model('login_model');
 		
 		// verify login
 		//returns array: of an array that has : 1st element = type, 2nd element= whole user's tuple
-		$results = $this->login->authorize(array("email" => $email,"password" => $password));
+		$results = $this->login_model->authorize(array("email" => $email,"password" => $password));
 		
 		// login fails : error view
 		if ($results === NULL)
