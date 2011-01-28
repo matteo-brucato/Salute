@@ -1,10 +1,5 @@
 <h1>My Patients</h1>
 
-<?php $pat_list = array(
-	array('account_id' => 0, 'first_name' => 'Mario', 'last_name' => 'Rossi', 'specialty' => 'Murderer'),
-	array('account_id' => 1, 'first_name' => 'Matteo', 'last_name' => 'Brucato', 'specialty' => 'Surgeon')
-); ?>
-
 <table class="tables-1" id="mypatients-table" cellpadding="0" cellspacing="0">
 	<tr>
 		<th>First Name</th>

@@ -17,16 +17,17 @@ class Connections extends Controller {
 	//TODO: fix this to make it only list docs
 	function list_doctors()
 	{
-		//$this->output->enable_profiler(TRUE); // Nice debug feature
 		$this->auth->check_logged_in();		/** @attention Put this function in each
 												controller function that needs authorization
 												to be executed */
 		$this->load->model('connections_model');
-		//$results = $this->connections->list_doctors(array('account_id' => $this->account_id)); 
-		$results = array(
-			array('first_name' => 'Mario', 'last_name' => 'Rossi', 'specialty' => 'Murderer'),
-			array('first_name' => 'Matteo', 'last_name' => 'Brucato', 'specialty' => 'Surgeon')
-		); /** @todo Remove this and uncomment above, when Model is available */
+		
+		if ($this->auth->get_type() === 'patient') {
+			$results = $this->connections_model->list_my_doctors($this->auth->get_account_id()); 
+		} else {
+			$results = $this->connections_model->list_my_colleagues($this->auth->get_account_id()); 
+		}
+		
 		$this->ajax->view(array(
 			$this->load->view('mainpane/mydoctors', array('hcp_list' => $results) , TRUE),
 			''	/** @note Remember to specify always 2 views... 
@@ -38,7 +39,6 @@ class Connections extends Controller {
 	//TODO: fix this to make it only list patients
 	function list_patients()
 	{
-		//$this->output->enable_profiler(TRUE); // Nice debug feature
 		$this->auth->check_logged_in();
 		
 		if ($this->auth->get_type() !== 'doctor'){
@@ -47,8 +47,8 @@ class Connections extends Controller {
 		}
 
 		$this->load->model('connections_model');
-		//$results = $this->connections->list_patients(array('account_id' => $this->account_id)); 
-		$results = array(
+		$results = $this->connections_model->list_my_patients($this->auth->get_account_id()); 
+		/*$results = array(
 			array('first_name' => 'Mario', 'last_name' => 'Rossi', 'specialty' => 'Murderer'),
 			array('first_name' => 'Matteo', 'last_name' => 'Brucato', 'specialty' => 'Surgeon')
 		); /** @todo Remove this and uncomment above, when Model is available */
@@ -63,7 +63,6 @@ class Connections extends Controller {
 	// Request a connection ( aka request to be friends with a doctor )
 	function request($id)
 	{
-		//$this->output->enable_profiler(TRUE); // Nice debug feature
 		$this->auth->check_logged_in();
 		
 		// TODO: model to check that $id is a patient, returns boolean
@@ -102,6 +101,8 @@ class Connections extends Controller {
 	// Only Doctors do this 
 	function establish($id) // this needs to take in an account id as an argument. 
 	{
+		$this->auth->check_logged_in();
+		
 		$this->load->model('connections');
 		// doctor is connecting with a doctor
 		if ($this->auth->type === 'doctor'){
@@ -134,6 +135,8 @@ class Connections extends Controller {
 	// destroy connection (un-friend someone)
 	function destroy($id) // TODO: needs to take in an id.
 	{
+		$this->auth->check_logged_in();
+		
 		// TODO: need model to delete connection
 		$this->load->model('connections');
 		$delete = $this->connections->remove(array('account_id_1' => $this->account_id , 'account_id_2' => $id )); // expecting boolean

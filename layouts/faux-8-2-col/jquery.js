@@ -67,10 +67,20 @@ function execute_ajax(href) {
 		//$("#leftcolumn").append("<center>Loading...</center>").delay(600, "beenslow").slideToggle(1000, function() {
 		//	beenslow = true;
 		//});
-		$.get(href, function(data, status, request) {
-			alert(request.getResponseHeader(1));
+		/*$.ajax({
+			type: "GET",
+			url: href,
+			complete: function(request, status) {
+					//alert(request.getResponseHeader('Last-Modified'));
+					alert(request.status + ' ' + status);
+				},
+			dataType: 'json'
 		});
-		$.get(href, function(data, status) {
+		$.get(href, function(data, status, request) {
+			//alert(request.getResponseHeader('Last-Modified'));
+			alert(request.status);
+		});*/
+		$.get(href, function(data, status, request) {
 			//$("#leftcolumn").dequeue("beenslow");
 			//$("#leftcolumn").stop();
 			//$("#leftcolumn").hide();
@@ -78,12 +88,12 @@ function execute_ajax(href) {
 			//if (beenslow) {
 				//$("#leftcolumn").slideToggle(1);
 			//}
-			alert(data);
 			//alert(data.redirect);
 			
 			if (data.redirect) {
 				// data.redirect contains the string URL to redirect to
 				window.location.href = data.redirect;
+				//$(window.location).attr('href', data.redirect);
 				return;
 			}
 			

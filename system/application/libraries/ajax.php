@@ -33,6 +33,7 @@ class Ajax {
 			//	$j = 0;
 			//}
 			echo json_encode(array (
+				'donotredirect'	=> '',
 				'mainpane'	=> ($views[0] != ''? $views[0] : ''),
 				'sidepane'	=> ($views[1] != ''? $views[1] : '')
 			));
@@ -45,12 +46,13 @@ class Ajax {
 	}
 	
 	function redirect($url) {
+		//redirect($url, 'location', 303);
 		if (IS_AJAX) {
 			echo json_encode(array (
 				'redirect'	=> $url
 			));
 		} else {
-			redirect($url, 'location', 301);
+			redirect($url, 'location', 303);
 		}
 	}
 	

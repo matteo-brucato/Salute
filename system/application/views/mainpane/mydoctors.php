@@ -19,7 +19,7 @@ else
 	<tr>
 		<td><?php echo $hcp['first_name']; ?></td>
 		<td><?php echo $hcp['last_name']; ?></td>
-		<td><?php echo $hcp['specialty']; ?></td>
+		<td><?php echo $hcp['specialization']; ?></td>
 		<td>
 			<ul>
 				<li><a href="">Send Email</a></li>
