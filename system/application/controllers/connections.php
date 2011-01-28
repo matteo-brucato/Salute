@@ -65,19 +65,20 @@ class Connections extends Controller {
 	{
 		$this->auth->check_logged_in();
 		
-		// TODO: model to check that $id is a patient, returns boolean
-		$this->load->model('connections'); 
-		$check = $this->search->is_patient(array('id' => $id)); 
-		$check2 = $this->search->is_doctor(array('id' => $id)); 
+		$this->load->model('patient_model'); 
+		$this->load->model('hcp_model'); 
+		$is_pat = $this->search->is_patient(array('id' => $id)); 
+		$is_doc = $this->search->is_doctor(array('id' => $id)); 
 
 		// if the id you are requesting is a patient, not allowed
-		if (!$check){
+		if (!$is_pat){
 			show_error('Permission Denied.', 500);
 			return;
 		}
 
 		// the id requested is a doctor
-		else if($check2){
+		/* TODO: Get the email working */
+		else if($is_doc){
 			// Send default friend request email to doctor
 			echo "$this->first_name $this->last_name";
 			return;
@@ -104,24 +105,23 @@ class Connections extends Controller {
 	{
 		$this->auth->check_logged_in();
 		
-		$this->load->model('connections');
+		$this->load->model('connections_model');
+
 		// doctor is connecting with a doctor
 		if ($this->auth->get_type() === 'doctor'){
-			// TODO: model, insert a connection b/w doc - doc
-			$results = $this->connections->connect_doc(array('account_id' => $this->account_id, 'account_id_2' => $id )); 
+			$results = $this->connections_model->accept_doctor_doctor(array('account_id' => $this->auth->get_account_id(), 'account_id_2' => $id )); 
 		}
 
 		// patient is connecting with doctor		
 		else if ($this->auth->get_type() === 'patient') {
-			// TODO: model, insert a connection b/w patient - doc
-			$results = $this->connections->connect_pat(array('account_id' => $this->account_id, 'account_id_2' => $id )); 
+			$results = $this->connections_model->accept_patient_doctor(array('account_id' => $this->auth->get_account_id(), 'account_id_2' => $id )); 
 		}
 		else {
-			show_error('Unexpected Errors have occured.', 500);
+			show_error('Unknown Error.', 500);
 			return;
 		}		
 	
-		// expecting a bool from $results
+		/* Waiting on model functions to make sure connection establishment is success or fail ; expecting a bool from $results
 		if($results){
 			// TODO: main panel view that says "Your connection has been successfully requested, you will receive an email upon confirmation"
 			// $this->ajax->view(array($this->load->view('mainpane/_______', '' , TRUE)));
@@ -130,23 +130,27 @@ class Connections extends Controller {
 		else{
 			show_error('Connection Establishment Failed.', 500);
 			return;
-		}		
+		}
+		*/		
 	}
 
 	// destroy connection (un-friend someone)
-	function destroy($id) // TODO: needs to take in an id.
+	function destroy($id)
 	{
 		$this->auth->check_logged_in();
 		
 		// TODO: need model to delete connection
-		$this->load->model('connections');
-		$delete = $this->connections->remove(array('account_id_1' => $this->account_id , 'account_id_2' => $id )); // expecting boolean
+		$this->load->model('connections_model');
+		$delete = $this->connections_model->remove(array('account_id_1' => $this->auth->get_account_id() , 'account_id_2' => $id )); // expecting boolean
+
+		/*	
 		if ($delete){
 			echo "Success";
 		}
 		else {
 			echo "Unable to remove connection";
 		}
+		*/
 	}
 
 	/* Fancy Feature: list all my pending connections

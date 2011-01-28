@@ -67,8 +67,8 @@ class Profile extends Controller {
 			$check = $this->____->is_connected(array('id' => $id)); 
 			*/
 			$this->ajax->view(array(
-				$this->load->view('mainpane/see_patient', '', TRUE),  /* pass in account id! */
-				$this->load->view('sidepane/doctor-profile', '', TRUE)
+				$this->load->view('mainpane/see_patient', $id , TRUE),  /* pass in account id! */
+				$this->load->view('sidepane/doctor-profile', $id , TRUE)
 			));
 
 		}
