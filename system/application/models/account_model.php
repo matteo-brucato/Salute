@@ -15,7 +15,7 @@ class Account_model extends Model {
 		//$data = array('active' => FALSE);
 		//$this->db->update('Accounts', $data, 'account_id' => $inputs);
 		
-		$sql = "UPDATE Accounts
+		$sql = "UPDATE accounts
 			SET active = FALSE
 			WHERE account_id = ?";
 		$query = $this->db->query($sql, $inputs);
@@ -31,12 +31,12 @@ class Account_model extends Model {
 		//$data = array( 'email' => $inputs[0], 'password' => $inputs[1]);
 		//$this->db->insert( 'Accounts', $data);
 		
-		$sql = "INSERT INTO Accounts (email, password)
+		$sql = "INSERT INTO accounts (email, password)
 			VALUES (?, ?)";
 		$query = $this->db->query($sql, $inputs);
 		
 		$sql = "SELECT account_id
-			FROM Accounts
+			FROM accounts
 			WHERE email = ?"
 		$query = $this->db->query($sql, array($inputs[0]));
 		$result = $this->result_array();
@@ -53,7 +53,7 @@ class Account_model extends Model {
 		//$data = array( 'email' => $inputs[1], 'password' => $inputs[2]);
 		//this->db->update( 'Accounts', $data, array('account_id' => $inputs[0]);
 		
-		$sql = "UPDATE Accounts
+		$sql = "UPDATE accounts
 			SET email = ?, password = ?
 			WHERE account_id = ?"
 		$query = $this->db->query($sql, array($inputs[1], $inputs[2], $inputs[0]));
@@ -71,7 +71,7 @@ class Account_model extends Model {
 	 function get_password($inputs){
 	 
 	 	$sql = "SELECT A.password
-	 		FROM Account A
+	 		FROM account A
 	 		WHERE A.email = ?"
 	 	$query = $this->db->query($sql, $inputs);
 	 	$result = $this->result_array();

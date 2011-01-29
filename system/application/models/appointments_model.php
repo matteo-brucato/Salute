@@ -17,7 +17,7 @@ class Appointments_model extends Model {
 	 function is_myappointment($inputs){
 	 
 	 	$sql = "Select *
-	 		FROM Appointments A
+	 		FROM appointments A
 	 		WHERE A.patient_id = ? AND A.appointment_id = ?";
 	 	$query = $this->db->query($sql, $inputs);
 	 	$result = $query->result_array();
@@ -39,7 +39,7 @@ class Appointments_model extends Model {
 	 
 	 	$sql = "SELECT A.*, P.first_name AS pat_first_name, P.last_name AS pat_last_name, 
 	 			    H.first_name AS hcp_first_name, H.last_name AS hcp_last_name 
-	 		FROM Appointments A, HCP_Account H, Patient_account P 
+	 		FROM appointments A, hcp_account H, patient_account P 
 	 		WHERE A.appointment_id = ? AND A.patient_id = P.account_id AND A.hcp_id = H.account_id";
 	 	$query = $this->db->query($sql, $inputs);
 	 	$result = $query->result_array();
@@ -66,7 +66,7 @@ class Appointments_model extends Model {
 		//$data = array( 'patient_id' => $inputs[0], 'hcp_id' => $inputs[1], 'descryption' => $inputs[2], 'date_time' => $inputs[3]);
 		//this->db->insert('Appointments', $data);
 		
-		$sql = "INSERT INTO Appointments (patient_id, hcp_id, descryption, date_time)
+		$sql = "INSERT INTO appointments (patient_id, hcp_id, descryption, date_time)
 			VALUES (?, ?, ?, ?)";
 		$query = $this->db->query($sql, $inputs);
 		
@@ -80,7 +80,7 @@ class Appointments_model extends Model {
 		//lists all appointments a patient has ever had
 		if( $inputs[1] == 'patient'){
 			$sql = "Select A.appointment_id, H2.first_name, H2.last_name, A.amount, A.descryption, A.date_time, A.cleared
-				FROM Appointments A, HCP_Account H, HCP_Account H2
+				FROM appointments A, hcp_account H, hcp_account H2
 				WHERE A.hcp_id = H.account_id AND A.patient_id = ? AND A.hcp_id == H2.account_id";
 			$query = $this->db->query($sql, array($inputs[0]));
 			$result = $query->result_array();
@@ -92,7 +92,7 @@ class Appointments_model extends Model {
 
 		//lists all appointments a doctor has issued
 		$sql = "Select A.appointment_id, P2.first_name, P2.last_name, A.amount, A.descryption, A.date_time, A.cleared
-			FROM Appointments A, Patient_Account P, Patient_Account P2
+			FROM appointments A, patient_account P, patient_account P2
 			WHERE A.patient_id = P.account_id AND A.hcp_id = ? AND A.patient_id == P2.account_id";
 		$query = $this->db->query($sql, array($inputs[0]));
 		$result = $query->result_array();
@@ -111,7 +111,7 @@ class Appointments_model extends Model {
 		//lists all upcoming appointments a patient has
 		if( $inputs[1] == 'patient'){
 			$sql = "Select A.appointment_id, H2.first_name, H2.last_name, A.amount, A.descryption, A.date_time, A.cleared
-				FROM Appointments A, HCP_Account H, HCP_Account H2
+				FROM appointments A, hcp_account H, hcp_account H2
 				WHERE A.hcp_id = H.account_id AND A.patient_id = ? AND A.hcp_id == H2.account_id AND A.date_time >= NOW()";
 			$query = $this->db->query($sql, $inputs[0]);
 			$result = $query->result_array();
@@ -123,7 +123,7 @@ class Appointments_model extends Model {
 
 		//lists all upcoming appointments a doctor has
 		$sql = "Select A.appointment_id, P2.first_name, P2.last_name, A.amount, A.descryption, A.date_time, A.cleared
-			FROM Appointments A, Patient_Account P, Patient_Account P2
+			FROM appointments A, patient_account P, patient_account P2
 			WHERE A.patient_id = P.account_id AND A.hcp_id = ? AND A.patient_id == P2.account_id and A.date_time >= NOW()";
 		$query = $this->db->query($sql, $inputs[0]);
 		$result = $query->result_array();
@@ -142,7 +142,7 @@ class Appointments_model extends Model {
 		//lists all past appointments a patient has had 
 		if( $inputs[1] == 'patient'){
 			$sql = "Select A.appointment_id, H2.first_name, H2.last_name, A.amount, A.descryption, A.date_time, A.cleared
-				FROM Appointments A, HCP_Account H, HCP_Account H2
+				FROM appointments A, hcp_account H, hcp_account H2
 				WHERE A.hcp_id = H.account_id AND A.patient_id = ? AND A.hcp_id == H2.account_id AND A.date_time < NOW()";
 			$query = $this->db->query($sql, $inputs[0]);
 			$result = $query->result_array();
@@ -154,7 +154,7 @@ class Appointments_model extends Model {
 
 		//lists all past appointments a doctor has had
 		$sql = "Select A.appointment_id, P2.first_name, P2.last_name, A.amount, A.descryption, A.date_time, A.cleared
-			FROM Appointments A, Patient_Account P, Patient_Account P2
+			FROM appointments A, patient_account P, patient_account P2
 			WHERE A.patient_id = P.account_id AND A.hcp_id = ? AND A.patient_id == P2.account_id and A.date_time < NOW()";
 		$query = $this->db->query($sql, $inputs[0]);
 		$result = $query->result_array();
@@ -172,7 +172,7 @@ class Appointments_model extends Model {
 		//$data = array('approved' => TRUE);
 		//$this->db->update('Appointments', $data, array('appointment_id' => $inputs));
 		
-		$sql = "UPDATE Appointments
+		$sql = "UPDATE appointments
 			SET approved = TRUE
 			WHERE appointment_id = ?";
 		$query = $this->db->query($sql, $inputs);
@@ -187,7 +187,7 @@ class Appointments_model extends Model {
 		
 		//$this->db->delete('Appointments', array('appointment_id' => $inputs));
 		
-		$sql = "DELETE FROM Appointments
+		$sql = "DELETE FROM appointments
 			WHERE appointment_id = ?";
 		$query = $this->db->query($sql, $inputs);
 	}
@@ -201,7 +201,7 @@ class Appointments_model extends Model {
 		//$data = array('date_time' => $inputs[1]);
 		//this->db-update('Appointments', $data, array('appointment_id' => $inputs));
 		
-		$sql = "UPDATE Appointments
+		$sql = "UPDATE appointments
 			SET date_time = ?
 			WHERE appointment_id = ?";
 		$query = $this->db->query($sql, array($inputs[1], $inputs[0]));
