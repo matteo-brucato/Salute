@@ -169,10 +169,45 @@ class Connections_model extends Model {
 		
 	}
 
-	//$inputs for the form (account_id of doctor, account_id of patient)
+	/**
+	 * Sets the connection patient-doctor to TRUE only if it was not
+	 * already accepted.
+	 * 
+	 * @param
+	 *   $inputs of the form array(account_id of requester, account_id of accepter)
+	 * 
+	 * @return
+	 *   -1 in case of error in a query
+	 *   -2 if the connection does not exist
+	 *   -3 if the connection was already accepted
+	 *   0  if everything goes fine
+	 * */
 	function accept_patient_doctor($inputs) {
-		$data = array( 'accepted'=> TRUE );
-		$this->db->update('P_D_Connection', $data, array('patient_id' => $inputs[1], 'hcp_id' =>$inputs[0]));
+		$query = $this->db->query("SELECT * FROM P_D_Connection
+			WHERE patient_id = ? AND hcp_id = ?", $inputs);
+		
+		if ($this->db->trans_status() === FALSE) {
+			return -1; /* query error */
+		}
+		
+		if ($query->num_rows() < 1) {
+			return -2; /* connection does not exist */
+		}
+		
+		$res = $query->result();
+		if ($res[0]->accepted == 't') {
+			return -3; /* connection alreaday accepted */
+		}
+		
+		// Accept connection
+		$this->db->query("UPDATE P_D_Connection SET accepted = TRUE
+			WHERE patient_id = ? AND hcp_id = ?", $inputs);
+		
+		if ($this->db->trans_status() === FALSE) {
+			return -1; /* query error */
+		}
+		
+		return 0;
 	}
 	
 	

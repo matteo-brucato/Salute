@@ -96,9 +96,10 @@ class Connections extends Controller {
 		
 		$config['mailtype'] = 'html';
 		$this->email->initialize($config);
-		$this->email->from($this->auth->get_email());
+		//$this->email->from($this->auth->get_email());
+		$this->email->from('salute-noreply@salute.com');
 //		$this->email->to($results['email']);
-		$this->email->to('nadahashem@gmail.com');
+		$this->email->to('mattfeel@gmail.com');
 		$this->email->subject('New Connection Request');
 		
 		$this->email->message(
@@ -108,15 +109,22 @@ class Connections extends Controller {
 
 		// @todo: Pop-up : are you sure you want to send?
 		$this->email->send();
+		
+		$this->ajax->view(array(
+			'Your request has been submitted.',
+			''
+		));
 	}
 
-	// Accept request ; Note: only Doctors do this 
-	// Bug: Auto Accepts...why?!
-	function accept($requester_id = NULL , $my_id = NULL ) 
+	/** 
+	 * Accept request ; Note: only Doctors do this 
+	 * @bug Auto Accepts...why?!
+	 * */
+	function accept($requester_id = NULL, $my_id = NULL) 
 	{
 		$this->auth->check_logged_in();
 
-		if ( $requester_id == NULL || $my_id == NULL ){
+		if ($requester_id == NULL || $my_id == NULL) {
 			show_error('ids not specified.', 500);
 			return;
 		}
@@ -131,17 +139,38 @@ class Connections extends Controller {
 		$this->load->model('patient_model');
 		
 		if ($this->patient_model->is_patient(array($requester_id))) {
-			$this->connections_model->accept_patient_doctor(array('patient_id' => $requester_id, 'hcp_id' => $this->auth->get_account_id() ));
+			$res = $this->connections_model->accept_patient_doctor(array($requester_id,$my_id));
 		}
 
 		else if ($this->hcp_model->is_doctor(array($requester_id))) {
-			$this->connections_model->accept_doctor_doctor(array('hcp_id' => $requester_id, 'this_hcp_id' => $this->auth->get_account_id() ));
+			$res = $this->connections_model->accept_doctor_doctor(array('hcp_id' => $requester_id, 'this_hcp_id' => $this->auth->get_account_id() ));
 		}
 
 		else {
 			show_error('The requester id does not match any id in the database', 500);
 			return;
 		}
+		
+		switch ($res) {
+			case -1:
+				$view = 'Query error!';
+				break;
+			case -2:
+				$view = 'Connection does not exists.';
+				break;
+			case -3:
+				$view = 'This connection has already been accepted.';
+				break;
+			default:
+				$view = 'You have accepted the connection.';
+				break;
+		}
+		
+		// Create final view for the client
+		$this->ajax->view(array(
+			$view,
+			''
+		));
 	}
 
 	// destroy connection (un-friend someone)
