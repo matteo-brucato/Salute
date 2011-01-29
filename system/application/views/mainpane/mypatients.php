@@ -1,4 +1,4 @@
-<h1>My Patients</h1>
+<h2>My Patients</h2>
 
 <?php
 // Id of the table
