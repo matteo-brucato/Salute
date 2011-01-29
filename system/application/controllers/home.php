@@ -117,11 +117,20 @@ class Home extends Controller {
 		$tel_no = $this->input->post('tel_no');
 		$fax_no = $this->input->post('fax_no');
 		$address = $this->input->post('address');
+		$input=array(
+				'email' => $email,'password' => $password,'type' => $type,'first_name' => $first_name,'last_name' => $last_name,
+				'middle_name' => $middle_name, 'dob' => $dob, 'sex' => $sex, 'ssn' => $ssn,'tel_no' => $tel_no,
+				'fax_no' => $fax_no, 'address' => $address);
+
+	}
+	function register_do()
+	{
 
 		$this->load->model('account_model');
 		$account_id = $this->account_model->add_account(array('email' => $email, 'password' => $password)); 
 
 		if ($type === 'patient'){
+			echo "i am a patient!";
 			$this->load->model('patient_model');
 			$this->patient_model->register(array(
 								'account_id' => $account_id, 
@@ -137,7 +146,8 @@ class Home extends Controller {
 							)); 
 		}
 
-		else if ($this->auth->get_type() === 'doctor') {
+		else if ($type() === 'doctor') {
+			echo "I am a doctor!";
 			$this->load->model('hcp_model');
 			$this->hcp_model->register(array(
 								'account_id' => $account_id, 
@@ -156,6 +166,7 @@ class Home extends Controller {
 			show_error('Unknown Error.', 500);
 		}
 
+		// @todo: show some confirmation view
 	}
 
 }
