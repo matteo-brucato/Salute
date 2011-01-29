@@ -85,23 +85,20 @@ class Home extends Controller {
 		$this->ajax->redirect('/');
 	}
 
-	/* Fancy Feature?
+	/* @todo- view to retrieve password*/
 	function retrieve_password()
 	{
-		/** @todo Change *
-		// need a retrieve password form(user should input email address)
 		$this->load->view('mainpane/retrieve_password', '', TRUE);
 		$email = $this->input->post('email');
 
 		// need a retrieve password function in login model
-		$this->load->model('login');
-		$password = this->login->get_password($email); 
+		$this->load->model('account_model');
+		$password = this->account_model->get_password($email); 
 		
-		$this->ajax->view(array("Your password has been emailed to you.",""));
-
+		echo "Your password is $password";		
 		// Fancy Feature later: actually email the password to the user.
 	}
-*/
+
 	function register()
 	{
 		$this->ajax->view(array(

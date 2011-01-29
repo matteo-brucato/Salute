@@ -61,77 +61,72 @@ class Connections extends Controller {
 	}
 
 	// Request a connection ( aka request to be friends with a doctor )
-	function request($id)
+	function request($id = NULL)
 	{
+		if ( $id == NULL ){
+			show_error('No doctor_id specified.', 500);
+			return;
+		}
+
 		$this->auth->check_logged_in();
+
+		$this->load->model('hcp_model');		
+		$results = $this->hcp_model->get_doctor('account_id'=> array($id));
 		
-		$this->load->model('patient_model'); 
-		$this->load->model('hcp_model'); 
-		$is_pat = $this->search->is_patient(array('id' => $id)); 
-		$is_doc = $this->search->is_doctor(array('id' => $id)); 
+		$this->load->model('connections_model');
+		/*@todo: How to get Timestamp? */		
+		if ( $this->auth->get_type() === 'doctor' ){		
+			$check = $this->connections_model->add_doctor_doctor(array(
+										'user_id'=> $this->auth->get_account_id(), 'requester_id' => $id, 
+										'timestamp' => $timestamp 
+										));
+		}
 
-		// if the id you are requesting is a patient, not allowed
-		if (!$is_pat){
-			show_error('Permission Denied.', 500);
+		else if ( $this->auth->get_type() === 'patient' ){		
+			$check = $this->connections_model->add_patient_doctor(array(
+										'patient_id'=> $this->auth->get_account_id(), 'hcp_id' => $id, 
+										'timestamp' => $timestamp 
+										));
+		}
+
+		else {
+			show_error('Unknown Error.', 500);
 			return;
 		}
 
-		// the id requested is a doctor
-		/* TODO: Get the email working */
-		else if($is_doc){
-			// Send default friend request email to doctor
-			echo "$this->first_name $this->last_name";
-			return;
+		$this->load->library('email');
+		$this->email->from($this->auth->get_email());
+//		$this->email->to($results['email']);
+		$this->email->to(nadahashem@gmail.com);
+		$this->email->subject('New Connection Request');
+		$this->email->mailtype('html');
 
-			$this->load->library('email');
-			$this->email->from($this->email, "$this->auth->first_name $this->auth->last_name");
-			$this->email->to('someone@example.com'); // need the email!
-			$this->email->subject('New Connection Request');
-			
-			// need to put a link in here to 'accept' connection, 
-			$this->email->message('You have a new connection request from [first name] [Last name]. Click here to accept.');
-			$this->email->send();
-		}
+		// @todo: Fix the body -- need to put a link to 'accept' connection, connections/accept/requester_id
+		$this->email->message('You have a new connection request from [first name] [Last name]. Click here to accept.');
 
-		else{
-			show_error('Unexpected Errors have occured.', 500);
-			return;
-		}			
+		// @todo: Pop-up : are you sure you want to send?
+		$this->email->send();
 	}
 
-	// Establish Connection ( aka accept friend request )
-	// Only Doctors do this 
-	function establish($id) // this needs to take in an account id as an argument. 
+	// Accept request ; Note: only Doctors do this 
+	function accept($id) // this needs to take in an account id as an argument. 
 	{
 		$this->auth->check_logged_in();
 		
 		$this->load->model('connections_model');
-
-		// doctor is connecting with a doctor
-		if ($this->auth->get_type() === 'doctor'){
-			$results = $this->connections_model->accept_doctor_doctor(array('account_id' => $this->auth->get_account_id(), 'account_id_2' => $id )); 
+		
+		if ( $this->auth->get_type() === 'patient' ){
+			$this->connections_model->accept_patient_doctor(array('patient_id' => $id, 'hcp_id' => $this->auth->get_account_id() ));
 		}
 
-		// patient is connecting with doctor		
-		else if ($this->auth->get_type() === 'patient') {
-			$results = $this->connections_model->accept_patient_doctor(array('account_id' => $this->auth->get_account_id(), 'account_id_2' => $id )); 
+		else if ( $this->auth->get_type() === 'doctor' ){
+			$this->connections_model->accept_doctor_doctor(array('hcp_id' => $id, 'this_hcp_id' => $this->auth->get_account_id() ));
 		}
+
 		else {
 			show_error('Unknown Error.', 500);
 			return;
 		}		
-	
-		/* Waiting on model functions to make sure connection establishment is success or fail ; expecting a bool from $results
-		if($results){
-			// TODO: main panel view that says "Your connection has been successfully requested, you will receive an email upon confirmation"
-			// $this->ajax->view(array($this->load->view('mainpane/_______', '' , TRUE)));
-			echo "success";
-		}
-		else{
-			show_error('Connection Establishment Failed.', 500);
-			return;
-		}
-		*/		
 	}
 
 	// destroy connection (un-friend someone)
@@ -139,10 +134,19 @@ class Connections extends Controller {
 	{
 		$this->auth->check_logged_in();
 		
-		// TODO: need model to delete connection
 		$this->load->model('connections_model');
-		$delete = $this->connections_model->remove(array('account_id_1' => $this->auth->get_account_id() , 'account_id_2' => $id )); // expecting boolean
 
+		if ( $this->auth->get_type() === 'patient' ){
+			$delete = $this->connections_model->remove_pd_connection(array('patient_id' => $this->auth->get_account_id() , 'hcp_id' => $id )); 
+		}
+		else if ( $this->auth->get_type() === 'doctor' ){
+			$delete = $this->connections_model->remove_dd_connection(array('this_hcp_id' => $this->auth->get_account_id() , 'hcp_id' => $id )); 
+		}
+
+		else(){
+			show_error('Unknown Error.', 500);
+			return;
+		}
 		/*	
 		if ($delete){
 			echo "Success";
