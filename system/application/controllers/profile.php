@@ -89,11 +89,61 @@ class Profile extends Controller {
 	// loads form that allows me to edit my info
 	function edit() {
 		$this->auth->check_logged_in();
-	}
 
-	// submits edits to database
-	function make_edits() {
-		$this->auth->check_logged_in();
+		$this->ajax->view(array(
+					$this->load->view('mainpane/edit_info', '', TRUE),
+					$this->load->view('sidepane/default', '', TRUE)
+				));
+
+		$email = $this->input->post('email');
+		$password = $this->input->post('password');
+		$first_name = $this->input->post('first_name');
+		$middle_name = $this->input->post('middle_name');
+		$last_name = $this->input->post('last_name');
+		$dob = $this->input->post('dob');
+		$sex = $this->input->post('sex');
+		$ssn = $this->input->post('ssn');
+		$tel_no = $this->input->post('tel_no');
+		$fax_no = $this->input->post('fax_no');
+		$address = $this->input->post('address');
+
+		if ( $this->auth->get_type() === 'patient'){
+			$this->load->model('patient_model');
+			this->patient_model->update_personal_info(array(
+								'account_id' => $account_id, 
+								'first_name' => $first_name, 
+								'last_name' => $last_name,
+								'middle_name' => $middle_name, 
+								'ssn' => $ssn, 
+								'dob' => $dob, 
+								'sex' => $sex, 
+								'tel_number' => $tel_no, 
+								'fax_number' => $fax_no, 
+								'address' => $address
+							)); 
+		}
+
+		else if ($this->auth->get_type() === 'doctor'){
+			$this->load->model('hcp_model');
+			this->hcp_model->update_personal_info(array(
+								'account_id' => $account_id, 
+								'first_name' => $first_name, 
+								'last_name' => $last_name,
+								'middle_name' => $middle_name, 
+								'ssn' => $ssn, 
+								'dob' => $dob, 
+								'sex' => $sex, 
+								'tel_number' => $tel_no, 
+								'fax_number' => $fax_no, 
+								'address' => $address
+						)); 
+		}
+		else{
+			show_error('Unknown Error.', 500);
+			return;
+		}
+
+
 	}
 
 }

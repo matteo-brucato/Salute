@@ -24,7 +24,7 @@ class Appointments extends Controller {
 								)); 
 		$this->ajax->view(array(
 					'',
-					$this->load->view('mainpane/list_appointments', $results , TRUE)
+					$this->load->view('mainpane/table_result', $results , TRUE)
 				));
 	}
 
@@ -39,7 +39,7 @@ class Appointments extends Controller {
 								)); 
 		$this->ajax->view(array(
 					'',
-					$this->load->view('mainpane/list_appointments', $results , TRUE)
+					$this->load->view('mainpane/table_result', $results , TRUE)
 				));
 	}
 
@@ -53,7 +53,7 @@ class Appointments extends Controller {
 								)); 
 		$this->ajax->view(array(
 					'',
-					$this->load->view('mainpane/list_appointments', $results , TRUE)
+					$this->load->view('mainpane/table_result', $results , TRUE)
 				));
 
 	}
@@ -95,7 +95,12 @@ class Appointments extends Controller {
 									'desc' => $desc ,
 									'time' => $time 
 								)); 
-		// Fancy: send confirmation 
+		/* Fancy: send confirmation 
+		$this->ajax->view(array(
+					'',
+					$this->load->view('mainpane/confirmation', '' , TRUE)
+				));
+		*/
 	}
 }
 ?>

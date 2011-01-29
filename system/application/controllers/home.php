@@ -108,11 +108,58 @@ class Home extends Controller {
 					$this->load->view('mainpane/registration', '', TRUE),
 					$this->load->view('sidepane/default', '', TRUE)
 				));
-	}
+		$email = $this->input->post('email');
+		$password = $this->input->post('password');
+		$type = $this->input->post('type');
+		$first_name = $this->input->post('first_name');
+		$middle_name = $this->input->post('middle_name');
+		$last_name = $this->input->post('last_name');
+		$dob = $this->input->post('dob');
+		$sex = $this->input->post('sex');
+		$ssn = $this->input->post('ssn');
+		$tel_no = $this->input->post('tel_no');
+		$fax_no = $this->input->post('fax_no');
+		$address = $this->input->post('address');
 
-	function register_do()
-	{
-		echo "Your Registration has been submitted"; 
+		$this->load->model('account_model');
+		$account_id = this->account_model->add_account(array('email' => $email, 'password' => $password)); 
+
+		if ($type === 'patient'){
+			$this->load->model('patient_model');
+			this->patient_model->register(array(
+								'account_id' => $account_id, 
+								'first_name' => $first_name, 
+								'last_name' => $last_name,
+								'middle_name' => $middle_name, 
+								'ssn' => $ssn, 
+								'dob' => $dob, 
+								'sex' => $sex, 
+								'tel_number' => $tel_no, 
+								'fax_number' => $fax_no, 
+								'address' => $address
+							)); 
+		}
+
+		else if ($type === 'doctor'){
+			$this->load->model('hcp_model');
+			$this->hcp_model->register(array(
+								'account_id' => $account_id, 
+								'first_name' => $first_name, 
+								'last_name' => $last_name,
+								'middle_name' => $middle_name, 
+								'ssn' => $ssn, 
+								'dob' => $dob, 
+								'sex' => $sex, 
+								'tel_number' => $tel_no, 
+								'fax_number' => $fax_no, 
+								'address' => $address
+						)); 
+		}
+		else{
+			show_error('Unknown Error.', 500);
+			return;
+		}
+
 	}
 
 }

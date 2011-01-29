@@ -58,7 +58,6 @@ class MedicalRecords extends Controller {
 						''
 			));	
 			
-			/*TODO: fix model: when patient uploads their own file....don't need doc_id */
 			$results = $this->medical_record_model->add_med_record(array(
 										'patient_id' => $this->auth->get_account_id(), 
 										'account_id' => $this->auth->get_account_id(), 
@@ -74,18 +73,20 @@ class MedicalRecords extends Controller {
 
 			/* TODO: Need a view for file uploads */
 			// TODO: How to upload a file from a user's computer?
-			// expects file on return... 
-			$file = $this->ajax->view(array(
+			$this->ajax->view(array(
 						$this->load->view('mainpane/upload', '' , TRUE),
 						''
 			));	
+
+			$file = $this->input->post('file');
+			$patient_id = $this->input->post('patient_id');
 			
-			/*TODO: fix model: when patient uploads their own file....don't need doc_id */
 			$results = $this->medical_record_model->add_med_record(array(
 										'patient_id' => $this->auth->get_account_id(),
 										'account_id' => $this->auth->get_account_id(), 
 										'file_path' => $file,
 			)); 
+			// LATER: check that it was added successfully
 		}
 		else {		
 			show_error('Unknown Error.', 500);
