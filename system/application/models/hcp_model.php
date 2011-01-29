@@ -88,14 +88,14 @@ class Hcp_model extends Model {
 	 * registers a doctor
 	 * 
 	 * @param $inputs 
-	 *   Is of the form( first_name, last_name, middle_name, ssn, dbo, sex, tel_number, fax_number, specialization, orgname, address)
+	 *   Is of the form( account_id, first_name, last_name, middle_name, ssn, dbo, sex, tel_number, fax_number, specialization, orgname, address)
 	 * @return
 	 * */
 	function register($inputs){
 	
-		$data = array( 'first_name' => $inputs[0], 'last_name' => $inputs[1], 'middle_name' => $inputs[2], 'ssn' => $inputs[3], 'dob' => $inputs[4], 
-			       'sex' => $inputs[5], 'tel_number' => $inputs[6], 'fax_number' => $inputs[7], 'specialization' => $inputs[8], 
-			       'org_name' => $inputs[9], 'address' => $inputs[10]);
+		$data = array( 'account_id' => $inputs[0], 'first_name' => $inputs[1], 'last_name' => $inputs[2], 'middle_name' => $inputs[3], 'ssn' => $inputs[4],  
+			       'dob' => $inputs[5], 'sex' => $inputs[6], 'tel_number' => $inputs[7], 'fax_number' => $inputs[8], 'specialization' => $inputs[9], 
+			       'org_name' => $inputs[10], 'address' => $inputs[11]);
 		$this->db->insert('HCP_Account', $data);
 	}
 	

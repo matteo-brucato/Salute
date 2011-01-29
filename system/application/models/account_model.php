@@ -19,10 +19,19 @@ class Account_model extends Model {
 	//adds an account
 	//$inputs is of the form( email, password)
 	//inserts new account into the Accounts table
+	//returns the account_id of the account just created
 	function add_account($inputs){
 	
 		$data = array( 'email' => $inputs[0], 'password' => $inputs[1]);
 		$this->db->insert( 'Accounts', $data);
+		
+		$sql = "SELECT account_id
+			FROM Accounts
+			WHERE email = ?"
+		$query = $this->db->query($sql, $inputs[0]);
+		$result = $this->result_array();
+		return $result;
+		
 	}
 	
 	
