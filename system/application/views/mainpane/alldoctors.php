@@ -29,7 +29,9 @@ if ($this->auth->get_type() == 'patient') {
 				<li><a href="">Request Appointment</a></li>
 			</ul>';
 		} else {
-			$table['tuples'][$i]['*actions'] = '<a href="">Request connection</a>';
+			$table['tuples'][$i]['*actions'] = '<a href="/connections/request/'.
+			$table['tuples'][$i]['account_id'].
+			'" class="ajaxlink-confirm">Request connection</a>';
 		}
 	}
 } else {
@@ -41,7 +43,9 @@ if ($this->auth->get_type() == 'patient') {
 				<li><a href="">Delete Connection</a></li>
 			</ul>';
 		} else {
-			$table['tuples'][$i]['*actions'] = '<a href="">Request connection</a>';
+			$table['tuples'][$i]['*actions'] = '<a href="/connections/request/'.
+			$table['tuples'][$i]['account_id'].
+			'" class="ajaxlink-confirm">Request connection</a>';
 		}
 	}
 }

@@ -27,7 +27,7 @@ class MedicalRecords extends Controller {
 			$results = $this->medical_record->list_my_records(array('account_id' => $this->auth->get_account_id() )); 
 			$this->ajax->view(array(
 					'',
-					$this->load->view('mainpane/list_patient_recs', $results , TRUE)
+					$this->load->view('mainpane/_________', $results , TRUE)
 				));
 		}
 	
@@ -54,7 +54,7 @@ class MedicalRecords extends Controller {
 			// TODO: How to upload a file from a user's computer?
 			// expects file on return... 
 			$file = $this->ajax->view(array(
-						$this->load->view('mainpane/upload', '' , TRUE),
+						$this->load->view('mainpane/_____', '' , TRUE),
 						''
 			));	
 			
@@ -74,7 +74,7 @@ class MedicalRecords extends Controller {
 			/* TODO: Need a view for file uploads */
 			// TODO: How to upload a file from a user's computer?
 			$this->ajax->view(array(
-						$this->load->view('mainpane/upload', '' , TRUE),
+						$this->load->view('mainpane/_____', '' , TRUE),
 						''
 			));	
 
@@ -90,7 +90,9 @@ class MedicalRecords extends Controller {
 		}
 		else {		
 			show_error('Unknown Error.', 500);
-			return;}
+			return;
+		}
+		$this->ajax->redirect('/medical_records/list_med_recs');
 	}
 
 	// gets called when an individual medical record is selected to be viewed
@@ -98,31 +100,66 @@ class MedicalRecords extends Controller {
 	// should list all doctors who have permission to see it
 	// should have a button that lets you give another doctor permission , or remove permission 
 	// should have a button to delete a medical record
-	function medical_record() {
+	/* @todo: need a view that lists medical records: Name, Description, link to file */
+	function medical_record($med_rec_id) {
 		$this->auth->check_logged_in();
+		$this->load->model('medical_records_model');
+		$result = $this->medical_records_model->get_medicalrecord(array($med_rec_id));
+		$this->ajax->view(array(
+					$this->load->view('mainpane/______', $result , TRUE),
+					''
+				));	
 	}
 
 	// Set medical record to hidden: not public to your doctor(s)
-	// take in medical record id as a param
 	// should be able to set multiple recs to hidden at once
-	function set_hidden() {
+	/* @todo: waiting is_myrecord model function*/
+	function set_hidden($medical_record_id) {
 		$this->auth->check_logged_in();
+		$this->load->model('medical_records_model');
+		$this->load->model('permissions_model');
+		if( $this->medical_records_model->is_myrecord(array($this->auth->get_account_id(),$medical_record_id)) ){
+			$this->permissions_model->delete_permission($medical_record_id);
+		}
+ 		else{
+			show_error('This is not your record.', 500);
+			return;
+		}
+		$this->ajax->redirect('/medical_records/list_med_recs');
 	}
 
 	// Set medical record to viewable: public to your doctor(s)
-	// take in medical record id as a param
 	// should be able to set multiple recs to allowed at once
-	function set_allowed() {
+	/* @todo: waiting is_myrecord model function*/
+	function set_allowed($medical_record_id) {
 		$this->auth->check_logged_in();	
+		$this->load->model('medical_records_model');
+		$this->load->model('permissions_model');
+		if( $this->medical_records_model->is_myrecord(array($this->auth->get_account_id(),$medical_record_id)) ){
+			$this->permissions_model->allow_permission($medical_record_id);
+		}
+ 		else{
+			show_error('This is not your record.', 500);
+			return;
+		}
+		$this->ajax->redirect('/medical_records/list_med_recs');
 	}
 
 	// Delete medical record 
 	// ONLY patient should be able to do this
-	// take in medical record id as a param
 	// should be able to delete multiple recs at once
-	function destroy() {
+	/* @todo: waiting is_myrecord model function*/
+	function destroy($medical_record_id) {
 		$this->auth->check_logged_in();
+		$this->load->model('medical_records_model');
+		if( $this->medical_records_model->is_myrecord(array($this->auth->get_account_id(),$medical_record_id)) ){
+			$this->medical_records_model->delete_medical_record($medical_record_id);		
+		}
+ 		else{
+			show_error('This is not your record.', 500);
+			return;
+		}
+		$this->ajax->redirect('/medical_records/list_med_recs');
 	}
-
 }
 ?>

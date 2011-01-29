@@ -54,7 +54,7 @@ class Medical_Records_model extends Model {
 	//patient deletes medical record
 	//I assume $inputs will be of the form (medical_rec_id)
 	//deletes the medical record from the account
-	function delete_medical_record(){
+	function delete_medical_record($inputs){
 	
 		$this->db->delete('Medical_Records', array('medical_rec_id' == $inputs));
 	}

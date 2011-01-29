@@ -26,7 +26,7 @@ $(document).ready(function() {			// Wait for the document to be able to be manip
 });
 
 function layout_bindings() {
-	$(".ajaxlink").live("click", function(event) {
+	$("a.ajaxlink").live("click", function(event) {
 		event.preventDefault();
 		var href = $(this).attr('href');
 		execute_ajax(href);
@@ -46,6 +46,14 @@ function layout_bindings() {
 		alert(account_id);
 		execute_ajax('/profile/user/' + account_id);
 	});*/
+	
+	$("a.ajaxlink-confirm").live("click", function() {
+		event.preventDefault();
+		if (confirm('Do you really want to?')) {
+			var href = $(this).attr('href');
+			execute_ajax(href);
+		}
+	});
 }
 
 function show_patient_form() {

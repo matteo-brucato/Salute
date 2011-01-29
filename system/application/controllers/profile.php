@@ -63,14 +63,12 @@ class Profile extends Controller {
 			return;
 		}
 		
-		// Authentication issue
 		$this->auth->check_logged_in();
 		
 		$this->load->model('hcp_model');
 		$this->load->model('patient_model');
 		$this->load->model('connections_model');
 		
-		// Check if the given id is a patient or a doctor
 		if ($this->hcp_model->is_doctor(array($id))) {
 			$info = $this->hcp_model->get_doctor(array($id));
 			$id_type = 'doctor';
@@ -85,10 +83,8 @@ class Profile extends Controller {
 			return;
 		}
 		
-		// Check whether they are connected
 		$is_my_friend = $this->connections_model->is_connected_with($this->auth->get_account_id(), $id);
 		
-		// A doctor can view only connected patients profiles
 		if ($this->auth->get_type() == 'doctor' && $id_type == 'patient' && ! $is_my_friend) {
 			show_error('Sorry! An HCP can only view profiles of connected patients');
 			return;
