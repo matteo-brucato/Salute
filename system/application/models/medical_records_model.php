@@ -26,7 +26,7 @@ class Medical_Records_model extends Model {
 	//vill allow a patient OR doctor to add a medical record
 	//I assume $inputs will be of the form (patient_id, account_id (person adding), issue, suplementary_info, file_path)
 	//inserts the new medical record into the patients account
-	function add_medical_record(){
+	function add_medical_record($inputs){
 	
 		$data = array( 'patient_id' => $inputs[0], 'account_id' => $inputs[1], 'issue' => $inputs[2], 'suplementary_info' => $inputs[3], 'file_path' => $inputs[4]);
 		$this->db->insert('Medical_Records', $data);	
