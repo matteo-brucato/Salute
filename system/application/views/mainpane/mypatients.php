@@ -21,6 +21,7 @@ $table['attr'] = array('account_id', 'first_name', 'last_name', '*actions');
 for ($i = 0; $i < count($table['tuples']); $i++) {
 	$table['tuples'][$i]['*actions'] = '
 	<ul>
+		<li><a href="/profile/user/'.$table['tuples'][$i]['account_id'].'" class="ajaxlink">See Profile</a></li>
 		<li><a href="">Send Email</a></li>
 		<li><a href="">Delete Connection</a></li>
 		<li><a href="">Upload Medical Record</a></li>
