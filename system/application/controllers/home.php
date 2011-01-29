@@ -93,7 +93,7 @@ class Home extends Controller {
 
 		// need a retrieve password function in login model
 		$this->load->model('account_model');
-		$password = this->account_model->get_password($email); 
+		$password = $this->account_model->get_password($email); 
 		
 		echo "Your password is $password";		
 		// Fancy Feature later: actually email the password to the user.

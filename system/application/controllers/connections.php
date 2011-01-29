@@ -71,21 +71,21 @@ class Connections extends Controller {
 		$this->auth->check_logged_in();
 
 		$this->load->model('hcp_model');		
-		$results = $this->hcp_model->get_doctor('account_id'=> array($id));
+		$results = $this->hcp_model->get_doctor(array($id));
 		
 		$this->load->model('connections_model');
 		/*@todo: How to get Timestamp? */		
 		if ( $this->auth->get_type() === 'doctor' ){		
 			$check = $this->connections_model->add_doctor_doctor(array(
-										'user_id'=> $this->auth->get_account_id(), 'requester_id' => $id, 
-										'timestamp' => $timestamp 
+										$this->auth->get_account_id(),
+										$id
 										));
 		}
 
 		else if ( $this->auth->get_type() === 'patient' ){		
 			$check = $this->connections_model->add_patient_doctor(array(
-										'patient_id'=> $this->auth->get_account_id(), 'hcp_id' => $id, 
-										'timestamp' => $timestamp 
+										$this->auth->get_account_id(),
+										$id
 										));
 		}
 
@@ -93,23 +93,33 @@ class Connections extends Controller {
 			show_error('Unknown Error.', 500);
 			return;
 		}
+		
+		if (! $check) {
+			show_error('Connection already requested');
+			return;
+		}
 
 		$this->load->library('email');
+		
+		$config['mailtype'] = 'html';
+		$this->email->initialize($config);
 		$this->email->from($this->auth->get_email());
 //		$this->email->to($results['email']);
-		$this->email->to(nadahashem@gmail.com);
+		$this->email->to('nadahashem@gmail.com');
 		$this->email->subject('New Connection Request');
-		$this->email->mailtype('html');
 
 		// @todo: Fix the body -- need to put a link to 'accept' connection, connections/accept/requester_id
-		$this->email->message('You have a new connection request from [first name] [Last name]. Click here to accept.');
+		$this->email->message(
+			'You have a new connection request from '.
+			$this->auth->get_first_name().' '.$this->auth->get_last_name().
+			'. Click <a href="connections/accept/'.$this->auth->get_account_id().'/'.$id.'">here</a> to accept.');
 
 		// @todo: Pop-up : are you sure you want to send?
 		$this->email->send();
 	}
 
 	// Accept request ; Note: only Doctors do this 
-	function accept($id) // this needs to take in an account id as an argument. 
+	function accept($requestor_id, $my_id) // this needs to take in an account id as an argument. 
 	{
 		$this->auth->check_logged_in();
 		
@@ -143,7 +153,7 @@ class Connections extends Controller {
 			$delete = $this->connections_model->remove_dd_connection(array('this_hcp_id' => $this->auth->get_account_id() , 'hcp_id' => $id )); 
 		}
 
-		else(){
+		else {
 			show_error('Unknown Error.', 500);
 			return;
 		}

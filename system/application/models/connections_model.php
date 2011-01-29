@@ -103,12 +103,14 @@ class Connections_model extends Model {
 		$result = $query->result_array();
 		if( count($result) > 0 )
 			return FALSE;
-		$data = array( 'patient_id' => $inputs[0], 
-				'hcp_id' => $inputs[1],
-				'date_connection' => $inputs[2]
+		$data = array( 'patient_id' => (int)$inputs[0], 
+				'hcp_id' => (int)$inputs[1]
 				);				
 				
-		$this->db->insert('P_D_Connection', $data );
+		//$this->db->insert('P_D_Connection', $data);
+		
+		$this->db->query("INSERT INTO P_D_Connection (patient_id, hcp_id, date_connected)
+			VALUES (? , ?, current_timestamp)", $data);
 		return TRUE;
 		 
 	}	

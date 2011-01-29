@@ -133,7 +133,7 @@ CREATE TABLE P_D_Connection(
 	patient_id SERIAL NOT NULL,
 	hcp_id SERIAL NOT NULL,
 	accepted BOOLEAN NOT NULL DEFAULT FALSE,
-	date_connected DATE,
+	date_connected DATE NOT NULL,
 	PRIMARY KEY(patient_id, hcp_id),
 	FOREIGN KEY (patient_id) REFERENCES Patient_Account(account_id),
 	FOREIGN KEY (hcp_id) REFERENCES HCP_Account(account_id)
@@ -145,7 +145,7 @@ CREATE TABLE D_D_Connection(
 	requester_id serial NOT NULL,
 	accepter_id serial NOT NULL,
 	aceepted BOOLEAN NOT NULL DEFAULT FALSE,
-	date_connected DATE,
+	date_connected DATE NOT NULL,
 	PRIMARY KEY (requester_id, accepter_id),
 	FOREIGN KEY (requester_id) REFERENCES HCP_Account(account_id),
 	FOREIGN KEY (accepter_id) REFERENCES HCP_Account(account_id)
