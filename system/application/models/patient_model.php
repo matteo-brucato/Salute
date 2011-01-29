@@ -45,6 +45,7 @@ class Patient_model extends Model {
 		return $query->result_array();		
 	}
 	
+	
 	//registers a patient
 	//$inputs is of the form( first_name, last_name, middle_name, ssn, dbo, sex, tel_number, fax_number, address)
 	//adds the patient to the Patient_Account

@@ -92,9 +92,8 @@ class Connections_model extends Model {
 				);				
 				
 		$this->db->insert('D_D_Connection', $data );
-		
-
 	}
+	
 	//$inputs of the form (account_id of patient, account_id of HCP, timestamp)
 	function add_patient_doctor($inputs){
 		$sql = "SELECT *
@@ -128,7 +127,35 @@ class Connections_model extends Model {
 		$this->db->update('P_D_Connection', $data, array('patient_id' => $inputs[1], 'hcp_id' =>$inputs[0]));
 	}
 	
-
+	
+	/**
+	 * Removes a conection between a patient and a doctor
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(patient_id, hcp_id)
+	 * @return
+	 *   Removes the connection from the P_D_Connection table
+	 * */
+	function remove_pd_connection($inputs){
+	
+		$this->db->delete('P_D_Connection', array('patient_id' => $inputs[0], 'hcp_id' => $inputs[1]));
+		
+	}
+	
+	/**
+	 * Removes a conection between a doctor and a doctor
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(A_id, B_id)
+	 * @return
+	 *   Removes the connection from the D_D_Connection table
+	 * */
+	function remove_dd_connection($inputs){
+	
+		$sql = "DELETE FROM D_D_Connection
+			WHERE (requester_id = ? AND accepter_id = ?) OR (requester_id = ? AND accepter_id = ?)";
+		$query = $this->db->query($sql, $inputs[0], $inputs[1], $inputs[1], $inputs[0]);
+	}
 }
 ?>
 

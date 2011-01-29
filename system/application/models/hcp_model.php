@@ -34,7 +34,7 @@ class Hcp_model extends Model {
 			return TRUE;
 		return FALSE;
 	}
-
+	
 	/**
 	 * Gets all of the doctor information
 	 * 
@@ -60,16 +60,18 @@ class Hcp_model extends Model {
 		return $this->db->query($sql)->result_array();
 	}
 	
-	//registers a doctor
-	//$inputs is of the form( first_name, last_name, middle_name, ssn, dbo, sex, tel_number, fax_number, specialization, orgname, address)
-	//adds the doctor to the HCP_Account
+	/**
+	 * registers a doctor
+	 * 
+	 * @param $inputs is of the form( first_name, last_name, middle_name, ssn, dbo, sex, tel_number, fax_number, specialization, orgname, address)
+	 * @return
+	 * */
 	function register($inputs){
 	
 		$data = array( 'first_name' => $inputs[0], 'last_name' => $inputs[1], 'middle_name' => $inputs[2], 'ssn' => $inputs[3], 'dob' => $inputs[4], 
 			       'sex' => $inputs[5], 'tel_number' => $inputs[6], 'fax_number' => $inputs[7], 'specialization' => $inputs[8], 
 			       'org_name' => $inputs[9], 'address' => $inputs[10]);
 		$this->db->insert('HCP_Account', $data);
-		
 	}
 	
 	//update doctor information

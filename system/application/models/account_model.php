@@ -34,4 +34,26 @@ class Account_model extends Model {
 		$data = array( 'email' => $inputs[1], 'password' => $inputs[2]);
 		this->db->update( 'Accounts', $data, array('account_id' => $inputs[0]);
 	}
+	
+	
+	/**
+	 * Gets the password of the account
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(email)
+	 * @return
+	 *   passowrd or NULL if the email does not exist
+	 * */
+	 function get_password($inputs){
+	 
+	 	$sql = "SELECT A.password
+	 		FROM Account A
+	 		WHERE A.email = ?"
+	 	$query = $this->db->query($sql, $inputs);
+	 	$result = $this->result_array();
+	 	if( count($result) == 1)
+	 		return $result;
+	 	return FALSE;
+	 
+	 }
 ?>
