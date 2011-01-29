@@ -23,6 +23,26 @@ class Medical_Records_model extends Model {
 		return NULL;
 	}
 	
+	/**
+	 * States wheather a medical record belongs to a patient
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(patient_id, medical_rec_id)
+	 * @return
+	 *   Returns TRUE if it is, FALSE otherwise
+	 * */
+	 function is_myrecord($inputs){
+	 
+	 	$sql = "SELECT *
+	 		FROM Medical_Record M
+	 		WHERE M.patient_id = ? AND M.medical_rec_id = ?";
+	 	$query = $this->db->query($sql, array($inputs[0], $inputs[1]));
+	 	$result = $query->result_array();
+	 	if ( count($result) > 0)
+	 		return TRUE;
+	 	return FALSE;
+	 }
+	
 	
 	/**
 	 * List all information regarding a medical record

@@ -6,7 +6,47 @@ class Appointments_model extends Model {
 		$this->load->database();
 	}
 
+	/**
+	 * States wheather an appointment belongs to a patient_id
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(patient_id, appointment_id)
+	 * @return
+	 *   Returns TRUE if it is, FALSE otherwise
+	 * */
+	 function is_myappointment($inputs){
+	 
+	 	$sql = "Select *
+	 		FROM Appointments A
+	 		WHERE A.patient_id = ? AND A.appointment_id = ?";
+	 	$query = $this->db->query($sql, $inputs);
+	 	$result = $query->result_array();
+	 	if ( count($result) > 0 )
+	 		return TRUE;
+	 	return FALSE;
+	 }
 
+
+	/**
+	 * Gets all information regarding an appointment
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(appointment_id)
+	 * @return
+	 *   Array with all the whole tuple from Appointments table, plus patient first_name and last_name, doctor first_name and last_name 
+	 * */
+	 function get_appointment($inputs){
+	 
+	 	$sql = "SELECT A.*, P.first_name AS pat_first_name, P.last_name AS pat_last_name, 
+	 			    H.first_name AS hcp_first_name, H.last_name AS hcp_last_name 
+	 		FROM Appointments A, HCP_Account H, Patient_account P 
+	 		WHERE A.appointment_id = ? AND A.patient_id = P.account_id AND A.hcp_id = H.account_id";
+	 	$query = $this->db->query($sql, $inputs);
+	 	$result = $query->result_array();
+	 	return $result;
+	 }
+	 
+	 
 	//patient requests an appointment with a doctor
 	//I assume $inputs will be of the form (patient_id, doctor_id, descryption, date_time (YY-MM-DD HH-MM-SS))
 	//inserts an entry into the Appointments table

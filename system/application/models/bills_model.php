@@ -6,6 +6,26 @@ class Bills_model extends Model {
 		$this->load->database();
 	}
 
+	/**
+	 * States wheather a bill belongs to a patient_id
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(patient_id, bill_id)
+	 * @return
+	 *   Returns TRUE if it is, FALSE otherwise
+	 * */
+	 function is_mybill($inputs){
+	 
+	 	$sql = "SELECT *
+	 		FROM Payment P
+	 		WHERE P.patient_id = ? AND P.bill_id = ?"
+	 	$query = $this->db->query($sql, $inputs);
+	 	$result = $query->result_array();
+	 	if ( count($result) > 0 )
+	 		return TRUE;
+	 	return FALSE;
+	 }
+
 	//view all bills a patient has received OR all bills a doctor has issued
 	//I assume $inputs will be of the form (account_id, type of account(doctor or patient))
 	//returns array with all bills OR NULL if there are no bills
@@ -147,6 +167,22 @@ class Bills_model extends Model {
 		$data = array('cleared' => TRUE);
 		$this->db->update('Payment', $data, array('bill_id' => $inputs[0]));
 	}
+	
+	/**
+	 * Allows doctors to delete a bill
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(hcp_id, bill_id)
+	 * @return
+	 *   Removes the tuple from the Payments table
+	 * */
+	 function delete_bill($inputs){
+	 
+	 	$sql = "DELETE FROM Payment
+	 		WHERE hcp_id = ? AND bill_id = ?";
+	 	$query = $this->db->query($sql, $inputs);
+	 	
+	 }
 
 	
 }
