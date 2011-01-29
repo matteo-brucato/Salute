@@ -60,10 +60,35 @@ class Hcp_model extends Model {
 		return $this->db->query($sql)->result_array();
 	}
 	
+	
+	/**
+	 * Searches everything in the HCP_Account table
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array( account_id, first_name, last_name, middle_name, ssn, dob, sex, tel_number, fax_number, specialization, orgname, address)
+	 * @return
+	 *   Array all of the criteria that matches OR NULL if nothing matches
+	 * */
+	 function search_doctor_all($inputs){
+	 
+	 	$sql = "SELECT *
+	 		FROM HCP_Account
+	 		WHERE string(account_id) LIKE '%?%' AND first_name LIKE '%?%' AND last_name LIKE '%?%' AND middle_name LIKE '%?%' AND 
+	 		      string(ssn) LIKE '%?%' AND string(dob) LIKE '%?%' AND sex LIKE '%?%' AND string(tel_number) LIKE '%?%' AND
+	 		      string(fax_number) LIKE '%?%' AND specialization LIKE '%?%'orgname LIKE '%?%' and address LIKE '%?%'";
+	 	$query = $this->db->query($sql, $inputs[0], $inputs[1], $inputs[2], $inputs[3], $inputs[4], $inputs[5], $inputs[6], 
+	 					$inputs[7], $inputs[8], $inputs[9], $inputs[10], $inputs[11], $inputs[12]);
+	 	$result = $query->result_array();
+	 	if ( count($result) >= 1)
+	 		return $result;
+	 	return NULL;
+	 }
+	
 	/**
 	 * registers a doctor
 	 * 
-	 * @param $inputs is of the form( first_name, last_name, middle_name, ssn, dbo, sex, tel_number, fax_number, specialization, orgname, address)
+	 * @param $inputs 
+	 *   Is of the form( first_name, last_name, middle_name, ssn, dbo, sex, tel_number, fax_number, specialization, orgname, address)
 	 * @return
 	 * */
 	function register($inputs){
