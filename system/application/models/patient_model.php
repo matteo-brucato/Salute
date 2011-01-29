@@ -64,7 +64,7 @@ class Patient_model extends Model {
 	
 		$data = array( 'account_id' => $inputs[0], 'first_name' => $inputs[1], 'last_name' => $inputs[2], 'middle_name' => $inputs[3], 'tel_number' => $inputs[4], 
 		               'fax_number' => $inputs[5], 'address' => $inputs[6]);
-		$this->db->update( 'Patient_Account', $data, array('account_id' => $inputs[0]);
+		$this->db->update( 'Patient_Account', $data, array('account_id' => $inputs[0]));
 	}
 }
 ?>
