@@ -140,7 +140,7 @@ class Profile extends Controller {
 
 		if ( $this->auth->get_type() === 'patient'){
 			$this->load->model('patient_model');
-			this->patient_model->update_personal_info(array(
+			$this->patient_model->update_personal_info(array(
 								'account_id' => $account_id, 
 								'first_name' => $first_name, 
 								'last_name' => $last_name,
@@ -156,7 +156,7 @@ class Profile extends Controller {
 
 		else if ($this->auth->get_type() === 'doctor'){
 			$this->load->model('hcp_model');
-			this->hcp_model->update_personal_info(array(
+			$this->hcp_model->update_personal_info(array(
 								'account_id' => $account_id, 
 								'first_name' => $first_name, 
 								'last_name' => $last_name,

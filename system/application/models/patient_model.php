@@ -47,12 +47,12 @@ class Patient_model extends Model {
 	
 	
 	//registers a patient
-	//$inputs is of the form( first_name, last_name, middle_name, ssn, dbo, sex, tel_number, fax_number, address)
+	//$inputs is of the form( account_id, first_name, last_name, middle_name, ssn, dbo, sex, tel_number, fax_number, address)
 	//adds the patient to the Patient_Account
 	function register($inputs){
 	
-		$data = array( 'first_name' => $inputs[0], 'last_name' => $inputs[1], 'middle_name' => $inputs[2], 'ssn' => $inputs[3], 'dob' => $inputs[4], 
-			       'sex' => $inputs[5], 'tel_number' => $inputs[6], 'fax_number' => $inputs[7], 'address' => $inputs[8]);
+		$data = array( 'account_id' => $inputs[0], 'first_name' => $inputs[1], 'last_name' => $inputs[2], 'middle_name' => $inputs[3], 'ssn' => $inputs[4],  
+			       'dob' => $inputs[5],'sex' => $inputs[6], 'tel_number' => $inputs[7], 'fax_number' => $inputs[8], 'address' => $inputs[9]);
 		$this->db->insert('Patient_Account', $data);
 		
 	}
@@ -65,7 +65,7 @@ class Patient_model extends Model {
 	
 		$data = array( 'account_id' => $inputs[0], 'first_name' => $inputs[1], 'last_name' => $inputs[2], 'middle_name' => $inputs[3], 'tel_number' => $inputs[4], 
 		               'fax_number' => $inputs[5], 'address' => $inputs[6]);
-		$this->db->update( 'Patient_Account', $data, array('account_id' => $inputs[0]));
+		$this->db->update( 'Patient_Account', $data, array('account_id' => $inputs[0]);
 	}
 }
 ?>

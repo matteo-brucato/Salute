@@ -119,11 +119,11 @@ class Home extends Controller {
 		$address = $this->input->post('address');
 
 		$this->load->model('account_model');
-		$account_id = this->account_model->add_account(array('email' => $email, 'password' => $password)); 
+		$account_id = $this->account_model->add_account(array('email' => $email, 'password' => $password)); 
 
 		if ($type === 'patient'){
 			$this->load->model('patient_model');
-			this->patient_model->register(array(
+			$this->patient_model->register(array(
 								'account_id' => $account_id, 
 								'first_name' => $first_name, 
 								'last_name' => $last_name,
@@ -137,7 +137,7 @@ class Home extends Controller {
 							)); 
 		}
 
-		else if ($type === 'doctor'){
+		else if ($this->auth->get_type() === 'doctor') {
 			$this->load->model('hcp_model');
 			$this->hcp_model->register(array(
 								'account_id' => $account_id, 
@@ -152,9 +152,8 @@ class Home extends Controller {
 								'address' => $address
 						)); 
 		}
-		else{
+		else {
 			show_error('Unknown Error.', 500);
-			return;
 		}
 
 	}
