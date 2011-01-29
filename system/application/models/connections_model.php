@@ -37,6 +37,52 @@ class Connections_model extends Model {
 		$query = $this->db->query($sql, $inputs);
 		return $query->result_array();
 	}
+	
+	
+	/**
+	 * List all pending request for a patient account
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id)
+	 * @return
+	 *   Array with all pending requests, NULL otherwise
+	 * */
+	 function pending_pd($inputs)
+	 {
+		$sql = "SELECT H.first_name H.last_name
+	 		FROM P_D_Connection P, HCP_Account H
+			WHERE P.patient_id = ? AND AND P.accepted = FALSE AND P.hcp_id = H.account_id";
+ 		$query = $this->db->query($sql, $inputs[0]);
+ 		$result = $query->result_array();
+		if (count($result) >= 1)
+			return $result;
+		return NULL;
+
+	 }
+	 
+	 
+	 /**
+	 * List all pending request for a doctor account
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id)
+	 * @return
+	 *   Array with all pending requests, NULL otherwise
+	 * */
+	 //NOT DONE
+	 function pending_dd($inputs)
+	 {
+		$sql = "SELECT H.first_name H.last_name
+	 		FROM D_D_Connection D, HCP_Account H
+			WHERE (D.requester_id = ? OR D.accepter_id = ? )AND D.accepted = FALSE AND (P.requester_id = H.account_id) OR";
+ 		$query = $this->db->query($sql, $inputs[0]);
+ 		$result = $query->result_array();
+		if (count($result) >= 1)
+			return $result;
+		return NULL;
+
+	 }
+
 
 	/**
 	 * Tells whether an account is in connection with another account

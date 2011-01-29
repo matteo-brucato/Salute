@@ -23,6 +23,25 @@ class Medical_Records_model extends Model {
 		return NULL;
 	}
 	
+	
+	/**
+	 * List all information regarding a medical record
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(medical_rec_id)
+	 * @return
+	 *   Array with all the infomation regarding medical record with id medical_rec_id
+	 * */
+	function get_medicalrecord($inputs){
+	
+		$sql = "SELECT *
+			FROM Medical_Record M
+			WHERE M.medical_rec_id = ?"
+		$query = $this->db->query($sql, $inputs);
+		$result = $query->result_array();
+		return $result;
+	}
+	
 	//vill allow a patient OR doctor to add a medical record
 	//I assume $inputs will be of the form (patient_id, account_id (person adding), issue, suplementary_info, file_path)
 	//inserts the new medical record into the patients account
