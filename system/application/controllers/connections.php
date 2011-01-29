@@ -63,12 +63,12 @@ class Connections extends Controller {
 
 		$this->auth->check_logged_in();
 
-		$this->load->model('hcp_model');		
+		$this->load->model('hcp_model');
 		$results = $this->hcp_model->get_doctor(array($id));
 		
 		$this->load->model('connections_model');
 
-		if ( $this->auth->get_type() === 'doctor' ){		
+		if ( $this->auth->get_type() === 'doctor' ){
 			$check = $this->connections_model->add_doctor_doctor(array(
 										$this->auth->get_account_id(),
 										$id
@@ -143,7 +143,7 @@ class Connections extends Controller {
 		}
 
 		else if ($this->hcp_model->is_doctor(array($requester_id))) {
-			$res = $this->connections_model->accept_doctor_doctor(array('hcp_id' => $requester_id, 'this_hcp_id' => $this->auth->get_account_id() ));
+			$res = $this->connections_model->accept_doctor_doctor(array($requester_id, $my_id));
 		}
 
 		else {

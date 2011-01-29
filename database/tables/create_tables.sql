@@ -1,16 +1,16 @@
 --
 --DROP TABLES
 --	
-DROP TABLE Accounts CASCADE;
-DROP TABLE Messages CASCADE;
-DROP TABLE Patient_Account CASCADE;
-DROP TABLE HCP_Account CASCADE;
-DROP TABLE Appointments CASCADE;
-DROP TABLE Medical_Record CASCADE;
-DROP TABLE Payment CASCADE;
-DROP TABLE P_D_Connection CASCADE;
-DROP TABLE D_D_Connection CASCADE;
-DROP TABLE Permission CASCADE;
+DROP TABLE accounts CASCADE;
+DROP TABLE messages CASCADE;
+DROP TABLE patient_account CASCADE;
+DROP TABLE hcp_account CASCADE;
+DROP TABLE appointments CASCADE;
+DROP TABLE medical_record CASCADE;
+DROP TABLE payment CASCADE;
+DROP TABLE p_d_Connection CASCADE;
+DROP TABLE d_d_Connection CASCADE;
+DROP TABLE permission CASCADE;
 DROP TABLE ci_sessions CASCADE;
 
 
@@ -19,17 +19,18 @@ DROP TABLE ci_sessions CASCADE;
 --
 
 --Accounts Table
-CREATE TABLE Accounts(
+CREATE TABLE accounts(
 	account_id SERIAL NOT NULL,
-	email VARCHAR(20) NOT NULL,
+	email VARCHAR(40) NOT NULL,
 	password VARCHAR(15) NOT NULL,
+	active BOOLEAN DEFAULT TRUE,
 	UNIQUE(email),
 	PRIMARY KEY(account_id)
 );
 
 
 --Messages Table
-CREATE TABLE Messages(
+CREATE TABLE messages(
 	message_id SERIAL NOT NULL,
 	sender_id SERIAL NOT NULL,
 	receiver_id SERIAL NOT NULL,
@@ -42,7 +43,7 @@ CREATE TABLE Messages(
 
 
 --Patient Table
-CREATE TABLE Patient_Account(
+CREATE TABLE patient_account(
 	account_id SERIAL NOT NULL,
 	--patient_id SERIAL NOT NULL,
 	first_name VARCHAR(30) NOT NULL,
@@ -61,7 +62,7 @@ CREATE TABLE Patient_Account(
 
 
 --HCP_Account Table
-CREATE TABLE HCP_Account(
+CREATE TABLE hcp_account(
 	account_id SERIAL NOT NULL,
 	--hcp_id SERIAL NOT NULL,
 	first_name VARCHAR(30) NOT NULL,
@@ -81,7 +82,7 @@ CREATE TABLE HCP_Account(
 
 
 --Apointments Table
-CREATE TABLE Appointments(
+CREATE TABLE appointments(
 	appointment_id SERIAL NOT NULL,
 	patient_id SERIAL NOT NULL,
 	hcp_id SERIAL NOT NULL,
@@ -95,7 +96,7 @@ CREATE TABLE Appointments(
 
 
 --Medical_Records Table
-CREATE TABLE Medical_Record(
+CREATE TABLE medical_record(
 	medical_rec_id SERIAL NOT NULL,
 	patient_id SERIAL NOT NULL,
 	account_id SERIAL NOT NULL, 
@@ -109,7 +110,7 @@ CREATE TABLE Medical_Record(
 
 
 --Payment Table
-CREATE TABLE Payment(
+CREATE TABLE payment(
 	bill_id SERIAL NOT NULL,
 	patient_id SERIAL NOT NULL,
 	hcp_id SERIAL NOT NULL,
@@ -129,7 +130,7 @@ CREATE TABLE Payment(
 --
 
 --Patient to Doctor Table
-CREATE TABLE P_D_Connection(
+CREATE TABLE p_d_connection(
 	patient_id SERIAL NOT NULL,
 	hcp_id SERIAL NOT NULL,
 	accepted BOOLEAN NOT NULL DEFAULT FALSE,
@@ -141,25 +142,26 @@ CREATE TABLE P_D_Connection(
 
 
 --Doctor to Doctor Table
-CREATE TABLE D_D_Connection(
+CREATE TABLE d_d_connection(
 	requester_id serial NOT NULL,
 	accepter_id serial NOT NULL,
-	aceepted BOOLEAN NOT NULL DEFAULT FALSE,
+	accepted BOOLEAN NOT NULL DEFAULT FALSE,
 	date_connected DATE NOT NULL,
 	PRIMARY KEY (requester_id, accepter_id),
-	FOREIGN KEY (requester_id) REFERENCES HCP_Account(account_id),
-	FOREIGN KEY (accepter_id) REFERENCES HCP_Account(account_id)
+	FOREIGN KEY (requester_id) REFERENCES hcp_account(account_id),
+	FOREIGN KEY (accepter_id) REFERENCES hcp_account(account_id)
 );
 
 
 --Permissions Medical Recorda Table
-CREATE TABLE Permission(
-	medical_record_id SERIAL NOT NULL,
+CREATE TABLE permission(
+	permission_id SERIAL NOT NULL,
+	medical_rec_id SERIAL NOT NULL,
 	account_id SERIAL NOT NULL,
 	date_created DATE NOT NULL,
-	PRIMARY KEY (medical_record_id, account_id),
-	FOREIGN KEY (medical_record_id) REFERENCES Medical_Record(medical_rec_id),
-	FOREIGN KEY (account_id) REFERENCES Accounts(account_id)
+	PRIMARY KEY (permission_id),
+	FOREIGN KEY (medical_rec_id) REFERENCES medical_record(medical_rec_id),
+	FOREIGN KEY (account_id) REFERENCES accounts(account_id)
 
 );
 

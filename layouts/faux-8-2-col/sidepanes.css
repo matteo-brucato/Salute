@@ -3,3 +3,7 @@
 #lorem-ipsum {
 	display: none;
 }
+
+#quick-search-field {
+	width: 150px;
+}
