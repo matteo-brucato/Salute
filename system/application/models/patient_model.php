@@ -6,17 +6,6 @@ class Patient_model extends Model {
 		$this->load->database();
 	}
 	
-	//account_id,
-	//--patient_id,
-	//first_name,
-	//last_name,
-	//middle_name,
-	//ssn,
-	//dob,
-	//sex,
-	//tel_number,
-	//fax_number,
-	//address
 	
 	//detemines wheather an account_id is for a patient
 	//$inputs is of the form(account_id)
@@ -51,10 +40,13 @@ class Patient_model extends Model {
 	//adds the patient to the Patient_Account
 	function register($inputs){
 	
-		$data = array( 'account_id' => $inputs[0], 'first_name' => $inputs[1], 'last_name' => $inputs[2], 'middle_name' => $inputs[3], 'ssn' => $inputs[4],  
-			       'dob' => $inputs[5],'sex' => $inputs[6], 'tel_number' => $inputs[7], 'fax_number' => $inputs[8], 'address' => $inputs[9]);
-		$this->db->insert('Patient_Account', $data);
+		//$data = array( 'account_id' => $inputs[0], 'first_name' => $inputs[1], 'last_name' => $inputs[2], 'middle_name' => $inputs[3], 'ssn' => $inputs[4],  
+			       //'dob' => $inputs[5],'sex' => $inputs[6], 'tel_number' => $inputs[7], 'fax_number' => $inputs[8], 'address' => $inputs[9]);
+		//$this->db->insert('Patient_Account', $data);
 		
+		$sql = "INSERT INTO Patient_Account (account_id, first_name, last_name, middle_name, ssn, dob, sex, tel_number, fax_number, address)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+		$query = $this->db->query($sql, $inputs);
 	}
 	
 	
@@ -63,9 +55,15 @@ class Patient_model extends Model {
 	//updates the Patient_Account table
 	function update_personal_info($inputs){
 	
-		$data = array( 'account_id' => $inputs[0], 'first_name' => $inputs[1], 'last_name' => $inputs[2], 'middle_name' => $inputs[3], 'tel_number' => $inputs[4], 
-		               'fax_number' => $inputs[5], 'address' => $inputs[6]);
-		$this->db->update('Patient_Account', $data, array('account_id' => $inputs[0]));
+		//$data = array( 'account_id' => $inputs[0], 'first_name' => $inputs[1], 'last_name' => $inputs[2], 'middle_name' => $inputs[3], 'tel_number' => $inputs[4], 
+		               //'fax_number' => $inputs[5], 'address' => $inputs[6]);
+		//$this->db->update('Patient_Account', $data, array('account_id' => $inputs[0]));
+		
+		$sql = "UPDATE Patient_Account
+			SET first_name = ?, last_name = ?, middle_name = ?, tel_number = ?, fax_number = ?, address = ?
+			WHERE account_id = ?";
+		$query = $this->db->query($data, array($inputs[1], $inputs[2], $inputs[3], $inputs[4], $inputs[5],
+						       $inputs[6], $inputs[0]));
 	}
 }
 ?>

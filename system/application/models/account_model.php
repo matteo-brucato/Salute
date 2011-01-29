@@ -12,8 +12,14 @@ class Account_model extends Model {
 	//deactivates the account
 	function deactivate($inputs){
 		
-		$data = array('active' => FALSE);
-		$this->db->update('Accounts', $data, 'account_id' => $inputs);
+		//$data = array('active' => FALSE);
+		//$this->db->update('Accounts', $data, 'account_id' => $inputs);
+		
+		$sql = "UPDATE Accounts
+			SET active = FALSE
+			WHERE account_id = ?";
+		$query = $this->db->query($sql, $inputs);
+		
 	}
 	
 	//adds an account
@@ -22,13 +28,17 @@ class Account_model extends Model {
 	//returns the account_id of the account just created
 	function add_account($inputs){
 	
-		$data = array( 'email' => $inputs[0], 'password' => $inputs[1]);
-		$this->db->insert( 'Accounts', $data);
+		//$data = array( 'email' => $inputs[0], 'password' => $inputs[1]);
+		//$this->db->insert( 'Accounts', $data);
+		
+		$sql = "INSERT INTO Accounts (email, password)
+			VALUES (?, ?)";
+		$query = $this->db->query($sql, $inputs);
 		
 		$sql = "SELECT account_id
 			FROM Accounts
 			WHERE email = ?"
-		$query = $this->db->query($sql, $inputs[0]);
+		$query = $this->db->query($sql, array($inputs[0]));
 		$result = $this->result_array();
 		return $result;
 		
@@ -40,8 +50,13 @@ class Account_model extends Model {
 	//updates the Accounts table
 	function update_account($inputs){
 	
-		$data = array( 'email' => $inputs[1], 'password' => $inputs[2]);
-		this->db->update( 'Accounts', $data, array('account_id' => $inputs[0]);
+		//$data = array( 'email' => $inputs[1], 'password' => $inputs[2]);
+		//this->db->update( 'Accounts', $data, array('account_id' => $inputs[0]);
+		
+		$sql = "UPDATE Accounts
+			SET email = ?, password = ?
+			WHERE account_id = ?"
+		$query = $this->db->query($sql, array($inputs[1], $inputs[2], $inputs[0]));
 	}
 	
 	

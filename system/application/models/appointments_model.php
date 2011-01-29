@@ -63,8 +63,13 @@ class Appointments_model extends Model {
 			AND ( EXTRACT(?) BETWEEN H.open AND H.close) AND ( ? NOT BETWEEN A.date_time AND )";
 		*/
 
-		$data = array( 'patient_id' => $inputs[0], 'hcp_id' => $inputs[1], 'descryption' => $inputs[2], 'date_time' => $inputs[3]);
-		this->db->insert('Appointments', $data);
+		//$data = array( 'patient_id' => $inputs[0], 'hcp_id' => $inputs[1], 'descryption' => $inputs[2], 'date_time' => $inputs[3]);
+		//this->db->insert('Appointments', $data);
+		
+		$sql = "INSERT INTO Appointments (patient_id, hcp_id, descryption, date_time)
+			VALUES (?, ?, ?, ?)";
+		$query = $this->db->query($sql, $inputs);
+		
 	}
 	
 	//view all appointments a patient has ever had OR all appointments a doctor has ever issued (approved as well as not approved)
@@ -77,7 +82,7 @@ class Appointments_model extends Model {
 			$sql = "Select A.appointment_id, H2.first_name, H2.last_name, A.amount, A.descryption, A.date_time, A.cleared
 				FROM Appointments A, HCP_Account H, HCP_Account H2
 				WHERE A.hcp_id = H.account_id AND A.patient_id = ? AND A.hcp_id == H2.account_id";
-			$query = $this->db->query($sql, $inputs[0]);
+			$query = $this->db->query($sql, array($inputs[0]));
 			$result = $query->result_array();
 			if( count($result) > 0 )
 				return $result;
@@ -89,7 +94,7 @@ class Appointments_model extends Model {
 		$sql = "Select A.appointment_id, P2.first_name, P2.last_name, A.amount, A.descryption, A.date_time, A.cleared
 			FROM Appointments A, Patient_Account P, Patient_Account P2
 			WHERE A.patient_id = P.account_id AND A.hcp_id = ? AND A.patient_id == P2.account_id";
-		$query = $this->db->query($sql, $inputs[0]);
+		$query = $this->db->query($sql, array($inputs[0]));
 		$result = $query->result_array();
 		if( count($result) > 0 )
 			return $result;
@@ -164,8 +169,15 @@ class Appointments_model extends Model {
 	//updates appointment approved status to TRUE
 	function approve($inputs){
 		
-		$data = array('approved' => TRUE);
-		$this->db->update('Appointments', $data, array('appointment_id' => $inputs));
+		//$data = array('approved' => TRUE);
+		//$this->db->update('Appointments', $data, array('appointment_id' => $inputs));
+		
+		$sql = "UPDATE Appointments
+			SET approved = TRUE
+			WHERE appointment_id = ?";
+		$query = $this->db->query($sql, $inputs);
+		
+		
 	}
 	
 	//patient OR doctor cancels appointment
@@ -173,7 +185,11 @@ class Appointments_model extends Model {
 	//deletes the apointment fromt the Appointments table
 	function cancel($inputs){
 		
-		$this->db->delete('Appointments', array('appointment_id' == $inputs));
+		//$this->db->delete('Appointments', array('appointment_id' => $inputs));
+		
+		$sql = "DELETE FROM Appointments
+			WHERE appointment_id = ?";
+		$query = $this->db->query($sql, $inputs);
 	}
 	
 	//patient reschedules appointment with the doctor
@@ -182,8 +198,13 @@ class Appointments_model extends Model {
 	//NOTE: AS OF RIGHT NOW IT DOES NOT HANDLE ERROR CHECKING TO SEE IF THE date_time SPECIFIED CONFLICTS WITH ANOTHER APPOINTMENT
 	function reschedule($inputs){
 	
-		$data = array('date_time' => $inputs[1]);
-		this->db-update('Appointments', $data, array('appointment_id' => $inputs));
+		//$data = array('date_time' => $inputs[1]);
+		//this->db-update('Appointments', $data, array('appointment_id' => $inputs));
+		
+		$sql = "UPDATE Appointments
+			SET date_time = ?
+			WHERE appointment_id = ?";
+		$query = $this->db->query($sql, array($inputs[1], $inputs[0]));
 	}
 
 

@@ -67,8 +67,12 @@ class Medical_Records_model extends Model {
 	//inserts the new medical record into the patients account
 	function add_medical_record($inputs){
 	
-		$data = array( 'patient_id' => $inputs[0], 'account_id' => $inputs[1], 'issue' => $inputs[2], 'suplementary_info' => $inputs[3], 'file_path' => $inputs[4]);
-		$this->db->insert('Medical_Records', $data);	
+		//$data = array( 'patient_id' => $inputs[0], 'account_id' => $inputs[1], 'issue' => $inputs[2], 'suplementary_info' => $inputs[3], 'file_path' => $inputs[4]);
+		//$this->db->insert('Medical_Records', $data);	
+		
+		$sql = "INSERT INTO Medical_Records (patient_id, account_id, issue, suplementary_info, file_path)
+			VALUES (?, ?, ?, ?, ?)";
+		$query = $this->db->query($sql, $inputs);
 	}
 	
 	//patient deletes medical record
@@ -76,7 +80,11 @@ class Medical_Records_model extends Model {
 	//deletes the medical record from the account
 	function delete_medical_record($inputs){
 	
-		$this->db->delete('Medical_Records', array('medical_rec_id' == $inputs));
+		//$this->db->delete('Medical_Records', array('medical_rec_id' => $inputs));
+		
+		$sql = "DELETE FROM Medical_Records
+			WHERE medical_rec_id = ?";
+		$query = $this->db->query($sql, $inputs);
 	}
 }
 ?>

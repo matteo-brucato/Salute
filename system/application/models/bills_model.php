@@ -155,8 +155,12 @@ class Bills_model extends Model {
 	//NOTE: NEED TO ADD ATTRIUTE TO THE DATABASE TO BE ABLE TO ADD ITEMIZED RECEIPT
 	function issue_bill($inputs){
 
-		$data = array( 'patient_id' => $inputs[0], 'hcp_id' => $inputs[1], 'amount' => $inputs[2], 'descryption' => $inputs[3], 'due_date' => $inputs[4]);
-		$this->db->insert('Payment', $data);
+		//$data = array( 'patient_id' => $inputs[0], 'hcp_id' => $inputs[1], 'amount' => $inputs[2], 'descryption' => $inputs[3], 'due_date' => $inputs[4]);
+		//$this->db->insert('Payment', $data);
+		
+		$sql = "INSERT INTO Payment (patient_id, hcp_id, amount, descryption, due_date)
+			VALUES (?, ?, ?, ?)";
+		query = $this->db->query($sql, $inputs);
 	}
 
 	//patient pays a bill
@@ -164,8 +168,13 @@ class Bills_model extends Model {
 	//changes the cleared status of a bill to TRUE
 	function pay_bill($inputs){
 	
-		$data = array('cleared' => TRUE);
-		$this->db->update('Payment', $data, array('bill_id' => $inputs[0]));
+		//$data = array('cleared' => TRUE);
+		//$this->db->update('Payment', $data, array('bill_id' => $inputs[0]));
+		
+		$sql = "UPDATE Payment
+			SET cleared = TRUE
+			WHERE bill_id = ?"
+		$query = $this->db->query($sql, $inputs);
 	}
 	
 	/**

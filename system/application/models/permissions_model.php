@@ -16,8 +16,12 @@ class Permissions_model extends Model {
 	 * */
 	function allow_permission($inputs){
 	
-		$data = array( 'medical_rec_id' => $inputs[0], 'account_id' => $inputs[1]);
-		$this->db->insert( 'Permissions', $data);
+		//$data = array( 'medical_rec_id' => $inputs[0], 'account_id' => $inputs[1]);
+		//$this->db->insert( 'Permissions', $data);
+		
+		$sql = "INSERT INTO Permissions (medical_rec_id, account_id)
+			VALUES (?, ?)";
+		$query = $this->db->query($data, $inputs);
 	
 	}
 	
@@ -31,7 +35,11 @@ class Permissions_model extends Model {
 	 * */
 	function delete_permission($inputs){
 	
-		$this->db->delete('Permissions', array( 'medical_rec_id' => $inputs[0], 'account_id' => $inputs[1]);
+		//$this->db->delete('Permissions', array( 'medical_rec_id' => $inputs[0], 'account_id' => $inputs[1]);
+		
+		$sql = "DELETE FROM Permissions
+			WHERE medical_rec_id = ? AND account_id = ?";
+		$query = $this->db->query($data, $inputs);
 	
 	}
 

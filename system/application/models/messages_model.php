@@ -68,5 +68,4 @@ class Messages_model extends Model{
 }
 ?>
 
-SELECT M.message_id, H.first_name, M.subject, M.content, M.datetime FROM Messages M, Account A, HCP_Account H WHERE A.account_id = M.receiver_id AND M.receiver_id = ? AND M.sernder_id = H.account_id
 
