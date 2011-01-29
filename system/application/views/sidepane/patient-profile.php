@@ -25,7 +25,7 @@
 	
 	<li><a href="">Medical Records</a>
 	
-	<li><a href="">Advanced Search</a>
+	<li><a href="/search">Advanced Search</a>
 	<form method="post" action="/" id="quick-search-form">
 		<fieldset id="quick-search-fs">
 			<legend>Quick Serach</legend>

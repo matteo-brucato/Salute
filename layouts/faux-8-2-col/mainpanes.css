@@ -41,7 +41,7 @@ table.tables-1 {
 }
 td.tables-1-selected-tds {
 	background-color: #aabbcc;
-	cursor: pointer;
+	/*cursor: pointer;*/
 }
 
 

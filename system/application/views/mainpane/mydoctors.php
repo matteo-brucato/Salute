@@ -29,6 +29,7 @@ if ($this->auth->get_type() == 'patient') {
 	for ($i = 0; $i < count($table['tuples']); $i++) {
 		$table['tuples'][$i]['*actions'] = '
 		<ul>
+			<li><a href="/profile/user/'.$table['tuples'][$i]['account_id'].'" class="ajaxlink">See Profile</a></li>
 			<li><a href="">Send Email</a></li>
 			<li><a href="">Delete Connection</a></li>
 			<li><a href="">Request Appointment</a></li>
@@ -38,6 +39,7 @@ if ($this->auth->get_type() == 'patient') {
 	for ($i = 0; $i < count($table['tuples']); $i++) {
 		$table['tuples'][$i]['*actions'] = '
 		<ul>
+			<li><a href="/profile/user/'.$table['tuples'][$i]['account_id'].'" class="ajaxlink">See Profile</a></li>
 			<li><a href="">Send Email</a></li>
 			<li><a href="">Delete Connection</a></li>
 		</ul>';

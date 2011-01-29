@@ -25,7 +25,7 @@
 	
 	<li><a href="/connections/list_doctors" class="ajaxlink">My Collegues</a>
 	
-	<li><a href="">Advanced Search</a>
+	<li><a href="/search">Advanced Search</a>
 	<form method="post" action="/" id="quick-search-form">
 		<fieldset id="quick-search-fs">
 			<legend>Quick Serach</legend>

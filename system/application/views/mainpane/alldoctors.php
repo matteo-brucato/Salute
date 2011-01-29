@@ -20,12 +20,10 @@ $table['attr'] = array('account_id', 'first_name', 'last_name', 'specialization'
 // Special columns to dislpay
 if ($this->auth->get_type() == 'patient') {
 	for ($i = 0; $i < count($table['tuples']); $i++) {
-		if ($this->connections_model->is_my_friend(
-			$this->auth->get_account_id(),
-			$table['tuples'][$i]['account_id']
-		)) {
+		if ($table['tuples'][$i]['connected']) {
 			$table['tuples'][$i]['*actions'] = '
 			<ul>
+				<li><a href="/profile/user/'.$table['tuples'][$i]['account_id'].'" class="ajaxlink">See Profile</a></li>
 				<li><a href="">Send Email</a></li>
 				<li><a href="">Delete Connection</a></li>
 				<li><a href="">Request Appointment</a></li>
@@ -36,10 +34,7 @@ if ($this->auth->get_type() == 'patient') {
 	}
 } else {
 	for ($i = 0; $i < count($table['tuples']); $i++) {
-		if ($this->connections_model->is_my_friend(
-			$this->auth->get_account_id(),
-			$table['tuples'][$i]['account_id']
-		)) {
+		if ($table['tuples'][$i]['connected']) {
 			$table['tuples'][$i]['*actions'] = '
 			<ul>
 				<li><a href="">Send Email</a></li>
