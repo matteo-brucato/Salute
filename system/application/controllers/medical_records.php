@@ -58,13 +58,13 @@ class MedicalRecords extends Controller {
 						''
 			));	
 			
-			/*TODO: fix model: when patient uploads their own file....don't need doc_id */
 			$results = $this->medical_record_model->add_med_record(array(
 										'patient_id' => $this->auth->get_account_id(), 
 										'account_id' => $this->auth->get_account_id(), 
 										'file_path' => $file,
 			)); 
 		}
+
 		// Case 2: Doctor adds medical record of a specific patient 
 		// 		Note: should the patient approve this first before having it added to their list of records?
 		// DEFAULT permission: set_hidden
@@ -73,20 +73,24 @@ class MedicalRecords extends Controller {
 
 			/* TODO: Need a view for file uploads */
 			// TODO: How to upload a file from a user's computer?
-			// expects file on return... 
-			$file = $this->ajax->view(array(
+			$this->ajax->view(array(
 						$this->load->view('mainpane/upload', '' , TRUE),
 						''
 			));	
+
+			$file = $this->input->post('file');
+			$patient_id = $this->input->post('patient_id');
 			
-			/*TODO: fix model: when patient uploads their own file....don't need doc_id */
 			$results = $this->medical_record_model->add_med_record(array(
 										'patient_id' => $this->auth->get_account_id(),
 										'account_id' => $this->auth->get_account_id(), 
 										'file_path' => $file,
 			)); 
+			// LATER: check that it was added successfully
 		}
-		else {}
+		else {		
+			show_error('Unknown Error.', 500);
+			return;}
 	}
 
 	// gets called when an individual medical record is selected to be viewed

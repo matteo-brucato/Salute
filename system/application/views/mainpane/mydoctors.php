@@ -1,11 +1,11 @@
-<h1>My 
+<h2>My 
 <?php
 if ($this->auth->get_type() == 'patient')
 	echo 'Doctors';
 else
 	echo 'Collegues';
 ?>
-</h1>
+</h2>
 
 <?php
 // Id of the table

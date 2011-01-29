@@ -39,11 +39,11 @@ class Connections_model extends Model {
 	}
 
 	/**
-	 * Tells whether another account is in connection with me
+	 * Tells whether an account is in connection with another account
 	 * @return
-	 *   TRUE if $other_id is in connection with $my_id, FALSE otherwise
+	 *   TRUE if $a_id is in connection with $b_id, FALSE otherwise
 	 * */
-	function is_my_friend($my_id, $other_id) {
+	function is_connected_with($a_id, $b_id) {
 		$sql = "(SELECT *
 				FROM P_D_Connection PD
 				WHERE  (PD.hcp_id = ? AND PD.patient_id = ?)
@@ -53,10 +53,10 @@ class Connections_model extends Model {
 				FROM D_D_Connection DD
 				WHERE  (DD.requester_id = ? AND DD.accepter_id = ?)
 					OR (DD.accepter_id = ? AND DD.requester_id = ?))";
-		$query = $this->db->query($sql, array($my_id, $other_id,
-											  $my_id, $other_id,
-											  $my_id, $other_id,
-											  $my_id, $other_id,));
+		$query = $this->db->query($sql, array($a_id, $b_id,
+											  $a_id, $b_id,
+											  $a_id, $b_id,
+											  $a_id, $b_id,));
 		return (count($query->result_array()) > 0);
 	}
 	
@@ -158,5 +158,3 @@ class Connections_model extends Model {
 	}
 }
 ?>
-
-

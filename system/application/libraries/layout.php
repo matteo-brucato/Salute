@@ -50,7 +50,7 @@ class Layout {
 		$CI =& get_instance();
 		
 		// Applicatoin needs 2 dynamic views
-		if (count($views) < 2) {
+		if (count($views) != 2) {
 			$views = array('static/app_error','static/app_error');
 		}
 		

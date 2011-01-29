@@ -45,6 +45,20 @@ class Ajax {
 		}
 	}
 	
+	function show_app_error() {
+		$view0 = $this->CI->load->view('static/app_error', '', TRUE);
+		$view1 = $this->CI->load->view('static/app_error', '', TRUE);
+		if (IS_AJAX) {
+			echo json_encode(array (
+				'donotredirect'	=> '',
+				'mainpane'	=> $views0,
+				'sidepane'	=> $views1
+			));
+		} else {
+			$this->CI->layout->view(array($view0, $view1));
+		}
+	}
+	
 	function redirect($url) {
 		//redirect($url, 'location', 303);
 		if (IS_AJAX) {
