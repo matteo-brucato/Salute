@@ -49,14 +49,14 @@ class Connections_model extends Model {
 	
 	
 	/**
-	 * List all pending request for a patient account
+	 * List all pending requests to doctors from a patient
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
 	 * @return
 	 *   Array with all pending requests, NULL otherwise
 	 * */
-	 function pending_pd($inputs)
+	 function pending_todoctors_frompatient($inputs)
 	 {
 		$sql = "SELECT H.first_name H.last_name
 	 		FROM p_d_connection P, hcp_account H
@@ -71,19 +71,18 @@ class Connections_model extends Model {
 	 
 	 
 	 /**
-	 * List all pending request for a doctor account
+	 * List all pending requests to a doctor from patients
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
 	 * @return
 	 *   Array with all pending requests, NULL otherwise
 	 * */
-	 //NOT DONE
-	 function pending_dd($inputs)
+	 function pending_todoctor_frompatients($inputs)
 	 {
-		$sql = "SELECT H.first_name H.last_name
-	 		FROM d_d_connection D, hcp_account H
-			WHERE (D.requester_id = ? OR D.accepter_id = ? )AND D.accepted = FALSE AND (P.requester_id = H.account_id) OR";
+		$sql = "SELECT A.first_name A.last_name
+	 		FROM p_d_connection P, patient_account A
+			WHERE P.hcp_id = ? AND AND P.accepted = FALSE AND A.account_id = P.patient_id";
  		$query = $this->db->query($sql, $inputs);
  		$result = $query->result_array();
 		if (count($result) >= 1)
@@ -91,7 +90,49 @@ class Connections_model extends Model {
 		return NULL;
 
 	 }
+	 
+	 /**
+	 * List all pending requests to a doctor from doctors
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id)
+	 * @return
+	 *   Array with all pending requests, NULL otherwise
+	 * */
+	 function pending_todoctor_fromdoctors($inputs)
+	 {
+		$sql = "SELECT A.first_name A.last_name
+	 		FROM d_d_connection D, hcp_account A
+			WHERE D.accepter_id = ? AND AND D.accepted = FALSE AND A.account_id = D.requester_id";
+ 		$query = $this->db->query($sql, $inputs);
+ 		$result = $query->result_array();
+		if (count($result) >= 1)
+			return $result;
+		return NULL;
 
+	 }
+	 
+	 /**
+	 * List all pending requests to doctors from a doctor
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id)
+	 * @return
+	 *   Array with all pending requests, NULL otherwise
+	 * */
+	 function pending_todoctors_fromdoctor($inputs)
+	 {
+		$sql = "SELECT A.first_name A.last_name
+	 		FROM d_d_connection D, hcp_account A
+			WHERE D.requester_id = ? AND AND D.accepted = FALSE AND A.account_id = D.accepter_id";
+ 		$query = $this->db->query($sql, $inputs);
+ 		$result = $query->result_array();
+		if (count($result) >= 1)
+			return $result;
+		return NULL;
+
+	 }
+	
 
 	/**
 	 * Tells whether an account is in connection with another account
@@ -116,6 +157,7 @@ class Connections_model extends Model {
 											  $a_id, $b_id,));
 		return ($query->num_rows() > 0);
 	}
+	
 	
 	/**
 	 * Creates a new request for a connection.
