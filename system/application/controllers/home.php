@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file home.php
+ * @brief Controller to handle access to the web application
+ *
+ * @defgroup ctr Controllers
+ * @ingroup ctr
+ * @{
+ */
+
 class Home extends Controller {
 
 	function __construct() {
@@ -214,6 +223,7 @@ class Home extends Controller {
 		/* @todo- Confirmation view*/
 		$this->ajax->view(array('Congratulations, you are now registered. ',''));
 	}
-
 }
+
+/** @} */
 ?>

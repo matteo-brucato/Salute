@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file profile.php
+ * @brief Controller to view and edit profile info
+ *
+ * @defgroup ctr Controllers
+ * @ingroup ctr
+ * @{
+ */
+
 class Profile extends Controller {
 
 	function __construct(){
@@ -202,4 +211,5 @@ class Profile extends Controller {
 	}
 
 }
+/** @} */
 ?>

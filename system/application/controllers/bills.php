@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file bills.php
+ * @brief Controller to handle bills
+ *
+ * @defgroup ctr Controllers
+ * @ingroup ctr
+ * @{
+ */
+
 class Bills extends Controller {
 
 	function __construct(){
@@ -105,4 +114,5 @@ class Bills extends Controller {
 	}
 
 }
+/** @} */
 ?>
