@@ -34,8 +34,11 @@ CREATE TABLE messages(
 	message_id SERIAL NOT NULL,
 	sender_id SERIAL NOT NULL,
 	receiver_id SERIAL NOT NULL,
+	sender_kept BOOLEAN NOT NULL DEFAULT TRUE,
+	receiver_kept BOOLEAN NOT NULL DEFAULT TRUE, 
 	subject TEXT NOT NULL,
 	content TEXT NOT NULL,
+	datetime TIMESTAMP(0) WITH TIME ZONE NOT NULL,
 	PRIMARY KEY(message_id),
 	FOREIGN KEY (sender_id) REFERENCES Accounts(account_id),
 	FOREIGN KEY (receiver_id) REFERENCES Accounts(account_id)
