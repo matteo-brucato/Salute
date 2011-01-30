@@ -42,4 +42,5 @@ class Example extends Controller {
 	}
 	
 }
+/** @} */
 ?>

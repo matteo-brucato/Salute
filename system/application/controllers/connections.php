@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file connections.php
+ * @brief Controller to handle connections
+ *
+ * @defgroup ctr Controllers
+ * @ingroup ctr
+ * @{
+ */
+
 class Connections extends Controller {
 
 	function __construct(){
@@ -53,45 +62,79 @@ class Connections extends Controller {
 			$this->load->view('sidepane/doctor-profile', '', TRUE)
 		));
 	}
-
+	
+	/**
+	 * Request a new connection to a doctor.
+	 * 
+	 * @param
+	 *   $id is the id of a doctor you want to connect to
+	 * 
+	 * @attention
+	 *   Can be called by both patients and doctors, but a 
+	 * doctor can only request for another doctor and a patient can 
+	 * only request for a doctor.
+	 * */
 	function request($id = NULL)
 	{
-		if ( $id == NULL ){
-			show_error('No doctor_id specified.', 500);
+		$this->auth->check_logged_in();
+		$this->load->model('hcp_model');
+		$this->load->model('connections_model');
+		
+		// Check if an account_id has been specified
+		if ($id == NULL) {
+			show_error('No doctor_id specified.');
 			return;
 		}
-
-		$this->auth->check_logged_in();
-
-		$this->load->model('hcp_model');
+		
+		// Check if the account_id specified refers to a doctor
+		if (!$this->hcp_model->is_doctor(array($id))) {
+			show_error('The id specified does not refer to an HCP.');
+			return;
+		}
+		
+		// Get all the doctor's info
 		$results = $this->hcp_model->get_doctor(array($id));
 		
-		$this->load->model('connections_model');
-
-		if ( $this->auth->get_type() === 'doctor' ){
-			$check = $this->connections_model->add_doctor_doctor(array(
+		// If current user is a doctor
+		if ($this->auth->get_type() === 'doctor') {
+			$res = $this->connections_model->add_doctor_doctor(array(
 										$this->auth->get_account_id(),
 										$id
 										));
 		}
-
-		else if ( $this->auth->get_type() === 'patient' ){		
-			$check = $this->connections_model->add_patient_doctor(array(
+		// If current user is a patient
+		else if ($this->auth->get_type() === 'patient') {
+			$res = $this->connections_model->add_patient_doctor(array(
 										$this->auth->get_account_id(),
 										$id
 										));
 		}
-
 		else {
-			show_error('Unknown Error.', 500);
+			show_error('Internal server logic error.', 500);
 			return;
+		}
+		
+		// Switch the response from the model, to select the correct view
+		switch ($res) {
+			case -1:
+				$view = 'Query error!';
+				break;
+			case -2:
+				$view = 'Connection does not exists.';
+				break;
+			case -3:
+				$view = 'This connection has already been accepted.';
+				break;
+			default:
+				$view = 'You have accepted the connection.';
+				break;
 		}
 		
 		if (! $check) {
 			show_error('Connection already requested');
 			return;
 		}
-
+		
 		$this->load->library('email');
 		
 		$config['mailtype'] = 'html';
@@ -117,40 +160,47 @@ class Connections extends Controller {
 	}
 
 	/** 
-	 * Accept request ; Note: only Doctors do this 
-	 * @bug Auto Accepts...why?!
+	 * Accept an existing connection request
+	 * 
+	 * @attention Only doctors can do this
 	 * */
 	function accept($requester_id = NULL, $my_id = NULL) 
 	{
 		$this->auth->check_logged_in();
-
+		$this->load->model('connections_model');
+		$this->load->model('hcp_model');
+		$this->load->model('patient_model');
+		
+		// Check if parameters are specified
 		if ($requester_id == NULL || $my_id == NULL) {
 			show_error('ids not specified.', 500);
 			return;
 		}
 		
+		// Check if the current user is the receiver
 		if ($this->auth->get_account_id() != $my_id) {
 			show_error('You are not the receiver for this request');
 			return;
 		}
 		
-		$this->load->model('connections_model');
-		$this->load->model('hcp_model');
-		$this->load->model('patient_model');
+		// Check if you are a doctor (only doctor can call this function)
+		if ($this->auth->get_type() != 'doctor') {
+			show_error('Sorry, only HCP can accept connection requests');
+			return;
+		}
 		
 		if ($this->patient_model->is_patient(array($requester_id))) {
 			$res = $this->connections_model->accept_patient_doctor(array($requester_id,$my_id));
 		}
-
 		else if ($this->hcp_model->is_doctor(array($requester_id))) {
 			$res = $this->connections_model->accept_doctor_doctor(array($requester_id, $my_id));
 		}
-
 		else {
 			show_error('The requester id does not match any id in the database', 500);
 			return;
 		}
 		
+		// Switch the response from the model, to select the correct view
 		switch ($res) {
 			case -1:
 				$view = 'Query error!';
@@ -223,4 +273,6 @@ class Connections extends Controller {
 
 
 }
+
+/** @} */
 ?>

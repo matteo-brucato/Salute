@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file connections_model.php
+ * @brief Model to give access to the two connection tables in the database
+ *
+ * @defgroup mdl Model
+ * @ingroup mdl
+ * @{
+ */
+
 class Connections_model extends Model {
 	function __construct() {
 		parent::Model();
@@ -291,4 +300,5 @@ class Connections_model extends Model {
 		$query = $this->db->query($sql, $inputs[0], $inputs[1], $inputs[1], $inputs[0]);
 	}
 }
+/** @} */
 ?>

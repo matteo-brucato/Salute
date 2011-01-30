@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file search.php
+ * @brief Controller to handle search requests
+ *
+ * @defgroup ctr Controllers
+ * @ingroup ctr
+ * @{
+ */
+
 class Search extends Controller {
 
 	function __construct() {
@@ -64,4 +73,5 @@ class Search extends Controller {
 	}
 
 }
+/** @} */
 ?>

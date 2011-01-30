@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file patient_model.php
+ * @brief Model to give access to the Patient table in the database
+ *
+ * @defgroup mdl Model
+ * @ingroup mdl
+ * @{
+ */
+
 class Patient_model extends Model {
 
 	function __construct() {
@@ -38,14 +47,14 @@ class Patient_model extends Model {
 	//registers a patient
 	//$inputs is of the form( account_id, first_name, last_name, middle_name, ssn, dbo, sex, tel_number, fax_number, address)
 	//adds the patient to the Patient_Account
-	function register($inputs){
+	function register($inputs) {
 	
 		//$data = array( 'account_id' => $inputs[0], 'first_name' => $inputs[1], 'last_name' => $inputs[2], 'middle_name' => $inputs[3], 'ssn' => $inputs[4],  
 			       //'dob' => $inputs[5],'sex' => $inputs[6], 'tel_number' => $inputs[7], 'fax_number' => $inputs[8], 'address' => $inputs[9]);
 		//$this->db->insert('Patient_Account', $data);
 		
-		$sql = "INSERT INTO Patient_Account (account_id, first_name, last_name, middle_name, ssn, dob, sex, tel_number, fax_number, address)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+		$sql = "INSERT INTO patient_account (account_id, first_name, last_name, middle_name, ssn, dob, sex, tel_number, fax_number, address)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$query = $this->db->query($sql, $inputs);
 	}
 	
@@ -66,4 +75,5 @@ class Patient_model extends Model {
 						       $inputs[6], $inputs[0]));
 	}
 }
+/** @} */
 ?>

@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file hcp_model.php
+ * @brief Model to give access to the HCP table in the database
+ *
+ * @defgroup mdl Model
+ * @ingroup mdl
+ * @{
+ */
+
 class Hcp_model extends Model {
 
 	function __construct() {
@@ -106,4 +115,5 @@ class Hcp_model extends Model {
 
 	}
 }
+/** @} */
 ?>

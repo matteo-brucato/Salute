@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file appointments.php
+ * @brief Controller to handle appointments
+ *
+ * @defgroup ctr Controllers
+ * @ingroup ctr
+ * @{
+ */
+
 class Appointments extends Controller {
 
 	function __construct(){
@@ -108,4 +117,5 @@ class Appointments extends Controller {
 								)); 
 	}
 }
+/** @} */
 ?>
