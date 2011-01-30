@@ -111,9 +111,12 @@ class Connections_model extends Model {
 	 * 
 	 * @param
 	 *   $inputs of the form array(requestor_id, requestee_id)
-	 * 
-	 * @todo This function should handle errors as accept_doctor_doctor
-	 * does, that is, using the same error codes and error cases.
+	 *
+	 * @return
+	 *   -1 in case of error in a query
+	 *   -2 if the connection does not exist
+	 *   -3 if the connection was already accepted
+	 *   0  if everything goes fine
 	 * 
 	 * @test We still need to test the auto-acceptance if both doctors
 	 * ask for the same connection.
@@ -125,58 +128,84 @@ class Connections_model extends Model {
 			WHERE (D.requester_id = ? AND D.accepter_id = ?)";
 		$query = $this->db->query($sql, $inputs);
 		
+		if( $this->db->trans_status() === FALSE )
+			return -1;	
+		
 		if ($query->num_rows() > 0) {
-			return FALSE;
+			return -3;
 		}
 		
 		//testing to see if doctor_loggedin is sending request to doctor who
-		//already sent doctor_loggedin a request
+		//already sent doctor_logged in a request
 		$sql = "SELECT *
 			FROM d_d_connection D
 			WHERE (D.requester_id = ? AND D.accepter_id = ?)";
 		$query = $this->db->query($sql, array($inputs[1], $inputs[0]));
+		
+		if( $this->db->trans_status() === FALSE )
+			return -1;	
+		
 		if ($query->num_rows() > 0) {
 			//this is an update to the original request
-			return accept_doctor_doctor($inputs); /** @todo Needs to be tested */
+			return accept_doctor_doctor(array($inputs[1], $inputs[0])); /** @todo Needs to be tested */
+			
+			if( $this->db->trans_status() === FALSE )
+				return -1;
+				
+			return 0;
+			
 			//$data = array( 'accepted'=> TRUE );
 			//$this->db->update('D_D_Connection', $data, array('requester_id' => $inputs[1], 'accepter_id' => $inputs[0]));
 			//return TRUE;
 		}
 
-		//request has never been made in either direction
-		//$data = array( 'requester_id' => $inputs[0], 
-		//	'accepter_id' => $inputs[1],
-		//	'date_connection'=> $inputs[2]
-		//);
-				
-		//$this->db->insert('D_D_Connection', $data );
-		
+		//request has never been made in either direction	
 		$this->db->query("INSERT INTO d_d_connection (requester_id, accepter_id, date_connected)
-			VALUES (?, ?, current_timestamp)", $inputs);
-		return TRUE;
+				  VALUES (?, ?, current_timestamp)", $inputs);
+		
+		if( $this->db->trans_status() === FALSE )
+			return -1;
+			
+		return 0;
 	}
 	
-	//$inputs of the form (account_id of patient, account_id of HCP)
+	/**
+	 * Creates a new request for a patient doctor connection.
+	 * 
+	 * @param
+	 *   $inputs of the form (account_id of patient, account_id of HCP)
+	 *
+	 * @return
+	 *   -1 in case of error in a query
+	 *   -2 if the connection does not exist
+	 *   -3 if the connection was already accepted
+	 *   0  if everything goes fine
+	 * 
+	 * */
 	function add_patient_doctor($inputs){
+	
+		//test to see if connection already exists
 		$sql = "SELECT *
 			FROM p_d_connection D
 			WHERE D.patient_id = ? AND D.hcp_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		
-		if ($query->num_rows() > 0) {
-			return FALSE;
+		if ($this->db->trans_status() === FALSE) {
+			return -1; 
 		}
 		
-		/*$data = array(
-			'patient_id' => $inputs[0], 
-			'hcp_id' => $inputs[1]
-		);*/
-		
-		//$this->db->insert('P_D_Connection', $data);
-		
+		if ($query->num_rows() > 0) {
+			return -3;
+		}
+			
 		$this->db->query("INSERT INTO p_d_connection (patient_id, hcp_id, date_connected)
 			VALUES (? , ?, current_timestamp)", $inputs);
-		return TRUE;
+		
+		if ($this->db->trans_status() === FALSE) {
+			return -1; 
+		}
+		
+		return 0;
 	}
 
 	/**
