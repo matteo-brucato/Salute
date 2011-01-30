@@ -18,7 +18,7 @@ DROP TABLE ci_sessions CASCADE;
 --CREATE TABLES
 --
 
---Accounts Table
+--accounts Table
 CREATE TABLE accounts(
 	account_id SERIAL NOT NULL,
 	email VARCHAR(40) NOT NULL,
@@ -40,8 +40,8 @@ CREATE TABLE messages(
 	content TEXT NOT NULL,
 	datetime TIMESTAMP(0) WITH TIME ZONE NOT NULL,
 	PRIMARY KEY(message_id),
-	FOREIGN KEY (sender_id) REFERENCES Accounts(account_id),
-	FOREIGN KEY (receiver_id) REFERENCES Accounts(account_id)
+	FOREIGN KEY (sender_id) REFERENCES accounts(account_id),
+	FOREIGN KEY (receiver_id) REFERENCES accounts(account_id)
 );
 
 
@@ -59,12 +59,12 @@ CREATE TABLE patient_account(
 	fax_number VARCHAR(11),
 	address TEXT,
 	PRIMARY KEY(account_id),
-	FOREIGN KEY (account_id) REFERENCES Accounts(account_id)
+	FOREIGN KEY (account_id) REFERENCES accounts(account_id)
 );
 
 
 
---HCP_Account Table
+--hcp_account Table
 CREATE TABLE hcp_account(
 	account_id SERIAL NOT NULL,
 	--hcp_id SERIAL NOT NULL,
@@ -80,7 +80,7 @@ CREATE TABLE hcp_account(
 	org_name VARCHAR(30),
 	address TEXT,
 	PRIMARY KEY(account_id),
-	FOREIGN KEY (account_id) REFERENCES Accounts(account_id)
+	FOREIGN KEY (account_id) REFERENCES accounts(account_id)
 );
 
 
@@ -93,8 +93,8 @@ CREATE TABLE appointments(
 	date_time TIMESTAMP(0) WITH TIME ZONE NOT NULL,
 	approved BOOLEAN NOT NULL DEFAULT FALSE,
 	PRIMARY KEY(appointment_id),
-	FOREIGN KEY (patient_id) REFERENCES Patient_Account(account_id),
-	FOREIGN KEY (hcp_id) REFERENCES HCP_Account(account_id)
+	FOREIGN KEY (patient_id) REFERENCES patient_account(account_id),
+	FOREIGN KEY (hcp_id) REFERENCES hcp_account(account_id)
 );
 
 
@@ -107,8 +107,8 @@ CREATE TABLE medical_record(
 	suplementary_info TEXT,
 	file_path TEXT NOT NULL,
 	PRIMARY KEY (medical_rec_id),
-	FOREIGN KEY (patient_id) REFERENCES Patient_Account(account_id),
-	FOREIGN KEY (account_id) REFERENCES Accounts(account_id)	
+	FOREIGN KEY (patient_id) REFERENCES patient_account(account_id),
+	FOREIGN KEY (account_id) REFERENCES accounts(account_id)	
 );
 
 
@@ -122,8 +122,8 @@ CREATE TABLE payment(
 	due_date TIMESTAMP(0) WITH TIME ZONE NOT NULL,
 	cleared BOOLEAN NOT NULL DEFAULT FALSE,
 	PRIMARY KEY(bill_id),
-	FOREIGN KEY (patient_id) REFERENCES Patient_Account(account_id),
-	FOREIGN KEY (hcp_id) REFERENCES HCP_Account(account_id)
+	FOREIGN KEY (patient_id) REFERENCES patient_account(account_id),
+	FOREIGN KEY (hcp_id) REFERENCES hcp_account(account_id)
 
 );
 
@@ -139,8 +139,8 @@ CREATE TABLE p_d_connection(
 	accepted BOOLEAN NOT NULL DEFAULT FALSE,
 	date_connected DATE NOT NULL,
 	PRIMARY KEY(patient_id, hcp_id),
-	FOREIGN KEY (patient_id) REFERENCES Patient_Account(account_id),
-	FOREIGN KEY (hcp_id) REFERENCES HCP_Account(account_id)
+	FOREIGN KEY (patient_id) REFERENCES patient_account(account_id),
+	FOREIGN KEY (hcp_id) REFERENCES hcp_account(account_id)
 );
 
 
