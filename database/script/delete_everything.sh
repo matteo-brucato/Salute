@@ -6,13 +6,13 @@ port=$(< dbport)
 folder=$(< dbfolder)
 dbname=$(< dbname)
 
-export PGDATA="$folder"
+#export PGDATA="$folder"
 
 # Drop relational schema
 psql -p $port -f ../tables/drop.sql $dbname
 
 dropdb -p $port $dbname
 
-pg_ctl -p $port stop
+pg_ctl -p $port -D $folder stop
 
 rm -fr "$folder"

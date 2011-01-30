@@ -6,18 +6,19 @@ dbport=$(< dbport)
 dbfolder=$(< dbfolder)
 dbname=$(< dbname)
 
-export PGDATA="$dbfolder"
+# export PGDATA="$dbfolder"
 
 if ! (cd "$dbfolder") ; then
 	mkdir "$dbfolder"
 	echo "Created folder $dbfolder"
 fi
 
-initdb
+initdb -D $dbfolder
 
-pg_ctl -o "-p $dbport" -l logfile start
+#pg_ctl -o "-p $dbport" -l logfile start
+(postgres -p $dbport -D $dbfolder &)
 
-sleep 8
+sleep 4
 
 createdb -p $dbport $dbname
 

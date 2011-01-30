@@ -141,8 +141,8 @@ class Home extends Controller {
 		$this->email->subject('Password Retrieval');
 		
 		$this->email->message(
-			'You have requested for retrieval of your password. Your password is: $password.' '.
-			'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/'">here</a> 'to login.');
+			'You have requested for retrieval of your password. Your password is:'.$password.' '.
+			'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
 
 		$this->email->send();
 		

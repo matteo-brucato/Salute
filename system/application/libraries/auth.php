@@ -10,6 +10,35 @@
  * @category	Libraries
  * @author		Matteo Brucato
  */
+
+class Auth {
+	
+	private $account_id;
+	private $type;
+	private $email;
+	private $first_name;
+	private $last_name;
+	private $CI;
+	
+	function __construct() {
+		$CI =& get_instance();
+		$this->account_id	= $CI->session->userdata('account_id');
+		$this->type		= $CI->session->userdata('type');
+		$this->email		= $CI->session->userdata('email');
+		$this->first_name	= $CI->session->userdata('first_name');
+		$this->last_name	= $CI->session->userdata('last_name');
+		$this->CI = $CI;
+	}
+	
+	function is_logged_in() {
+		return (
+			$this->account_id != FALSE &&
+			$this->type != FALSE &&
+			$this->email != FALSE &&
+			$this->first_name != FALSE &&
+			$this->last_name != FALSE
+		);
+	}
 	
 	/**
 	 * Automatically dislplays an error message if not logged in.
