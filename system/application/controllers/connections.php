@@ -41,20 +41,33 @@ class Connections extends Controller {
 		
 		if ($this->auth->get_type() === 'patient') {
 			$results = $this->connections_model->list_my_doctors($this->auth->get_account_id()); 
-
-			$this->ajax->view(array(
-				$this->load->view('mainpane/mydoctors', array('hcp_list' => $results) , TRUE),
-				$this->load->view('sidepane/patient-profile', '', TRUE)
-			));
+			$sidepane='sidepane/patient-profile'
 		} 
 
-		else {
+		else if ($this->auth->get_type() === 'doctor'){
 			$results = $this->connections_model->list_my_colleagues($this->auth->get_account_id()); 
-			$this->ajax->view(array(
-				$this->load->view('mainpane/mydoctors', array('hcp_list' => $results) , TRUE),
-				$this->load->view('sidepane/doctor-profile', '', TRUE)
-			));	
+			$sidepane='sidepane/doctor-profile'
 		}
+		else{
+			show_error('Internal server logic error.', 500);
+			return;
+		}
+		switch($results){
+			case -1:
+				$view = 'Query error!';
+				break;
+			default:
+				$view = $this->ajax->view(array(
+						$this->load->view('mainpane/mydoctors', array('hcp_list' => $results) , TRUE),
+						$this->load->view($sidepane, '', TRUE)
+						));			
+				break;
+		}
+		
+		$this->ajax->view(array(
+			$view,
+			''
+		));
 	}
 
 	/**
@@ -74,12 +87,27 @@ class Connections extends Controller {
 		}
 
 		$this->load->model('connections_model');
-		$results = $this->connections_model->list_my_patients($this->auth->get_account_id()); 
+		$res = $this->connections_model->list_my_patients($this->auth->get_account_id()); 
 
+		// Switch the response from the model, to select the correct view
+		switch ($res) {
+			case -1:
+				$view = 'Query error!';
+				break;
+			default:
+				$view = $this->ajax->view(array(
+							$this->load->view('mainpane/mypatients', array('pat_list' => $res) , TRUE),
+							$this->load->view('sidepane/doctor-profile', '', TRUE)
+						));
+				break;
+		}
+		
+		// Create final view for the user
 		$this->ajax->view(array(
-			$this->load->view('mainpane/mypatients', array('pat_list' => $results) , TRUE),
-			$this->load->view('sidepane/doctor-profile', '', TRUE)
+			$view,
+			''
 		));
+
 	}
 	
 	/**
@@ -224,7 +252,7 @@ class Connections extends Controller {
 				break;
 		}
 		
-		// Create final view for the client
+		// Create final view for the user
 		$this->ajax->view(array(
 			$view,
 			''
@@ -232,6 +260,7 @@ class Connections extends Controller {
 	}
 
 	// destroy connection (un-friend someone)
+	// @todo check case numbers in switch
 	function destroy($to_delete_id = NULL , $my_id = NULL )
 	{
 		$this->auth->check_logged_in();
@@ -251,23 +280,34 @@ class Connections extends Controller {
 		$this->load->model('patient_model');
 
 		if ( $this->patient_model->is_patient(array($to_delete_id)) ){
-			$delete = $this->connections_model->remove_pd_connection(array('patient_id' => $this->auth->get_account_id() , 'hcp_id' => $to_delete_id )); 
+			$res = $this->connections_model->remove_pd_connection(array('patient_id' => $this->auth->get_account_id() , 'hcp_id' => $to_delete_id )); 
 		}
 		else if ($this->hcp_model->is_doctor(array($to_delete_id))) {
-			$delete = $this->connections_model->remove_dd_connection(array('this_hcp_id' => $this->auth->get_account_id() , 'hcp_id' => $to_delete_id )); 
+			$res = $this->connections_model->remove_dd_connection(array('this_hcp_id' => $this->auth->get_account_id() , 'hcp_id' => $to_delete_id )); 
 		}
 		else {
-			show_error('Unknown Error.', 500);
+			show_error('You are not part of this connection.Permission denied.', 500);
 			return;
 		}
-		/*	
-		if ($delete){
-			echo "Success";
+		
+		// Switch the response from the model, to select the correct view
+		switch ($res) {
+			case -1:
+				$view = 'Query error!';
+				break;
+			case -2:
+				$view = 'Connection does not exists.';
+				break;
+			default:
+				$view = 'You have been disconnected from that health care provider.';
+				break;
 		}
-		else {
-			echo "Unable to remove connection";
-		}
-		*/
+		
+		// Create final view for the user
+		$this->ajax->view(array(
+			$view,
+			''
+		));
 	}
 
 	/* Fancy Feature: list all my pending connections
