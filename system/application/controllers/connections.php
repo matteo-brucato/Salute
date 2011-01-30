@@ -109,7 +109,90 @@ class Connections extends Controller {
 		));
 
 	}
+
+	/* 
+	 * Lists the pending connections that this user has initiated(outgoing)
+	 * */
+	function list_pending_out() 
+	{
+		$this->auth->check_logged_in();
+		$this->load->model('connections_model');
+		
+		if($this->auth->get_type() === 'doctor'){
+			$res = $this->connections_model->pending_todoctors_fromdoctor(array($this->auth->get_account_id())); 
+			$sidepane = 'sidepane/doctor-profile';
+		}
+		else if($this->auth->get_type() === 'patient'){
+			$res = $this->connections_model->pending_todoctors_frompatient(array($this->auth->get_account_id())); 
+			$sidepane = 'sidepane/patient-profile';
+		}
+		else {
+			show_error('Internal server logic error.', 500);
+			return;
+		}
+
+		// Switch the response from the model, to select the correct view
+		switch ($res) {
+			case -1:
+				$view = 'Query error!';
+				break;
+			default:
+				$view = $this->ajax->view(array(
+							$this->load->view('mainpane/mypatients', array('pending_list' => $res) , TRUE),
+							$this->load->view($sidepane, '', TRUE)
+						));
+				break;
+		}
+		
+		// Create final view for the user
+		$this->ajax->view(array(
+			$view,
+			''
+		));
+	}
 	
+	/* 
+	 * Lists the pending connections that this user has received(incoming)
+	 * Only doctors have this
+	 * */
+	function list_pending_in() 
+	{
+		$this->auth->check_logged_in();
+		$this->load->model('connections_model');
+		
+		if($this->auth->get_type() === 'doctor'){
+			$res = $this->connections_model->pending_todoctor_fromdoctors(array($this->auth->get_account_id())); 
+			$res2 = $this->connections_model->pending_todoctor_frompatients(array($this->auth->get_account_id())); 
+			$sidepane = 'sidepane/doctor-profile';
+		}
+		else if($this->auth->get_type() === 'patient'){
+			show_error('Patients cannot be requested. Internal server logic error.', 500);
+			return;
+		}
+		else {
+			show_error('Internal server logic error.', 500);
+			return;
+		}
+
+		// Switch the response from the model, to select the correct view
+		switch ($res) {
+			case -1:
+				$view = 'Query error!';
+				break;
+			default:
+				$view = $this->ajax->view(array(
+							$this->load->view('mainpane/mypatients', array('pending_hcp' => $res,'pending_pat' => $res2) , TRUE),
+							$this->load->view($sidepane, '', TRUE)
+						));
+				break;
+		}
+		
+		// Create final view for the user
+		$this->ajax->view(array(
+			$view,
+			''
+		));
+	}	
 	/**
 	 * Request a new connection to a doctor.
 	 * 
@@ -260,8 +343,7 @@ class Connections extends Controller {
 	}
 
 	// destroy connection (un-friend someone)
-	// @todo check case numbers in switch
-	function destroy($to_delete_id = NULL , $my_id = NULL )
+		function destroy($to_delete_id = NULL , $my_id = NULL )
 	{
 		$this->auth->check_logged_in();
 		
@@ -309,17 +391,6 @@ class Connections extends Controller {
 			''
 		));
 	}
-
-	/* Fancy Feature: list all my pending connections
-	function pending() 
-	{
-		// Case 1: Doctor's Incoming Doctor Requests
-		// Case 2: Doctor's Outgoing Doctor Requests
-		// Case 3: Doctor's Incoming Patient Requests
-		// Case 4: Patients's Outgoing Doctor Requests
-	}*/
-
-
 }
 
 /** @} */
