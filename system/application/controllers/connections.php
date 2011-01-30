@@ -119,42 +119,31 @@ class Connections extends Controller {
 			case -1:
 				$view = 'Query error!';
 				break;
-			case -2:
-				$view = 'Connection does not exists.';
-				break;
 			case -3:
-				$view = 'This connection has already been accepted.';
+				$view = 'This connection has been already requested.';
 				break;
 			default:
-				$view = 'You have accepted the connection.';
+				$view = 'Your request has been submitted.';
+				$this->load->library('email');
+				$config['mailtype'] = 'html';
+				$this->email->initialize($config);
+				//$this->email->from($this->auth->get_email());
+				$this->email->from('salute-noreply@salute.com');
+				//$this->email->to($results['email']);
+				$this->email->to('mattfeel@gmail.com');
+				$this->email->subject('New Connection Request');
+				
+				$this->email->message(
+					'You have a new connection request from '.
+					$this->auth->get_first_name().' '.$this->auth->get_last_name().
+					'. Click <a href="https://'.$_SERVER['SERVER_NAME'].'/connections/accept/'.$this->auth->get_account_id().'/'.$id.'">here</a> to accept.');
+				
+				$this->email->send();
 				break;
 		}
 		
-		if (! $check) {
-			show_error('Connection already requested');
-			return;
-		}
-		
-		$this->load->library('email');
-		
-		$config['mailtype'] = 'html';
-		$this->email->initialize($config);
-		//$this->email->from($this->auth->get_email());
-		$this->email->from('salute-noreply@salute.com');
-//		$this->email->to($results['email']);
-		$this->email->to('mattfeel@gmail.com');
-		$this->email->subject('New Connection Request');
-		
-		$this->email->message(
-			'You have a new connection request from '.
-			$this->auth->get_first_name().' '.$this->auth->get_last_name().
-			'. Click <a href="https://'.$_SERVER['SERVER_NAME'].'/connections/accept/'.$this->auth->get_account_id().'/'.$id.'">here</a> to accept.');
-
-		// @todo: Pop-up : are you sure you want to send?
-		$this->email->send();
-		
 		$this->ajax->view(array(
-			'Your request has been submitted.',
+			$view,
 			''
 		));
 	}
