@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file appointments.php
+ * @brief Controller to handle appointments
+ *
+ * @defgroup ctr Controllers
+ * @ingroup ctr
+ * @{
+ */
+
 class Appointments extends Controller {
 
 	function __construct(){
@@ -8,15 +17,21 @@ class Appointments extends Controller {
 		$this->load->model('appointments_model');
 	}
 
-	// Default: load upcoming function
+	/*
+	 * fn index -- default
+	 * checks if user is logged in. 
+	 * redirects to page to list upcoming appointments
+	 * */
 	function index(){
 		$this->auth->check_logged_in();
 		$this->ajax->redirect('/appointments/upcoming');
 	}  	
 
-	/* List all Appointments 
-		@todo: view to list appointments: Date Time Descrip Doctor Name Actions(Reschedule,Cancel)	
-	*/
+	/*
+	 * fn all 
+	 * lists all appointments of the logged in user
+	 * @todo: need a view to list appointments: Date Time Descrip Doctor Name Actions(Reschedule,Cancel)	
+	 * */
 	function all() {
 		$this->auth->check_logged_in();
 
@@ -24,16 +39,17 @@ class Appointments extends Controller {
 									'account_id' => $this->auth->get_account_id(),
 									'type' => $this->auth->get_type()
 								)); 
-		$this->ajax->view(array(
-					$this->load->view('mainpane/____', $results , TRUE),
-					''
-				));
+		if($results == NULL){
+			$this->ajax->view(array('No appointments. ',''));
+		}
+		$this->ajax->view(array($this->load->view('mainpane/____', $results , TRUE),''));
 	}
 
-
-	/* List Upcoming Appointments
-		@todo: view to list appointments: Date Time Descrip Doctor Name Actions(Reschedule,Cancel)	
-	*/
+	/*
+	 * fn upcoming 
+	 * lists all upcoming appointments of the logged in user
+	 * @todo: need a view to list appointments: Date Time Descrip Doctor Name Actions(Reschedule,Cancel)	
+	 * */
 	function upcoming(){
 		$this->auth->check_logged_in();
 
@@ -41,10 +57,18 @@ class Appointments extends Controller {
 									'account_id' => $this->auth->get_account_id(),
 									'type' => $this->auth->get_type()
 								)); 
+		if($results == NULL){
+			$this->ajax->view(array('You have no upcoming appointments. ',''));
+		}
 		$this->ajax->view(array($this->load->view('mainpane/_____', $results , TRUE),''));
 	}
 
-	/* List Past Appointments */
+
+	/*
+	 * fn past 
+	 * lists all past appointments of the logged in user
+	 * @todo: need a view to list appointments: Date Time Descrip Doctor_Name 	
+	 * */
 	function past(){
 		$this->auth->check_logged_in();
 
@@ -52,10 +76,19 @@ class Appointments extends Controller {
 									'account_id' => $this->auth->get_account_id(),
 									'type' => $this->auth->get_type()
 								)); 
+		if($results == NULL){
+			$this->ajax->view(array('You have no past appointments. ',''));
+		}
 		$this->ajax->view(array($this->load->view('mainpane/table_result', $results , TRUE),''));
 	}
 
-	/*Cancel an existing appointment */	
+	/*
+	 * fn cancel 
+	 * cancel an existing appointment
+	 * @param apt_id, the appointment id number to delete from database
+	 * @return redirect to list of upcoming appointments || error(not their appointment)
+	 * @todo: pop up-- are you sure you want to cancel appointment?
+	 * */
 	function cancel($apt_id) {
 		$this->auth->check_logged_in();
 		$this->load->model('appointments_model');
@@ -71,9 +104,15 @@ class Appointments extends Controller {
 		
 	}
 	
-	/*Reschedule an existing appointment (date/time) */
-	// @todo: need reschedule appt form / view
-	// Later: we should have a request reschedule and accept reschedule 
+	/*
+	 * fn reschedule 
+	 * reschedule an existing appointment (date/time)
+	 * @param apt_id, the appointment id number to modifty in database
+	 * @input -- new appointment date/time
+	 * @return redirect to list of upcoming appointments || error(not their appointment)
+	 * @todo: need reschedule appt form / view
+ 	 * @todo(later): Later: have a request reschedule and accept reschedule via email 
+	 * */
 	function reschedule($apt_id){
 		$this->auth->check_logged_in();
 		$this->load->model('appointments_model');
@@ -82,6 +121,7 @@ class Appointments extends Controller {
 			$this->ajax->view(array($this->load->view('mainpane/________',$result, TRUE),''));
 			$new_time = $this->input->post('appointment_time');
 			$results = $this->appointments_model->reschedule(array('appointment_id' => $apt_id, 'date_time' => $new_time )); 
+			$this->ajax->redirect('/appointments/upcoming');
 		}
 		else{
 			show_error('This is not your appointment. Permission Denied.', 500);
@@ -89,23 +129,32 @@ class Appointments extends Controller {
 		}
 	}
 
-	/* request an appointment */      	   
-	//TODO: view for appt request ; 
-	// expect an array with doctorid, reason for appointment, time
-	/* Fancy: send confirmation */
-	// do the same thing as a connection request...wont implement this till that one is figured out 
+	/*
+	 * fn request 
+	 * request an apptointment with a hcp
+	 * @input -- appointment date/time, description
+	 * @return -- confirmation statement
+	 * @todo: need reschedule appt form / view
+	 * @todo:fix this -- view should pass this to me based on the tuple they click..
+ 	 * @todo(later): Later: have a request reschedule and accept reschedule via email , reminder emails... 
+	 * */
 	function request(){
 		$this->auth->check_logged_in();
 
 		$this->ajax->view(array($this->load->view('mainpane/__________', '' , TRUE), ''));
-		$hcp_id = $this->input->post('hcp_id');
+		$hcp_id = $this->input->post('hcp_id'); // @todo:fix this -- view should pass this to me based on the tuple they click..
 		$desc = $this->input->post('description');
 		$time = $this->input->post('time');
-		$results = $this->appointments_model->reschedule(array( 'patient_id' => $this->auth->get_account_id(), 
+		$results = $this->appointments_model->request(array( 'patient_id' => $this->auth->get_account_id(), 
 									'hcp_id' => $hcp_id , 
 									'desc' => $desc ,
 									'time' => $time 
 								)); 
+		/*if($results == NULL){
+			show_error('We apologize for the inconvenience. Your appointment could not be requested.', 500);
+			return;	
+		} */
 	}
 }
+/** @} */
 ?>

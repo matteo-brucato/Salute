@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file settings.php
+ * @brief Controller to manage user settings
+ *
+ * @defgroup ctr Controllers
+ * @ingroup ctr
+ * @{
+ */
+
 class Settings extends Controller {
 
 //	private $type;
@@ -24,4 +33,5 @@ class Settings extends Controller {
 		$this->auth->check_logged_in();
 	}
 }
+/** @} */
 ?>

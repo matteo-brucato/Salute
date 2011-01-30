@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file home.php
+ * @brief Controller to handle access to the web application
+ *
+ * @defgroup ctr Controllers
+ * @ingroup ctr
+ * @{
+ */
+
 class Home extends Controller {
 
 	function __construct() {
@@ -7,7 +16,11 @@ class Home extends Controller {
 		$this->load->library('auth');
 	}
 	
-	// Default function: loads Default Home Page
+	/*
+	 * fn index -- default
+	 * if not logged in load default welcome page and login side panel
+	 * else already logged in, load their profile
+	 * */
 	function index()
 	{
 		// Not logged in
@@ -24,6 +37,14 @@ class Home extends Controller {
 		}
 	}
 
+	/*
+	 * fn login
+	 * @input -- email, password
+	 * verify input, check authorization
+	 * if login successful, store session info
+	 * @return redirect to profile || error (if already logged in || authorization fails)
+	 * @todo this is not tested, unsure about logic. 
+	 * */
 	function login()
 	{
 		if ($this->auth->is_logged_in()) {
@@ -78,27 +99,58 @@ class Home extends Controller {
 
 	}
 
-	// Logout User: Clear session id, redirect to default view
+	/*
+	 * fn logout
+	 * clears current session info
+	 * @return redirect to default page
+	 * */
 	function logout()
 	{
 		$this->session->sess_destroy();
 		$this->ajax->redirect('/');
 	}
 
-	/* @todo- view to retrieve password*/
+	/*
+	 * fn retrieve_password
+	 * @input -- email
+	 * look up password
+	 * @return send password via email to user, with link to login again. || error(invalid email)
+	 * @todo -- this is not tested, unsure about logic. 
+	 * @todo -- view needed
+	 * */
 	function retrieve_password()
 	{
-		$this->load->view('mainpane/retrieve_password', '', TRUE);
+		$this->load->view('mainpane/________', '', TRUE); 	/* @todo- view to retrieve password*/
 		$email = $this->input->post('email');
 
 		// need a retrieve password function in login model
 		$this->load->model('account_model');
-		$password = $this->account_model->get_password($email); 
+		$password = $this->account_model->get_password(array($email)); 
+		if ($password == NULL){
+			show_error('Invalid Email: error retreiving password.', 500);
+			return;
+		}
+
+		$this->load->library('email');
+		$config['mailtype'] = 'html';
+		$this->email->initialize($config);
+//		$this->email->from($this->auth->get_email());
+		$this->email->from('salute-noreply@salute.com');
+//		$this->email->to($results['email']);
+		$this->email->to('mattfeel@gmail.com');
+		$this->email->subject('Password Retrieval');
 		
-		echo "Your password is $password";		
-		// Fancy Feature later: actually email the password to the user.
+		$this->email->message(
+			'You have requested for retrieval of your password. Your password is: $password.' '.
+			'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/'">here</a> 'to login.');
+
+		$this->email->send();
+		
+		$this->ajax->view(array('Your password has been emailed to you.',''));
+
 	}
 
+//	 * @todo -- this is not tested, unsure about logic. 
 	function register()
 	{
 		$this->ajax->view(array(
@@ -121,8 +173,10 @@ class Home extends Controller {
 				'email' => $email,'password' => $password,'type' => $type,'first_name' => $first_name,'last_name' => $last_name,
 				'middle_name' => $middle_name, 'dob' => $dob, 'sex' => $sex, 'ssn' => $ssn,'tel_no' => $tel_no,
 				'fax_no' => $fax_no, 'address' => $address);
+		/* @todo- Fancy: Confirmation Email*/
 
 	}
+//	 * @todo -- this is not tested, unsure about logic. 
 	function register_do()
 	{
 
@@ -166,8 +220,10 @@ class Home extends Controller {
 			show_error('Unknown Error.', 500);
 		}
 
-		// @todo: show some confirmation view
+		/* @todo- Confirmation view*/
+		$this->ajax->view(array('Congratulations, you are now registered. ',''));
 	}
-
 }
+
+/** @} */
 ?>

@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file medical_records.php
+ * @brief Controller to handle medical records
+ *
+ * @defgroup ctr Controllers
+ * @ingroup ctr
+ * @{
+ */
+
 class MedicalRecords extends Controller {
 
 	function __construct(){
@@ -162,4 +171,5 @@ class MedicalRecords extends Controller {
 		$this->ajax->redirect('/medical_records/list_med_recs');
 	}
 }
+/** @} */
 ?>

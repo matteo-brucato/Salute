@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file connections_model.php
+ * @brief Model to give access to the two connection tables in the database
+ *
+ * @defgroup mdl Model
+ * @ingroup mdl
+ * @{
+ */
+
 class Connections_model extends Model {
 	function __construct() {
 		parent::Model();
@@ -133,18 +142,20 @@ class Connections_model extends Model {
 	function is_connected_with($a_id, $b_id) {
 		$sql = "(SELECT *
 				FROM p_d_connection PD
-				WHERE  (PD.hcp_id = ? AND PD.patient_id = ?)
-					OR (PD.patient_id = ? AND PD.hcp_id = ?))
+				WHERE PD.accepted = true AND
+					((PD.hcp_id = ? AND PD.patient_id = ?)
+					OR (PD.patient_id = ? AND PD.hcp_id = ?)))
 				UNION
 				(SELECT *
 				FROM d_d_connection DD
-				WHERE  (DD.requester_id = ? AND DD.accepter_id = ?)
-					OR (DD.accepter_id = ? AND DD.requester_id = ?))";
+				WHERE DD.accepted = true AND
+					((DD.requester_id = ? AND DD.accepter_id = ?)
+					OR (DD.accepter_id = ? AND DD.requester_id = ?)))";
 		$query = $this->db->query($sql, array($a_id, $b_id,
 											  $a_id, $b_id,
 											  $a_id, $b_id,
 											  $a_id, $b_id,));
-		return (count($query->result_array()) > 0);
+		return ($query->num_rows() > 0);
 	}
 	
 	
@@ -156,8 +167,7 @@ class Connections_model extends Model {
 	 *
 	 * @return
 	 *   -1 in case of error in a query
-	 *   -2 if the connection does not exist
-	 *   -3 if the connection was already accepted
+	 *   -3 if the connection already exists
 	 *   0  if everything goes fine
 	 * 
 	 * @test We still need to test the auto-acceptance if both doctors
@@ -170,8 +180,8 @@ class Connections_model extends Model {
 			WHERE (D.requester_id = ? AND D.accepter_id = ?)";
 		$query = $this->db->query($sql, $inputs);
 		
-		if( $this->db->trans_status() === FALSE )
-			return -1;	
+		if ($this->db->trans_status() === FALSE)
+			return -1;
 		
 		if ($query->num_rows() > 0) {
 			return -3;
@@ -364,4 +374,5 @@ class Connections_model extends Model {
 		$query = $this->db->query($sql, $inputs[0], $inputs[1], $inputs[1], $inputs[0]);
 	}
 }
+/** @} */
 ?>

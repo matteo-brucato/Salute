@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file messages.php
+ * @brief Controller to send/receive/view messages
+ *
+ * @defgroup ctr Controllers
+ * @ingroup ctr
+ * @{
+ */
+
 class Messages extends Controller {
 
 // 	private $type;
@@ -45,4 +54,5 @@ class Messages extends Controller {
 		$this->auth->check_logged_in();
 	}
 }
+/** @} */
 ?>
