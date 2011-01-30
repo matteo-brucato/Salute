@@ -13,7 +13,7 @@ class Medical_Records_model extends Model {
 	//returns an array with all of the medical records OR NULL if there arent any
 	function list_my_records($inputs){
 		$sql = "SELECT *
-			FROM Medical_Records
+			FROM medical_records
 			WHERE patient_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		$result = $query->result_array();
@@ -34,7 +34,7 @@ class Medical_Records_model extends Model {
 	 function is_myrecord($inputs){
 	 
 	 	$sql = "SELECT *
-	 		FROM Medical_Record M
+	 		FROM medical_record M
 	 		WHERE M.patient_id = ? AND M.medical_rec_id = ?";
 	 	$query = $this->db->query($sql, array($inputs[0], $inputs[1]));
 	 	$result = $query->result_array();
@@ -55,7 +55,7 @@ class Medical_Records_model extends Model {
 	function get_medicalrecord($inputs){
 	
 		$sql = "SELECT *
-			FROM Medical_Record M
+			FROM medical_record M
 			WHERE M.medical_rec_id = ?"
 		$query = $this->db->query($sql, $inputs);
 		$result = $query->result_array();
@@ -70,7 +70,7 @@ class Medical_Records_model extends Model {
 		//$data = array( 'patient_id' => $inputs[0], 'account_id' => $inputs[1], 'issue' => $inputs[2], 'suplementary_info' => $inputs[3], 'file_path' => $inputs[4]);
 		//$this->db->insert('Medical_Records', $data);	
 		
-		$sql = "INSERT INTO Medical_Records (patient_id, account_id, issue, suplementary_info, file_path)
+		$sql = "INSERT INTO medical_records (patient_id, account_id, issue, suplementary_info, file_path)
 			VALUES (?, ?, ?, ?, ?)";
 		$query = $this->db->query($sql, $inputs);
 	}
@@ -82,7 +82,7 @@ class Medical_Records_model extends Model {
 	
 		//$this->db->delete('Medical_Records', array('medical_rec_id' => $inputs));
 		
-		$sql = "DELETE FROM Medical_Records
+		$sql = "DELETE FROM medical_records
 			WHERE medical_rec_id = ?";
 		$query = $this->db->query($sql, $inputs);
 	}

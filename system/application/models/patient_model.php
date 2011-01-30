@@ -22,7 +22,7 @@ class Patient_model extends Model {
 	function is_patient($inputs){
 		
 		$sql = "SELECT A.account_id
-			FROM Patient_Account A
+			FROM patient_account A
 			WHERE A.account_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		$result = $query->result_array();
@@ -37,7 +37,7 @@ class Patient_model extends Model {
 	function get_patient($inputs) {
 	
 		$sql = "SELECT *
-			FROM Patient_Account P
+			FROM patient_account P
 			WHERE P.account_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		return $query->result_array();		
@@ -68,7 +68,7 @@ class Patient_model extends Model {
 		               //'fax_number' => $inputs[5], 'address' => $inputs[6]);
 		//$this->db->update('Patient_Account', $data, array('account_id' => $inputs[0]));
 		
-		$sql = "UPDATE Patient_Account
+		$sql = "UPDATE patient_account
 			SET first_name = ?, last_name = ?, middle_name = ?, tel_number = ?, fax_number = ?, address = ?
 			WHERE account_id = ?";
 		$query = $this->db->query($data, array($inputs[1], $inputs[2], $inputs[3], $inputs[4], $inputs[5],

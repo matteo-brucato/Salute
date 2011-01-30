@@ -17,7 +17,7 @@ class Bills_model extends Model {
 	 function is_mybill($inputs){
 	 
 	 	$sql = "SELECT *
-	 		FROM Payment P
+	 		FROM payment P
 	 		WHERE P.patient_id = ? AND P.bill_id = ?"
 	 	$query = $this->db->query($sql, $inputs);
 	 	$result = $query->result_array();
@@ -34,7 +34,7 @@ class Bills_model extends Model {
 		//lists all bills a patient has received
 		if( $inputs[1] == 'patient'){
 			$sql = "Select B.bill_id, H2.first_name, H2.last_name, B.amount, B.descryption, B.due_date, B.cleared
-				FROM Payment B, HCP_Account H, HCP_Account H2
+				FROM payment B, hcp_account H, hcp_account H2
 				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id == H2.account_id";
 			$query = $this->db->query($sql, $inputs[0]);
 			$result = $query->result_array();
@@ -46,7 +46,7 @@ class Bills_model extends Model {
 
 		//lists all bills a doctor has issued
 		$sql = "Select B.bill_id, P2.first_name, P2.last_name, B.amount, B.descryption, B.due_date, B.cleared
-			FROM Payment B, Patient_Account P, Patient_Account P2
+			FROM payment B, patient_account P, patient_account P2
 			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id == P2.account_id";
 		$query = $this->db->query($sql, $inputs[0]);
 		$result = $query->result_array();
@@ -65,7 +65,7 @@ class Bills_model extends Model {
 		//lists all current bills a patient has received
 		if( $inputs[1] == 'patient'){
 			$sql = "Select B.bill_id, H2.first_name, H2.last_name, B.amount, B.descryption, B.due_date, B.cleared
-				FROM Payment B, HCP_Account H, HCP_Account H2
+				FROM payment B, hcp_account H, hcp_account H2
 				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id == H2.account_id AND B.due_date >= curdate()";
 			$query = $this->db->query($sql, $inputs[0]);
 			$result = $query->result_array();
@@ -77,7 +77,7 @@ class Bills_model extends Model {
 
 		//list all current bills a doctor has issued
 		$sql = "Select B.bill_id, P2.first_name, P2.last_name, B.amount, B.descryption, B.due_date, B.cleared
-			FROM Payment B, Patient_Account P, Patient_Account P2
+			FROM payment B, patient_account P, patient_account P2
 			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id == P2.account_id AND B.due_date >= curdate()";
 		$query = $this->db->query($sql, $inputs[0]);
 		$result = $query->result_array();
@@ -96,7 +96,7 @@ class Bills_model extends Model {
 		//lists all past bills a patient has received
 		if( $inputs[1] == 'patient'){
 			$sql = "Select B.bill_id, H2.first_name, H2.last_name, B.amount, B.descryption, B.due_date, B.cleared
-				FROM Payment B, HCP_Account H, HCP_Account H2
+				FROM payment B, hcp_account H, hcp_account H2
 				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id == H2.account_id AND B.due_date < curdate()";
 			$query = $this->db->query($sql, $inputs[0]);
 			$result = $query->result_array();
@@ -108,7 +108,7 @@ class Bills_model extends Model {
 
 		//list all past bills a doctor has issued
 		$sql = "Select B.bill_id, P2.first_name, P2.last_name, B.amount, B.descryption, B.due_date, B.cleared
-			FROM Payment B, Patient_Account P, Patient_Account P2
+			FROM payment B, patient_account P, patient_account P2
 			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id == P2.account_id AND B.due_date < curdate()";
 		$query = $this->db->query($sql, $inputs[0]);
 		$result = $query->result_array();
@@ -126,7 +126,7 @@ class Bills_model extends Model {
 		//lists all past bills a patient has received that are NOT CLEARED
 		if( $inputs[1] == 'patient'){
 			$sql = "Select B.bill_id, H2.first_name, H2.last_name, B.amount, B.descryption, B.due_date, B.cleared
-				FROM Payment B, HCP_Account H, HCP_Account H2
+				FROM payment B, hcp_account H, hcp_account H2
 				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id == H2.account_id AND B.due_date < curdate() AND B.cleared == FALSE";
 			$query = $this->db->query($sql, $inputs[0]);
 			$result = $query->result_array();
@@ -138,7 +138,7 @@ class Bills_model extends Model {
 
 		//list all past bills a doctor has issued that are NOT CLEARED
 		$sql = "Select B.bill_id, P2.first_name, P2.last_name, B.amount, B.descryption, B.due_date, B.cleared
-			FROM Payment B, Patient_Account P, Patient_Account P2
+			FROM payment B, patient_account P, patient_account P2
 			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id == P2.account_id AND B.due_date < curdate() AND B.cleared == FALSE";
 		$query = $this->db->query($sql, $inputs[0]);
 		$result = $query->result_array();
@@ -158,7 +158,7 @@ class Bills_model extends Model {
 		//$data = array( 'patient_id' => $inputs[0], 'hcp_id' => $inputs[1], 'amount' => $inputs[2], 'descryption' => $inputs[3], 'due_date' => $inputs[4]);
 		//$this->db->insert('Payment', $data);
 		
-		$sql = "INSERT INTO Payment (patient_id, hcp_id, amount, descryption, due_date)
+		$sql = "INSERT INTO payment (patient_id, hcp_id, amount, descryption, due_date)
 			VALUES (?, ?, ?, ?)";
 		query = $this->db->query($sql, $inputs);
 	}
@@ -171,7 +171,7 @@ class Bills_model extends Model {
 		//$data = array('cleared' => TRUE);
 		//$this->db->update('Payment', $data, array('bill_id' => $inputs[0]));
 		
-		$sql = "UPDATE Payment
+		$sql = "UPDATE payment
 			SET cleared = TRUE
 			WHERE bill_id = ?"
 		$query = $this->db->query($sql, $inputs);
@@ -187,7 +187,7 @@ class Bills_model extends Model {
 	 * */
 	 function delete_bill($inputs){
 	 
-	 	$sql = "DELETE FROM Payment
+	 	$sql = "DELETE FROM payment
 	 		WHERE hcp_id = ? AND bill_id = ?";
 	 	$query = $this->db->query($sql, $inputs);
 	 	

@@ -21,7 +21,7 @@ class Hcp_model extends Model {
 	function is_doctor($inputs){
 		
 		$sql = "SELECT H.account_id
-			FROM HCP_Account H
+			FROM hcp_account H
 			WHERE H.account_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		$result = $query->result_array();
@@ -40,7 +40,7 @@ class Hcp_model extends Model {
 	 * */
 	function get_doctor($inputs) {
 		$sql = "SELECT *
-			FROM HCP_Account H
+			FROM hcp_account H
 			WHERE H.account_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		return $query->result_array();
@@ -51,7 +51,7 @@ class Hcp_model extends Model {
 	 *   Array with all the existing doctors in the database
 	 * */
 	function get_doctors() {
-		$sql = "SELECT * FROM HCP_Account";
+		$sql = "SELECT * FROM hcp_account";
 		return $this->db->query($sql)->result_array();
 	}
 	
@@ -67,7 +67,7 @@ class Hcp_model extends Model {
 	 function search_doctor_all($inputs){
 	 
 	 	$sql = "SELECT *
-	 		FROM HCP_Account
+	 		FROM hcp_account
 	 		WHERE string(account_id) LIKE '%?%' AND first_name LIKE '%?%' AND last_name LIKE '%?%' AND middle_name LIKE '%?%' AND 
 	 		      string(ssn) LIKE '%?%' AND string(dob) LIKE '%?%' AND sex LIKE '%?%' AND string(tel_number) LIKE '%?%' AND
 	 		      string(fax_number) LIKE '%?%' AND specialization LIKE '%?%'orgname LIKE '%?%' and address LIKE '%?%'";
@@ -93,7 +93,7 @@ class Hcp_model extends Model {
 			       //'org_name' => $inputs[10], 'address' => $inputs[11]);
 		//$this->db->insert('HCP_Account', $data);
 		
-		$sql = "INSERT INTO HCP_Account (account_id, first_name, last_name, middle_name, ssn, dob, sex, tel_number, fax_number, specialization, org_name, address)
+		$sql = "INSERT INTO hcp_account (account_id, first_name, last_name, middle_name, ssn, dob, sex, tel_number, fax_number, specialization, org_name, address)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$query = $this->db->query($sql, $inputs);
 	}
@@ -107,7 +107,7 @@ class Hcp_model extends Model {
 			       //'fax_number' => $inputs[5], 'specialization' => $inputs[6], 'org_name' => $inputs[7], 'address' => $inputs[8]);
 		//$this->db->update('HCP_Account', $data, array('account_id' => $inputs[0]));
 		
-		$sql = "UPDATE HCP_Account
+		$sql = "UPDATE hcp_account
 			SET first_name = ?, last_name = ?, middle_name = ?, tel_number = ?, fax_number = ?, specialization = ?, org_name = ?, address = ?
 			WHERE account_id = ?";
 		$query = $this->db->query($data, array($inputs[1], $inputs[2], $inputs[3], $inputs[4], $inputs[5],

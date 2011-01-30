@@ -10,7 +10,7 @@ class Login_model extends Model {
 	function authorize($inputs) {
 		//test to see if user is a PATIENT
 		$sql = "SELECT * 
-			FROM Accounts A, Patient_Account P 
+			FROM accounts A, patient_account P 
 			WHERE A.account_id = P.account_id AND email = ? AND password = ?";
 		$query = $this->db->query($sql, $inputs);
 		$result = $query->result_array();
@@ -20,7 +20,7 @@ class Login_model extends Model {
 			
 		//test to see if the user is a doctor
 		$sql = "SELECT * 
-			FROM Accounts A, HCP_Account H
+			FROM accounts A, hcp_account H
 			WHERE A.account_id = H.account_id AND email = ? AND password = ?";
 		$query = $this->db->query($sql, $inputs);
 		$result = $query->result_array();

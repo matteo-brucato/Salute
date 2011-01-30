@@ -16,6 +16,14 @@ class Profile extends Controller {
 		$this->load->library('auth');
 	}
 
+	/*
+	 * Fn index -- default 
+	 * checks that user is logged in
+	 * loads the main welcome screen for when a patient or doctor is logged in. 
+	 * if patient, load respective views
+	 * else if doctor, load respective views
+ 	 * else error
+	 * */
 	function index() {
 
 		$this->auth->check_logged_in();
@@ -42,6 +50,15 @@ class Profile extends Controller {
 		// Fancy Features: pass notifications from model to view via the 2nd parameter in the load->view call. 
 	}
 
+	/*
+	 * fn my_info
+	 * checks that user is logged in
+	 * loads the user's information in the main panel
+	 * loads the user's menu bar in the side panel  
+	 * if patient, load respective views
+	 * else if doctor, load respective views
+ 	 * else error
+	 * */
 	function myinfo()
 	{
 
@@ -64,7 +81,13 @@ class Profile extends Controller {
 			return;
 		}
 	}
-
+	/*
+	 * fn user
+	 * prints a another user's profile under the condition that they are connected
+	 * @param id is used to check type(hcp or patient) of the user who's profile is to be viewed
+	 * 			checks if they are connected
+	 * @return loads the friend's profile in the main panel || error page
+	 * */
 	function user($id = NULL) {
 		if ($id == NULL) {
 			$this->ajax->redirect('/profile');
@@ -122,7 +145,12 @@ class Profile extends Controller {
 		}
 	}
 
-	// loads form that allows me to edit my info
+	/*
+	 * fn edit
+	 * loads a form that allows the logged in user to edit their personal info
+	 * @return database is updated || error page
+	 * @todo this is not tested, unsure about logic. 
+	 * */
 	function edit() {
 		$this->auth->check_logged_in();
 

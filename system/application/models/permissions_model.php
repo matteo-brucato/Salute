@@ -19,7 +19,7 @@ class Permissions_model extends Model {
 		//$data = array( 'medical_rec_id' => $inputs[0], 'account_id' => $inputs[1]);
 		//$this->db->insert( 'Permissions', $data);
 		
-		$sql = "INSERT INTO Permissions (medical_rec_id, account_id)
+		$sql = "INSERT INTO permissions (medical_rec_id, account_id)
 			VALUES (?, ?)";
 		$query = $this->db->query($data, $inputs);
 	
@@ -37,7 +37,7 @@ class Permissions_model extends Model {
 	
 		//$this->db->delete('Permissions', array( 'medical_rec_id' => $inputs[0], 'account_id' => $inputs[1]);
 		
-		$sql = "DELETE FROM Permissions
+		$sql = "DELETE FROM permissions
 			WHERE medical_rec_id = ? AND account_id = ?";
 		$query = $this->db->query($data, $inputs);
 	
