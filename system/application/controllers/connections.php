@@ -16,12 +16,24 @@ class Connections extends Controller {
 		$this->load->library('auth');
 	}
 
-
+	/**
+	 * fn index -- default.
+	 * 
+	 * @return error
+	 *
+	 * */
 	function index() {
 		show_error('Direct access to this resource is forbidden', 500);
 		return;
 	}
 
+	/**
+	 * fn list_doctors: list all doctors that user is connected with.
+	 * 
+	 * only available for patients
+	 * 
+	 * @return: list view of doctors
+	 * */
 	function list_doctors()	{
 		$this->auth->check_logged_in();		
 
@@ -45,6 +57,13 @@ class Connections extends Controller {
 		}
 	}
 
+	/**
+	 * fn list_patients: list all patients that hcp is connected with.
+	 * 
+	 * only available for doctors
+	 * 
+	 * @return: list view of patients
+	 * */
 	function list_patients()
 	{
 		$this->auth->check_logged_in();
