@@ -26,7 +26,7 @@ class Connections_model extends Model {
 	 *   NULL if none
 	 * */
 	function list_my_patients($inputs) {
-		$sql = "SELECT *
+		$sql = "SELECT P.*
 			FROM p_d_connection D, patient_account P
 			WHERE (D.patient_id =  P.account_id) AND D.hcp_id = ?";
 		$query = $this->db->query($sql, $inputs);
@@ -52,7 +52,7 @@ class Connections_model extends Model {
 	 *   NULL if none
 	 * */
 	function list_my_colleagues($account_id) {
-		$sql = "SELECT *
+		$sql = "SELECT H.*
 			FROM d_d_connection D, hcp_account H
 			WHERE (D.requester_id = ? AND D.accepter_id = H.account_id)
 			OR    (D.accepter_id = ? AND D.requester_id = H.account_id)";
@@ -79,7 +79,7 @@ class Connections_model extends Model {
 	 *   NULL if none
 	 * */
 	function list_my_doctors($inputs) {
-		$sql = "SELECT *
+		$sql = "SELECT H.*
 			FROM p_d_connection D, hcp_account H
 			WHERE (D.patient_id =  ?) AND H.account_id = D.hcp_id";
 		$query = $this->db->query($sql, $inputs);
@@ -95,20 +95,20 @@ class Connections_model extends Model {
 	
 	
 	/**
-	 * Lists all pending requests to doctors from a patient
+	 * Lists all pending outgoing requests to doctors of a specific patient
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
 	 * @return	
 	 *  -1 in case of error in a query
 	 *   Array with all pending requests
-	 *   NULL if none
+	 *   empty array if none
 	 * */
-	 function pending_todoctors_frompatient($inputs)
+	 function pending_outgoing_hcps_4_a_patient($inputs)
 	 {
-		$sql = "SELECT H.first_name H.last_name
+		$sql = "SELECT H.*
 	 		FROM p_d_connection P, hcp_account H
-			WHERE P.patient_id = ? AND AND P.accepted = FALSE AND P.hcp_id = H.account_id";
+			WHERE P.patient_id = ? AND P.accepted = FALSE AND P.hcp_id = H.account_id";
  		$query = $this->db->query($sql, $inputs);
  		
  		if ($this->db->trans_status() === FALSE)
@@ -117,24 +117,23 @@ class Connections_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();
 		
-		return NULL;
-
+		return array();
 	 }
 	 
 	 
 	 /**
-	 * List all pending requests to a doctor from patients
+	 * List all pending incoming requests to a hcp from patients
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all pending requests
-	 *   NULL if none
+	 *   empty array if none
 	 * */
-	 function pending_todoctor_frompatients($inputs)
+	 function pending_incoming_patients_4_a_hcp($inputs)
 	 {
-		$sql = "SELECT A.first_name, A.last_name
+		$sql = "SELECT A.*
 	 		FROM p_d_connection P, patient_account A
 			WHERE P.hcp_id = ? AND P.accepted = FALSE AND A.account_id = P.patient_id";
  		$query = $this->db->query($sql, $inputs);
@@ -146,23 +145,23 @@ class Connections_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();
 		
-		return NULL;
+		return array();
 	 }
 	 
 	 
 	 /**
-	 * List all pending requests to a doctor from doctors
+	 * List all pending incoming requests to a hcp from hcps
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
 	 * @return
 	 * 	 -1 in case of error in a query
 	 *    Array with all pending requests OR 
-	 * 	  NULL if none
+	 * 	  empty array if none
 	 * */
-	 function pending_todoctor_fromdoctors($inputs)
+	 function pending_incoming_hcps_4_a_hcp($inputs)
 	 {
-		$sql = "SELECT A.first_name, A.last_name
+		$sql = "SELECT A.*
 	 		FROM d_d_connection D, hcp_account A
 			WHERE D.accepter_id = ? AND D.accepted = FALSE AND A.account_id = D.requester_id";
  		$query = $this->db->query($sql, $inputs);
@@ -174,23 +173,23 @@ class Connections_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();
 		
-		return NULL;
+		return array();
 	 }
 	 
 	 
 	 /**
-	 * List all pending requests to doctors from a doctor
+	 * List all pending outgoing requests to doctors from a doctor
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all pending requests
-	 *   NULL if none	 
+	 *   empty array if none
 	 * */
-	 function pending_todoctors_fromdoctor($inputs)
+	 function pending_outgoing_hcps_4_a_hcp($inputs)
 	 {
-		$sql = "SELECT A.first_name, A.last_name
+		$sql = "SELECT A.*
 	 		FROM d_d_connection D, hcp_account A
 			WHERE D.requester_id = ? AND D.accepted = FALSE AND A.account_id = D.accepter_id";
  		$query = $this->db->query($sql, $inputs);
@@ -201,7 +200,7 @@ class Connections_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();
 		
-		return NULL;
+		return array();
 	 }
 	
 

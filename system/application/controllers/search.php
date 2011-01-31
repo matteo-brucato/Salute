@@ -49,7 +49,7 @@ class Search extends Controller {
 		}
 		
 		$this->ajax->view(array(
-			$this->load->view('mainpane/alldoctors', array('doc_list' => $hcps) , TRUE),
+			$this->load->view('mainpane/allhcps', array('doc_list' => $hcps) , TRUE),
 			''
 		));
 	}
