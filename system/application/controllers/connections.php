@@ -29,7 +29,7 @@ class Connections extends Controller {
 	/**
 	 * List all doctors that current user is connected with
 	 * 
-	 * @note Available for both patients and doctors
+	 * @attention Available for both patients and doctors
 	 * 
 	 * @return: List view of my hcps
 	 * */
@@ -69,7 +69,7 @@ class Connections extends Controller {
 	/**
 	 * List all patients that current hcp is connected with
 	 * 
-	 * @note Only available for hcps
+	 * @attention Only available for hcps
 	 * 
 	 * @return: List view of patients
 	 * */
