@@ -127,7 +127,7 @@ class MedicalRecords extends Controller {
 			$result = $this->medical_records_model->is_myrecord(array($this->auth->get_account_id(), $med_rec_id));
 		}
 		// If doctor: check if he/she has permission to see it
-		else if($this->auth->get_type() === 'doc'){
+		else if($this->auth->get_type() === 'doctor'){
 			$result = $this->permissions_model->____(array($this->auth->get_account_id(), $med_rec_id)); /*@todo: update fn call*/
 		}
 		else{
@@ -161,44 +161,102 @@ class MedicalRecords extends Controller {
 	}
 
 	// Set medical record to hidden: not public to your doctor(s)
-	// should be able to set multiple recs to hidden at once
-	/* @todo: waiting is_myrecord model function*/
-	function set_hidden($medical_record_id) {
+	function set_private($medical_record_id,$hcp_id) {
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
 		$this->load->model('permissions_model');
-		if( $this->medical_records_model->is_myrecord(array($this->auth->get_account_id(),$medical_record_id)) ){
-			$this->permissions_model->delete_permission($medical_record_id);
+		
+		// Check if the medical record belongs to user
+		if($this->auth->get_type() === 'patient'){
+			$result = $this->medical_records_model->is_myrecord(array($this->auth->get_account_id(), $med_record_id));
+			if(!$result){
+				show_error('This is not your record. Permission Denied.',500);
+				return;
+			} else {
+				// Check if its already hidden from doctor
+				$result = $this->permissions_model->get_permission_status($hcp_id,$medical_record_id);
+				if(!$result){
+					show_error('This record is already private from that doctor.',500);
+					return;					
+				}
+				$res = $this->permissions_model->delete_permission($hcp_id,$medical_record_id);
+			}
 		}
- 		else{
-			show_error('This is not your record.', 500);
-			return;
+		// If doctor: check if he/she has permission to see it
+		else if($this->auth->get_type() === 'doctor'){
+				show_error('Permission Denied.',500);
+				return;
 		}
-		$this->ajax->redirect('/medical_records/list_med_recs');
+		else{
+				show_error('Internal Logic Error.',500);
+				return;
+		}
+		switch ($res) {
+			case -1:
+				$mainview = 'Query error!';
+				$sideview = '';
+				$error = TRUE;
+				break;
+			default:
+				$mainview = 'This record is now private to that doctor.';
+				$sideview = '';
+				break;
+		}
+		
+		$this->ajax->view(array($mainview,$sideview));
 	}
 
 	// Set medical record to viewable: public to your doctor(s)
-	// should be able to set multiple recs to allowed at once
-	/* @todo: waiting is_myrecord model function*/
-	function set_allowed($medical_record_id) {
-		$this->auth->check_logged_in();	
+	function set_public($medical_record_id, ,$hcp_id) {
+		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
 		$this->load->model('permissions_model');
-		if( $this->medical_records_model->is_myrecord(array($this->auth->get_account_id(),$medical_record_id)) ){
-			$this->permissions_model->allow_permission($medical_record_id);
+		
+		// Check if the medical record belongs to user
+		if($this->auth->get_type() === 'patient'){
+			$result = $this->medical_records_model->is_myrecord(array($this->auth->get_account_id(), $med_record_id));
+			if(!$result){
+				show_error('This is not your record. Permission Denied.',500);
+				return;
+			} else {
+				// Check if its already allowed to be seen by doctor
+				$result = $this->permissions_model->get_permission_status($hcp_id,$medical_record_id);
+				if($result){
+					show_error('This record is already public to this doctor.',500);
+					return;					
+				}
+				$res = $this->permissions_model->allow_permission($hcp_id,$medical_record_id);
+			}
 		}
- 		else{
-			show_error('This is not your record.', 500);
-			return;
+		// If doctor: check if he/she has permission to see it
+		else if($this->auth->get_type() === 'doctor'){
+				show_error('Permission Denied.',500);
+				return;
 		}
-		$this->ajax->redirect('/medical_records/list_med_recs');
+		else{
+				show_error('Internal Logic Error.',500);
+				return;
+		}
+		switch ($res) {
+			case -1:
+				$mainview = 'Query error!';
+				$sideview = '';
+				$error = TRUE;
+				break;
+			default:
+				$mainview = 'This record is now public to that doctor.';
+				$sideview = '';
+				break;
+		}
+		
+		$this->ajax->view(array($mainview,$sideview));
 	}
 
 	// Delete medical record 
 	// ONLY patient should be able to do this
 	// should be able to delete multiple recs at once
 	/* @todo: waiting is_myrecord model function*/
-	function destroy($medical_record_id) {
+	function destroy($medical_record_id, ,$hcp_id) {
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
 		if( $this->medical_records_model->is_myrecord(array($this->auth->get_account_id(),$medical_record_id)) ){
