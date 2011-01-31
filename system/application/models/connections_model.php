@@ -21,9 +21,9 @@ class Connections_model extends Model {
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
 	 * @return
-	 *   -1 in case of error in a query
-	 * 	  Array with all the patients a doctor has
-	 * 	  NULL if none
+	 *  -1 in case of error in a query
+	 *   Array with all the patients a doctor has
+	 *   NULL if none
 	 * */
 	function list_my_patients($inputs) {
 		$sql = "SELECT *
@@ -47,9 +47,9 @@ class Connections_model extends Model {
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
 	 * @return
-	 *   -1 in case of error in a query
-	 * 	  Array with all the doctor friends
-	 * 	  NULL if none
+	 *  -1 in case of error in a query
+	 *   Array with all the doctor friends
+	 *   NULL if none
 	 * */
 	function list_my_colleagues($account_id) {
 		$sql = "SELECT *
@@ -74,9 +74,9 @@ class Connections_model extends Model {
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
 	 * @return
-	 *   -1 in case of error in a query
-	 * 	  Array of all the doctor friends
-	 *    NULL if none
+	 *  -1 in case of error in a query
+	 *   Array of all the doctor friends
+	 *   NULL if none
 	 * */
 	function list_my_doctors($inputs) {
 		$sql = "SELECT *
@@ -100,9 +100,9 @@ class Connections_model extends Model {
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
 	 * @return	
-	 *   -1 in case of error in a query
-	 *    Array with all pending requests
-	 * 	  NULL if none
+	 *  -1 in case of error in a query
+	 *   Array with all pending requests
+	 *   NULL if none
 	 * */
 	 function pending_todoctors_frompatient($inputs)
 	 {
@@ -128,9 +128,9 @@ class Connections_model extends Model {
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
 	 * @return
-	 *   -1 in case of error in a query
-	 *    Array with all pending requests
-	 * 	  NULL if none
+	 *  -1 in case of error in a query
+	 *   Array with all pending requests
+	 *   NULL if none
 	 * */
 	 function pending_todoctor_frompatients($inputs)
 	 {
@@ -184,9 +184,9 @@ class Connections_model extends Model {
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
 	 * @return
-	 * 	 -1 in case of error in a query
-	 *    Array with all pending requests
-	 * 	  NULL if none	 
+	 *  -1 in case of error in a query
+	 *   Array with all pending requests
+	 *   NULL if none	 
 	 * */
 	 function pending_todoctors_fromdoctor($inputs)
 	 {
@@ -211,9 +211,9 @@ class Connections_model extends Model {
 	 * @params $inputs
 	 * 	 Is of the form: array(account_id)
 	 * @return
-	 * 	 -1 in case of error in a query
-	 *    TRUE if $a_id is in connection with $b_id
-	 *    FALSE otherwise
+	 *  -1 in case of error in a query
+	 *   TRUE if $a_id is in connection with $b_id
+	 *   FALSE otherwise
 	 * */
 	function is_connected_with($a_id, $b_id) {
 		$sql = "(SELECT *
@@ -249,9 +249,9 @@ class Connections_model extends Model {
 	 *   $inputs of the form array(requestor_id, requestee_id)
 	 *
 	 * @return
-	 *   -1 in case of error in a query
-	 *   -3 if the connection already exists
-	 *    0 if everything goes fine
+	 *  -1 in case of error in a query
+	 *  -3 if the connection already exists
+	 *   0 if everything goes fine
 	 * 
 	 * @test We still need to test the auto-acceptance if both doctors
 	 * ask for the same connection.
@@ -311,9 +311,9 @@ class Connections_model extends Model {
 	 *   $inputs of the form (account_id of patient, account_id of HCP)
 	 *
 	 * @return
-	 *   -1 in case of error in a query
-	 *   -3 if the connection was already accepted
-	 *    0 if everything goes fine
+	 *  -1 in case of error in a query
+	 *  -3 if the connection was already accepted
+	 *   0 if everything goes fine
 	 * 
 	 * */
 	function add_patient_doctor($inputs){
@@ -350,10 +350,10 @@ class Connections_model extends Model {
 	 *   $inputs of the form array(account_id of requester, account_id of accepter)
 	 * 
 	 * @return
-	 *   -1 in case of error in a query
-	 *   -2 if the connection does not exist
-	 *   -3 if the connection was already accepted
-	 *    0 if everything goes fine
+	 *  -1 in case of error in a query
+	 *  -2 if the connection does not exist
+	 *  -3 if the connection was already accepted
+	 *   0 if everything goes fine
 	 * */
 	function accept_doctor_doctor($inputs) {
 		$query = $this->db->query("SELECT * FROM d_d_connection
@@ -392,10 +392,10 @@ class Connections_model extends Model {
 	 *   $inputs of the form array(account_id of requester, account_id of accepter)
 	 * 
 	 * @return
-	 *   -1 in case of error in a query
-	 *   -2 if the connection does not exist
-	 *   -3 if the connection was already accepted
-	 *    0 if everything goes fine
+	 *  -1 in case of error in a query
+	 *  -2 if the connection does not exist
+	 *  -3 if the connection was already accepted
+	 *   0 if everything goes fine
 	 * */
 	function accept_patient_doctor($inputs) {
 		$query = $this->db->query("SELECT * FROM p_d_connection

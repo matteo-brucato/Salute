@@ -21,9 +21,9 @@ class Hcp_model extends Model {
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
 	 * @return
-	 *   -1 in case of error in a query
-	 *    TRUE if it is
-	 * 	  FALSE otherwise
+	 *  -1 in case of error in a query
+	 *   TRUE if it is
+	 *   FALSE otherwise
 	 * */
 	function is_doctor($inputs){
 
@@ -99,7 +99,7 @@ class Hcp_model extends Model {
 	 *   Array all of the criteria that matches OR NULL if nothing matches
 	 *   NULL if nothing was found
 	 * @note
-	 * 	 RIGHT NOW IT SHOULD NOT WORK. NEED TO FIX THE THING WITH THE QUOTES AROUND THE STRINGS FOR THIS TO WORK.
+	 *   RIGHT NOW IT SHOULD NOT WORK. NEED TO FIX THE THING WITH THE QUOTES AROUND THE STRINGS FOR THIS TO WORK.
 	 * */
 	 function search_doctor_all($inputs){
 	 

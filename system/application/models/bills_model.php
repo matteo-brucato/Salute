@@ -15,7 +15,7 @@ class Bills_model extends Model {
 	 *  -1 in case of error in a query
 	 *  -6 in case bill_id does not exist
 	 *   TRUE if it is
-	 * 	 FALSE otherwise
+	 *   FALSE otherwise
 	 * */
 	 function is_mybill($inputs){
 		 
@@ -221,7 +221,7 @@ class Bills_model extends Model {
 	 *  -1 in case of error in a query
 	 *   0 if everything goes fine and a new tuple is inserted into the Payment table
 	 * @note
-	 * 	 NEED TO ADD ATTRIUTE TO THE DATABASE TO BE ABLE TO ADD ITEMIZED RECEIPT
+	 *   NEED TO ADD ATTRIUTE TO THE DATABASE TO BE ABLE TO ADD ITEMIZED RECEIPT
 	 * */	
 	function issue_bill($inputs){
 
@@ -246,7 +246,7 @@ class Bills_model extends Model {
 	 *   Is of the form: array(bill_id)
 	 * @return
 	 *  -1 in case of error in a query
-	 * 	-6 in case the bill_id does not exist
+	 *  -6 in case the bill_id does not exist
 	 *   0 if everything goes fine and cleared attribute is assigned TRUE
 	 * */	
 	function pay_bill($inputs){
@@ -283,7 +283,7 @@ class Bills_model extends Model {
 	 *   Is of the form: array(hcp_id, bill_id)
 	 * @return
 	 *  -1 in case of error in a query
-	 * 	-6 in case the bill_id does not exist
+	 *  -6 in case the bill_id does not exist
 	 *   0 if everything goes fine and the tuple is removed from the Payments table
 	 * */
 	 function delete_bill($inputs){
