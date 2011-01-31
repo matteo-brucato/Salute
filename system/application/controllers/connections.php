@@ -396,10 +396,7 @@ class Connections extends Controller {
 		}
 		
 		// Create final view for the user
-		$this->ajax->view(array(
-			$view,
-			''
-		));
+		$this->ajax->view(array($view,''));
 	}
 }
 

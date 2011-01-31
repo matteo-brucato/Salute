@@ -121,11 +121,43 @@ class MedicalRecords extends Controller {
 	function medical_record($med_rec_id) {
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
-		$result = $this->medical_records_model->get_medicalrecord(array($med_rec_id));
-		$this->ajax->view(array(
-					$this->load->view('mainpane/______', $result , TRUE),
-					''
-				));	
+		
+		// Check if the medical record belongs to user
+		if($this->auth->get_type() === 'patient'){
+			$result = $this->medical_records_model->is_myrecord(array($this->auth->get_account_id(), $med_rec_id));
+		}
+		// If doctor: check if he/she has permission to see it
+		else if($this->auth->get_type() === 'doc'){
+			$result = $this->permissions_model->____(array($this->auth->get_account_id(), $med_rec_id)); /*@todo: update fn call*/
+		}
+		else{
+				show_error('Internal Logic Error.',500);
+				return;
+		}
+		
+		switch ($result) {
+			case -1:
+				$mainview = 'Query error!';
+				$sideview = '';
+				$error = TRUE;
+				break;
+			case FALSE:
+				$mainview = 'You do not have permission to see this medical record.';
+				$sideview = '';
+				$error = TRUE;
+			default:
+				$error = FALSE;
+				break;
+		}
+		
+		if($error){
+			$this->ajax->view(array($mainview,$sideview));
+			return;
+		}
+				
+		$res = $this->medical_records_model->get_medicalrecord(array($med_rec_id));
+		
+		$this->ajax->view(array($this->load->view('mainpane/______', $res, TRUE),''));	
 	}
 
 	// Set medical record to hidden: not public to your doctor(s)
