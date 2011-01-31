@@ -235,10 +235,7 @@ class Connections_model extends Model {
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 			
-		if ($query->num_rows() > 0)
-			return ($query->num_rows() > 0);
-		
-		return FALSE;
+		return ($query->num_rows() > 0);
 	}
 	
 	

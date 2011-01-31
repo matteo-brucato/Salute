@@ -95,9 +95,9 @@ class Profile extends Controller {
 	 * 			pat trying to view unconnected hcp: 'You are not connected. Permission Denied.' 
 	 * 			hcp trying to view unconnected hcp: 'You are not connected. Permission Denied.'
 	 * 			pat trying to view patient: 'Sorry! Patients cannot be connected with other patients'
+	 * 			hcp trying to view unconnected hcp: 'You are not connected. Permission Denied.'
 	 * Fails:
 	 * 			hcp trying to view connected hcp: Query error!'
-	 * 			hcp trying to view unconnected hcp: 'You are not connected. Permission Denied.'
 	 * 			hcp trying to view connected patient: Sorry! An HCP can only view profiles of connected patients
 	 * 			pat trying to view connected hcp: 'Query error!'
 	 * 
@@ -166,7 +166,7 @@ class Profile extends Controller {
 		$is_my_friend = $this->connections_model->is_connected_with($this->auth->get_account_id(), $id);
 		switch ($is_my_friend) {
 			case -1:
-				$view = 'Query error!';
+				$view = '==Query error!';
 				$error = TRUE;
 				break;
 			case FALSE:

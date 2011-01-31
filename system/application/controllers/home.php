@@ -117,10 +117,13 @@ class Home extends Controller {
 	 * @return send password via email to user, with link to login again. || error(invalid email)
 	 * @todo -- this is not tested, unsure about logic. 
 	 * @todo -- view needed
+	 * @error 
+	 * 		does not output hello world
 	 * */
 	function retrieve_password()
 	{
-		$this->load->view('mainpane/________', '', TRUE); 	/* @todo- view to retrieve password*/
+		// load view
+		$this->ajax->view(array('hello','world'));
 		$email = $this->input->post('email');
 
 		// need a retrieve password function in login model
@@ -177,8 +180,11 @@ class Home extends Controller {
 	 * @attention how is the type going to be returned to the controller? 
 	 * @todo- Fancy: Confirmation Email
 	 * */
-	function register_do()
+	function register_do($type = NULL)
 	{
+		// if type is null, error
+		// if not hcp nor patient error
+		
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
 	
@@ -187,6 +193,7 @@ class Home extends Controller {
 			return;
 		}
 		
+		// load respective forms.
 		$this->load->model('account_model');
 		$account_id = $this->account_model->add_account(array('email' => $email, 'password' => $password)); 
 		
