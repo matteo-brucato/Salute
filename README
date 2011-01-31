@@ -1,0 +1,13 @@
+How to create Doxygen documentation
+===================================
+* cd into yout Salute folder
+* $ doxygen doxygen.conf
+* you documentation will appear into doxygen folder. In doxgen/html you'll find html files, into doxyge/latex you'll find .tex files.
+* if you want to compile .tex files, cs into that folder and run
+  $ make
+  it'll compile and create 'refman.pdf'
+
+How to compile .tex documentation
+=================================
+* cd into documentation folder
+* run $ pdflatex documentation.tex

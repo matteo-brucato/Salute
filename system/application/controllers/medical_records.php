@@ -38,21 +38,33 @@ class MedicalRecords extends Controller {
 
 		// if patient, show all their med recs
 		if ($this->auth->get_type() === 'patient') {
-			$results = $this->medical_record->list_my_records(array('account_id' => $this->auth->get_account_id() )); 
-			$this->ajax->view(array(
-					'',
-					$this->load->view('mainpane/_________', $results , TRUE)
-				));
+			$res = $this->medical_record->list_my_records(array('account_id' => $this->auth->get_account_id() )); 
 		}
-	
 		// if doctor, redirect to My Patients search List
 		else if ( $this->auth->get_type() === 'doctor') {
 			$this->ajax->redirect('/search/patient');
-		}
-		else{
+			return;
+		} else {
 			show_error('Unknown Error.', 500);
 			return;
-		}		
+		}
+		
+		switch ($res) {
+			case -1:
+				$mainview = 'Query error!';
+				$sideview = '';
+				break;
+			case -2:
+				$mainview = 'You have no medical records.';
+				$sideview = '';
+				break;
+			default:
+				$mainview = $this->load->view('mainpane/myrecords', array('med_rec_list' => $res) , TRUE);
+				$sideview = '';
+				break;
+		}
+		
+		$this->ajax->view(array($mainview,$sideview));		
 	}
 
 	/*
