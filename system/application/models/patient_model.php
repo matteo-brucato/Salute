@@ -16,37 +16,68 @@ class Patient_model extends Model {
 	}
 	
 	
-	//detemines wheather an account_id is for a patient
-	//$inputs is of the form(account_id)
-	//returns TRUE if its a patient OR FALSE otherwise
+
+	/**
+	 * Checks if patient exists
+	 * 
+	 * @params $inputs
+	 *  Is of the form: array(account_id)
+	 * @return
+	 * -1 in case of error in a query
+	 * True if account_id is a patient
+	 * False if not
+	 * */
 	function is_patient($inputs){
 		
 		$sql = "SELECT A.account_id
 			FROM patient_account A
 			WHERE A.account_id = ?";
 		$query = $this->db->query($sql, $inputs);
-		$result = $query->result_array();
-		if( count($result) == 1 )
+		if ($this->db->trans_status() === FALSE)
+			return -1;	
+		if( $query->num_rows() > 0){
 			return TRUE;
-		return FALSE;
+		}
+		return false;
+
 	}
-	
-	//gets all of the patient information
-	//$inputs is of the form(account_id)
-	//returns array with all of patient information
+
+	/**
+	 * Gets patient info
+	 * 
+	 * @params $inputs
+	 *  Is of the form: array(account_id)
+	 * @return
+	 * -1 in case of error in a query
+	 * array with patient info if patient exists
+	 * empty array if not
+	 * */
 	function get_patient($inputs) {
 	
 		$sql = "SELECT *
 			FROM patient_account P
 			WHERE P.account_id = ?";
 		$query = $this->db->query($sql, $inputs);
-		return $query->result_array();		
+		if ($this->db->trans_status() === FALSE)
+			return -1;	
+		if( $query->num_rows() > 0){
+			$result = $query->result_array();
+			return $result;
+		}
+		return array();	
 	}
 	
 	
-	//registers a patient
-	//$inputs is of the form( account_id, first_name, last_name, middle_name, ssn, dbo, sex, tel_number, fax_number, address)
-	//adds the patient to the Patient_Account
+
+	/**
+	 * adds the patient to the Patient_Account
+	 * 
+	 * @params $inputs
+	 *  Is of the form: array(account_id, first_name, last_name, middle_name, ssn, dbo, sex, tel_number, fax_number, address)
+	 * @return
+	 * -1 in case of error in a insert
+	 * 1 otherwise
+	 * */
 	function register($inputs) {
 	
 		//$data = array( 'account_id' => $inputs[0], 'first_name' => $inputs[1], 'last_name' => $inputs[2], 'middle_name' => $inputs[3], 'ssn' => $inputs[4],  
@@ -56,12 +87,21 @@ class Patient_model extends Model {
 		$sql = "INSERT INTO patient_account (account_id, first_name, last_name, middle_name, ssn, dob, sex, tel_number, fax_number, address)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$query = $this->db->query($sql, $inputs);
+		if ($this->db->trans_status() === FALSE)
+			return -1;	
+		return 1;
 	}
 	
 	
-	//update patient information
-	//$inputs is of the form ( account_id, first_name, last_name, middle_name, tel_number, fax_number, address)
-	//updates the Patient_Account table
+	/**
+	 * updates the Patient_Account table
+	 * 
+	 * @params $inputs
+	 *  Is of the form: array(account_id, first_name, last_name, middle_name, tel_number, fax_number, address)
+	 * @return
+	 * -1 in case of error in a update
+	 * 1 otherwise
+	 * */
 	function update_personal_info($inputs){
 	
 		//$data = array( 'account_id' => $inputs[0], 'first_name' => $inputs[1], 'last_name' => $inputs[2], 'middle_name' => $inputs[3], 'tel_number' => $inputs[4], 
@@ -73,6 +113,9 @@ class Patient_model extends Model {
 			WHERE account_id = ?";
 		$query = $this->db->query($data, array($inputs[1], $inputs[2], $inputs[3], $inputs[4], $inputs[5],
 						       $inputs[6], $inputs[0]));
+		if ($this->db->trans_status() === FALSE)
+			return -1;	
+		return 1;
 	}
 }
 /** @} */

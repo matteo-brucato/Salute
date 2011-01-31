@@ -48,7 +48,7 @@ class Hcp_model extends Model {
 	 *   Is of the form: array(account_id)
 	 * @return
 	 *  -1 in case of error in a query
-	 *  -7 if account_id does not exist
+	 *  empty array() if account_id does not exist
 	 *   Array with all of the doctor information
 	 * */
 	function get_doctor($inputs) {
@@ -61,7 +61,7 @@ class Hcp_model extends Model {
 		if ($this->db->trans_status() === FALSE)
 			return -1;	
 		if ($query->num_rows() < 1)
-			return -7;
+			return array();
 					
 		return $query->result_array();
 	}
@@ -74,7 +74,7 @@ class Hcp_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all the existing doctors in the database
-	 *   NULL if there are not any doctors in the database
+	 *   empty array() if there are not any doctors in the database
 	 * */
 	function get_doctors() {
 		$sql = "SELECT * FROM hcp_account";
@@ -85,7 +85,7 @@ class Hcp_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();
 		
-		return NULL;	
+		return array();	
 	}
 	
 	
@@ -97,7 +97,7 @@ class Hcp_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array all of the criteria that matches OR NULL if nothing matches
-	 *   NULL if nothing was found
+	 *   empty array() if nothing was found
 	 * @note
 	 *   RIGHT NOW IT SHOULD NOT WORK. NEED TO FIX THE THING WITH THE QUOTES AROUND THE STRINGS FOR THIS TO WORK.
 	 * */
@@ -152,7 +152,7 @@ class Hcp_model extends Model {
 	 * @param $inputs 
 	 *   Is of the form: array(account_id, first_name, last_name, middle_name, tel_number, fax_number, specialization, orgname, address)
 	 * @return
-	 *  -1 in case of error in a query
+	 *  -1 in case of error in update
 	 *  -7 if the account_id does not exist
 	 *   0 if everything goes fine and the tuple is updated in the hcp_account table
 	 * */

@@ -6,40 +6,49 @@ class Login_model extends Model {
 		$this->load->database();
 	}
 	
-	//verify if the user is in the system or not
+
+	/**
+	 * Authenticates an account
+	 * 
+	 * @params $inputs
+	 *  Is of the form: array(email, password)
+	 * @return
+	 * -1 in case of error in a query
+	 * empty array if no tuples returned by query
+	 * if patient exists: array of form ("patient", tuple of accounts merged with patient_account )
+	 * if doctor exists: array of form ("doctor", tuple of accounts merged with hcp_account )
+	 * */
 	function authorize($inputs) {
 		//test to see if user is a PATIENT
 		$sql = "SELECT * 
 			FROM accounts A, patient_account P 
 			WHERE A.account_id = P.account_id AND email = ? AND password = ?";
 		$query = $this->db->query($sql, $inputs);
-		$result = $query->result_array();
-		if( count($result) >= 1 ){
-			return array("patient", $result[0]);
-		}
-			
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		
+	
+		if( $query->num_rows() > 0){
+			$result = $query->result_array();
+			return array( "patient", $result[0] );
+		}	
+
 		//test to see if the user is a doctor
 		$sql = "SELECT * 
 			FROM accounts A, hcp_account H
 			WHERE A.account_id = H.account_id AND email = ? AND password = ?";
 		$query = $this->db->query($sql, $inputs);
-		$result = $query->result_array();
-		if( count($result) >= 1 ){
-			return array("doctor", $result[0]);
-		}
-		
-		return NULL;
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if( $query->num_rows() > 0){
+			$result = $query->result_array();
+			return array( "patient", $result[0] );
+		}	
+	
+		return array();
+
 	}
 	
-	
-
-	/*function patients($inputs) {
-		$sql = "SELECT * FROM patient_account WHERE 
-		first_name LIKE '%?%' AND
-		last_name LIKE '%?%' ";
-		$query = $this->db->query($sql, $inputs);
-		return $query->result_array();
-	}*/
 	
 }
 ?>

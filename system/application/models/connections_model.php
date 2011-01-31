@@ -23,7 +23,7 @@ class Connections_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all the patients a doctor has
-	 *   NULL if none
+	 *   empty array() if none
 	 * */
 	function list_my_patients($inputs) {
 		$sql = "SELECT P.*
@@ -37,7 +37,7 @@ class Connections_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();
 		
-		return NULL;
+		return array();
 	}
 
 
@@ -49,7 +49,7 @@ class Connections_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all the doctor friends
-	 *   NULL if none
+	 *   empty array() if none
 	 * */
 	function list_my_colleagues($account_id) {
 		$sql = "SELECT H.*
@@ -64,7 +64,7 @@ class Connections_model extends Model {
 		if ($query->num_rows() > 0)	
 			return $query->result_array();
 			
-		return NULL;
+		return array();
 	}	
 
 
@@ -76,7 +76,7 @@ class Connections_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array of all the doctor friends
-	 *   NULL if none
+	 *   empty array() if none
 	 * */
 	function list_my_doctors($inputs) {
 		$sql = "SELECT H.*
@@ -90,7 +90,7 @@ class Connections_model extends Model {
 		if ($query->num_rows() > 0)	
 			return $query->result_array();
 		
-		return NULL;
+		return array();
 	}
 	
 	
@@ -102,7 +102,7 @@ class Connections_model extends Model {
 	 * @return	
 	 *  -1 in case of error in a query
 	 *   Array with all pending requests
-	 *   empty array if none
+	 *   empty array() if none
 	 * */
 	 function pending_outgoing_hcps_4_a_patient($inputs)
 	 {
@@ -129,7 +129,7 @@ class Connections_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all pending requests
-	 *   empty array if none
+	 *   empty array() if none
 	 * */
 	 function pending_incoming_patients_4_a_hcp($inputs)
 	 {
@@ -157,7 +157,7 @@ class Connections_model extends Model {
 	 * @return
 	 * 	 -1 in case of error in a query
 	 *    Array with all pending requests OR 
-	 * 	  empty array if none
+	 *    empty array() if none
 	 * */
 	 function pending_incoming_hcps_4_a_hcp($inputs)
 	 {
@@ -185,7 +185,7 @@ class Connections_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all pending requests
-	 *   empty array if none
+	 *   empty array() if none
 	 * */
 	 function pending_outgoing_hcps_4_a_hcp($inputs)
 	 {
