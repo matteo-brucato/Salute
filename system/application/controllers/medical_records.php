@@ -30,6 +30,10 @@ class MedicalRecords extends Controller {
 
 	/*
 	 * lists all medical records
+	 * 
+	 * @return
+	 *		if patient-list your records
+	 * 		if doctor, redirect to list of his/her patients
 	*/
 	function list_med_recs()
 	{
