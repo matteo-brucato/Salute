@@ -42,9 +42,26 @@ class Permissions_model extends Model {
 		$query = $this->db->query($data, $inputs);
 	
 	}
-
-
-
-
-
+	
+	/**
+	 * Determines if a medical record can be viewed by a doctor
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(hcp_id, medical_rec_id)
+	 * @return
+	 *   True or Flase
+	 * */
+	function is_allowed($inputs){
+		
+		$sql = "SELECT *
+			FROM permissions P
+			WHERE P.account_id = ? and P.medical_rec_id = ?";
+		$query = $this->db->query($sql, $inputs);
+		
+		if( $query->num_rows() > 0)
+			return TRUE;
+			
+		return FALSE;
+		
+	}
 ?>
