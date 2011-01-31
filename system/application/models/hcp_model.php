@@ -15,20 +15,31 @@ class Hcp_model extends Model {
 		$this->load->database();
 	}
 
-	//detemines wheather an account_id is for a doctor
-	//$inputs is of the form(account_id)
-	//returns TRUE if its a doctor OR FALSE otherwise
+	/**
+	 * Detemines wheather an account_id is for a doctor
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id)
+	 * @return
+	 *   -1 in case of error in a query
+	 *    TRUE if it is
+	 * 	  FALSE otherwise
+	 * */
 	function is_doctor($inputs){
-		
+
 		$sql = "SELECT H.account_id
 			FROM hcp_account H
 			WHERE H.account_id = ?";
 		$query = $this->db->query($sql, $inputs);
-		$result = $query->result_array();
-		if( count($result) == 1 )
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;	
+	 	if ($query->num_rows() > 0)
 			return TRUE;
+			
 		return FALSE;
 	}
+	
 	
 	/**
 	 * Gets all of the doctor information
@@ -36,23 +47,45 @@ class Hcp_model extends Model {
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
 	 * @return
+	 *  -1 in case of error in a query
+	 *  -7 if account_id does not exist
 	 *   Array with all of the doctor information
 	 * */
 	function get_doctor($inputs) {
+					
 		$sql = "SELECT *
 			FROM hcp_account H
 			WHERE H.account_id = ?";
 		$query = $this->db->query($sql, $inputs);
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;	
+		if ($query->num_rows() < 1)
+			return -7;
+					
 		return $query->result_array();
 	}
 	
 	/**
+	 * Gets all of the doctor information
+	 * 
+	 * @param $inputs
+	 *   Is of the form: Does not take anything in
 	 * @return
+	 *  -1 in case of error in a query
 	 *   Array with all the existing doctors in the database
+	 *   NULL if there are not any doctors in the database
 	 * */
 	function get_doctors() {
 		$sql = "SELECT * FROM hcp_account";
-		return $this->db->query($sql)->result_array();
+		$query = $this->db->query($sql);
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if ($query->num_rows() > 0)
+			return $query->result_array();
+		
+		return NULL;	
 	}
 	
 	
@@ -62,7 +95,11 @@ class Hcp_model extends Model {
 	 * @param $inputs
 	 *   Is of the form: array( account_id, first_name, last_name, middle_name, ssn, dob, sex, tel_number, fax_number, specialization, orgname, address)
 	 * @return
+	 *  -1 in case of error in a query
 	 *   Array all of the criteria that matches OR NULL if nothing matches
+	 *   NULL if nothing was found
+	 * @note
+	 * 	 RIGHT NOW IT SHOULD NOT WORK. NEED TO FIX THE THING WITH THE QUOTES AROUND THE STRINGS FOR THIS TO WORK.
 	 * */
 	 function search_doctor_all($inputs){
 	 
@@ -73,18 +110,23 @@ class Hcp_model extends Model {
 	 		      string(fax_number) LIKE '%?%' AND specialization LIKE '%?%'orgname LIKE '%?%' and address LIKE '%?%'";
 	 	$query = $this->db->query($sql, $inputs[0], $inputs[1], $inputs[2], $inputs[3], $inputs[4], $inputs[5], $inputs[6], 
 	 					$inputs[7], $inputs[8], $inputs[9], $inputs[10], $inputs[11], $inputs[12]);
-	 	$result = $query->result_array();
-	 	if ( count($result) >= 1)
-	 		return $result;
+	 					
+	 	if ($this->db->trans_status() === FALSE)
+			return -1;
+		if ($query->num_rows() > 0)
+			return = $query->result_array();
+
 	 	return NULL;
 	 }
 	
 	/**
-	 * registers a doctor
+	 * Registers a doctor
 	 * 
 	 * @param $inputs 
 	 *   Is of the form( account_id, first_name, last_name, middle_name, ssn, dbo, sex, tel_number, fax_number, specialization, orgname, address)
 	 * @return
+	 *  -1 in case of error in a query
+	 *   0 if everything goes fine and a new tuple is inserted into the hcp_account table
 	 * */
 	function register($inputs){
 	
@@ -96,12 +138,36 @@ class Hcp_model extends Model {
 		$sql = "INSERT INTO hcp_account (account_id, first_name, last_name, middle_name, ssn, dob, sex, tel_number, fax_number, specialization, org_name, address)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$query = $this->db->query($sql, $inputs);
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		return 0;
 	}
 	
-	//update doctor information
-	//$inputs is of the form( account_id, first_name, last_name, middle_name, tel_number, fax_number, specialization, orgname, address)
-	//updates the HCP_Account table
+
+	/**
+	 * Update doctor information
+	 * 
+	 * @param $inputs 
+	 *   Is of the form: array(account_id, first_name, last_name, middle_name, tel_number, fax_number, specialization, orgname, address)
+	 * @return
+	 *  -1 in case of error in a query
+	 *  -7 if the account_id does not exist
+	 *   0 if everything goes fine and the tuple is updated in the hcp_account table
+	 * */
 	function update_personal_info($inputs){
+		
+		//test to see if account_id exists
+		$sql = "SELECT H.account_id
+			FROM hcp_account H
+			WHERE H.account_id = ?";
+		$query = $this->db->query($sql, array($inputs[0]));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if ($query->num_rows() < 1)
+			return -7;
 	
 		//$data = array( 'first_name' => $inputs[1], 'last_name' => $inputs[2], 'middle_name' => $inputs[3], 'tel_number' => $inputs[4], 
 			       //'fax_number' => $inputs[5], 'specialization' => $inputs[6], 'org_name' => $inputs[7], 'address' => $inputs[8]);
@@ -112,7 +178,11 @@ class Hcp_model extends Model {
 			WHERE account_id = ?";
 		$query = $this->db->query($data, array($inputs[1], $inputs[2], $inputs[3], $inputs[4], $inputs[5],
 						       $inputs[6], $inputs[7], $inputs[8], $inputs[0]));
-
+						       
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		return 0;
 	}
 }
 /** @} */
