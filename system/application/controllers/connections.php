@@ -28,56 +28,53 @@ class Connections extends Controller {
 	}
 
 	/**
-	 * fn list_doctors: list all doctors that user is connected with.
+	 * List all doctors that current user is connected with
 	 * 
-	 * only available for patients
+	 * @note Available for both patients and doctors
 	 * 
-	 * @return: list view of doctors
+	 * @return: List view of my hcps
 	 * */
-	function list_doctors()	{
-		$this->auth->check_logged_in();		
+	function myhcps() {
+		$this->auth->check_logged_in();
 
 		$this->load->model('connections_model');
 		
 		if ($this->auth->get_type() === 'patient') {
-			$results = $this->connections_model->list_my_doctors($this->auth->get_account_id()); 
-			$sidepane='sidepane/patient-profile'
-		} 
-
-		else if ($this->auth->get_type() === 'doctor'){
-			$results = $this->connections_model->list_my_colleagues($this->auth->get_account_id()); 
-			$sidepane='sidepane/doctor-profile'
+			$results  = $this->connections_model->list_my_doctors($this->auth->get_account_id()); 
+			$sidepane = 'sidepane/patient-profile';
 		}
-		else{
+		else if ($this->auth->get_type() === 'doctor'){
+			$results  = $this->connections_model->list_my_colleagues($this->auth->get_account_id()); 
+			$sidepane = 'sidepane/doctor-profile';
+		}
+		else {
 			show_error('Internal server logic error.', 500);
 			return;
 		}
-		switch($results){
+		
+		switch ($results) {
 			case -1:
-				$view = 'Query error!';
+				$mainview = 'Query error!';
+				$sideview = '';
 				break;
 			default:
-				$view = $this->ajax->view(array(
-						$this->load->view('mainpane/mydoctors', array('hcp_list' => $results) , TRUE),
-						$this->load->view($sidepane, '', TRUE)
-						));			
+				$mainview = $this->load->view('mainpane/mydoctors', array('hcp_list' => $results) , TRUE);
+				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
 		}
 		
-		$this->ajax->view(array(
-			$view,
-			''
-		));
+		// Give results to the client
+		$this->ajax->view(array($mainview,$sideview));
 	}
 
 	/**
-	 * fn list_patients: list all patients that hcp is connected with.
+	 * List all patients that current hcp is connected with
 	 * 
-	 * only available for doctors
+	 * @note Only available for hcps
 	 * 
-	 * @return: list view of patients
+	 * @return: List view of patients
 	 * */
-	function list_patients()
+	function mypatients()
 	{
 		$this->auth->check_logged_in();
 		
@@ -92,37 +89,55 @@ class Connections extends Controller {
 		// Switch the response from the model, to select the correct view
 		switch ($res) {
 			case -1:
-				$view = 'Query error!';
+				$mainview = 'Query error!';
+				$sideview = '';
 				break;
 			default:
-				$view = $this->ajax->view(array(
-							$this->load->view('mainpane/mypatients', array('pat_list' => $res) , TRUE),
-							$this->load->view('sidepane/doctor-profile', '', TRUE)
-						));
+				$mainview = $this->load->view('mainpane/mypatients', array('pat_list' => $res) , TRUE);
+				$sideview = $this->load->view('sidepane/doctor-profile', '', TRUE);
 				break;
 		}
 		
-		// Create final view for the user
-		$this->ajax->view(array(
-			$view,
-			''
-		));
-
+		// Give results to the client
+		$this->ajax->view(array($mainview,$sideview));
 	}
-
-	/* 
-	 * Lists the pending connections that this user has initiated(outgoing)
+	
+	/**
+	 * Lists the pending connections that this user has initiated
+	 * 
+	 * @param
+	 *   $direction
+	 *   If it is 'out', it lists pending outgoing connections,
+	 *   otherwise it lists pending incoming connections.
+	 * 
+	 * @attention Only hcps can see pending(in)
 	 * */
-	function list_pending_out() 
+	function pending($direction = 'in')
+	{
+		if ($direction == 'in') {
+			if ($this->auth->get_type() === 'doctor') {
+				$this->_pending_in();
+			} else {
+				show_error($this->load->view('errors/not_hcp', '', TRUE));
+			}
+		} else {
+			$this->_pending_out();
+		}
+	}
+	
+	/**
+	 * Private function to list all pending outgoing connection requests
+	 * */
+	function _pending_out()
 	{
 		$this->auth->check_logged_in();
 		$this->load->model('connections_model');
 		
-		if($this->auth->get_type() === 'doctor'){
+		if ($this->auth->get_type() === 'doctor') {
 			$res = $this->connections_model->pending_todoctors_fromdoctor(array($this->auth->get_account_id())); 
 			$sidepane = 'sidepane/doctor-profile';
 		}
-		else if($this->auth->get_type() === 'patient'){
+		else if ($this->auth->get_type() === 'patient') {
 			$res = $this->connections_model->pending_todoctors_frompatient(array($this->auth->get_account_id())); 
 			$sidepane = 'sidepane/patient-profile';
 		}
@@ -134,28 +149,24 @@ class Connections extends Controller {
 		// Switch the response from the model, to select the correct view
 		switch ($res) {
 			case -1:
-				$view = 'Query error!';
+				$mainview = 'Query error!';
+				$sideview = '';
 				break;
 			default:
-				$view = $this->ajax->view(array(
-							$this->load->view('mainpane/mypatients', array('pending_list' => $res) , TRUE),
-							$this->load->view($sidepane, '', TRUE)
-						));
+				$mainview = $this->load->view('mainpane/mypatients', array('pending_list' => $res) , TRUE);
+				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
 		}
 		
-		// Create final view for the user
-		$this->ajax->view(array(
-			$view,
-			''
-		));
+		// Give results to the client
+		$this->ajax->view(array($mainview,$sideview));
 	}
 	
-	/* 
-	 * Lists the pending connections that this user has received(incoming)
-	 * Only doctors have this
+	/**
+	 * Private function that lists all pending connections that this 
+	 * user has received (incoming)
 	 * */
-	function list_pending_in() 
+	function _pending_in() 
 	{
 		$this->auth->check_logged_in();
 		$this->load->model('connections_model');
@@ -165,10 +176,6 @@ class Connections extends Controller {
 			$res2 = $this->connections_model->pending_todoctor_frompatients(array($this->auth->get_account_id())); 
 			$sidepane = 'sidepane/doctor-profile';
 		}
-		else if($this->auth->get_type() === 'patient'){
-			show_error('Patients cannot be requested. Internal server logic error.', 500);
-			return;
-		}
 		else {
 			show_error('Internal server logic error.', 500);
 			return;
@@ -177,22 +184,19 @@ class Connections extends Controller {
 		// Switch the response from the model, to select the correct view
 		switch ($res) {
 			case -1:
-				$view = 'Query error!';
+				$mainview = 'Query error!';
+				$sideview = '';
 				break;
 			default:
-				$view = $this->ajax->view(array(
-							$this->load->view('mainpane/mypatients', array('pending_hcp' => $res,'pending_pat' => $res2) , TRUE),
-							$this->load->view($sidepane, '', TRUE)
-						));
+				$mainview = $this->load->view('mainpane/mypatients', array('pending_hcp' => $res,'pending_pat' => $res2) , TRUE);
+				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
 		}
 		
-		// Create final view for the user
-		$this->ajax->view(array(
-			$view,
-			''
-		));
-	}	
+		// Give results to the client
+		$this->ajax->view(array($mainview,$sideview));
+	}
+	
 	/**
 	 * Request a new connection to a doctor.
 	 * 
@@ -247,13 +251,16 @@ class Connections extends Controller {
 		// Switch the response from the model, to select the correct view
 		switch ($res) {
 			case -1:
-				$view = 'Query error!';
+				$mainview = 'Query error!';
+				$sideview = '';
 				break;
 			case -3:
-				$view = 'This connection has been already requested.';
+				$mainview = 'This connection has been already requested.';
+				$sideview = '';
 				break;
 			default:
-				$view = 'Your request has been submitted.';
+				$mainview = 'Your request has been submitted.';
+				$sideview = '';
 				$this->load->library('email');
 				$config['mailtype'] = 'html';
 				$this->email->initialize($config);
@@ -272,10 +279,8 @@ class Connections extends Controller {
 				break;
 		}
 		
-		$this->ajax->view(array(
-			$view,
-			''
-		));
+		// Give results to the client
+		$this->ajax->view(array($mainview,$sideview));
 	}
 
 	/** 
@@ -322,24 +327,25 @@ class Connections extends Controller {
 		// Switch the response from the model, to select the correct view
 		switch ($res) {
 			case -1:
-				$view = 'Query error!';
+				$mainview = 'Query error!';
+				$sideview = '';
 				break;
 			case -2:
-				$view = 'Connection does not exists.';
+				$mainview = 'Connection does not exists.';
+				$sideview = '';
 				break;
 			case -3:
-				$view = 'This connection has already been accepted.';
+				$mainview = 'This connection has already been accepted.';
+				$sideview = '';
 				break;
 			default:
-				$view = 'You have accepted the connection.';
+				$mainview = 'You have accepted the connection.';
+				$sideview = '';
 				break;
 		}
 		
-		// Create final view for the user
-		$this->ajax->view(array(
-			$view,
-			''
-		));
+		// Give results to the client
+		$this->ajax->view(array($mainview,$sideview));
 	}
 
 	// destroy connection (un-friend someone)

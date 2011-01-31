@@ -134,9 +134,9 @@ class Connections_model extends Model {
 	 * */
 	 function pending_todoctor_frompatients($inputs)
 	 {
-		$sql = "SELECT A.first_name A.last_name
+		$sql = "SELECT A.first_name, A.last_name
 	 		FROM p_d_connection P, patient_account A
-			WHERE P.hcp_id = ? AND AND P.accepted = FALSE AND A.account_id = P.patient_id";
+			WHERE P.hcp_id = ? AND P.accepted = FALSE AND A.account_id = P.patient_id";
  		$query = $this->db->query($sql, $inputs);
  		$result = $query->result_array();
 	
@@ -162,9 +162,9 @@ class Connections_model extends Model {
 	 * */
 	 function pending_todoctor_fromdoctors($inputs)
 	 {
-		$sql = "SELECT A.first_name A.last_name
+		$sql = "SELECT A.first_name, A.last_name
 	 		FROM d_d_connection D, hcp_account A
-			WHERE D.accepter_id = ? AND AND D.accepted = FALSE AND A.account_id = D.requester_id";
+			WHERE D.accepter_id = ? AND D.accepted = FALSE AND A.account_id = D.requester_id";
  		$query = $this->db->query($sql, $inputs);
  		$result = $query->result_array();
 		
@@ -190,9 +190,9 @@ class Connections_model extends Model {
 	 * */
 	 function pending_todoctors_fromdoctor($inputs)
 	 {
-		$sql = "SELECT A.first_name A.last_name
+		$sql = "SELECT A.first_name, A.last_name
 	 		FROM d_d_connection D, hcp_account A
-			WHERE D.requester_id = ? AND AND D.accepted = FALSE AND A.account_id = D.accepter_id";
+			WHERE D.requester_id = ? AND D.accepted = FALSE AND A.account_id = D.accepter_id";
  		$query = $this->db->query($sql, $inputs);
 	
 		if ($this->db->trans_status() === FALSE)

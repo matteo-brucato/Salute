@@ -32,6 +32,14 @@ function layout_bindings() {
 		execute_ajax(href);
 	});
 	
+	$("a.ajaxlink-confirm").live("click", function() {
+		event.preventDefault();
+		if (confirm('Do you really want to?')) {
+			var href = $(this).attr('href');
+			execute_ajax(href);
+		}
+	});
+	
 	$("#mypatients-table tr, #mydoctors-table tr").live("hover",
 	function() {
 		$(this).children().toggleClass("tables-1-selected-tds");
@@ -46,14 +54,6 @@ function layout_bindings() {
 		alert(account_id);
 		execute_ajax('/profile/user/' + account_id);
 	});*/
-	
-	$("a.ajaxlink-confirm").live("click", function() {
-		event.preventDefault();
-		if (confirm('Do you really want to?')) {
-			var href = $(this).attr('href');
-			execute_ajax(href);
-		}
-	});
 }
 
 function show_patient_form() {
