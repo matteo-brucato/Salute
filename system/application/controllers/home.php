@@ -150,78 +150,111 @@ class Home extends Controller {
 
 	}
 
-//	 * @todo -- this is not tested, unsure about logic. 
+	/*
+	 * loads registration form
+	 * */
 	function register()
 	{
 		$this->ajax->view(array(
 					$this->load->view('mainpane/registration', '', TRUE),
 					$this->load->view('sidepane/default', '', TRUE)
 				));
-		$email = $this->input->post('email');
-		$password = $this->input->post('password');
-		$type = $this->input->post('type');
-		$first_name = $this->input->post('first_name');
-		$middle_name = $this->input->post('middle_name');
-		$last_name = $this->input->post('last_name');
-		$dob = $this->input->post('dob');
-		$sex = $this->input->post('sex');
-		$ssn = $this->input->post('ssn');
-		$tel_no = $this->input->post('tel_no');
-		$fax_no = $this->input->post('fax_no');
-		$address = $this->input->post('address');
-		$input=array(
-				'email' => $email,'password' => $password,'type' => $type,'first_name' => $first_name,'last_name' => $last_name,
-				'middle_name' => $middle_name, 'dob' => $dob, 'sex' => $sex, 'ssn' => $ssn,'tel_no' => $tel_no,
-				'fax_no' => $fax_no, 'address' => $address);
-		/* @todo- Fancy: Confirmation Email*/
-
+	
 	}
-//	 * @todo -- this is not tested, unsure about logic. 
+
+	/*
+	 * registers new user 
+	 * @args
+	 * 		takes in text from user(registration form)
+	 * @return
+	 * 		error 
+	 * 			email || password is missing
+	 *			add_account query error
+	 * 			email is already registered
+	 * 			type is not doctor nor patient
+	 * 			account id is already registered in patient||hcp table
+	 * 		confirmation view
+	 * @attention how is the type going to be returned to the controller? 
+	 * @todo- Fancy: Confirmation Email
+	 * */
 	function register_do()
 	{
-
+		$email = $this->input->post('email');
+		$password = $this->input->post('password');
+	
+		if($email == NULL || $password == NULL)	{
+			show_error('Email and Password are mandatory to register.',500);
+			return;
+		}
+		
 		$this->load->model('account_model');
 		$account_id = $this->account_model->add_account(array('email' => $email, 'password' => $password)); 
-
-		if ($type === 'patient'){
-			echo "i am a patient!";
-			$this->load->model('patient_model');
-			$this->patient_model->register(array(
-								'account_id' => $account_id, 
-								'first_name' => $first_name, 
-								'last_name' => $last_name,
-								'middle_name' => $middle_name, 
-								'ssn' => $ssn, 
-								'dob' => $dob, 
-								'sex' => $sex, 
-								'tel_number' => $tel_no, 
-								'fax_number' => $fax_no, 
-								'address' => $address
-							)); 
+		
+		switch ($account_id) {
+			case -1:
+				$view = 'Query error!';
+				$error = TRUE;
+				break;
+			case -2:
+				$view = 'This email is already registered.';
+				$error = TRUE;
+				break;
+			default:
+				$error = FALSE;
+				break;
 		}
-
+		
+		if($error){
+					$this->ajax->view(array(
+						$view,
+						''
+					));
+					return;
+				}
+				
+		$type = $this->input->post('type');
+		$input=array(
+						$account_id,
+						$this->input->post('first_name'),
+						$this->input->post('middle_name'),
+						$this->input->post('last_name'),
+						$this->input->post('dob'),
+						$this->input->post('sex'),
+						$this->input->post('ssn'),
+						$this->input->post('tel_no'),
+						$this->input->post('fax_no'),
+						$this->input->post('address')
+		);
+		
+		if ($type === 'patient'){
+			$this->load->model('patient_model');
+			$res = $this->patient_model->register(array($input)); 
+		}
 		else if ($type() === 'doctor') {
-			echo "I am a doctor!";
 			$this->load->model('hcp_model');
-			$this->hcp_model->register(array(
-								'account_id' => $account_id, 
-								'first_name' => $first_name, 
-								'last_name' => $last_name,
-								'middle_name' => $middle_name, 
-								'ssn' => $ssn, 
-								'dob' => $dob, 
-								'sex' => $sex, 
-								'tel_number' => $tel_no, 
-								'fax_number' => $fax_no, 
-								'address' => $address
-						)); 
+			$res = $this->hcp_model->register(array($input)); 
 		}
 		else {
-			show_error('Unknown Error.', 500);
+			show_error('Internal Server Error.', 500);
 		}
 
-		/* @todo- Confirmation view*/
-		$this->ajax->view(array('Congratulations, you are now registered. ',''));
+		switch ($res) {
+			case -1:
+				$view = 'Query error!';
+				break;
+			case -2:
+				$view = 'This account id is already registered.';
+				break;
+			default:
+				$view = 'Congratulations, you are now registered.';
+				break;
+		}
+		
+		// Create final view for the user
+		$this->ajax->view(array(
+			$view,
+			''
+		));
 	}
 }
 
