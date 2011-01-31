@@ -94,11 +94,13 @@ class Profile extends Controller {
 	 * 			hcp trying to view unconnected patient: 'Sorry! An HCP can only view profiles of connected patients'
 	 * 			pat trying to view unconnected hcp: 'You are not connected. Permission Denied.' 
 	 * 			hcp trying to view unconnected hcp: 'You are not connected. Permission Denied.'
+	 * 			pat trying to view patient: 'Sorry! Patients cannot be connected with other patients'
 	 * Fails:
 	 * 			hcp trying to view connected hcp: Query error!'
 	 * 			hcp trying to view unconnected hcp: 'You are not connected. Permission Denied.'
 	 * 			hcp trying to view connected patient: Sorry! An HCP can only view profiles of connected patients
 	 * 			pat trying to view connected hcp: 'Query error!'
+	 * 
 	 * 
 	 * */
 	function user($id = NULL) {
@@ -155,7 +157,11 @@ class Profile extends Controller {
 			show_error('Sorry! An HCP can only view profiles of connected patients');
 			return;
 		}
-		
+		else if ($this->auth->get_type() == 'patient' && $id_type == 'patient') {
+			show_error('Sorry! Patients cannot be connected with other patients',500);
+			return;
+		}
+	
 		// check that the id is friends with logged in user
 		$is_my_friend = $this->connections_model->is_connected_with($this->auth->get_account_id(), $id);
 		switch ($is_my_friend) {
