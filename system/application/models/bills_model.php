@@ -12,23 +12,48 @@ class Bills_model extends Model {
 	 * @param $inputs
 	 *   Is of the form: array(patient_id, bill_id)
 	 * @return
-	 *   Returns TRUE if it is, FALSE otherwise
+	 *  -1 in case of error in a query
+	 *  -6 in case bill_id does not exist
+	 *   TRUE if it is
+	 *   FALSE otherwise
 	 * */
 	 function is_mybill($inputs){
+		 
+		//test to see if bill_id exists
+		$sql = "SELECT *
+			FROM payment P
+			WHERE P.bill_id = ?"
+		$query = $this->db->query($sql, array($inputs[1]));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if ($query->num_rows() < 1)
+			return -6;
 	 
 	 	$sql = "SELECT *
 	 		FROM payment P
 	 		WHERE P.patient_id = ? AND P.bill_id = ?"
 	 	$query = $this->db->query($sql, $inputs);
-	 	$result = $query->result_array();
-	 	if ( count($result) > 0 )
-	 		return TRUE;
+	 	
+	 	if ($this->db->trans_status() === FALSE)
+			return -1;
+		if ($query->num_rows() > 0)
+			return TRUE;
+			
 	 	return FALSE;
 	 }
 
-	//view all bills a patient has received OR all bills a doctor has issued
-	//I assume $inputs will be of the form (account_id, type of account(doctor or patient))
-	//returns array with all bills OR NULL if there are no bills
+
+	/**
+	 * View all bills a patient has received OR all bills a doctor has issued
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id, type of account(doctor or patient))
+	 * @return
+	 *  -1 in case of error in a query
+	 *   Array with all bills
+	 *   NULL if there are no bills
+	 * */
 	function view_all($inputs){
 	
 		//lists all bills a patient has received
@@ -37,9 +62,11 @@ class Bills_model extends Model {
 				FROM payment B, hcp_account H, hcp_account H2
 				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id == H2.account_id";
 			$query = $this->db->query($sql, $inputs[0]);
-			$result = $query->result_array();
-			if( count($result) > 0 )
-				return $result;
+			
+			if ($this->db->trans_status() === FALSE)
+				return -1;
+			if ($query->num_rows() > 0)
+				return $query->result_array();
 
 			return NULL;	
 		}
@@ -49,17 +76,26 @@ class Bills_model extends Model {
 			FROM payment B, patient_account P, patient_account P2
 			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id == P2.account_id";
 		$query = $this->db->query($sql, $inputs[0]);
-		$result = $query->result_array();
-		if( count($result) > 0 )
-			return $result;
+
+		if ($this->db->trans_status() === FALSE)
+			return -1;			
+		if ($query->num_rows() > 0)
+			return $query->result_array();
 
 		return NULL;	
-			
 	}
 
-	//view all CURRENT bills a patient has received OR all CURRENT bills a doctor has issued
-	//I assume $inputs will be of the form (account_id, type of account(doctor or patient))
-	//returns array with all bills OR NULL if there are no bills
+
+	/**
+	 * View all CURRENT bills a patient has received OR all CURRENT bills a doctor has issued
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id, type of account(doctor or patient))
+	 * @return
+	 *  -1 in case of error in a query
+	 *   Array with all bills
+	 *   NULL if there are no bills
+	 * */
 	function view_current($inputs){
 
 		//lists all current bills a patient has received
@@ -68,10 +104,12 @@ class Bills_model extends Model {
 				FROM payment B, hcp_account H, hcp_account H2
 				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id == H2.account_id AND B.due_date >= curdate()";
 			$query = $this->db->query($sql, $inputs[0]);
-			$result = $query->result_array();
-			if( count($result) > 0 )
-				return $result;
 			
+			if ($this->db->trans_status() === FALSE)
+				return -1;			
+			if ($query->num_rows() > 0)
+				return $query->result_array();
+				
 			return NULL;	
 		}
 
@@ -80,17 +118,26 @@ class Bills_model extends Model {
 			FROM payment B, patient_account P, patient_account P2
 			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id == P2.account_id AND B.due_date >= curdate()";
 		$query = $this->db->query($sql, $inputs[0]);
-		$result = $query->result_array();
-		if( count($result) > 0 )
-			return $result;
-			
+		
+		if ($this->db->trans_status() === FALSE)
+				return -1;			
+		if ($query->num_rows() > 0)
+			return $query->result_array();			
+		
 		return NULL;	
 	}
 
 
-	//view all PAST bills a patient has received OR all PAST bills a doctor has issued
-	//I assume $inputs will be of the form (account_id, type of account(doctor or patient))
-	//returns array with all bills OR NULL if there are no bills
+	/**
+	 * View all PAST bills a patient has received OR all PAST bills a doctor has issued
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id, type of account(doctor or patient))
+	 * @return
+	 *  -1 in case of error in a query
+	 *   Array with all bills
+	 *   NULL if there are no bills
+	 * */
 	function view_past($inputs){
 
 		//lists all past bills a patient has received
@@ -99,9 +146,11 @@ class Bills_model extends Model {
 				FROM payment B, hcp_account H, hcp_account H2
 				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id == H2.account_id AND B.due_date < curdate()";
 			$query = $this->db->query($sql, $inputs[0]);
-			$result = $query->result_array();
-			if( count($result) > 0 )
-				return $result;
+			
+			if ($this->db->trans_status() === FALSE)
+				return -1;			
+			if ($query->num_rows() > 0)
+				return $query->result_array();	
 			
 			return NULL;	
 		}
@@ -111,16 +160,26 @@ class Bills_model extends Model {
 			FROM payment B, patient_account P, patient_account P2
 			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id == P2.account_id AND B.due_date < curdate()";
 		$query = $this->db->query($sql, $inputs[0]);
-		$result = $query->result_array();
-		if( count($result) > 0 )
-			return $result;
+		
+		if ($this->db->trans_status() === FALSE)
+				return -1;			
+		if ($query->num_rows() > 0)
+			return $query->result_array();	
 			
 		return NULL;
 	}
 
-	//view all PAST bills a patient has received OR all PAST bills a doctor has issued THAT HAVE NOT CLEARED
-	//I assume $inputs will be of the form (account_id, type of account(doctor or patient))
-	//returns array with all bills OR NULL if there are no bills
+
+	/**
+	 * View all PAST bills a patient has received OR all PAST bills a doctor has issued THAT HAVE NOT CLEARED
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id, type of account(doctor or patient))
+	 * @return
+	 *  -1 in case of error in a query
+	 *   Array with all bills
+	 *   NULL if there are no bills
+	 * */	
 	function view_past_not_cleared($inputs){
 
 		//lists all past bills a patient has received that are NOT CLEARED
@@ -129,9 +188,11 @@ class Bills_model extends Model {
 				FROM payment B, hcp_account H, hcp_account H2
 				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id == H2.account_id AND B.due_date < curdate() AND B.cleared == FALSE";
 			$query = $this->db->query($sql, $inputs[0]);
-			$result = $query->result_array();
-			if( count($result) > 0 )
-				return $result;
+				
+			if ($this->db->trans_status() === FALSE)
+				return -1;			
+			if ($query->num_rows() > 0)
+				return $query->result_array();	
 			
 			return NULL;	
 		}
@@ -141,18 +202,27 @@ class Bills_model extends Model {
 			FROM payment B, patient_account P, patient_account P2
 			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id == P2.account_id AND B.due_date < curdate() AND B.cleared == FALSE";
 		$query = $this->db->query($sql, $inputs[0]);
-		$result = $query->result_array();
-		if( count($result) > 0 )
-			return $result;
+		
+		if ($this->db->trans_status() === FALSE)
+				return -1;			
+		if ($query->num_rows() > 0)
+			return $query->result_array();	
 			
 		return NULL;
 	}
 
 
-	//doctor issues a new bill to patient
-	//I assume $inputs will be of the form (patient_id, hcp_id, amount, descryption, due_date)
-	//inserts the new bill in the Payments table
-	//NOTE: NEED TO ADD ATTRIUTE TO THE DATABASE TO BE ABLE TO ADD ITEMIZED RECEIPT
+	/**
+	 * Doctor issues a new bill to patient
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(patient_id, hcp_id, amount, descryption, due_date)
+	 * @return
+	 *  -1 in case of error in a query
+	 *   0 if everything goes fine and a new tuple is inserted into the Payment table
+	 * @note
+	 *   NEED TO ADD ATTRIUTE TO THE DATABASE TO BE ABLE TO ADD ITEMIZED RECEIPT
+	 * */	
 	function issue_bill($inputs){
 
 		//$data = array( 'patient_id' => $inputs[0], 'hcp_id' => $inputs[1], 'amount' => $inputs[2], 'descryption' => $inputs[3], 'due_date' => $inputs[4]);
@@ -161,13 +231,37 @@ class Bills_model extends Model {
 		$sql = "INSERT INTO payment (patient_id, hcp_id, amount, descryption, due_date)
 			VALUES (?, ?, ?, ?)";
 		query = $this->db->query($sql, $inputs);
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		return 0;	
 	}
 
-	//patient pays a bill
-	//I assume $inputs will be of the form (bill_id)
-	//changes the cleared status of a bill to TRUE
+
+	/**
+	 * Patient pays a bill
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(bill_id)
+	 * @return
+	 *  -1 in case of error in a query
+	 *  -6 in case the bill_id does not exist
+	 *   0 if everything goes fine and cleared attribute is assigned TRUE
+	 * */	
 	function pay_bill($inputs){
 	
+		//test to see if bill_id exists
+		$sql = "SELECT *
+			FROM payment P
+			WHERE P.bill_id = ?"
+		$query = $this->db->query($sql, $inputs));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if ($query->num_rows() < 1)
+			return -6;
+			
 		//$data = array('cleared' => TRUE);
 		//$this->db->update('Payment', $data, array('bill_id' => $inputs[0]));
 		
@@ -175,6 +269,11 @@ class Bills_model extends Model {
 			SET cleared = TRUE
 			WHERE bill_id = ?"
 		$query = $this->db->query($sql, $inputs);
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		return 0;
 	}
 	
 	/**
@@ -183,16 +282,31 @@ class Bills_model extends Model {
 	 * @param $inputs
 	 *   Is of the form: array(hcp_id, bill_id)
 	 * @return
-	 *   Removes the tuple from the Payments table
+	 *  -1 in case of error in a query
+	 *  -6 in case the bill_id does not exist
+	 *   0 if everything goes fine and the tuple is removed from the Payments table
 	 * */
 	 function delete_bill($inputs){
+		 
+		//test to see if bill_id exists
+		$sql = "SELECT *
+			FROM payment P
+			WHERE P.bill_id = ?"
+		$query = $this->db->query($sql, $inputs));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if ($query->num_rows() < 1)
+			return -6;
 	 
 	 	$sql = "DELETE FROM payment
 	 		WHERE hcp_id = ? AND bill_id = ?";
 	 	$query = $this->db->query($sql, $inputs);
 	 	
-	 }
-
-	
+	 	if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		return 0;
+	 }	
 }
 ?>
