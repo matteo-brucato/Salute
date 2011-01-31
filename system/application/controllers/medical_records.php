@@ -18,14 +18,19 @@ class MedicalRecords extends Controller {
 		$this->account_id = $this->session->userdata('account_id');	
 	}
 
-	// Default: call list_my_med_recs function
+	/*
+	 * Default function call
+	 * @return  redirects to list_my_med_recs function
+	 */ 
 	function index()
 	{
 		$this->auth->check_logged_in();
 		$this->ajax->redirect('/medical_records/list_med_recs');
 	}
 
-	// list all medical records
+	/*
+	 * lists all medical records
+	*/
 	function list_med_recs()
 	{
 		$this->auth->check_logged_in();
@@ -50,58 +55,61 @@ class MedicalRecords extends Controller {
 		}		
 	}
 
-	// Add/Upload new medical record
+	/*
+	 * Loads view that allows you to upload a medical record
+	 * @todo need a view
+	 * */
+	function upload(){
+		$this->auth->check_logged_in();
+
+		$this->ajax->view(array(
+								$this->load->view('mainpane/_____', '' , TRUE),
+								''
+						));	
+		}
+	}
+	/*
+	 * Add the new medical record
+	 * @attention should the patient approve this first before having it added to their list of records?
+	 */ 
 	function add()
 	{
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
 
-		// Case 1: Patient add their own file
+		$file = $this->input->post('filepath');
+		
+		// Patient adding their own file
 		if ($this->auth->get_type() === 'patient') {
-
-			/* TODO: Need a view for file uploads */
-			// TODO: How to upload a file from a user's computer?
-			// expects file on return... 
-			$file = $this->ajax->view(array(
-						$this->load->view('mainpane/_____', '' , TRUE),
-						''
-			));	
-			
 			$results = $this->medical_record_model->add_med_record(array(
-										'patient_id' => $this->auth->get_account_id(), 
-										'account_id' => $this->auth->get_account_id(), 
-										'file_path' => $file,
-			)); 
+																			'patient_id' => $this->auth->get_account_id(), 
+																			'account_id' => $this->auth->get_account_id(), 
+																			'file_path' => $file,
+																	)); 
 		}
 
-		// Case 2: Doctor adds medical record of a specific patient 
-		// 		Note: should the patient approve this first before having it added to their list of records?
-		// DEFAULT permission: set_hidden
-
+		// Doctor adds medical record of a specific patient 
 		else if ($this->auth->get_type() === 'doctor') {
-
-			/* TODO: Need a view for file uploads */
-			// TODO: How to upload a file from a user's computer?
-			$this->ajax->view(array(
-						$this->load->view('mainpane/_____', '' , TRUE),
-						''
-			));	
-
-			$file = $this->input->post('file');
 			$patient_id = $this->input->post('patient_id');
-			
 			$results = $this->medical_record_model->add_med_record(array(
-										'patient_id' => $this->auth->get_account_id(),
-										'account_id' => $this->auth->get_account_id(), 
-										'file_path' => $file,
-			)); 
-			// LATER: check that it was added successfully
+																			'patient_id' => $this->auth->get_account_id(),
+																			'account_id' => $this->auth->get_account_id(), 
+																			'file_path' => $file,
+																	)); 
 		}
 		else {		
-			show_error('Unknown Error.', 500);
+			show_error('Internal Logic Error.', 500);
 			return;
 		}
-		$this->ajax->redirect('/medical_records/list_med_recs');
+		
+		switch ($results) {
+			case -1:
+				$this->ajax->view(array('Query error!',''));
+				break;
+			default:
+				$this->ajax->redirect('/medical_records/list_med_recs');
+				break; 
+		}	
 	}
 
 	// gets called when an individual medical record is selected to be viewed

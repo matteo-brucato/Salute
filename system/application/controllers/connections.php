@@ -17,10 +17,9 @@ class Connections extends Controller {
 	}
 
 	/**
-	 * fn index -- default.
-	 * 
+	 * default view
+	 * @attention should never be accessible
 	 * @return error
-	 *
 	 * */
 	function index() {
 		show_error('Direct access to this resource is forbidden', 500);
@@ -28,11 +27,10 @@ class Connections extends Controller {
 	}
 
 	/**
-	 * fn list_doctors: list all doctors that user is connected with.
+	 * lists all doctors that user is connected with.
 	 * 
-	 * only available for patients
-	 * 
-	 * @return: list view of doctors
+	 * @attention
+	 * 		only available for patients
 	 * */
 	function list_doctors()	{
 		$this->auth->check_logged_in();		
@@ -71,11 +69,11 @@ class Connections extends Controller {
 	}
 
 	/**
-	 * fn list_patients: list all patients that hcp is connected with.
+	 * lists all patients that hcp is connected with.
 	 * 
-	 * only available for doctors
+	 * @attention
+	 * 		only available for doctors
 	 * 
-	 * @return: list view of patients
 	 * */
 	function list_patients()
 	{
@@ -153,7 +151,8 @@ class Connections extends Controller {
 	
 	/* 
 	 * Lists the pending connections that this user has received(incoming)
-	 * Only doctors have this
+	 * @attention
+	 * 		only doctors have this
 	 * */
 	function list_pending_in() 
 	{
@@ -342,33 +341,38 @@ class Connections extends Controller {
 		));
 	}
 
-	// destroy connection (un-friend someone)
-		function destroy($to_delete_id = NULL , $my_id = NULL )
+	/*
+	 * deletes connection (un-friend someone)
+	 * @param
+	 * 		id is the account_id of the doctor the user would like to disconnect from
+	 * @return 
+	 * 		error 
+	 * 			id not specified (the one to disconnect from)
+	 * 			query fails
+	 * 			connection doesnt exist
+	 * 		success: deleted the connection
+	 */
+	function destroy($id = NULL)
 	{
 		$this->auth->check_logged_in();
 		
-		if ( $to_delete_id == NULL || $my_id == NULL ){
-			show_error('ids not specified.', 500);
+		if ( $id == NULL ){
+			show_error('id not specified.', 500);
 			return;
 		}
 		
-		if ($this->auth->get_account_id() != $my_id) {
-			show_error('You are not the receiver for this request');
-			return;
-		}
-
 		$this->load->model('connections_model');
 		$this->load->model('hcp_model');
 		$this->load->model('patient_model');
 
-		if ( $this->patient_model->is_patient(array($to_delete_id)) ){
-			$res = $this->connections_model->remove_pd_connection(array('patient_id' => $this->auth->get_account_id() , 'hcp_id' => $to_delete_id )); 
+		if ( $this->patient_model->is_patient(array($id)) ){
+			$res = $this->connections_model->remove_pd_connection(array('patient_id' => $this->auth->get_account_id() , 'hcp_id' => $id )); 
 		}
-		else if ($this->hcp_model->is_doctor(array($to_delete_id))) {
-			$res = $this->connections_model->remove_dd_connection(array('this_hcp_id' => $this->auth->get_account_id() , 'hcp_id' => $to_delete_id )); 
+		else if ($this->hcp_model->is_doctor(array($id))) {
+			$res = $this->connections_model->remove_dd_connection(array('this_hcp_id' => $this->auth->get_account_id() , 'hcp_id' => $id )); 
 		}
 		else {
-			show_error('You are not part of this connection.Permission denied.', 500);
+			show_error('Internal Logic Error.', 500);
 			return;
 		}
 		
