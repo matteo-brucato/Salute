@@ -17,10 +17,9 @@ class Connections extends Controller {
 	}
 
 	/**
-	 * fn index -- default.
-	 * 
+	 * default view
+	 * @attention should never be accessible
 	 * @return error
-	 *
 	 * */
 	function index() {
 		show_error('Direct access to this resource is forbidden', 500);
@@ -28,11 +27,10 @@ class Connections extends Controller {
 	}
 
 	/**
-	 * fn list_doctors: list all doctors that user is connected with.
+	 * lists all doctors that user is connected with.
 	 * 
-	 * only available for patients
-	 * 
-	 * @return: list view of doctors
+	 * @attention
+	 * 		only available for patients
 	 * */
 	function list_doctors()	{
 		$this->auth->check_logged_in();		
@@ -71,11 +69,11 @@ class Connections extends Controller {
 	}
 
 	/**
-	 * fn list_patients: list all patients that hcp is connected with.
+	 * lists all patients that hcp is connected with.
 	 * 
-	 * only available for doctors
+	 * @attention
+	 * 		only available for doctors
 	 * 
-	 * @return: list view of patients
 	 * */
 	function list_patients()
 	{
@@ -153,7 +151,8 @@ class Connections extends Controller {
 	
 	/* 
 	 * Lists the pending connections that this user has received(incoming)
-	 * Only doctors have this
+	 * @attention
+	 * 		only doctors have this
 	 * */
 	function list_pending_in() 
 	{
@@ -345,12 +344,13 @@ class Connections extends Controller {
 	/*
 	 * deletes connection (un-friend someone)
 	 * @param
-	 * 		to_delete_id t
-	 * 		my_id
+	 * 		id is the account_id of the doctor the user would like to disconnect from
 	 * @return 
 	 * 		error 
+	 * 			id not specified (the one to disconnect from)
 	 * 			query fails
 	 * 			connection doesnt exist
+	 * 		success: deleted the connection
 	 */
 	function destroy($id = NULL)
 	{
