@@ -150,6 +150,9 @@ class Home extends Controller {
 
 	}
 
+	/*
+	 * loads registration form
+	 * */
 	function register()
 	{
 		$this->ajax->view(array(
@@ -160,17 +163,26 @@ class Home extends Controller {
 	}
 
 	/*
+	 * registers new user 
+	 * @args
+	 * 		takes in text from user(registration form)
+	 * @return
+	 * 		error 
+	 * 			email || password is missing
+	 *			add_account query error
+	 * 			email is already registered
+	 * 			type is not doctor nor patient
+	 * 			account id is already registered in patient||hcp table
+	 * 		confirmation view
 	 * @attention how is the type going to be returned to the controller? 
-	 * @todo -- this is not tested, unsure about logic. 
-	 */
+	 * @todo- Fancy: Confirmation Email
+	 * */
 	function register_do()
 	{
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
-		
-		/* @todo- Fancy: Confirmation Email*/
-
-		if($input[0] == NULL || $input[1] == NULL)	{
+	
+		if($email == NULL || $password == NULL)	{
 			show_error('Email and Password are mandatory to register.',500);
 			return;
 		}
@@ -178,12 +190,28 @@ class Home extends Controller {
 		$this->load->model('account_model');
 		$account_id = $this->account_model->add_account(array('email' => $email, 'password' => $password)); 
 		
-		if (account_id == -1){
-				$view = 'Query Error!';
-				$this->ajax->view(array($view,''));		
-				return;
+		switch ($account_id) {
+			case -1:
+				$view = 'Query error!';
+				$error = TRUE;
+				break;
+			case -2:
+				$view = 'This email is already registered.';
+				$error = TRUE;
+				break;
+			default:
+				$error = FALSE;
+				break;
 		}
-
+		
+		if($error){
+					$this->ajax->view(array(
+						$view,
+						''
+					));
+					return;
+				}
+				
 		$type = $this->input->post('type');
 		$input=array(
 						$account_id,
@@ -215,7 +243,7 @@ class Home extends Controller {
 				$view = 'Query error!';
 				break;
 			case -2:
-				$view = 'Connection does not exists.';
+				$view = 'This account id is already registered.';
 				break;
 			default:
 				$view = 'Congratulations, you are now registered.';
