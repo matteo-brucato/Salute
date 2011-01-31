@@ -22,7 +22,7 @@ class Appointments_model extends Model {
 		//test to see if the appointment_id exists
 		$sql = "SELECT *
 			FROM appointments A
-			WHERE A.appointment_id = ?"
+			WHERE A.appointment_id = ?";
 		$query = $this->db->query($sql, array($inputs[1]));
 		
 		if ($this->db->trans_status() === FALSE)
@@ -54,13 +54,13 @@ class Appointments_model extends Model {
 	 *  -1 in case of error in a query
 	 *  -5 appointment id does not exist
 	 *   Array with all the whole tuple from Appointments table, plus patient first_name and last_name, doctor first_name and last_name 
+	 *   emtpy array() if no tuples
 	 * */
 	 function get_appointment($inputs){
-		 
-		//test to see if the appointment_id exists
+
 		$sql = "SELECT *
 			FROM appointments A
-			WHERE A.appointment_id = ?"
+			WHERE A.appointment_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
@@ -74,8 +74,10 @@ class Appointments_model extends Model {
 			WHERE A.appointment_id = ? AND A.patient_id = P.account_id AND A.hcp_id = H.account_id";
 	 	$query = $this->db->query($sql, $inputs);
 	 	
-	 	if ($this->db->trans_status() === FALSE)
-			return -1;
+		if ($this->db->trans_status() === FALSE)
+			return -1;		
+		if ($query->num_rows() < 1)
+			return array();
 		
 	 	return $query->result_array();
 	 }
@@ -126,7 +128,7 @@ class Appointments_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all appointments
-	 *   NULL if there are no appointments
+	 *   empty array() if there are no appointments
 	 * */
 	function view_all($inputs){
 	
@@ -143,7 +145,7 @@ class Appointments_model extends Model {
 			if ($query->num_rows() > 0)
 				return $query->result_array();
 
-			return NULL;	
+			return array();	
 		}
 
 		//lists all appointments a doctor has issued
@@ -158,7 +160,7 @@ class Appointments_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();
 			
-		return NULL;			
+		return array();			
 	}
 	
 	
@@ -170,7 +172,7 @@ class Appointments_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all upcoming appointments
-	 *   NULL if there are no upcoming appointments
+	 *   empty array() if there are no upcoming appointments
 	 * @note
 	 *   I DETERMINE WHAT IS UPCOMING IF THE APPOINTMENT date_time ATTRIBURE >= NOW() (NOW RETURNTS CURRENT DATE AND TIME YY-MM-DD HH:MM:SS)	
 	 * */
@@ -189,7 +191,7 @@ class Appointments_model extends Model {
 			if ($query->num_rows() > 0)
 				return $query->result_array();
 
-			return NULL;	
+			return array();	
 		}
 
 		//lists all upcoming appointments a doctor has
@@ -204,7 +206,7 @@ class Appointments_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();
 
-		return NULL;			
+		return array();			
 	}
 	
 
@@ -216,7 +218,7 @@ class Appointments_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all past appointments
-	 *   NULL if there are no past appointments
+	 *   empty array() if there are no past appointments
 	 * @note
 	 *   I DETERMINE WHAT IS PAST IF THE APPOINTMENT date_time ATTRIBURE < NOW() (NOW RETURNTS CURRENT DATE AND TIME YY-MM-DD HH:MM:SS)	
 	 * */
@@ -235,7 +237,7 @@ class Appointments_model extends Model {
 			if ($query->num_rows() > 0)
 				return $query->result_array();
 
-			return NULL;	
+			return array();	
 		}
 
 		//lists all past appointments a doctor has had
@@ -250,7 +252,7 @@ class Appointments_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();
 		
-		return NULL;
+		return array();
 	}
 	
 	
@@ -269,7 +271,7 @@ class Appointments_model extends Model {
 		//test to see if the appointment_id exists
 		$sql = "SELECT *
 			FROM appointments A
-			WHERE A.appointment_id = ?"
+			WHERE A.appointment_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
@@ -307,7 +309,7 @@ class Appointments_model extends Model {
 		//test to see if the appointment_id exists
 		$sql = "SELECT *
 			FROM appointments A
-			WHERE A.appointment_id = ?"
+			WHERE A.appointment_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
@@ -345,7 +347,7 @@ class Appointments_model extends Model {
 		//test to see if the appointment_id exists
 		$sql = "SELECT *
 			FROM appointments A
-			WHERE A.appointment_id = ?"
+			WHERE A.appointment_id = ?";
 		$query = $this->db->query($sql, array($inputs[0]));
 		
 		if ($this->db->trans_status() === FALSE)

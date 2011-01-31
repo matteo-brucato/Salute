@@ -23,7 +23,7 @@ class Connections_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all the patients a doctor has
-	 *   NULL if none
+	 *   empty array() if none
 	 * */
 	function list_my_patients($inputs) {
 		$sql = "SELECT *
@@ -37,7 +37,7 @@ class Connections_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();
 		
-		return NULL;
+		return array();
 	}
 
 
@@ -49,7 +49,7 @@ class Connections_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all the doctor friends
-	 *   NULL if none
+	 *   empty array() if none
 	 * */
 	function list_my_colleagues($account_id) {
 		$sql = "SELECT *
@@ -64,7 +64,7 @@ class Connections_model extends Model {
 		if ($query->num_rows() > 0)	
 			return $query->result_array();
 			
-		return NULL;
+		return array();
 	}	
 
 
@@ -76,7 +76,7 @@ class Connections_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array of all the doctor friends
-	 *   NULL if none
+	 *   empty array() if none
 	 * */
 	function list_my_doctors($inputs) {
 		$sql = "SELECT *
@@ -90,7 +90,7 @@ class Connections_model extends Model {
 		if ($query->num_rows() > 0)	
 			return $query->result_array();
 		
-		return NULL;
+		return array();
 	}
 	
 	
@@ -102,7 +102,7 @@ class Connections_model extends Model {
 	 * @return	
 	 *  -1 in case of error in a query
 	 *   Array with all pending requests
-	 *   NULL if none
+	 *   empty array() if none
 	 * */
 	 function pending_todoctors_frompatient($inputs)
 	 {
@@ -117,7 +117,7 @@ class Connections_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();
 		
-		return NULL;
+		return array();
 
 	 }
 	 
@@ -130,7 +130,7 @@ class Connections_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all pending requests
-	 *   NULL if none
+	 *   empty array() if none
 	 * */
 	 function pending_todoctor_frompatients($inputs)
 	 {
@@ -146,7 +146,7 @@ class Connections_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();
 		
-		return NULL;
+		return array();
 	 }
 	 
 	 
@@ -158,7 +158,7 @@ class Connections_model extends Model {
 	 * @return
 	 * 	 -1 in case of error in a query
 	 *    Array with all pending requests OR 
-	 * 	  NULL if none
+	 *    empty array() if none
 	 * */
 	 function pending_todoctor_fromdoctors($inputs)
 	 {
@@ -174,7 +174,7 @@ class Connections_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();
 		
-		return NULL;
+		return array();
 	 }
 	 
 	 
@@ -186,7 +186,7 @@ class Connections_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all pending requests
-	 *   NULL if none	 
+	 *   array() if none	 
 	 * */
 	 function pending_todoctors_fromdoctor($inputs)
 	 {
@@ -201,7 +201,7 @@ class Connections_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();
 		
-		return NULL;
+		return array();
 	 }
 	
 

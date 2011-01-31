@@ -22,7 +22,7 @@ class Bills_model extends Model {
 		//test to see if bill_id exists
 		$sql = "SELECT *
 			FROM payment P
-			WHERE P.bill_id = ?"
+			WHERE P.bill_id = ?";
 		$query = $this->db->query($sql, array($inputs[1]));
 		
 		if ($this->db->trans_status() === FALSE)
@@ -32,7 +32,7 @@ class Bills_model extends Model {
 	 
 	 	$sql = "SELECT *
 	 		FROM payment P
-	 		WHERE P.patient_id = ? AND P.bill_id = ?"
+	 		WHERE P.patient_id = ? AND P.bill_id = ?";
 	 	$query = $this->db->query($sql, $inputs);
 	 	
 	 	if ($this->db->trans_status() === FALSE)
@@ -52,7 +52,7 @@ class Bills_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all bills
-	 *   NULL if there are no bills
+	 *   empty array() if there are no bills
 	 * */
 	function view_all($inputs){
 	
@@ -68,7 +68,7 @@ class Bills_model extends Model {
 			if ($query->num_rows() > 0)
 				return $query->result_array();
 
-			return NULL;	
+			return array();	
 		}
 
 		//lists all bills a doctor has issued
@@ -82,7 +82,7 @@ class Bills_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();
 
-		return NULL;	
+		return array();	
 	}
 
 
@@ -94,7 +94,7 @@ class Bills_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all bills
-	 *   NULL if there are no bills
+	 *   empty array() if there are no bills
 	 * */
 	function view_current($inputs){
 
@@ -110,7 +110,7 @@ class Bills_model extends Model {
 			if ($query->num_rows() > 0)
 				return $query->result_array();
 				
-			return NULL;	
+			return array();	
 		}
 
 		//list all current bills a doctor has issued
@@ -124,7 +124,7 @@ class Bills_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();			
 		
-		return NULL;	
+		return array();	
 	}
 
 
@@ -136,7 +136,7 @@ class Bills_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all bills
-	 *   NULL if there are no bills
+	 *   empty array() if there are no bills
 	 * */
 	function view_past($inputs){
 
@@ -152,7 +152,7 @@ class Bills_model extends Model {
 			if ($query->num_rows() > 0)
 				return $query->result_array();	
 			
-			return NULL;	
+			return array();	
 		}
 
 		//list all past bills a doctor has issued
@@ -166,7 +166,7 @@ class Bills_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();	
 			
-		return NULL;
+		return array();
 	}
 
 
@@ -178,7 +178,7 @@ class Bills_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all bills
-	 *   NULL if there are no bills
+	 *   emmpty array() if there are no bills
 	 * */	
 	function view_past_not_cleared($inputs){
 
@@ -194,7 +194,7 @@ class Bills_model extends Model {
 			if ($query->num_rows() > 0)
 				return $query->result_array();	
 			
-			return NULL;	
+			return array();	
 		}
 
 		//list all past bills a doctor has issued that are NOT CLEARED
@@ -208,7 +208,7 @@ class Bills_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();	
 			
-		return NULL;
+		return array();
 	}
 
 
@@ -230,7 +230,7 @@ class Bills_model extends Model {
 		
 		$sql = "INSERT INTO payment (patient_id, hcp_id, amount, descryption, due_date)
 			VALUES (?, ?, ?, ?)";
-		query = $this->db->query($sql, $inputs);
+		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -254,8 +254,8 @@ class Bills_model extends Model {
 		//test to see if bill_id exists
 		$sql = "SELECT *
 			FROM payment P
-			WHERE P.bill_id = ?"
-		$query = $this->db->query($sql, $inputs));
+			WHERE P.bill_id = ?";
+		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -267,7 +267,7 @@ class Bills_model extends Model {
 		
 		$sql = "UPDATE payment
 			SET cleared = TRUE
-			WHERE bill_id = ?"
+			WHERE bill_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
@@ -291,8 +291,8 @@ class Bills_model extends Model {
 		//test to see if bill_id exists
 		$sql = "SELECT *
 			FROM payment P
-			WHERE P.bill_id = ?"
-		$query = $this->db->query($sql, $inputs));
+			WHERE P.bill_id = ?";
+		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
