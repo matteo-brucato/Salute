@@ -25,7 +25,6 @@ class Profile extends Controller {
  	 * else error
 	 * */
 	function index() {
-
 		$this->auth->check_logged_in();
 
 		if ($this->auth->get_type() === 'patient') {
@@ -61,7 +60,6 @@ class Profile extends Controller {
 	 * */
 	function myinfo()
 	{
-
 		$this->auth->check_logged_in();
 
 		if ($this->auth->get_type() === 'patient') {
@@ -87,20 +85,42 @@ class Profile extends Controller {
 	 * @param id is used to check type(hcp or patient) of the user who's profile is to be viewed
 	 * 			checks if they are connected
 	 * @return loads the friend's profile in the main panel || error page
+	 * @tests
+	 * 		Successful:
+	 * 			invalid id input
+	 * 			hcp trying to view pending patient : denies permission
+	 * 			hcp trying to view pending hcp: denies permission
+	 * 			pat trying to view pending hcp: 'You are not connected. Permission Denied. '		
+	 * 			hcp trying to view unconnected patient: 'Sorry! An HCP can only view profiles of connected patients'
+	 * 			pat trying to view unconnected hcp: 'You are not connected. Permission Denied.' 
+	 * 			hcp trying to view unconnected hcp: 'You are not connected. Permission Denied.'
+	 * 			pat trying to view patient: 'Sorry! Patients cannot be connected with other patients'
+	 * Fails:
+	 * 			hcp trying to view connected hcp: Query error!'
+	 * 			hcp trying to view unconnected hcp: 'You are not connected. Permission Denied.'
+	 * 			hcp trying to view connected patient: Sorry! An HCP can only view profiles of connected patients
+	 * 			pat trying to view connected hcp: 'Query error!'
+	 * 
+	 * 
 	 * */
 	function user($id = NULL) {
+		$this->auth->check_logged_in();
+		// check that id is an intenger
+		if (!is_numeric($id)){
+			show_error('Invalid id type.',500);
+			return;
+		}
 		if ($id == NULL) {
 			$this->ajax->redirect('/profile');
 			//$this->ajax->show_app_error();
 			return;
 		}
-		
-		$this->auth->check_logged_in();
-		
+					
 		$this->load->model('hcp_model');
 		$this->load->model('patient_model');
 		$this->load->model('connections_model');
 		
+		// Checks the user_id, if passes, get their info 
 		if ($this->hcp_model->is_doctor(array($id))) {
 			$info = $this->hcp_model->get_doctor(array($id));
 			$id_type = 'doctor';
@@ -108,25 +128,68 @@ class Profile extends Controller {
 		else if ($this->patient_model->is_patient(array($id))) {
 			$info = $this->patient_model->get_patient(array($id));
 			$id_type = 'patient';
-		}
-		else {
+		} else {
 			show_error('The specified <i>id</i> does not correspond
 			neither to an HCP nor a patient');
 			return;
 		}
+		// error checking for get_doctor / get_patient fn calls
+		switch ($info) {
+			case -1:
+				$view = 'Query error!';
+				$error = TRUE;
+				break;
+			case -7:
+				$view = 'This account id is not an hcp';
+				break;
+			default:
+				$error = FALSE;
+				break;
+		}
 		
-		$is_my_friend = $this->connections_model->is_connected_with($this->auth->get_account_id(), $id);
-		
-		if ($this->auth->get_type() == 'doctor' && $id_type == 'patient' && ! $is_my_friend) {
-			show_error('Sorry! An HCP can only view profiles of connected patients');
+		if($error){
+			$this->ajax->view(array($view,''));
 			return;
 		}
 		
-		// Select the right side-pane view
+		// check that logged in user is a doctor. 
+		if ($this->auth->get_type() == 'doctor' && $id_type == 'patient') {
+			show_error('Sorry! An HCP can only view profiles of connected patients');
+			return;
+		}
+		else if ($this->auth->get_type() == 'patient' && $id_type == 'patient') {
+			show_error('Sorry! Patients cannot be connected with other patients',500);
+			return;
+		}
+	
+		// check that the id is friends with logged in user
+		$is_my_friend = $this->connections_model->is_connected_with($this->auth->get_account_id(), $id);
+		switch ($is_my_friend) {
+			case -1:
+				$view = 'Query error!';
+				$error = TRUE;
+				break;
+			case FALSE:
+				$view = 'You are not connected. Permission Denied.';
+				$error = TRUE;
+				break;
+			default:
+				$error = FALSE;
+				break;
+		}
+		if($error){
+			$this->ajax->view(array($view,''));
+			return;
+		}
+
+		// Show the side panel based on logged in type.
 		if ($this->auth->get_type() == 'doctor') {
 			$sideview = $this->load->view('sidepane/doctor-profile', '' , TRUE);
-		} else {
+		} else if ($this->auth->get_type() == 'patient') {
 			$sideview = $this->load->view('sidepane/patient-profile', '' , TRUE);
+		} else {
+				show_error('Internal Logic Error.',500);
+				return;
 		}
 		
 		// Load up the right view
@@ -136,12 +199,15 @@ class Profile extends Controller {
 					array('info' => $info[0], 'is_my_friend' => $is_my_friend), TRUE), 
 				$sideview
 			));
-		} else { // looking for a patient profile
+		} else if($id_type == 'patient') { // looking for a patient profile
 			$this->ajax->view(array(
 				$this->load->view('mainpane/see_patient',
 					array('info' => $info[0], 'is_my_friend' => $is_my_friend), TRUE),
 				$sideview
 			));
+		} else {
+				show_error('Internal Logic Error.',500);
+				return;			
 		}
 	}
 
