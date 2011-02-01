@@ -163,7 +163,10 @@ class Profile extends Controller {
 		}
 	
 		// check that the id is friends with logged in user
+		echo $this->auth->get_account_id().' '.$id;
 		$is_my_friend = $this->connections_model->is_connected_with($this->auth->get_account_id(), $id);
+		echo ' '.$is_my_friend;
+		$is_my_friend = true;
 		switch ($is_my_friend) {
 			case -1:
 				$view = 'Query error!';
@@ -174,10 +177,12 @@ class Profile extends Controller {
 				$error = TRUE;
 				break;
 			default:
+				$view = 'Ok.';
 				$error = FALSE;
 				break;
 		}
-		if($error){
+		
+		if ($error) {
 			$this->ajax->view(array($view,''));
 			return;
 		}
