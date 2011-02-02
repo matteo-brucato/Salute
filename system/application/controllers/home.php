@@ -118,13 +118,12 @@ class Home extends Controller {
 	 * @todo -- this is not tested, unsure about logic. 
 	 * @todo -- view needed
 	 * @error 
-	 * 		contents of $password ALWAYS hold the value 'Array'.  for some reason it always receives this from get_password(the last return in that function)
 	 * 		emails are not being sent...
 	 * */
 	function retrieve_password(){
 		// load view
 //		$email = $this->input->post('email');
-/*		$email='patient1@yahoo.com';
+		$email='patient1@yahoo.com';
 
 		if ( $email == NULL ){
 				show_error('Error: No email passed in.', 500);
@@ -132,13 +131,14 @@ class Home extends Controller {
 		}
 		$this->load->model('account_model');
 		
-		$password = $this->account_model->get_password(array($email)); 
-		echo $email.' '.$password;
+		$result = $this->account_model->get_password(array($email)); 
+		$password = $result[0]['password'];
+		
 		if ($password == NULL){
 			show_error('Sorry, this email is not registered.', 500);
 			return;
 		}
-*/ 
+
 		$this->load->library('email');
 		
 		$config['mailtype'] = 'html';
