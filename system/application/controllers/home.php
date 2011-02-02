@@ -162,7 +162,6 @@ class Home extends Controller {
 					$this->load->view('mainpane/registration', '', TRUE),
 					$this->load->view('sidepane/default', '', TRUE)
 				));
-	
 	}
 
 	/*

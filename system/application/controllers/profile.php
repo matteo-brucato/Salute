@@ -136,7 +136,7 @@ class Profile extends Controller {
 		// error checking for get_doctor / get_patient fn calls
 		switch ($info) {
 			case -1:
-				$view = 'Query error!';
+				$view = 'Query error grom get_doctor/get_patient function!';
 				$error = TRUE;
 				break;
 			case -7:
@@ -166,7 +166,7 @@ class Profile extends Controller {
 		$is_my_friend = $this->connections_model->is_connected_with($this->auth->get_account_id(), $id);
 		switch ($is_my_friend) {
 			case -1:
-				$view = '==Query error!';
+				$view = 'Query error from is_connected_with function!';
 				$error = TRUE;
 				break;
 			case FALSE:
