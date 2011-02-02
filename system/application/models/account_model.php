@@ -69,7 +69,7 @@ class Account_model extends Model {
 		
 		$sql = "SELECT account_id
 			FROM accounts
-			WHERE email = ?"
+			WHERE email = ?";
 		$query = $this->db->query($sql, array($inputs[0]));
 		
 		if ($this->db->trans_status() === FALSE)
@@ -106,7 +106,7 @@ class Account_model extends Model {
 		
 		$sql = "UPDATE accounts
 			SET email = ?, password = ?
-			WHERE account_id = ?"
+			WHERE account_id = ?";
 		$query = $this->db->query($sql, array($inputs[1], $inputs[2], $inputs[0]));
 		
 		if ($this->db->trans_status() === FALSE)
@@ -124,20 +124,21 @@ class Account_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with the passowrd
-	 *   FALSE if the email does not exist
+	 *   empty array() if the email does not exist
 	 * */
 	 function get_password($inputs){
 	 
 	 	$sql = "SELECT A.password
 			FROM account A
-			WHERE A.email = ?"
+			WHERE A.email = ?";
 	 	$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
-			return -1	
+			return -1;	
 		if( $query->num_rows() < 1)
-			return FALSE;	 	
+			return array();	 	
 	 	
-	 	retrun $query->result_array();
+	 	return $query->result_array();
 	 }
+}
 ?>

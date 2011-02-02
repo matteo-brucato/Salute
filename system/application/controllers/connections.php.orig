@@ -10,7 +10,7 @@
 
 class Connections extends Controller {
 
-	function __construct() {
+	function __construct(){
 		parent::Controller();
 		$this->load->library('ajax');
 		$this->load->library('auth');
@@ -27,13 +27,18 @@ class Connections extends Controller {
 	}
 
 	/**
+<<<<<<< HEAD:system/application/controllers/connections.php
 	 * List all doctors that current user is connected with
 	 * 
-	 * @attention Available for both patients and doctors
+	 * @note Available for both patients and doctors
 	 * 
 	 * @return: List view of my hcps
+=======
+	 * lists all doctors that user is connected with.
 	 * 
-	 * @test Works fine
+	 * @attention
+	 * 		only available for patients
+>>>>>>> 14270249d2f7dd56deeecd425d033b8e31abb8cd:system/application/controllers/connections.php
 	 * */
 	function myhcps() {
 		$this->auth->check_logged_in();
@@ -59,8 +64,7 @@ class Connections extends Controller {
 				$sideview = '';
 				break;
 			default:
-				$mainview = $this->load->view('mainpane/list_doctors',
-					array('list_name' => 'My Hcps', 'list' => $results, 'status' => 'connected') , TRUE);
+				$mainview = $this->load->view('mainpane/mydoctors', array('hcp_list' => $results) , TRUE);
 				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
 		}
@@ -70,13 +74,19 @@ class Connections extends Controller {
 	}
 
 	/**
+<<<<<<< HEAD:system/application/controllers/connections.php
 	 * List all patients that current hcp is connected with
 	 * 
-	 * @attention Only available for hcps
+	 * @note Only available for hcps
 	 * 
 	 * @return: List view of patients
-	 *
-	 * @test Works fine
+=======
+	 * lists all patients that hcp is connected with.
+	 * 
+	 * @attention
+	 * 		only available for doctors
+	 * 
+>>>>>>> 14270249d2f7dd56deeecd425d033b8e31abb8cd:system/application/controllers/connections.php
 	 * */
 	function mypatients()
 	{
@@ -97,8 +107,7 @@ class Connections extends Controller {
 				$sideview = '';
 				break;
 			default:
-				$mainview = $this->load->view('mainpane/list_patients',
-					array('list_name' => 'My Patients', 'list' => $res, 'status' => 'connected') , TRUE);
+				$mainview = $this->load->view('mainpane/mypatients', array('pat_list' => $res) , TRUE);
 				$sideview = $this->load->view('sidepane/doctor-profile', '', TRUE);
 				break;
 		}
@@ -116,11 +125,8 @@ class Connections extends Controller {
 	 *   otherwise it lists pending incoming connections.
 	 * 
 	 * @attention Only hcps can see pending(in)
-	 * 
-	 * @test Tested in and out and also incorrect inputs.
-	 * @test Tested pendings for both patients and hcps and worked fine
 	 * */
-	function pending($direction = 'out')
+	function pending($direction = 'in')
 	{
 		if ($direction == 'in') {
 			if ($this->auth->get_type() === 'doctor') {
@@ -128,22 +134,13 @@ class Connections extends Controller {
 			} else {
 				show_error($this->load->view('errors/not_hcp', '', TRUE));
 			}
-		}
-		else if ($direction == 'out') {
+		} else {
 			$this->_pending_out();
-		}
-		else {
-			show_error('Input not valid');
 		}
 	}
 	
 	/**
 	 * Private function to list all pending outgoing connection requests
-	 * 
-	 * @note Lists only hcps
-	 * @note This function is available for both patients and doctors
-	 * 
-	 * @test Tested!
 	 * */
 	function _pending_out()
 	{
@@ -151,11 +148,11 @@ class Connections extends Controller {
 		$this->load->model('connections_model');
 		
 		if ($this->auth->get_type() === 'doctor') {
-			$res = $this->connections_model->pending_outgoing_hcps_4_a_hcp(array($this->auth->get_account_id())); 
+			$res = $this->connections_model->pending_todoctors_fromdoctor(array($this->auth->get_account_id())); 
 			$sidepane = 'sidepane/doctor-profile';
 		}
 		else if ($this->auth->get_type() === 'patient') {
-			$res = $this->connections_model->pending_outgoing_hcps_4_a_patient(array($this->auth->get_account_id())); 
+			$res = $this->connections_model->pending_todoctors_frompatient(array($this->auth->get_account_id())); 
 			$sidepane = 'sidepane/patient-profile';
 		}
 		else {
@@ -170,8 +167,7 @@ class Connections extends Controller {
 				$sideview = '';
 				break;
 			default:
-				$mainview = $this->load->view('mainpane/list_doctors',
-					array('list_name' => 'Pending Outgoing Requests', 'list' => $res, 'status' => 'pending_out') , TRUE);
+				$mainview = $this->load->view('mainpane/mypatients', array('pending_list' => $res) , TRUE);
 				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
 		}
@@ -180,45 +176,43 @@ class Connections extends Controller {
 		$this->ajax->view(array($mainview,$sideview));
 	}
 	
+<<<<<<< HEAD:system/application/controllers/connections.php
 	/**
 	 * Private function that lists all pending connections that this 
 	 * user has received (incoming)
-	 * 
-	 * @note Lists both requests from doctors and patients
-	 * @note Available only for doctors, but the check is already done
-	 * by the function pending()
-	 * 
-	 * @test Tested!
+=======
+	/* 
+	 * Lists the pending connections that this user has received(incoming)
+	 * @attention
+	 * 		only doctors have this
+>>>>>>> 14270249d2f7dd56deeecd425d033b8e31abb8cd:system/application/controllers/connections.php
 	 * */
 	function _pending_in() 
 	{
 		$this->auth->check_logged_in();
 		$this->load->model('connections_model');
 		
-		if($this->auth->get_type() === 'doctor') {
-			// Take pending incoming from other doctors
-			$hcps = $this->connections_model->pending_incoming_hcps_4_a_hcp(array($this->auth->get_account_id())); 
-			// And pending incoming from other patients
-			$pats = $this->connections_model->pending_incoming_patients_4_a_hcp(array($this->auth->get_account_id())); 
+		if($this->auth->get_type() === 'doctor'){
+			$res = $this->connections_model->pending_todoctor_fromdoctors(array($this->auth->get_account_id())); 
+			$res2 = $this->connections_model->pending_todoctor_frompatients(array($this->auth->get_account_id())); 
+			$sidepane = 'sidepane/doctor-profile';
 		}
 		else {
-			/** @todo In the future, create a specific view for this
-			 * kind of errors, anc call this view in all similar cases */
-			show_error('Internal server logic error.');
+			show_error('Internal server logic error.', 500);
 			return;
 		}
-		
-		if ($hcps == -1 || $pats == -1) {
-			$mainview = 'Query error!';
-			$sideview = '';
-			return;
+
+		// Switch the response from the model, to select the correct view
+		switch ($res) {
+			case -1:
+				$mainview = 'Query error!';
+				$sideview = '';
+				break;
+			default:
+				$mainview = $this->load->view('mainpane/mypatients', array('pending_hcp' => $res,'pending_pat' => $res2) , TRUE);
+				$sideview = $this->load->view($sidepane, '', TRUE);
+				break;
 		}
-		
-		$mainview  = $this->load->view('mainpane/list_patients',
-			array('list_name' => 'Pending Requests from Patients', 'list' => $pats, 'status' => 'pending_out') , TRUE);
-		$mainview .= $this->load->view('mainpane/list_doctors',
-			array('list_name' => 'Pending Requests from Hcps', 'list' => $hcps, 'status' => 'pending_out') , TRUE);
-		$sideview = $this->load->view('sidepane/doctor-profile', '', TRUE);
 		
 		// Give results to the client
 		$this->ajax->view(array($mainview,$sideview));
@@ -234,8 +228,6 @@ class Connections extends Controller {
 	 *   Can be called by both patients and doctors, but a 
 	 * doctor can only request for another doctor and a patient can 
 	 * only request for a doctor.
-	 * 
-	 * @test Tested different inputs: nothing, string, invalid id
 	 * */
 	function request($id = NULL)
 	{
@@ -246,12 +238,6 @@ class Connections extends Controller {
 		// Check if an account_id has been specified
 		if ($id == NULL) {
 			show_error('No doctor_id specified.');
-			return;
-		}
-		
-		// Check the input type
-		if (! is_numeric($id)) {
-			show_error('Invalid id type.');
 			return;
 		}
 		
@@ -432,7 +418,10 @@ class Connections extends Controller {
 		}
 		
 		// Create final view for the user
-		$this->ajax->view(array($view,''));
+		$this->ajax->view(array(
+			$view,
+			''
+		));
 	}
 }
 

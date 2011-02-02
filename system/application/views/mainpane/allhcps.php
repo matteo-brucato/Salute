@@ -1,6 +1,9 @@
 <h2>Doctors</h2>
 
 <?php
+$this->load->helper('actions');
+$this->load->helper('table_result');
+
 // Id of the table
 $table['table-name'] = 'mydoctors-table';
 
@@ -50,5 +53,6 @@ if ($this->auth->get_type() == 'patient') {
 	}
 }
 
-require_once('table_result.php');
+//require_once('table_result.php');
+view_table($table);
 ?>

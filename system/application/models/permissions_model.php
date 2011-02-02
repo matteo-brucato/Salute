@@ -12,16 +12,20 @@ class Permissions_model extends Model {
 	 * @param $inputs
 	 *   Is of the form: array(medical_rec_id, account_id)
 	 * @return
-	 *   Inserts a row in the Permissions table
+	 *  -1 if error in insert
+	 *  1 otherwise
 	 * */
 	function allow_permission($inputs){
-	
 		//$data = array( 'medical_rec_id' => $inputs[0], 'account_id' => $inputs[1]);
 		//$this->db->insert( 'Permissions', $data);
 		
+
 		$sql = "INSERT INTO permissions (medical_rec_id, account_id)
 			VALUES (?, ?)";
 		$query = $this->db->query($data, $inputs);
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		return 1;
 	
 	}
 	
@@ -40,7 +44,9 @@ class Permissions_model extends Model {
 		$sql = "DELETE FROM permissions
 			WHERE medical_rec_id = ? AND account_id = ?";
 		$query = $this->db->query($data, $inputs);
-	
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		return 1;		
 	}
 	
 	/**
@@ -50,6 +56,7 @@ class Permissions_model extends Model {
 	 *   Is of the form: array(hcp_id, medical_rec_id)
 	 * @return
 	 *   True or Flase
+	 *   -1 if error in query
 	 * */
 	function is_allowed($inputs){
 		
@@ -57,11 +64,12 @@ class Permissions_model extends Model {
 			FROM permissions P
 			WHERE P.account_id = ? and P.medical_rec_id = ?";
 		$query = $this->db->query($sql, $inputs);
-		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
 		if( $query->num_rows() > 0)
-			return TRUE;
-			
+			return TRUE;	
 		return FALSE;
 		
 	}
+}
 ?>
