@@ -35,9 +35,6 @@ class Messages_model extends Model{
 
 
 
-	//query_view_sent
-	//I assume inputs will be of the form (account_id)
-	//returns an array of tuples or NULL	
 	/**
 	 * View all messages sent
 	 * 

@@ -96,7 +96,7 @@ class Hcp_model extends Model {
 	 *   Is of the form: array( account_id, first_name, last_name, middle_name, ssn, dob, sex, tel_number, fax_number, specialization, orgname, address)
 	 * @return
 	 *  -1 in case of error in a query
-	 *   Array all of the criteria that matches OR NULL if nothing matches
+	 *   Array all of the criteria that matches
 	 *   empty array() if nothing was found
 	 * @note
 	 *   RIGHT NOW IT SHOULD NOT WORK. NEED TO FIX THE THING WITH THE QUOTES AROUND THE STRINGS FOR THIS TO WORK.
