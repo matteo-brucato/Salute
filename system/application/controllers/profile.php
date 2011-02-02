@@ -229,9 +229,11 @@ class Profile extends Controller {
 					$this->load->view('mainpane/edit_info', '', TRUE),
 					$this->load->view('sidepane/default', '', TRUE)
 				));
+	}
+	
+	function edit_do() {
+		$this->auth->check_logged_in();
 
-		$email = $this->input->post('email');
-		$password = $this->input->post('password');
 		$first_name = $this->input->post('first_name');
 		$middle_name = $this->input->post('middle_name');
 		$last_name = $this->input->post('last_name');
@@ -277,10 +279,7 @@ class Profile extends Controller {
 			show_error('Unknown Error.', 500);
 			return;
 		}
-
-
 	}
-
 }
 /** @} */
 ?>

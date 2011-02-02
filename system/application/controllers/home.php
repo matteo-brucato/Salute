@@ -118,39 +118,44 @@ class Home extends Controller {
 	 * @todo -- this is not tested, unsure about logic. 
 	 * @todo -- view needed
 	 * @error 
-	 * 		does not output hello world
+	 * 		contents of $password ALWAYS hold the value 'Array'.  for some reason it always receives this from get_password(the last return in that function)
+	 * 		emails are not being sent...
 	 * */
-	function retrieve_password()
-	{
+	function retrieve_password(){
 		// load view
-		$this->ajax->view(array('hello','world'));
-		$email = $this->input->post('email');
+//		$email = $this->input->post('email');
+/*		$email='patient1@yahoo.com';
 
-		// need a retrieve password function in login model
+		if ( $email == NULL ){
+				show_error('Error: No email passed in.', 500);
+				return;
+		}
 		$this->load->model('account_model');
+		
 		$password = $this->account_model->get_password(array($email)); 
+		echo $email.' '.$password;
 		if ($password == NULL){
-			show_error('Invalid Email: error retreiving password.', 500);
+			show_error('Sorry, this email is not registered.', 500);
 			return;
 		}
-
+*/ 
 		$this->load->library('email');
+		
 		$config['mailtype'] = 'html';
 		$this->email->initialize($config);
-//		$this->email->from($this->auth->get_email());
-		$this->email->from('salute-noreply@salute.com');
+//		$this->email->from('salute-noreply@salute.com');
+		$this->email->from('lldenadall@gmail.com');
 //		$this->email->to($results['email']);
-		$this->email->to('mattfeel@gmail.com');
+//		$this->email->to('mattfeel@gmail.com');
+		$this->email->to('nadahashem@gmail.com');
 		$this->email->subject('Password Retrieval');
-		
-		$this->email->message(
+		$this->email->message('testing email');
+	/*	$this->email->message(
 			'You have requested for retrieval of your password. Your password is:'.$password.' '.
 			'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
-
+*/
 		$this->email->send();
-		
 		$this->ajax->view(array('Your password has been emailed to you.',''));
-
 	}
 
 	/*
@@ -176,13 +181,16 @@ class Home extends Controller {
 	 * 			type is not doctor nor patient
 	 * 			account id is already registered in patient||hcp table
 	 * 		confirmation view
-	 * @attention how is the type going to be returned to the controller? 
-	 * @todo- Fancy: Confirmation Email
+	 * @error
+	 * 		
+	 * @todo- Confirmation Email
 	 * */
 	function register_do($type = NULL)
 	{
-		// if type is null, error
-		// if not hcp nor patient error
+		if( $type == NULL || $type !== 'patient' || $type !== 'doctor' ) {
+			show_error('Invalid type.',500);
+			return;
+		}
 		
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
