@@ -17,8 +17,7 @@ class Home extends Controller {
 	}
 	
 	/*
-	 * fn index -- default
-	 * if not logged in load default welcome page and login side panel
+	 * If not logged in load default welcome page and login side panel
 	 * else already logged in, load their profile
 	 * */
 	function index()

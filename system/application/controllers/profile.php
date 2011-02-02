@@ -16,7 +16,7 @@ class Profile extends Controller {
 		$this->load->library('auth');
 	}
 
-	/*
+	/**
 	 * Fn index -- default 
 	 * checks that user is logged in
 	 * loads the main welcome screen for when a patient or doctor is logged in. 
@@ -49,9 +49,8 @@ class Profile extends Controller {
 		// Fancy Features: pass notifications from model to view via the 2nd parameter in the load->view call. 
 	}
 
-	/*
-	 * fn my_info
-	 * checks that user is logged in
+	/**
+	 * Checks that user is logged in
 	 * loads the user's information in the main panel
 	 * loads the user's menu bar in the side panel  
 	 * if patient, load respective views
@@ -79,9 +78,9 @@ class Profile extends Controller {
 			return;
 		}
 	}
-	/*
-	 * fn user
-	 * prints a another user's profile under the condition that they are connected
+	
+	/**
+	 * Prints another user's profile under the condition that they are connected
 	 * @param id is used to check type(hcp or patient) of the user who's profile is to be viewed
 	 * 			checks if they are connected
 	 * @return loads the friend's profile in the main panel || error page
@@ -106,15 +105,17 @@ class Profile extends Controller {
 	function user($id = NULL) {
 		$this->auth->check_logged_in();
 		// check that id is an intenger
-		if (!is_numeric($id)){
-			show_error('Invalid id type.',500);
-			return;
-		}
 		if ($id == NULL) {
 			$this->ajax->redirect('/profile');
 			//$this->ajax->show_app_error();
 			return;
 		}
+		
+		if (!is_numeric($id)) {
+			show_error('Invalid id type.',500);
+			return;
+		}
+		
 					
 		$this->load->model('hcp_model');
 		$this->load->model('patient_model');

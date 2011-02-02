@@ -58,14 +58,14 @@ function layout_bindings() {
 
 function show_patient_form() {
 	//$("#type-selection").fadeOut(400);
-	$("#registration-hcp-form").hide();
-	$("#registration-patient-form").fadeIn(400);
+	$("#registration-hcp-fieldset").hide();
+	$("#registration-patient-fieldset").fadeIn(400);
 }
 
 function show_hcp_form() {
 	//$("#type-selection").fadeOut(400);
-	$("#registration-patient-form").hide();
-	$("#registration-hcp-form").fadeIn(400);
+	$("#registration-patient-fieldset").hide();
+	$("#registration-hcp-fieldset").fadeIn(400);
 }
 
 function execute_ajax(href) {
