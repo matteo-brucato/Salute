@@ -12,7 +12,7 @@
 }
 
 /* Registration */
-#registration-patient-form, #registration-hcp-form {
+#registration-patient-fieldset, #registration-hcp-fieldset {
 	display: none;
 }
 

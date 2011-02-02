@@ -5,8 +5,8 @@
 	<a href="javascript:show_hcp_form();">Health Care Provider</a>
 </div>
 
-<form method="post" action="/home/register_do" id="registration-form">
-	<fieldset id="registration-patient-form">
+<form method="post" action="/home/register_do/patient" id="registration-patient">
+	<fieldset id="registration-patient-fieldset">
 		<legend>Register to <?php echo SITENAME; ?> as a patient</legend>
 		<table>
 			<tr>
@@ -58,9 +58,13 @@
 		
 		<p>
 			<input type="submit" name="submit" value="Submit" class="submit-button" />
+			<input type="reset" />
 		</p>
 	</fieldset>
-	<fieldset id="registration-hcp-form">
+</form>
+
+<form method="post" action="/home/register_do/hcp" id="registration-hcp">
+	<fieldset id="registration-hcp-fieldset">
 		<legend>Register to <?php echo SITENAME; ?> as an Health Care Provider</legend>
 			<table>
 			<tr>
@@ -120,6 +124,7 @@
 		
 		<p>
 			<input type="submit" name="submit" value="Submit" class="submit-button" />
+			<input type="reset" />
 		</p>
 	</fieldset>
 </form>

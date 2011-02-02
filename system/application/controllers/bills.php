@@ -18,8 +18,9 @@ class Bills extends Controller {
 
 	/* Default: call all function */
 	function index(){
-		$this->auth->check_logged_in();
-		$this->ajax->redirect('/bills/all');
+		//$this->auth->check_logged_in();
+		//$this->ajax->redirect('/bills/all');
+		$this->all();
 	}
   	
 	/* List all bills  */      	   
@@ -101,14 +102,14 @@ class Bills extends Controller {
 
 	// only available to patient: pay a bill
 	function pay($bill_id) {
-		$this->auth->check_logged_in();	
+		$this->auth->check_logged_in();
 		$this->load->model('bills_model');
 		if($this->auth->get_type() === 'patient' && $this->bills_model->is_mybill(array($this->auth->get_account_id(),$bill_id)) ){
 			$this->bills_model->pay_bill(array($this->auth->get_account_id(),$amount));
 		}
 		else{
 			show_error('Error: only patients can pay bills.', 500);
-			return;		
+			return;
 		}
 		$this->ajax->redirect('/bills');
 	}

@@ -24,8 +24,9 @@ class MedicalRecords extends Controller {
 	 */ 
 	function index()
 	{
-		$this->auth->check_logged_in();
-		$this->ajax->redirect('/medical_records/list_med_recs');
+		//$this->auth->check_logged_in();
+		//$this->ajax->redirect('/medical_records/list_med_recs');
+		$this->list_med_recs();
 	}
 
 	/*
