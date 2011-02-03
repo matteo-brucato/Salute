@@ -20,27 +20,59 @@ class Bills extends Controller {
 	function index(){
 		//$this->auth->check_logged_in();
 		//$this->ajax->redirect('/bills/all');
+
 		$this->all();
 	}
   	
 	/* List all bills  */      	   
 	// @todo: patient main panel view : to list bills : ( Date, Title, Doctor Name, Amount, Status(unpaid/paid/pending), Actions (Pay Now, View Receipt)  
 	// @todo: doctor main panel view : to list bills : ( Date, Title, Doctor Name, Amount, Status(unpaid/paid/pending), Actions (Delete,View Receipt)  
+	// array $results sent to view in order:  bill_id, first_name(Doctor or Patient), last_name(doctor or patient), B.amount, B.descryption, B.due_date, B.cleared
 	function all()	{
+		
 		$this->auth->check_logged_in();
 		$this->load->model('bills_model');
+
 		if($this->auth->get_type() === 'patient'){
 			$results = $this->bills_model->view_all(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$this->ajax->view(array($this->load->view('mainpane/____________', $results, TRUE),''));
-		} 
+			
+			switch ($results) {
+				case -1:
+					$mainview = 'Query error!';
+					$sideview = '';
+					break;
+				default:
+					$mainview = $this->load->view('mainpane/____________',
+						array('list_name' => '________', 'list' => $results, 'status' => 'connected') , TRUE);
+					$sideview = $this->load->view($sidepane, '', TRUE);
+					
+					return;
+					break;
+			}
+		}
+			
 		else if($this->auth->get_type() === 'doctor'){
 			$results = $this->bills_model->view_all(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$this->ajax->view(array($this->load->view('mainpane/____________', $results, TRUE),''));
+			switch ($results) {
+				case -1:
+					$mainview = 'Query error!';
+					$sideview = '';
+					break;
+				default:
+					$mainview = $this->load->view('mainpane/____________',
+						array('list_name' => '________', 'list' => $results, 'status' => 'connected') , TRUE);
+					$sideview = $this->load->view($sidepane, '', TRUE);
+					break;
+			}
 		} 
 		else{
 			show_error('Error: unable to list your bills.', 500);
 			return;		
 		}
+		
+	
+		// Give results to the client
+		$this->ajax->view(array($mainview,$sideview));
 	}
 
 	/* List Current Bills */
