@@ -84,8 +84,7 @@ class Profile extends Controller {
 	 * @param id is used to check type(hcp or patient) of the user who's profile is to be viewed
 	 * 			checks if they are connected
 	 * @return loads the friend's profile in the main panel || error page
-	 * @tests
-	 * 		Successful:
+	 * @tests all successful and complete.
 	 * 			invalid id input
 	 * 			non-existent id #
 	 * 			pat trying to view patient: 'Sorry! Patients cannot be connected with other patients'
@@ -98,8 +97,6 @@ class Profile extends Controller {
 	 * 			hcp trying to view pending hcp: denies permission
 	 * 			hcp trying to view connected hcp: Profile + actions
 	 * 			hcp trying to view unconnected hcp: 'You are not connected. Permission Denied.'
-	 * 
-	 * 		Fails:
 	 * 			hcp trying to view connected patient: Sorry! An HCP can only view profiles of connected patients
 	 * 
 	 * */
@@ -116,8 +113,7 @@ class Profile extends Controller {
 			show_error('Invalid id type.',500);
 			return;
 		}
-		
-					
+			
 		$this->load->model('hcp_model');
 		$this->load->model('patient_model');
 		$this->load->model('connections_model');
@@ -135,13 +131,13 @@ class Profile extends Controller {
 			neither to an HCP nor a patient');
 			return;
 		}
-		
+		echo $id_type;
 		if( $info === -1 ){
 			$this->ajax->view(array('Query error grom get_doctor/get_patient function!',''));
 			return;		
 		}
 		// check that logged in user is a hcp. 
-		if ($this->auth->get_type() == 'hcp' && $id_type == 'patient') {
+		if ($this->auth->get_type() == 'hcp' && $id_type != 'patient') {
 			show_error('Sorry! An HCP can only view profiles of connected patients');
 			return;
 		}
@@ -151,14 +147,12 @@ class Profile extends Controller {
 		}
 	
 		// check that the id is friends with logged in user
-		//echo $this->auth->get_account_id().' '.$id;
 		$is_my_friend = $this->connections_model->is_connected_with($this->auth->get_account_id(), $id);
-		//echo ' '.$is_my_friend;
+		
 		if ($is_my_friend === -1){
 			$this->ajax->view(array('Query error from is_connected_with function!',''));
 			return;		
-		}
-		else if (!$is_my_friend){
+		}else if (!$is_my_friend){
 			$this->ajax->view(array('You are not connected. Permission Denied.',''));
 			return;		
 		}
