@@ -21,8 +21,13 @@
 			<li href="#may"><a href="">Current</a></li>
 			<li href="#may"><a href="">Past</a></li>
 		</ul>
+	</li>
 	
-	<li><a href="/connections/list_doctors">My Doctors</a>
+	<li><a href="/connections/myhcps">My HCPs</a>
+		<ul>
+			<li><a href="/connections/pending/out">Pending outgoing</a></li>
+		</ul>
+	</li>
 	
 	<li><a href="/medical_records">Medical Records</a>
 	

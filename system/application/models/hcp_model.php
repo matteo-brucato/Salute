@@ -16,7 +16,7 @@ class Hcp_model extends Model {
 	}
 
 	/**
-	 * Detemines wheather an account_id is for a doctor
+	 * Detemines wheather an account_id is for a hcp
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
@@ -25,7 +25,7 @@ class Hcp_model extends Model {
 	 *   TRUE if it is
 	 *   FALSE otherwise
 	 * */
-	function is_doctor($inputs){
+	function is_hcp($inputs){
 
 		$sql = "SELECT H.account_id
 			FROM hcp_account H
@@ -42,16 +42,16 @@ class Hcp_model extends Model {
 	
 	
 	/**
-	 * Gets all of the doctor information
+	 * Gets all of the hcp information
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
 	 * @return
 	 *  -1 in case of error in a query
 	 *  empty array() if account_id does not exist
-	 *   Array with all of the doctor information
+	 *   Array with all of the hcp information
 	 * */
-	function get_doctor($inputs) {
+	function get_hcp($inputs) {
 					
 		$sql = "SELECT *
 			FROM hcp_account H
@@ -67,16 +67,16 @@ class Hcp_model extends Model {
 	}
 	
 	/**
-	 * Gets all of the doctor information
+	 * Gets all of the hcp information
 	 * 
 	 * @param $inputs
 	 *   Is of the form: Does not take anything in
 	 * @return
 	 *  -1 in case of error in a query
-	 *   Array with all the existing doctors in the database
-	 *   empty array() if there are not any doctors in the database
+	 *   Array with all the existing hcps in the database
+	 *   empty array() if there are not any hcps in the database
 	 * */
-	function get_doctors() {
+	function get_hcps() {
 		$sql = "SELECT * FROM hcp_account";
 		$query = $this->db->query($sql);
 		
@@ -101,7 +101,7 @@ class Hcp_model extends Model {
 	 * @note
 	 *   RIGHT NOW IT SHOULD NOT WORK. NEED TO FIX THE THING WITH THE QUOTES AROUND THE STRINGS FOR THIS TO WORK.
 	 * */
-	 function search_doctor_all($inputs){
+	 function search_hcp_all($inputs){
 	 
 	 	$sql = "SELECT *
 	 		FROM hcp_account
@@ -120,7 +120,7 @@ class Hcp_model extends Model {
 	 }
 	
 	/**
-	 * Registers a doctor
+	 * Registers a hcp
 	 * 
 	 * @param $inputs 
 	 *   Is of the form( account_id, first_name, last_name, middle_name, ssn, dbo, sex, tel_number, fax_number, specialization, orgname, address)
@@ -147,7 +147,7 @@ class Hcp_model extends Model {
 	
 
 	/**
-	 * Update doctor information
+	 * Update hcp information
 	 * 
 	 * @param $inputs 
 	 *   Is of the form: array(account_id, first_name, last_name, middle_name, tel_number, fax_number, specialization, orgname, address)

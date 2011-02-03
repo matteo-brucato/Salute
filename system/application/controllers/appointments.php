@@ -205,7 +205,8 @@ class Appointments extends Controller {
 				$mainview = 'Appointment does not exist';
 				$sideview = '';
 			default:
-				$mainview = $this->ajax->redirect('/appointments/upcoming');   //on the name
+				//$mainview = $this->ajax->redirect('/appointments/upcoming');   //????on the name
+				$mainview = $this->ajax->redirect('/appointments/upcoming_appointments');
 				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
 			}
@@ -215,6 +216,8 @@ class Appointments extends Controller {
 			return;
 		}
 		
+		// Give results to the client
+		$this->ajax->view(array($mainview,$sideview));
 	}
 	
 	/*
@@ -224,22 +227,42 @@ class Appointments extends Controller {
 	 * @input -- new appointment date/time
 	 * @return redirect to list of upcoming appointments || error(not their appointment)
 	 * @todo: need reschedule appt form / view
- 	 * @todo(later): Later: have a request reschedule and accept reschedule via email 
+ 	 * @todo(later): Later: have a request reschedule and accept reschedule via email
+ 	 * @MATEO:
+	 * 	I ASSUME THE VIEW NAME WILL BE reschedule	 
 	 * */
 	function reschedule($apt_id){
 		$this->auth->check_logged_in();
 		$this->load->model('appointments_model');
 		if($this->appointments_model->is_myappointment(array($this->auth->get_account_id(),$apt_id))){
 			$result = $this->appointments_model->get_appointment(array($apt_id));
-			$this->ajax->view(array($this->load->view('mainpane/________',$result, TRUE),''));
+			
+			$this->ajax->view(array($this->load->view('mainpane/reschedule',$result, TRUE),''));
 			$new_time = $this->input->post('appointment_time');
 			$results = $this->appointments_model->reschedule(array('appointment_id' => $apt_id, 'date_time' => $new_time )); 
-			$this->ajax->redirect('/appointments/upcoming');
+			
+			switch ($results) {
+			case -1:
+				$mainview = 'Query error!';
+				$sideview = '';
+				break;
+			case -5:
+				$mainview = 'Appointment does not exist';
+				$sideview = '';
+			default:
+				//$mainview = $this->ajax->redirect('/appointments/upcoming');   //????on the name
+				$mainview = $this->ajax->redirect('/appointments/upcoming_appointments');
+				$sideview = $this->load->view('sidepane/patient-profile', '', TRUE);
+				break;
+			}
 		}
 		else{
 			show_error('This is not your appointment. Permission Denied.', 500);
 			return;
 		}
+		
+		// Give results to the client
+		$this->ajax->view(array($mainview,$sideview));
 	}
 
 	/*
@@ -249,20 +272,36 @@ class Appointments extends Controller {
 	 * @return -- confirmation statement
 	 * @todo: need reschedule appt form / view
 	 * @todo:fix this -- view should pass this to me based on the tuple they click..
- 	 * @todo(later): Later: have a request reschedule and accept reschedule via email , reminder emails... 
+ 	 * @todo(later): Later: have a request reschedule and accept reschedule via email , reminder emails...
+ 	 * @MATEO:
+	 * 	I ASSUME THE VIEW NAME WILL BE request
+ 	 * 
 	 * */
 	function request(){
 		$this->auth->check_logged_in();
 
-		$this->ajax->view(array($this->load->view('mainpane/__________', '' , TRUE), ''));
+		$this->ajax->view(array($this->load->view('mainpane/request', '' , TRUE), ''));
 		$hcp_id = $this->input->post('hcp_id'); // @todo:fix this -- view should pass this to me based on the tuple they click..
 		$desc = $this->input->post('description');
 		$time = $this->input->post('time');
 		$results = $this->appointments_model->request(array( 'patient_id' => $this->auth->get_account_id(), 
 									'hcp_id' => $hcp_id , 
 									'desc' => $desc ,
-									'time' => $time 
-								)); 
+									'time' => $time ));
+									 
+		switch ($results) {
+			case -1:
+				$mainview = 'Query error!';
+				$sideview = '';
+			default:
+				$mainview = $this->ajax->redirect('/appointments/upcoming_appointments');
+				$sideview = $this->load->view('sidepane/patient-profile', '', TRUE);
+				break;
+			}
+			
+		// Give results to the client
+		$this->ajax->view(array($mainview,$sideview));					
+		
 		/*if($results == NULL){
 			show_error('We apologize for the inconvenience. Your appointment could not be requested.', 500);
 			return;	

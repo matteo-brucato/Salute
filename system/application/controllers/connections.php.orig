@@ -28,13 +28,13 @@ class Connections extends Controller {
 
 	/**
 <<<<<<< HEAD:system/application/controllers/connections.php
-	 * List all doctors that current user is connected with
+	 * List all hcps that current user is connected with
 	 * 
-	 * @note Available for both patients and doctors
+	 * @note Available for both patients and hcps
 	 * 
 	 * @return: List view of my hcps
 =======
-	 * lists all doctors that user is connected with.
+	 * lists all hcps that user is connected with.
 	 * 
 	 * @attention
 	 * 		only available for patients
@@ -46,12 +46,12 @@ class Connections extends Controller {
 		$this->load->model('connections_model');
 		
 		if ($this->auth->get_type() === 'patient') {
-			$results  = $this->connections_model->list_my_doctors($this->auth->get_account_id()); 
+			$results  = $this->connections_model->list_my_hcps($this->auth->get_account_id()); 
 			$sidepane = 'sidepane/patient-profile';
 		}
-		else if ($this->auth->get_type() === 'doctor'){
+		else if ($this->auth->get_type() === 'hcp'){
 			$results  = $this->connections_model->list_my_colleagues($this->auth->get_account_id()); 
-			$sidepane = 'sidepane/doctor-profile';
+			$sidepane = 'sidepane/hcp-profile';
 		}
 		else {
 			show_error('Internal server logic error.', 500);
@@ -64,7 +64,7 @@ class Connections extends Controller {
 				$sideview = '';
 				break;
 			default:
-				$mainview = $this->load->view('mainpane/mydoctors', array('hcp_list' => $results) , TRUE);
+				$mainview = $this->load->view('mainpane/myhcps', array('hcp_list' => $results) , TRUE);
 				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
 		}
@@ -84,7 +84,7 @@ class Connections extends Controller {
 	 * lists all patients that hcp is connected with.
 	 * 
 	 * @attention
-	 * 		only available for doctors
+	 * 		only available for hcps
 	 * 
 >>>>>>> 14270249d2f7dd56deeecd425d033b8e31abb8cd:system/application/controllers/connections.php
 	 * */
@@ -92,7 +92,7 @@ class Connections extends Controller {
 	{
 		$this->auth->check_logged_in();
 		
-		if ($this->auth->get_type() !== 'doctor'){
+		if ($this->auth->get_type() !== 'hcp'){
 			show_error($this->load->view('errors/not_hcp', '', TRUE));
 			return;
 		}
@@ -108,7 +108,7 @@ class Connections extends Controller {
 				break;
 			default:
 				$mainview = $this->load->view('mainpane/mypatients', array('pat_list' => $res) , TRUE);
-				$sideview = $this->load->view('sidepane/doctor-profile', '', TRUE);
+				$sideview = $this->load->view('sidepane/hcp-profile', '', TRUE);
 				break;
 		}
 		
@@ -129,7 +129,7 @@ class Connections extends Controller {
 	function pending($direction = 'in')
 	{
 		if ($direction == 'in') {
-			if ($this->auth->get_type() === 'doctor') {
+			if ($this->auth->get_type() === 'hcp') {
 				$this->_pending_in();
 			} else {
 				show_error($this->load->view('errors/not_hcp', '', TRUE));
@@ -147,12 +147,12 @@ class Connections extends Controller {
 		$this->auth->check_logged_in();
 		$this->load->model('connections_model');
 		
-		if ($this->auth->get_type() === 'doctor') {
-			$res = $this->connections_model->pending_todoctors_fromdoctor(array($this->auth->get_account_id())); 
-			$sidepane = 'sidepane/doctor-profile';
+		if ($this->auth->get_type() === 'hcp') {
+			$res = $this->connections_model->pending_tohcps_fromhcp(array($this->auth->get_account_id())); 
+			$sidepane = 'sidepane/hcp-profile';
 		}
 		else if ($this->auth->get_type() === 'patient') {
-			$res = $this->connections_model->pending_todoctors_frompatient(array($this->auth->get_account_id())); 
+			$res = $this->connections_model->pending_tohcps_frompatient(array($this->auth->get_account_id())); 
 			$sidepane = 'sidepane/patient-profile';
 		}
 		else {
@@ -184,7 +184,7 @@ class Connections extends Controller {
 	/* 
 	 * Lists the pending connections that this user has received(incoming)
 	 * @attention
-	 * 		only doctors have this
+	 * 		only hcps have this
 >>>>>>> 14270249d2f7dd56deeecd425d033b8e31abb8cd:system/application/controllers/connections.php
 	 * */
 	function _pending_in() 
@@ -192,10 +192,10 @@ class Connections extends Controller {
 		$this->auth->check_logged_in();
 		$this->load->model('connections_model');
 		
-		if($this->auth->get_type() === 'doctor'){
-			$res = $this->connections_model->pending_todoctor_fromdoctors(array($this->auth->get_account_id())); 
-			$res2 = $this->connections_model->pending_todoctor_frompatients(array($this->auth->get_account_id())); 
-			$sidepane = 'sidepane/doctor-profile';
+		if($this->auth->get_type() === 'hcp'){
+			$res = $this->connections_model->pending_tohcp_fromhcps(array($this->auth->get_account_id())); 
+			$res2 = $this->connections_model->pending_tohcp_frompatients(array($this->auth->get_account_id())); 
+			$sidepane = 'sidepane/hcp-profile';
 		}
 		else {
 			show_error('Internal server logic error.', 500);
@@ -219,15 +219,15 @@ class Connections extends Controller {
 	}
 	
 	/**
-	 * Request a new connection to a doctor.
+	 * Request a new connection to a hcp.
 	 * 
 	 * @param
-	 *   $id is the id of a doctor you want to connect to
+	 *   $id is the id of a hcp you want to connect to
 	 * 
 	 * @attention
-	 *   Can be called by both patients and doctors, but a 
-	 * doctor can only request for another doctor and a patient can 
-	 * only request for a doctor.
+	 *   Can be called by both patients and hcps, but a 
+	 * hcp can only request for another hcp and a patient can 
+	 * only request for a hcp.
 	 * */
 	function request($id = NULL)
 	{
@@ -237,29 +237,29 @@ class Connections extends Controller {
 		
 		// Check if an account_id has been specified
 		if ($id == NULL) {
-			show_error('No doctor_id specified.');
+			show_error('No hcp_id specified.');
 			return;
 		}
 		
-		// Check if the account_id specified refers to a doctor
-		if (!$this->hcp_model->is_doctor(array($id))) {
+		// Check if the account_id specified refers to a hcp
+		if (!$this->hcp_model->is_hcp(array($id))) {
 			show_error('The id specified does not refer to an HCP.');
 			return;
 		}
 		
-		// Get all the doctor's info
-		$results = $this->hcp_model->get_doctor(array($id));
+		// Get all the hcp's info
+		$results = $this->hcp_model->get_hcp(array($id));
 		
-		// If current user is a doctor
-		if ($this->auth->get_type() === 'doctor') {
-			$res = $this->connections_model->add_doctor_doctor(array(
+		// If current user is a hcp
+		if ($this->auth->get_type() === 'hcp') {
+			$res = $this->connections_model->add_hcp_hcp(array(
 										$this->auth->get_account_id(),
 										$id
 										));
 		}
 		// If current user is a patient
 		else if ($this->auth->get_type() === 'patient') {
-			$res = $this->connections_model->add_patient_doctor(array(
+			$res = $this->connections_model->add_patient_hcp(array(
 										$this->auth->get_account_id(),
 										$id
 										));
@@ -307,7 +307,7 @@ class Connections extends Controller {
 	/** 
 	 * Accept an existing connection request
 	 * 
-	 * @attention Only doctors can do this
+	 * @attention Only hcps can do this
 	 * */
 	function accept($requester_id = NULL, $my_id = NULL) 
 	{
@@ -328,17 +328,17 @@ class Connections extends Controller {
 			return;
 		}
 		
-		// Check if you are a doctor (only doctor can call this function)
-		if ($this->auth->get_type() != 'doctor') {
+		// Check if you are a hcp (only hcp can call this function)
+		if ($this->auth->get_type() != 'hcp') {
 			show_error('Sorry, only HCP can accept connection requests');
 			return;
 		}
 		
 		if ($this->patient_model->is_patient(array($requester_id))) {
-			$res = $this->connections_model->accept_patient_doctor(array($requester_id,$my_id));
+			$res = $this->connections_model->accept_patient_hcp(array($requester_id,$my_id));
 		}
-		else if ($this->hcp_model->is_doctor(array($requester_id))) {
-			$res = $this->connections_model->accept_doctor_doctor(array($requester_id, $my_id));
+		else if ($this->hcp_model->is_hcp(array($requester_id))) {
+			$res = $this->connections_model->accept_hcp_hcp(array($requester_id, $my_id));
 		}
 		else {
 			show_error('The requester id does not match any id in the database', 500);
@@ -372,7 +372,7 @@ class Connections extends Controller {
 	/*
 	 * deletes connection (un-friend someone)
 	 * @param
-	 * 		id is the account_id of the doctor the user would like to disconnect from
+	 * 		id is the account_id of the hcp the user would like to disconnect from
 	 * @return 
 	 * 		error 
 	 * 			id not specified (the one to disconnect from)
@@ -396,7 +396,7 @@ class Connections extends Controller {
 		if ( $this->patient_model->is_patient(array($id)) ){
 			$res = $this->connections_model->remove_pd_connection(array('patient_id' => $this->auth->get_account_id() , 'hcp_id' => $id )); 
 		}
-		else if ($this->hcp_model->is_doctor(array($id))) {
+		else if ($this->hcp_model->is_hcp(array($id))) {
 			$res = $this->connections_model->remove_dd_connection(array('this_hcp_id' => $this->auth->get_account_id() , 'hcp_id' => $id )); 
 		}
 		else {

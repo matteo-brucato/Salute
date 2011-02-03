@@ -16,7 +16,7 @@ class Home extends Controller {
 		$this->load->library('auth');
 	}
 	
-	/*
+	/**
 	 * If not logged in load default welcome page and login side panel
 	 * else already logged in, load their profile
 	 * */
@@ -29,26 +29,27 @@ class Home extends Controller {
 				$this->load->view('sidepane/login', '', TRUE)
 			));
 		}
-
 		// Already logged in
 		else {
 			$this->ajax->redirect('/profile');
 		}
 	}
 
-	/*
+	/**
 	 * fn login
 	 * @input -- email, password
 	 * verify input, check authorization
 	 * if login successful, store session info
 	 * @return redirect to profile || error (if already logged in || authorization fails)
 	 * @todo this is not tested, unsure about logic. 
+	 * 
+	 * @bug It does not check properly the result from the model. What happes
+	 * if the model returns -1, for instance?
 	 * */
 	function login()
 	{
 		if ($this->auth->is_logged_in()) {
-			show_error('You are already logged in', 200);
-			return;
+			$this->ajax->redirect('/profile');
 		}
 		
 		// get email & password
@@ -78,7 +79,7 @@ class Home extends Controller {
 		// login successful : store info for session id, go to user profile
 		else
 		{
-			if ($results[0] != 'patient' && $results[0] != 'doctor') {
+			if ($results[0] != 'patient' && $results[0] != 'hcp') {
 				$this->ajax->view(array(
 					'',
 					$this->load->view('sidepane/login_failed', '', TRUE)
@@ -98,9 +99,8 @@ class Home extends Controller {
 
 	}
 
-	/*
-	 * fn logout
-	 * clears current session info
+	/**
+	 * Clears current session info
 	 * @return redirect to default page
 	 * */
 	function logout()
@@ -108,7 +108,12 @@ class Home extends Controller {
 		$this->session->sess_destroy();
 		$this->ajax->redirect('/');
 	}
-
+	function retrieve_password(){
+		// check if logged in
+		$this->auth->check_logged_in();
+		// load view
+	}
+	
 	/*
 	 * fn retrieve_password
 	 * @input -- email
@@ -116,37 +121,38 @@ class Home extends Controller {
 	 * @return send password via email to user, with link to login again. || error(invalid email)
 	 * @todo -- this is not tested, unsure about logic. 
 	 * @todo -- view needed
+	 * @error 
+	 * 		emails are not being sent...
 	 * */
-	function retrieve_password()
-	{
-		$this->load->view('mainpane/________', '', TRUE); 	/* @todo- view to retrieve password*/
+	function retrieve_password_do(){
 		$email = $this->input->post('email');
 
-		// need a retrieve password function in login model
+		if ( $email == NULL ){
+				show_error('Error: No email passed in.', 500);
+				return;
+		}
 		$this->load->model('account_model');
-		$password = $this->account_model->get_password(array($email)); 
+		
+		$result = $this->account_model->get_password(array($email)); 
+		$password = $result[0]['password'];
+		
 		if ($password == NULL){
-			show_error('Invalid Email: error retreiving password.', 500);
+			show_error('Sorry, this email is not registered.', 500);
 			return;
 		}
 
 		$this->load->library('email');
 		$config['mailtype'] = 'html';
 		$this->email->initialize($config);
-//		$this->email->from($this->auth->get_email());
 		$this->email->from('salute-noreply@salute.com');
-//		$this->email->to($results['email']);
-		$this->email->to('mattfeel@gmail.com');
+		$this->email->to($results['email']);
 		$this->email->subject('Password Retrieval');
-		
 		$this->email->message(
 			'You have requested for retrieval of your password. Your password is:'.$password.' '.
 			'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
 
 		$this->email->send();
-		
 		$this->ajax->view(array('Your password has been emailed to you.',''));
-
 	}
 
 	/*
@@ -158,7 +164,6 @@ class Home extends Controller {
 					$this->load->view('mainpane/registration', '', TRUE),
 					$this->load->view('sidepane/default', '', TRUE)
 				));
-	
 	}
 
 	/*
@@ -170,14 +175,23 @@ class Home extends Controller {
 	 * 			email || password is missing
 	 *			add_account query error
 	 * 			email is already registered
-	 * 			type is not doctor nor patient
+	 * 			type is not hcp nor patient
 	 * 			account id is already registered in patient||hcp table
-	 * 		confirmation view
-	 * @attention how is the type going to be returned to the controller? 
-	 * @todo- Fancy: Confirmation Email
+	 * @error tests
+	 * 		mandatory email/password field succes
+	 * 		patient registration success
+	 * 		hcp registration success 
+	 * @attention dob is VERY sensitive...
+	 * @todo- Confirmation Email
 	 * */
-	function register_do()
+	function register_do($type = NULL)
 	{
+		echo $type;
+		if( $type == NULL || ( $type !== 'patient' && $type !== 'hcp' ) ){
+			show_error('Invalid type.',500);
+			return;
+		}
+		
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
 	
@@ -186,76 +200,66 @@ class Home extends Controller {
 			return;
 		}
 		
+		// load respective forms.
 		$this->load->model('account_model');
-		$account_id = $this->account_model->add_account(array('email' => $email, 'password' => $password)); 
-		
-		switch ($account_id) {
-			case -1:
-				$view = 'Query error!';
-				$error = TRUE;
-				break;
-			case -2:
-				$view = 'This email is already registered.';
-				$error = TRUE;
-				break;
-			default:
-				$error = FALSE;
-				break;
+		$result = $this->account_model->add_account(array('email' => $email, 'password' => $password)); 
+			
+		if($result === -1){
+				$this->ajax->view(array('Query error!',''));
+				return;
 		}
 		
-		if($error){
-					$this->ajax->view(array(
-						$view,
-						''
-					));
-					return;
-				}
+		$account_id = $result[0]['account_id'];
 				
-		$type = $this->input->post('type');
-		$input=array(
+		if ($type === 'patient'){
+			$input=array(
 						$account_id,
-						$this->input->post('first_name'),
-						$this->input->post('middle_name'),
-						$this->input->post('last_name'),
+						$this->input->post('firstname'),
+						$this->input->post('lastname'),
+						$this->input->post('middlename'),
+						$this->input->post('ssn'),
 						$this->input->post('dob'),
 						$this->input->post('sex'),
-						$this->input->post('ssn'),
-						$this->input->post('tel_no'),
-						$this->input->post('fax_no'),
+						$this->input->post('tel'),
+						$this->input->post('fax'),
 						$this->input->post('address')
-		);
+			);
 		
-		if ($type === 'patient'){
 			$this->load->model('patient_model');
-			$res = $this->patient_model->register(array($input)); 
+			$res = $this->patient_model->register($input); 
 		}
-		else if ($type() === 'doctor') {
+		else if ($type === 'hcp') {
+			$input=array(
+						$account_id,
+						$this->input->post('firstname'),
+						$this->input->post('lastname'),
+						$this->input->post('middlename'),
+						$this->input->post('ssn'),
+						$this->input->post('dob'),
+						$this->input->post('sex'),
+						$this->input->post('tel'),
+						$this->input->post('fax'),
+						$this->input->post('spec'),
+						$this->input->post('org'),
+						$this->input->post('address')
+			);
+		
 			$this->load->model('hcp_model');
-			$res = $this->hcp_model->register(array($input)); 
+			$res = $this->hcp_model->register($input); 
 		}
 		else {
 			show_error('Internal Server Error.', 500);
 		}
-
-		switch ($res) {
-			case -1:
+		echo 'am i here?';
+		if ( $res === -1 ){
 				$view = 'Query error!';
-				break;
-			case -2:
-				$view = 'This account id is already registered.';
-				break;
-			default:
-				$view = 'Congratulations, you are now registered.';
-				break;
+		} 
+		else {
+			$view = 'Congratulations, you are now registered.';
 		}
-		
-		// Create final view for the user
-		$this->ajax->view(array(
-			$view,
-			''
-		));
+		echo 'am i here3?';
+		$this->ajax->view(array($view,''));
 	}
 }
-
 /** @} */
 ?>

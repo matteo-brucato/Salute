@@ -70,12 +70,12 @@ class Account_model extends Model {
 		$sql = "SELECT account_id
 			FROM accounts
 			WHERE email = ?";
-		$query = $this->db->query($sql, array($inputs[0]));
+		$query = $this->db->query($sql, $inputs['email']);
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 			
-		return $this->result_array();	
+		return $query->result_array();	
 	}
 	
 	/**
@@ -129,7 +129,7 @@ class Account_model extends Model {
 	 function get_password($inputs){
 	 
 	 	$sql = "SELECT A.password
-			FROM account A
+			FROM accounts A
 			WHERE A.email = ?";
 	 	$query = $this->db->query($sql, $inputs);
 		
@@ -137,8 +137,8 @@ class Account_model extends Model {
 			return -1;	
 		if( $query->num_rows() < 1)
 			return array();	 	
-	 	
-	 	return $query->result_array();
+
+		return $query->result_array();
 	 }
 }
 ?>

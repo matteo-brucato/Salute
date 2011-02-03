@@ -23,7 +23,7 @@ class Auth {
 	function __construct() {
 		$CI =& get_instance();
 		$this->account_id	= $CI->session->userdata('account_id');
-		$this->type		= $CI->session->userdata('type');
+		$this->type			= $CI->session->userdata('type');
 		$this->email		= $CI->session->userdata('email');
 		$this->first_name	= $CI->session->userdata('first_name');
 		$this->last_name	= $CI->session->userdata('last_name');

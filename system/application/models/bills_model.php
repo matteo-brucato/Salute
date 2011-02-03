@@ -45,10 +45,10 @@ class Bills_model extends Model {
 
 
 	/**
-	 * View all bills a patient has received OR all bills a doctor has issued
+	 * View all bills a patient has received OR all bills a hcp has issued
 	 * 
 	 * @param $inputs
-	 *   Is of the form: array(account_id, type of account(doctor or patient))
+	 *   Is of the form: array(account_id, type of account(hcp or patient))
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all bills
@@ -71,7 +71,7 @@ class Bills_model extends Model {
 			return array();	
 		}
 
-		//lists all bills a doctor has issued
+		//lists all bills a hcp has issued
 		$sql = "Select B.bill_id, P2.first_name, P2.last_name, B.amount, B.descryption, B.due_date, B.cleared
 			FROM payment B, patient_account P, patient_account P2
 			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id";
@@ -87,10 +87,10 @@ class Bills_model extends Model {
 
 
 	/**
-	 * View all CURRENT bills a patient has received OR all CURRENT bills a doctor has issued
+	 * View all CURRENT bills a patient has received OR all CURRENT bills a hcp has issued
 	 * 
 	 * @param $inputs
-	 *   Is of the form: array(account_id, type of account(doctor or patient))
+	 *   Is of the form: array(account_id, type of account(hcp or patient))
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all bills
@@ -113,7 +113,7 @@ class Bills_model extends Model {
 			return array();	
 		}
 
-		//list all current bills a doctor has issued
+		//list all current bills a hcp has issued
 		$sql = "Select B.bill_id, P2.first_name, P2.last_name, B.amount, B.descryption, B.due_date, B.cleared
 			FROM payment B, patient_account P, patient_account P2
 			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id AND B.due_date >= curdate()";
@@ -129,10 +129,10 @@ class Bills_model extends Model {
 
 
 	/**
-	 * View all PAST bills a patient has received OR all PAST bills a doctor has issued
+	 * View all PAST bills a patient has received OR all PAST bills a hcp has issued
 	 * 
 	 * @param $inputs
-	 *   Is of the form: array(account_id, type of account(doctor or patient))
+	 *   Is of the form: array(account_id, type of account(hcp or patient))
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all bills
@@ -155,7 +155,7 @@ class Bills_model extends Model {
 			return array();	
 		}
 
-		//list all past bills a doctor has issued
+		//list all past bills a hcp has issued
 		$sql = "Select B.bill_id, P2.first_name, P2.last_name, B.amount, B.descryption, B.due_date, B.cleared
 			FROM payment B, patient_account P, patient_account P2
 			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id AND B.due_date < curdate()";
@@ -171,10 +171,10 @@ class Bills_model extends Model {
 
 
 	/**
-	 * View all PAST bills a patient has received OR all PAST bills a doctor has issued THAT HAVE NOT CLEARED
+	 * View all PAST bills a patient has received OR all PAST bills a hcp has issued THAT HAVE NOT CLEARED
 	 * 
 	 * @param $inputs
-	 *   Is of the form: array(account_id, type of account(doctor or patient))
+	 *   Is of the form: array(account_id, type of account(hcp or patient))
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all bills
@@ -197,7 +197,7 @@ class Bills_model extends Model {
 			return array();	
 		}
 
-		//list all past bills a doctor has issued that are NOT CLEARED
+		//list all past bills a hcp has issued that are NOT CLEARED
 		$sql = "Select B.bill_id, P2.first_name, P2.last_name, B.amount, B.descryption, B.due_date, B.cleared
 			FROM payment B, patient_account P, patient_account P2
 			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id AND B.due_date < curdate() AND B.cleared = FALSE";
@@ -213,7 +213,7 @@ class Bills_model extends Model {
 
 
 	/**
-	 * Doctor issues a new bill to patient
+	 * hcp issues a new bill to patient
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(patient_id, hcp_id, amount, descryption, due_date)
@@ -277,7 +277,7 @@ class Bills_model extends Model {
 	}
 	
 	/**
-	 * Allows doctors to delete a bill
+	 * Allows hcps to delete a bill
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(hcp_id, bill_id)
