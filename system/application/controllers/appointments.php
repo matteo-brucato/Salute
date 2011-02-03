@@ -30,56 +30,149 @@ class Appointments extends Controller {
 	/*
 	 * fn all 
 	 * lists all appointments of the logged in user
-	 * @todo: need a view to list appointments: Date Time Descrip Doctor Name Actions(Reschedule,Cancel)	
+	 * @todo: need a view to list appointments: Date Time Descrip Doctor Name Actions(Reschedule,Cancel)
+	 * @MATEO:
+	 * 	I ASSUME THE VIEW NAME WILL BE all_appointments	
 	 * */
 	function all() {
 		$this->auth->check_logged_in();
+		
+		$this->load->model('appointments_model');
 
-		$results = $this->appointments_model->view_all(array(
-									'account_id' => $this->auth->get_account_id(),
-									'type' => $this->auth->get_type()
-								)); 
-		if($results == NULL){
-			$this->ajax->view(array('No appointments. ',''));
+		if ($this->auth->get_type() === 'patient'){
+			
+			$results = $this->appointments_model->view_all(array('account_id' => $this->auth->get_account_id(),
+																 'type' => $this->auth->get_type()));
+			$sidepane = 'sidepane/patient-profile';
 		}
-		$this->ajax->view(array($this->load->view('mainpane/____', $results , TRUE),''));
+		else if ($this->auth->get_type() === 'doctor'){
+			$results = $this->appointments_model->view_all(array('account_id' => $this->auth->get_account_id(),
+																 'type' => $this->auth->get_type()));
+			$sidepane = 'sidepane/doctor-profile';
+		}
+		else {
+			show_error('Internal server logic error.', 500);
+			return;
+		}
+		
+		switch ($results) {
+			case -1:
+				$mainview = 'Query error!';
+				$sideview = '';
+				break;
+			default:
+				$mainview = $this->load->view('mainpane/all_appointments',
+					array('list_name' => 'My Appointments', 'list' => $results) , TRUE);
+				$sideview = $this->load->view($sidepane, '', TRUE);
+				break;
+		}
+		
+		// Give results to the client
+		$this->ajax->view(array($mainview,$sideview));
+		
+		//if($results == NULL){
+		//	$this->ajax->view(array('No appointments. ',''));
+		//}
+		//$this->ajax->view(array($this->load->view('mainpane/____', $results , TRUE),''));
 	}
 
 	/*
 	 * fn upcoming 
 	 * lists all upcoming appointments of the logged in user
-	 * @todo: need a view to list appointments: Date Time Descrip Doctor Name Actions(Reschedule,Cancel)	
+	 * @todo: need a view to list appointments: Date Time Descrip Doctor Name Actions(Reschedule,Cancel)
+	 * @MATEO:
+	 * 	I ASSUME THE VIEW NAME WILL BE upcoming_appointments	
 	 * */
 	function upcoming(){
 		$this->auth->check_logged_in();
+		
+		$this->load->model('appointments_model');
 
-		$results = $this->appointments_model->view_upcoming(array(
-									'account_id' => $this->auth->get_account_id(),
-									'type' => $this->auth->get_type()
-								)); 
-		if($results == NULL){
-			$this->ajax->view(array('You have no upcoming appointments. ',''));
+		if ($this->auth->get_type() === 'patient'){
+			
+			$results = $this->appointments_model->view_upcoming(array('account_id' => $this->auth->get_account_id(),
+																 'type' => $this->auth->get_type()));
+			$sidepane = 'sidepane/patient-profile';
 		}
-		$this->ajax->view(array($this->load->view('mainpane/_____', $results , TRUE),''));
+		else if ($this->auth->get_type() === 'doctor'){
+			$results = $this->appointments_model->view_upcoming(array('account_id' => $this->auth->get_account_id(),
+																 'type' => $this->auth->get_type()));
+			$sidepane = 'sidepane/doctor-profile';
+		}
+		else {
+			show_error('Internal server logic error.', 500);
+			return;
+		}
+		
+		switch ($results) {
+			case -1:
+				$mainview = 'Query error!';
+				$sideview = '';
+				break;
+			default:
+				$mainview = $this->load->view('mainpane/upcoming_appointments',
+					array('list_name' => 'My Upcoming Appointments', 'list' => $results) , TRUE);
+				$sideview = $this->load->view($sidepane, '', TRUE);
+				break;
+		}
+		
+		// Give results to the client
+		$this->ajax->view(array($mainview,$sideview));
+								
+		//if($results == NULL){
+		//	$this->ajax->view(array('You have no upcoming appointments. ',''));
+		//}
+		//$this->ajax->view(array($this->load->view('mainpane/_____', $results , TRUE),''));
 	}
 
 
 	/*
 	 * fn past 
 	 * lists all past appointments of the logged in user
-	 * @todo: need a view to list appointments: Date Time Descrip Doctor_Name 	
+	 * @todo: need a view to list appointments: Date Time Descrip Doctor_Name 
+	 * @MATEO:
+	 * 	I ASSUME THE VIEW NAME WILL BE past_appointments	
 	 * */
 	function past(){
 		$this->auth->check_logged_in();
+		
+		$this->load->model('appointments_model');
 
-		$results = $this->appointments_model->view_past(array(
-									'account_id' => $this->auth->get_account_id(),
-									'type' => $this->auth->get_type()
-								)); 
-		if($results == NULL){
-			$this->ajax->view(array('You have no past appointments. ',''));
+		if ($this->auth->get_type() === 'patient'){
+			
+			$results = $this->appointments_model->view_past(array('account_id' => $this->auth->get_account_id(),
+																 'type' => $this->auth->get_type()));
+			$sidepane = 'sidepane/patient-profile';
 		}
-		$this->ajax->view(array($this->load->view('mainpane/table_result', $results , TRUE),''));
+		else if ($this->auth->get_type() === 'doctor'){
+			$results = $this->appointments_model->view_past(array('account_id' => $this->auth->get_account_id(),
+																 'type' => $this->auth->get_type()));
+			$sidepane = 'sidepane/doctor-profile';
+		}
+		else {
+			show_error('Internal server logic error.', 500);
+			return;
+		}
+		
+		switch ($results) {
+			case -1:
+				$mainview = 'Query error!';
+				$sideview = '';
+				break;
+			default:
+				$mainview = $this->load->view('mainpane/past_appointments',
+					array('list_name' => 'My Past Appointments', 'list' => $results) , TRUE);
+				$sideview = $this->load->view($sidepane, '', TRUE);
+				break;
+		}
+		
+		// Give results to the client
+		$this->ajax->view(array($mainview,$sideview));
+		 
+		//if($results == NULL){
+		//	$this->ajax->view(array('You have no past appointments. ',''));
+		//}
+		//$this->ajax->view(array($this->load->view('mainpane/table_result', $results , TRUE),''));
 	}
 
 	/*
@@ -91,11 +184,31 @@ class Appointments extends Controller {
 	 * */
 	function cancel($apt_id) {
 		$this->auth->check_logged_in();
+		
 		$this->load->model('appointments_model');
+		
 		if($this->appointments_model->is_myappointment(array($this->auth->get_account_id(),$apt_id))){
 			/* @to do: pop up-- are you sure you want to cancel appointment?*/
-			$results = $this->appointments_model->cancel(array($apt_id)); 
-			$this->ajax->redirect('/appointments/upcoming');
+			$results = $this->appointments_model->cancel(array($apt_id));
+			
+			if ($this->auth->get_type() === 'patient')
+				$sidepane = 'sidepane/patient-profile';
+			$sidepane = 'sidepane/doctor-profile';
+				
+			
+			switch ($results) {
+			case -1:
+				$mainview = 'Query error!';
+				$sideview = '';
+				break;
+			case -5:
+				$mainview = 'Appointment does not exist';
+				$sideview = '';
+			default:
+				$mainview = $this->ajax->redirect('/appointments/upcoming');   //on the name
+				$sideview = $this->load->view($sidepane, '', TRUE);
+				break;
+			}
 		}
 		else{
 			show_error('This is not your appointment. Permission Denied.', 500);
