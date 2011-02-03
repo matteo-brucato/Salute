@@ -27,9 +27,9 @@ if ($this->auth->get_type() == 'patient') {
 			$table['tuples'][$i]['*actions'] = '
 			<ul>
 				<li><a href="/profile/user/'.$table['tuples'][$i]['account_id'].'" class="ajaxlink">See Profile</a></li>
-				<li><a href="">Send Email</a></li>
-				<li><a href="">Delete Connection</a></li>
-				<li><a href="">Request Appointment</a></li>
+				<li><a href="/messages/compose/'.$table['tuples'][$i]['account_id'].'">Send Email</a></li>
+				<li><a href="/connections/destroy/'.$table['tuples'][$i]['account_id'].'">Delete Connection</a></li>
+				<li><a href="/appointment/request/'.$table['tuples'][$i]['account_id'].'">Request Appointment</a></li>
 			</ul>';
 		} else {
 			$table['tuples'][$i]['*actions'] = '<a href="/connections/request/'.

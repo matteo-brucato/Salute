@@ -19,9 +19,9 @@ class Profile extends Controller {
 	/**
 	 * Fn index -- default 
 	 * checks that user is logged in
-	 * loads the main welcome screen for when a patient or doctor is logged in. 
+	 * loads the main welcome screen for when a patient or hcp is logged in. 
 	 * if patient, load respective views
-	 * else if doctor, load respective views
+	 * else if hcp, load respective views
  	 * else error
 	 * */
 	function index() {
@@ -34,10 +34,10 @@ class Profile extends Controller {
 			));
 		}
 
-		else if ($this->auth->get_type() === 'doctor') {
+		else if ($this->auth->get_type() === 'hcp') {
 			$this->ajax->view(array(
-				$this->load->view('mainpane/doctor-profile', '', TRUE),
-				$this->load->view('sidepane/doctor-profile', '', TRUE)
+				$this->load->view('mainpane/hcp-profile', '', TRUE),
+				$this->load->view('sidepane/hcp-profile', '', TRUE)
 			));
 		}
 
@@ -54,7 +54,7 @@ class Profile extends Controller {
 	 * loads the user's information in the main panel
 	 * loads the user's menu bar in the side panel  
 	 * if patient, load respective views
-	 * else if doctor, load respective views
+	 * else if hcp, load respective views
  	 * else error
 	 * */
 	function myinfo()
@@ -67,10 +67,10 @@ class Profile extends Controller {
 				$this->load->view('sidepane/patient-profile', '', TRUE)
 			));
 		}
-		else if ($this->auth->get_type() === 'doctor') {		
+		else if ($this->auth->get_type() === 'hcp') {		
 			$this->ajax->view(array(
-				$this->load->view('mainpane/doctor-info', '', TRUE),
-				$this->load->view('sidepane/doctor-profile', '', TRUE)
+				$this->load->view('mainpane/hcp-info', '', TRUE),
+				$this->load->view('sidepane/hcp-profile', '', TRUE)
 			));		
 		}	
 		else{
@@ -122,9 +122,9 @@ class Profile extends Controller {
 		$this->load->model('connections_model');
 		
 		// Checks the user_id, if passes, get their info 
-		if ($this->hcp_model->is_doctor(array($id))) {
-			$info = $this->hcp_model->get_doctor(array($id));
-			$id_type = 'doctor';
+		if ($this->hcp_model->is_hcp(array($id))) {
+			$info = $this->hcp_model->get_hcp(array($id));
+			$id_type = 'hcp';
 		}
 		else if ($this->patient_model->is_patient(array($id))) {
 			$info = $this->patient_model->get_patient(array($id));
@@ -134,7 +134,7 @@ class Profile extends Controller {
 			neither to an HCP nor a patient');
 			return;
 		}
-		// error checking for get_doctor / get_patient fn calls
+		// error checking for get_hcp / get_patient fn calls
 		switch ($info) {
 			case -1:
 				$view = 'Query error grom get_doctor/get_patient function!';
@@ -153,8 +153,8 @@ class Profile extends Controller {
 			return;
 		}
 		
-		// check that logged in user is a doctor. 
-		if ($this->auth->get_type() == 'doctor' && $id_type == 'patient') {
+		// check that logged in user is a hcp. 
+		if ($this->auth->get_type() == 'hcp' && $id_type == 'patient') {
 			show_error('Sorry! An HCP can only view profiles of connected patients');
 			return;
 		}
@@ -189,8 +189,8 @@ class Profile extends Controller {
 		}
 
 		// Show the side panel based on logged in type.
-		if ($this->auth->get_type() == 'doctor') {
-			$sideview = $this->load->view('sidepane/doctor-profile', '' , TRUE);
+		if ($this->auth->get_type() == 'hcp') {
+			$sideview = $this->load->view('sidepane/hcp-profile', '' , TRUE);
 		} else if ($this->auth->get_type() == 'patient') {
 			$sideview = $this->load->view('sidepane/patient-profile', '' , TRUE);
 		} else {
@@ -199,9 +199,9 @@ class Profile extends Controller {
 		}
 		
 		// Load up the right view
-		if ($id_type == 'doctor') {
+		if ($id_type == 'hcp') {
 			$this->ajax->view(array(
-				$this->load->view('mainpane/see_doctor',
+				$this->load->view('mainpane/see_hcp',
 					array('info' => $info[0], 'is_my_friend' => $is_my_friend), TRUE), 
 				$sideview
 			));
@@ -261,7 +261,7 @@ class Profile extends Controller {
 							)); 
 		}
 
-		else if ($this->auth->get_type() === 'doctor'){
+		else if ($this->auth->get_type() === 'hcp'){
 			$this->load->model('hcp_model');
 			$this->hcp_model->update_personal_info(array(
 								'account_id' => $account_id, 

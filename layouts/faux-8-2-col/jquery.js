@@ -26,7 +26,7 @@ $(document).ready(function() {			// Wait for the document to be able to be manip
 });
 
 function layout_bindings() {
-	$("a.ajaxlink").live("click", function(event) {
+	/*$("a.ajaxlink").live("click", function(event) {
 		event.preventDefault();
 		var href = $(this).attr('href');
 		execute_ajax(href);
@@ -38,7 +38,7 @@ function layout_bindings() {
 			var href = $(this).attr('href');
 			execute_ajax(href);
 		}
-	});
+	});*/
 	
 	$("#mypatients-table tr, #mydoctors-table tr").live("hover",
 	function() {

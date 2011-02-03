@@ -16,7 +16,7 @@ class Login_model extends Model {
 	 * -1 in case of error in a query
 	 * empty array if no tuples returned by query
 	 * if patient exists: array of form ("patient", tuple of accounts merged with patient_account )
-	 * if doctor exists: array of form ("doctor", tuple of accounts merged with hcp_account )
+	 * if hcp exists: array of form ("hcp", tuple of accounts merged with hcp_account )
 	 * */
 	function authorize($inputs) {
 		//test to see if user is a PATIENT
@@ -27,13 +27,12 @@ class Login_model extends Model {
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 		
-	
 		if( $query->num_rows() > 0){
 			$result = $query->result_array();
 			return array( "patient", $result[0] );
-		}	
+		}
 
-		//test to see if the user is a doctor
+		//test to see if the user is a hcp
 		$sql = "SELECT * 
 			FROM accounts A, hcp_account H
 			WHERE A.account_id = H.account_id AND email = ? AND password = ?";
@@ -42,7 +41,7 @@ class Login_model extends Model {
 			return -1;
 		if( $query->num_rows() > 0){
 			$result = $query->result_array();
-			return array( "patient", $result[0] );
+			return array( "hcp", $result[0] );
 		}	
 	
 		return array();

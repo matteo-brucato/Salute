@@ -11,10 +11,10 @@ class Example extends Controller {
 	{
 		$this->load->model('hcp_model');
 		$this->load->model('connections_model');
-		$results = $this->hcp_model->get_doctors();
+		$results = $this->hcp_model->get_hcps();
 		// Example of changing both panels (main AND side)
 		$this->ajax->view(array(
-			$this->load->view('mainpane/alldoctors', array('doc_list' => $results) , TRUE),
+			$this->load->view('mainpane/allhcps', array('doc_list' => $results) , TRUE),
 			$this->load->view('sidepane/patient-profile', '', TRUE)
 		));
 	}

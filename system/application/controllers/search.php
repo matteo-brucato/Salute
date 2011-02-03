@@ -26,7 +26,7 @@ class Search extends Controller {
 	}
 
 	/**
-	 * Search for doctors in the database
+	 * Search for hcps in the database
 	 * */
 	function hcps() {
 		$this->auth->check_logged_in();
@@ -35,7 +35,7 @@ class Search extends Controller {
 		$this->load->model('connections_model');
 		
 		/** @todo Change this with the actual search! */
-		$hcps = $this->hcp_model->get_doctors();
+		$hcps = $this->hcp_model->get_hcps();
 		
 		for ($i = 0; $i < count($hcps); $i++) {
 			if ($this->connections_model->is_connected_with(
@@ -55,7 +55,7 @@ class Search extends Controller {
 	}
 
 	// Search for patients 
-	// Note: Only for doctors, should only show patients they are connected with
+	// Note: Only for hcps, should only show patients they are connected with
 	function patients(){ 
 		$this->auth->check_logged_in();
 	}
@@ -67,7 +67,7 @@ class Search extends Controller {
 
 	// Search in medical records
 	// Note: if patient --> only search in my records
-	//	 if doctor --> only search in records i have access to
+	//	 if hcp --> only search in records i have access to
 	function medical_records() {
 		$this->auth->check_logged_in();
 	}
