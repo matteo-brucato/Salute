@@ -70,7 +70,7 @@ class Account_model extends Model {
 		$sql = "SELECT account_id
 			FROM accounts
 			WHERE email = ?";
-		$query = $this->db->query($sql, array($inputs[0]));
+		$query = $this->db->query($sql, $inputs['email']);
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
