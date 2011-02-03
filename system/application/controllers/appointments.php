@@ -45,7 +45,7 @@ class Appointments extends Controller {
 																 'type' => $this->auth->get_type()));
 			$sidepane = 'sidepane/patient-profile';
 		}
-		else if ($this->auth->get_type() === 'doctor'){
+		else if ($this->auth->get_type() === 'hcp'){
 			$results = $this->appointments_model->view_all(array('account_id' => $this->auth->get_account_id(),
 																 'type' => $this->auth->get_type()));
 			$sidepane = 'sidepane/doctor-profile';
@@ -58,7 +58,7 @@ class Appointments extends Controller {
 		switch ($results) {
 			case -1:
 				$mainview = 'Query error!';
-				$sideview = '';
+		    	$sideview = '';
 				break;
 			default:
 				$mainview = $this->load->view('mainpane/all_appointments',
@@ -69,11 +69,6 @@ class Appointments extends Controller {
 		
 		// Give results to the client
 		$this->ajax->view(array($mainview,$sideview));
-		
-		//if($results == NULL){
-		//	$this->ajax->view(array('No appointments. ',''));
-		//}
-		//$this->ajax->view(array($this->load->view('mainpane/____', $results , TRUE),''));
 	}
 
 	/*
@@ -94,7 +89,7 @@ class Appointments extends Controller {
 																 'type' => $this->auth->get_type()));
 			$sidepane = 'sidepane/patient-profile';
 		}
-		else if ($this->auth->get_type() === 'doctor'){
+		else if ($this->auth->get_type() === 'hcp'){
 			$results = $this->appointments_model->view_upcoming(array('account_id' => $this->auth->get_account_id(),
 																 'type' => $this->auth->get_type()));
 			$sidepane = 'sidepane/doctor-profile';
@@ -103,7 +98,7 @@ class Appointments extends Controller {
 			show_error('Internal server logic error.', 500);
 			return;
 		}
-		
+			
 		switch ($results) {
 			case -1:
 				$mainview = 'Query error!';
@@ -118,11 +113,6 @@ class Appointments extends Controller {
 		
 		// Give results to the client
 		$this->ajax->view(array($mainview,$sideview));
-								
-		//if($results == NULL){
-		//	$this->ajax->view(array('You have no upcoming appointments. ',''));
-		//}
-		//$this->ajax->view(array($this->load->view('mainpane/_____', $results , TRUE),''));
 	}
 
 
@@ -144,7 +134,7 @@ class Appointments extends Controller {
 																 'type' => $this->auth->get_type()));
 			$sidepane = 'sidepane/patient-profile';
 		}
-		else if ($this->auth->get_type() === 'doctor'){
+		else if ($this->auth->get_type() === 'hcp'){
 			$results = $this->appointments_model->view_past(array('account_id' => $this->auth->get_account_id(),
 																 'type' => $this->auth->get_type()));
 			$sidepane = 'sidepane/doctor-profile';
@@ -168,11 +158,6 @@ class Appointments extends Controller {
 		
 		// Give results to the client
 		$this->ajax->view(array($mainview,$sideview));
-		 
-		//if($results == NULL){
-		//	$this->ajax->view(array('You have no past appointments. ',''));
-		//}
-		//$this->ajax->view(array($this->load->view('mainpane/table_result', $results , TRUE),''));
 	}
 
 	/*
@@ -183,6 +168,7 @@ class Appointments extends Controller {
 	 * @todo: pop up-- are you sure you want to cancel appointment?
 	 * */
 	function cancel($apt_id) {
+		
 		$this->auth->check_logged_in();
 		
 		$this->load->model('appointments_model');
@@ -195,7 +181,6 @@ class Appointments extends Controller {
 				$sidepane = 'sidepane/patient-profile';
 			$sidepane = 'sidepane/doctor-profile';
 				
-			
 			switch ($results) {
 			case -1:
 				$mainview = 'Query error!';
@@ -205,8 +190,7 @@ class Appointments extends Controller {
 				$mainview = 'Appointment does not exist';
 				$sideview = '';
 			default:
-				//$mainview = $this->ajax->redirect('/appointments/upcoming');   //????on the name
-				$mainview = $this->ajax->redirect('/appointments/upcoming_appointments');
+				$mainview = $this->ajax->redirect('/appointments/upcoming');
 				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
 			}
@@ -250,8 +234,7 @@ class Appointments extends Controller {
 				$mainview = 'Appointment does not exist';
 				$sideview = '';
 			default:
-				//$mainview = $this->ajax->redirect('/appointments/upcoming');   //????on the name
-				$mainview = $this->ajax->redirect('/appointments/upcoming_appointments');
+				$mainview = $this->ajax->redirect('/appointments/upcoming');
 				$sideview = $this->load->view('sidepane/patient-profile', '', TRUE);
 				break;
 			}

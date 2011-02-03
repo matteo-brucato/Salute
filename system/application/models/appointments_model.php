@@ -7,10 +7,10 @@ class Appointments_model extends Model {
 	}
 
 	/**
-	 * States wheather an appointment belongs to a patient_id
+	 * States wheather an appointment belongs to a patient or doctor
 	 * 
 	 * @param $inputs
-	 *   Is of the form: array(patient_id, appointment_id)
+	 *   Is of the form: array(account_id, appointment_id)
 	 * @return
 	 *  -1 in case of error in a query
 	 *  -5 appointment id does not exist
@@ -32,8 +32,8 @@ class Appointments_model extends Model {
 
 	 	$sql = "SELECT *
 			FROM appointments A
-			WHERE A.patient_id = ? AND A.appointment_id = ?";
-	 	$query = $this->db->query($sql, $inputs);
+			WHERE (A.patient_id = ? OR A.hcp_id = ?) AND A.appointment_id = ?";
+	 	$query = $this->db->query($sql, array($inputs[0], $inputs[0], $inputs[1]));
 	 	
 	 	if ($this->db->trans_status() === FALSE)
 			return -1;	
@@ -133,11 +133,11 @@ class Appointments_model extends Model {
 	function view_all($inputs){
 	
 		//lists all appointments a patient has ever had
-		if( $inputs[1] === 'patient'){
-			$sql = "Select A.appointment_id, H2.first_name, H2.last_name, A.amount, A.descryption, A.date_time, A.cleared
+		if( $inputs['type'] === 'patient'){
+			$sql = "Select A.appointment_id, H2.first_name, H2.last_name, A.descryption, A.date_time, A.approved
 				FROM appointments A, hcp_account H, hcp_account H2
-				WHERE A.hcp_id = H.account_id AND A.patient_id = ? AND A.hcp_id == H2.account_id";
-			$query = $this->db->query($sql, array($inputs[0]));
+				WHERE A.hcp_id = H.account_id AND A.patient_id = ? AND A.hcp_id = H2.account_id";
+			$query = $this->db->query($sql, array($inputs['account_id']));
 			
 			if ($this->db->trans_status() === FALSE)
 				return -1;
@@ -149,10 +149,10 @@ class Appointments_model extends Model {
 		}
 
 		//lists all appointments a hcp has issued
-		$sql = "Select A.appointment_id, P2.first_name, P2.last_name, A.amount, A.descryption, A.date_time, A.cleared
+		$sql = "Select A.appointment_id, P2.first_name, P2.last_name, A.descryption, A.date_time, A.approved
 			FROM appointments A, patient_account P, patient_account P2
-			WHERE A.patient_id = P.account_id AND A.hcp_id = ? AND A.patient_id == P2.account_id";
-		$query = $this->db->query($sql, array($inputs[0]));
+			WHERE A.patient_id = P.account_id AND A.hcp_id = ? AND A.patient_id = P2.account_id";
+		$query = $this->db->query($sql, array($inputs['account_id']));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;			
@@ -179,11 +179,11 @@ class Appointments_model extends Model {
 	function view_upcoming($inputs){
 		
 		//lists all upcoming appointments a patient has
-		if( $inputs[1] == 'patient'){
-			$sql = "Select A.appointment_id, H2.first_name, H2.last_name, A.amount, A.descryption, A.date_time, A.cleared
+		if( $inputs['type'] == 'patient'){
+			$sql = "Select A.appointment_id, H2.first_name, H2.last_name, A.descryption, A.date_time, A.approved
 				FROM appointments A, hcp_account H, hcp_account H2
-				WHERE A.hcp_id = H.account_id AND A.patient_id = ? AND A.hcp_id == H2.account_id AND A.date_time >= NOW()";
-			$query = $this->db->query($sql, $inputs[0]);
+				WHERE A.hcp_id = H.account_id AND A.patient_id = ? AND A.hcp_id = H2.account_id AND A.date_time >= NOW()";
+			$query = $this->db->query($sql, $inputs['account_id']);
 			
 			if ($this->db->trans_status() === FALSE)
 				return -1;
@@ -195,10 +195,10 @@ class Appointments_model extends Model {
 		}
 
 		//lists all upcoming appointments a hcp has
-		$sql = "Select A.appointment_id, P2.first_name, P2.last_name, A.amount, A.descryption, A.date_time, A.cleared
+		$sql = "Select A.appointment_id, P2.first_name, P2.last_name, A.descryption, A.date_time, A.approved
 			FROM appointments A, patient_account P, patient_account P2
-			WHERE A.patient_id = P.account_id AND A.hcp_id = ? AND A.patient_id == P2.account_id and A.date_time >= NOW()";
-		$query = $this->db->query($sql, $inputs[0]);
+			WHERE A.patient_id = P.account_id AND A.hcp_id = ? AND A.patient_id = P2.account_id and A.date_time >= NOW()";
+		$query = $this->db->query($sql, $inputs['account_id']);
 		
 		if ($this->db->trans_status() === FALSE)
 				return -1;
@@ -225,11 +225,11 @@ class Appointments_model extends Model {
 	function view_past($inputs){
 			
 		//lists all past appointments a patient has had 
-		if( $inputs[1] == 'patient'){
-			$sql = "Select A.appointment_id, H2.first_name, H2.last_name, A.amount, A.descryption, A.date_time, A.cleared
+		if( $inputs['type'] == 'patient'){
+			$sql = "Select A.appointment_id, H2.first_name, H2.last_name, A.descryption, A.date_time, A.approved
 				FROM appointments A, hcp_account H, hcp_account H2
-				WHERE A.hcp_id = H.account_id AND A.patient_id = ? AND A.hcp_id == H2.account_id AND A.date_time < NOW()";
-			$query = $this->db->query($sql, $inputs[0]);
+				WHERE A.hcp_id = H.account_id AND A.patient_id = ? AND A.hcp_id = H2.account_id AND A.date_time < NOW()";
+			$query = $this->db->query($sql, $inputs['account_id']);
 			
 			if ($this->db->trans_status() === FALSE)
 				return -1;
@@ -241,10 +241,10 @@ class Appointments_model extends Model {
 		}
 
 		//lists all past appointments a hcp has had
-		$sql = "Select A.appointment_id, P2.first_name, P2.last_name, A.amount, A.descryption, A.date_time, A.cleared
+		$sql = "Select A.appointment_id, P2.first_name, P2.last_name, A.descryption, A.date_time, A.approved
 			FROM appointments A, patient_account P, patient_account P2
-			WHERE A.patient_id = P.account_id AND A.hcp_id = ? AND A.patient_id == P2.account_id and A.date_time < NOW()";
-		$query = $this->db->query($sql, $inputs[0]);
+			WHERE A.patient_id = P.account_id AND A.hcp_id = ? AND A.patient_id = P2.account_id and A.date_time < NOW()";
+		$query = $this->db->query($sql, $inputs['account_id']);
 		
 		if ($this->db->trans_status() === FALSE)
 				return -1;
@@ -321,7 +321,7 @@ class Appointments_model extends Model {
 		
 		$sql = "DELETE FROM appointments
 				WHERE appointment_id = ?";
-		$query = $this->db->query($sql, $inputs);
+		$query = $this->db->query($sql, array($inputs[0]));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
