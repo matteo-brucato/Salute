@@ -25,6 +25,28 @@ What tools and technology we used..
 \chapter{Design}
 \section{High Level View}
 \subsection{Database Design}
+\paragraph{PostgreSQL}
+Salute uses PostgreSQL 8.4 as its database management software.
+
+\paragraph{Entity Relationship Diagram (ERD)}
+//try to place the ER here
+
+\paragraph{Entities & Attributes}
+Entities are represented in the ER diagram as rectangles.  Each entity represents a table in the database that holds all of the information or attributes that represents that entity.  In the ER diagram, each attribute is represented with a oval.
+
+\subparagraph{Messages}
+Message Attributes: 
+SERIAL message_id: id to uniquely identify the message from other messages
+TEXT subject: subject of the message being sent
+TEXT content: where the sender can writte what they would like to send to the receiver
+TIMESTAMP date_time: date and time of when the message is sent
+BOOLEAN sender_kept: to determine if the sender would like to delete the message from their outbox
+BOOLEAN receiver_kept: to determine if the receiver would like to delete the message from their inbox
+
+\subparagraph{Accounts}
+
+
+
 \subsection{MVC Design}
 Intro... bla bla bla
 \paragraph{Models}
