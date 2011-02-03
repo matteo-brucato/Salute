@@ -1,4 +1,4 @@
-<?php
+l<?php
 class Appointments_model extends Model {
 	
 	function __construct() {
@@ -133,7 +133,7 @@ class Appointments_model extends Model {
 	function view_all($inputs){
 	
 		//lists all appointments a patient has ever had
-		if( $inputs[1] == 'patient'){
+		if( $inputs[1] === 'patient'){
 			$sql = "Select A.appointment_id, H2.first_name, H2.last_name, A.amount, A.descryption, A.date_time, A.cleared
 				FROM appointments A, hcp_account H, hcp_account H2
 				WHERE A.hcp_id = H.account_id AND A.patient_id = ? AND A.hcp_id == H2.account_id";
