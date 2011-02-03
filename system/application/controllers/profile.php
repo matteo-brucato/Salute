@@ -94,9 +94,9 @@ class Profile extends Controller {
 	 * 			pat trying to view unconnected hcp: 'You are not connected. Permission Denied.' 
 	 * 			hcp trying to view unconnected hcp: 'You are not connected. Permission Denied.'
 	 * 			pat trying to view patient: 'Sorry! Patients cannot be connected with other patients'
+	 * 			hcp trying to view unconnected hcp: 'You are not connected. Permission Denied.'
 	 * Fails:
 	 * 			hcp trying to view connected hcp: Query error!'
-	 * 			hcp trying to view unconnected hcp: 'You are not connected. Permission Denied.'
 	 * 			hcp trying to view connected patient: Sorry! An HCP can only view profiles of connected patients
 	 * 			pat trying to view connected hcp: 'Query error!'
 	 * 
@@ -137,7 +137,7 @@ class Profile extends Controller {
 		// error checking for get_doctor / get_patient fn calls
 		switch ($info) {
 			case -1:
-				$view = 'Query error!';
+				$view = 'Query error grom get_doctor/get_patient function!';
 				$error = TRUE;
 				break;
 			case -7:
@@ -170,7 +170,7 @@ class Profile extends Controller {
 		$is_my_friend = true;
 		switch ($is_my_friend) {
 			case -1:
-				$view = 'Query error!';
+				$view = 'Query error from is_connected_with function!';
 				$error = TRUE;
 				break;
 			case FALSE:
@@ -230,9 +230,11 @@ class Profile extends Controller {
 					$this->load->view('mainpane/edit_info', '', TRUE),
 					$this->load->view('sidepane/default', '', TRUE)
 				));
+	}
+	
+	function edit_do() {
+		$this->auth->check_logged_in();
 
-		$email = $this->input->post('email');
-		$password = $this->input->post('password');
 		$first_name = $this->input->post('first_name');
 		$middle_name = $this->input->post('middle_name');
 		$last_name = $this->input->post('last_name');
@@ -278,10 +280,7 @@ class Profile extends Controller {
 			show_error('Unknown Error.', 500);
 			return;
 		}
-
-
 	}
-
 }
 /** @} */
 ?>
