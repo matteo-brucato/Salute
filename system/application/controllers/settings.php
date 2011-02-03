@@ -118,8 +118,7 @@ class Settings extends Controller {
 	// @attention: need a reactivate function
 	function deactivate() {
 		$this->auth->check_logged_in();
-		
-		// Confirmation email: should have a link to reactivate? 
+				
 		$this->load->model('account_model');
 		$check = $this->account_model->deactivate($this->auth->get_account_id());
 		if ($check === -1){
@@ -129,8 +128,8 @@ class Settings extends Controller {
 			$this->ajax->view(array('Account does not exist!',''));
 			return;
 		}
-		$this->ajax->view(array('Your account has been deactivated.',''));
 		
+		// Confirmation email: should have a link to reactivate? 
 		$this->load->library('email');
 		$config['mailtype'] = 'html';
 		$this->email->initialize($config);
@@ -139,6 +138,8 @@ class Settings extends Controller {
 		$this->email->subject('Account Deactivated.');
 		$this->email->message('Your Account has been deactivated.');
 		$this->email->send();
+		
+		$this->ajax->view(array('Your account has been deactivated.',''));
 	}
 	
 	function activate(){

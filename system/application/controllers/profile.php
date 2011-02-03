@@ -87,19 +87,20 @@ class Profile extends Controller {
 	 * @tests
 	 * 		Successful:
 	 * 			invalid id input
-	 * 			hcp trying to view pending patient : denies permission
-	 * 			hcp trying to view pending hcp: denies permission
-	 * 			pat trying to view pending hcp: 'You are not connected. Permission Denied. '		
-	 * 			hcp trying to view unconnected patient: 'Sorry! An HCP can only view profiles of connected patients'
-	 * 			pat trying to view unconnected hcp: 'You are not connected. Permission Denied.' 
-	 * 			hcp trying to view unconnected hcp: 'You are not connected. Permission Denied.'
+	 * 			non-existent id #
 	 * 			pat trying to view patient: 'Sorry! Patients cannot be connected with other patients'
-	 * 			hcp trying to view unconnected hcp: 'You are not connected. Permission Denied.'
-	 * Fails:
-	 * 			hcp trying to view connected hcp: Query error!'
-	 * 			hcp trying to view connected patient: Sorry! An HCP can only view profiles of connected patients
-	 * 			pat trying to view connected hcp: 'Query error!'
+	 * 			pat trying to view unconnected hcp: 'You are not connected. Permission Denied.' 
+	 * 			pat trying to view connected hcp: shows hcp profile + actions
+	 * 			pat trying to view pending hcp: 'You are not connected. Permission Denied. '		
 	 * 
+	 * 			hcp trying to view pending patient : Sorry! An HCP can only view profiles of connected patients
+	 *  		hcp trying to view unconnected patient: 'Sorry! An HCP can only view profiles of connected patients'
+	 * 			hcp trying to view pending hcp: denies permission
+	 * 			hcp trying to view connected hcp: Profile + actions
+	 * 			hcp trying to view unconnected hcp: 'You are not connected. Permission Denied.'
+	 * 
+	 * 		Fails:
+	 * 			hcp trying to view connected patient: Sorry! An HCP can only view profiles of connected patients
 	 * 
 	 * */
 	function user($id = NULL) {
@@ -134,25 +135,11 @@ class Profile extends Controller {
 			neither to an HCP nor a patient');
 			return;
 		}
-		// error checking for get_hcp / get_patient fn calls
-		switch ($info) {
-			case -1:
-				$view = 'Query error grom get_doctor/get_patient function!';
-				$error = TRUE;
-				break;
-			case -7:
-				$view = 'This account id is not an hcp';
-				break;
-			default:
-				$error = FALSE;
-				break;
-		}
 		
-		if($error){
-			$this->ajax->view(array($view,''));
-			return;
+		if( $info === -1 ){
+			$this->ajax->view(array('Query error grom get_doctor/get_patient function!',''));
+			return;		
 		}
-		
 		// check that logged in user is a hcp. 
 		if ($this->auth->get_type() == 'hcp' && $id_type == 'patient') {
 			show_error('Sorry! An HCP can only view profiles of connected patients');
@@ -164,28 +151,16 @@ class Profile extends Controller {
 		}
 	
 		// check that the id is friends with logged in user
-		echo $this->auth->get_account_id().' '.$id;
+		//echo $this->auth->get_account_id().' '.$id;
 		$is_my_friend = $this->connections_model->is_connected_with($this->auth->get_account_id(), $id);
-		echo ' '.$is_my_friend;
-		$is_my_friend = true;
-		switch ($is_my_friend) {
-			case -1:
-				$view = 'Query error from is_connected_with function!';
-				$error = TRUE;
-				break;
-			case FALSE:
-				$view = 'You are not connected. Permission Denied.';
-				$error = TRUE;
-				break;
-			default:
-				$view = 'Ok.';
-				$error = FALSE;
-				break;
+		//echo ' '.$is_my_friend;
+		if ($is_my_friend === -1){
+			$this->ajax->view(array('Query error from is_connected_with function!',''));
+			return;		
 		}
-		
-		if ($error) {
-			$this->ajax->view(array($view,''));
-			return;
+		else if (!$is_my_friend){
+			$this->ajax->view(array('You are not connected. Permission Denied.',''));
+			return;		
 		}
 
 		// Show the side panel based on logged in type.
