@@ -110,6 +110,8 @@ class Home extends Controller {
 		// check if logged in
 		$this->auth->check_logged_in();
 		// load view
+		
+		$this->ajax->view(array('need view!', ''));
 	}
 	
 	/*
