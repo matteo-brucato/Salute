@@ -41,10 +41,10 @@ class Home extends Controller {
 	 * verify input, check authorization
 	 * if login successful, store session info
 	 * @return redirect to profile || error (if already logged in || authorization fails)
-	 * @todo this is not tested, unsure about logic. 
 	 * 
 	 * @bug It does not check properly the result from the model. What happes
 	 * if the model returns -1, for instance?
+	 * @bug what if logs in inactive user
 	 * */
 	function login()
 	{
@@ -124,7 +124,9 @@ class Home extends Controller {
 	 * @todo -- this is not tested, unsure about logic. 
 	 * @todo -- view needed
 	 * @error 
-	 * 		emails are not being sent...
+	 * @testing
+	 * 		working and tested.
+	 * 		only needs to be tested with view/input
 	 * */
 	function retrieve_password_do(){
 		$email = $this->input->post('email');
@@ -249,17 +251,24 @@ class Home extends Controller {
 			$this->load->model('hcp_model');
 			$res = $this->hcp_model->register($input); 
 		}
-		else {
+		else
 			show_error('Internal Server Error.', 500);
-		}
-		echo 'am i here?';
-		if ( $res === -1 ){
+		if ( $res === -1 )
 				$view = 'Query error!';
-		} 
-		else {
-			$view = 'Congratulations, you are now registered.';
+		else{
+			$this->load->library('email');
+			$config['mailtype'] = 'html';
+			$this->email->initialize($config);
+			$this->email->from('salute-noreply@salute.com');
+			$this->email->to($email);
+			$this->email->subject('Registration Confirmation');
+			$this->email->message(
+				'You have successfully registered with Salute!'.' '.
+				'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
+
+			$this->email->send();
+			$view = 'Congratulations, you are now registered. A confirmation email has been sent to you.';
 		}
-		echo 'am i here3?';
 		$this->ajax->view(array($view,''));
 	}
 }
