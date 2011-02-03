@@ -48,9 +48,20 @@ class Settings extends Controller {
 					$this->ajax->view(array('Account does not exist!',''));
 			}
 			
-			$this->ajax->view(array('Your password has been changed.',''));
-			
-			// @todo: email confirmation
+			$this->load->library('email');
+			$config['mailtype'] = 'html';
+			$this->email->initialize($config);
+			$this->email->from('salute-noreply@salute.com');
+			$this->email->to($email);
+			$this->email->subject('Your password has been changed.');
+			$this->email->message(
+				'Your password has been successfully changed. It is now: '.$password.'. '.
+				'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
+
+			$this->email->send();
+									
+			$view = 'Your password has been changed. A confirmation email has been sent for your records.';
+			$this->ajax->view(array($view,''));	
 	}
 
 	function change_email(){
@@ -86,15 +97,53 @@ class Settings extends Controller {
 					return;
 			}
 			
-			$this->ajax->view(array('Your password has been changed.',''));
+			$this->load->library('email');
+			$config['mailtype'] = 'html';
+			$this->email->initialize($config);
+			$this->email->from('salute-noreply@salute.com');
+			$this->email->to($email);
+			$this->email->subject('Your password has been changed.');
+			$this->email->message(
+				'Your email has been successfully changed. It is now: '.$email.'. '.
+				'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
+
+			$this->email->send();
 			
-			// @todo: email confirmation
+			$this->ajax->view(array('Your email has been changed. A confirmation has been sent to your email.',''));
+			
 	}
 	
-	
 	// Deactivate Account
+	// @todo: popup: are you sure?
+	// @attention: need a reactivate function
 	function deactivate() {
 		$this->auth->check_logged_in();
+				
+		$this->load->model('account_model');
+		$check = $this->account_model->deactivate($this->auth->get_account_id());
+		if ($check === -1){
+			$this->ajax->view(array('Query Error!',''));
+			return;
+		} else if ($check === -4){
+			$this->ajax->view(array('Account does not exist!',''));
+			return;
+		}
+		
+		// Confirmation email: should have a link to reactivate? 
+		$this->load->library('email');
+		$config['mailtype'] = 'html';
+		$this->email->initialize($config);
+		$this->email->from('salute-noreply@salute.com');
+		$this->email->to($this->auth->get_email());
+		$this->email->subject('Account Deactivated.');
+		$this->email->message('Your Account has been deactivated.');
+		$this->email->send();
+		
+		$this->ajax->view(array('Your account has been deactivated.',''));
+	}
+	
+	function activate(){
+		
 	}
 }
 /** @} */
