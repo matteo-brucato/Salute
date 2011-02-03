@@ -16,7 +16,7 @@ class Home extends Controller {
 		$this->load->library('auth');
 	}
 	
-	/*
+	/**
 	 * If not logged in load default welcome page and login side panel
 	 * else already logged in, load their profile
 	 * */
@@ -36,13 +36,16 @@ class Home extends Controller {
 		}
 	}
 
-	/*
+	/**
 	 * fn login
 	 * @input -- email, password
 	 * verify input, check authorization
 	 * if login successful, store session info
 	 * @return redirect to profile || error (if already logged in || authorization fails)
 	 * @todo this is not tested, unsure about logic. 
+	 * 
+	 * @bug It does not check properly the result from the model. What happes
+	 * if the model returns -1, for instance?
 	 * */
 	function login()
 	{
@@ -78,7 +81,7 @@ class Home extends Controller {
 		// login successful : store info for session id, go to user profile
 		else
 		{
-			if ($results[0] != 'patient' && $results[0] != 'doctor') {
+			if ($results[0] != 'patient' && $results[0] != 'hcp') {
 				$this->ajax->view(array(
 					'',
 					$this->load->view('sidepane/login_failed', '', TRUE)
@@ -98,9 +101,8 @@ class Home extends Controller {
 
 	}
 
-	/*
-	 * fn logout
-	 * clears current session info
+	/**
+	 * Clears current session info
 	 * @return redirect to default page
 	 * */
 	function logout()
@@ -170,7 +172,7 @@ class Home extends Controller {
 	 * 			email || password is missing
 	 *			add_account query error
 	 * 			email is already registered
-	 * 			type is not doctor nor patient
+	 * 			type is not hcp nor patient
 	 * 			account id is already registered in patient||hcp table
 	 * 		confirmation view
 	 * @attention how is the type going to be returned to the controller? 
@@ -229,7 +231,7 @@ class Home extends Controller {
 			$this->load->model('patient_model');
 			$res = $this->patient_model->register(array($input)); 
 		}
-		else if ($type() === 'doctor') {
+		else if ($type() === 'hcp') {
 			$this->load->model('hcp_model');
 			$res = $this->hcp_model->register(array($input)); 
 		}

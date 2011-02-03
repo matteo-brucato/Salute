@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file medical_records_model.php
+ * @brief Model to give access to the medical_records table in the database
+ *
+ * @defgroup mdl Model
+ * @ingroup mdl
+ * @{
+ */
+
 class Medical_Records_model extends Model {
 	
 
@@ -120,4 +129,5 @@ class Medical_Records_model extends Model {
 		return 1;
 	}
 }
+/** @} */
 ?>

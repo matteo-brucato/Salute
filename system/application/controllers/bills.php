@@ -25,9 +25,9 @@ class Bills extends Controller {
 	}
   	
 	/* List all bills  */      	   
-	// @todo: patient main panel view : to list bills : ( Date, Title, Doctor Name, Amount, Status(unpaid/paid/pending), Actions (Pay Now, View Receipt)  
-	// @todo: doctor main panel view : to list bills : ( Date, Title, Doctor Name, Amount, Status(unpaid/paid/pending), Actions (Delete,View Receipt)  
-	// array $results sent to view in order:  bill_id, first_name(Doctor or Patient), last_name(doctor or patient), B.amount, B.descryption, B.due_date, B.cleared
+	// @todo: patient main panel view : to list bills : ( Date, Title, hcp Name, Amount, Status(unpaid/paid/pending), Actions (Pay Now, View Receipt)  
+	// @todo: hcp main panel view : to list bills : ( Date, Title, hcp Name, Amount, Status(unpaid/paid/pending), Actions (Delete,View Receipt)  
+	// array $results sent to view in order:  bill_id, first_name(hcp or Patient), last_name(hcp or patient), B.amount, B.descryption, B.due_date, B.cleared
 	function all()	{
 		
 		$this->auth->check_logged_in();
@@ -51,7 +51,7 @@ class Bills extends Controller {
 			}
 		}
 			
-		else if($this->auth->get_type() === 'doctor'){
+		else if($this->auth->get_type() === 'hcp'){
 			$results = $this->bills_model->view_all(array($this->auth->get_account_id(),$this->auth->get_type()));
 			switch ($results) {
 				case -1:
@@ -83,7 +83,7 @@ class Bills extends Controller {
 			$results = $this->bills_model->view_current(array($this->auth->get_account_id(),$this->auth->get_type()));
 			$this->ajax->view(array($this->load->view('mainpane/____________', $results, TRUE),''));
 		} 
-		else if($this->auth->get_type() === 'doctor'){
+		else if($this->auth->get_type() === 'hcp'){
 			$results = $this->bills_model->view_current(array($this->auth->get_account_id(),$this->auth->get_type()));
 			$this->ajax->view(array($this->load->view('mainpane/____________', $results, TRUE),''));
 		} 
@@ -101,7 +101,7 @@ class Bills extends Controller {
 			$results = $this->bills_model->view_past(array($this->auth->get_account_id(),$this->auth->get_type()));
 			$this->ajax->view(array($this->load->view('mainpane/____________', $results, TRUE),''));
 		} 
-		else if($this->auth->get_type() === 'doctor'){
+		else if($this->auth->get_type() === 'hcp'){
 			$results = $this->bills_model->view_past(array($this->auth->get_account_id(),$this->auth->get_type()));
 			$this->ajax->view(array($this->load->view('mainpane/____________', $results, TRUE),''));
 		} 
@@ -113,11 +113,11 @@ class Bills extends Controller {
 
 	// load form , charge patient an amount for an procedure/appointment/test, upload itemized receipt	
 	// update database
-	// Only available for doctors
+	// Only available for hcps
 	function issue_new_bill() {
 		$this->auth->check_logged_in();
 		$this->load->model('bills_model');
-		if($this->auth->get_type() === 'doctor'){
+		if($this->auth->get_type() === 'hcp'){
 			$patient_id = $this->input->post('patient_id');
 			$amount = $this->input->post('amount');
 			$description = $this->input->post('description');
@@ -125,7 +125,7 @@ class Bills extends Controller {
 			$this->bills_model->issue_bill(array($patient_id,$this->auth->get_account_id(),$amount,$description,$due_date));
 		}
 		else{
-			show_error('Error: only doctors can issue bills.', 500);
+			show_error('Error: only hcps can issue bills.', 500);
 			return;		
 		}
 		$this->ajax->redirect('/bills');

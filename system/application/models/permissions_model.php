@@ -50,7 +50,7 @@ class Permissions_model extends Model {
 	}
 	
 	/**
-	 * Determines if a medical record can be viewed by a doctor
+	 * Determines if a medical record can be viewed by a hcp
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(hcp_id, medical_rec_id)
@@ -73,7 +73,7 @@ class Permissions_model extends Model {
 	
 	
 	/**
-	 * Gives a doctor permission to view all of a patients medical records
+	 * Gives a hcp permission to view all of a patients medical records
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(patient_id, hcp_id)
@@ -104,7 +104,7 @@ class Permissions_model extends Model {
 	
 		$result = $query->result_array();
 		
-		//allow the doctor to view those medical records
+		//allow the hcp to view those medical records
 		foreach( $result as $value){
 			
 			$sql = "INSERT INTO permission (medical_rec_id, account_id)
@@ -120,7 +120,7 @@ class Permissions_model extends Model {
 	
 	
 	/**
-	 * Does not allow a doctor to view any of the patients medical records
+	 * Does not allow a hcp to view any of the patients medical records
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(patient_id, hcp_id)

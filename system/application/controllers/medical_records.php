@@ -34,7 +34,7 @@ class MedicalRecords extends Controller {
 	 * 
 	 * @return
 	 *		if patient-list your records
-	 * 		if doctor, redirect to list of his/her patients
+	 * 		if hcp, redirect to list of his/her patients
 	*/
 	function list_med_recs()
 	{
@@ -45,8 +45,8 @@ class MedicalRecords extends Controller {
 		if ($this->auth->get_type() === 'patient') {
 			$res = $this->medical_record->list_my_records(array('account_id' => $this->auth->get_account_id() )); 
 		}
-		// if doctor, redirect to My Patients search List
-		else if ( $this->auth->get_type() === 'doctor') {
+		// if hcp, redirect to My Patients search List
+		else if ( $this->auth->get_type() === 'hcp') {
 			$this->ajax->redirect('/search/patient');
 			return;
 		} else {
@@ -105,8 +105,8 @@ class MedicalRecords extends Controller {
 																	)); 
 		}
 
-		// Doctor adds medical record of a specific patient 
-		else if ($this->auth->get_type() === 'doctor') {
+		// hcp adds medical record of a specific patient 
+		else if ($this->auth->get_type() === 'hcp') {
 			$patient_id = $this->input->post('patient_id');
 			$results = $this->medical_record_model->add_med_record(array(
 																			'patient_id' => $this->auth->get_account_id(),
@@ -131,8 +131,8 @@ class MedicalRecords extends Controller {
 
 	// gets called when an individual medical record is selected to be viewed
 	// loads a view that prints Name, Expanded Info, Date, ...etc
-	// should list all doctors who have permission to see it
-	// should have a button that lets you give another doctor permission , or remove permission 
+	// should list all hcps who have permission to see it
+	// should have a button that lets you give another hcp permission , or remove permission 
 	// should have a button to delete a medical record
 	/* @todo: need a view that lists medical records: Name, Description, link to file */
 	function medical_record($med_rec_id) {
@@ -143,8 +143,8 @@ class MedicalRecords extends Controller {
 		if($this->auth->get_type() === 'patient'){
 			$result = $this->medical_records_model->is_myrecord(array($this->auth->get_account_id(), $med_rec_id));
 		}
-		// If doctor: check if he/she has permission to see it
-		else if($this->auth->get_type() === 'doctor'){
+		// If hcp: check if he/she has permission to see it
+		else if($this->auth->get_type() === 'hcp'){
 			$result = $this->permissions_model->____(array($this->auth->get_account_id(), $med_rec_id)); /*@todo: update fn call*/
 		}
 		else{
@@ -177,7 +177,7 @@ class MedicalRecords extends Controller {
 		$this->ajax->view(array($this->load->view('mainpane/______', $res, TRUE),''));	
 	}
 
-	// Set medical record to hidden: not public to your doctor(s)
+	// Set medical record to hidden: not public to your hcp(s)
 	function set_private($medical_record_id,$hcp_id) {
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
@@ -190,17 +190,17 @@ class MedicalRecords extends Controller {
 				show_error('This is not your record. Permission Denied.',500);
 				return;
 			} else {
-				// Check if its already hidden from doctor
+				// Check if its already hidden from hcp
 				$result = $this->permissions_model->get_permission_status($hcp_id,$medical_record_id);
 				if(!$result){
-					show_error('This record is already private from that doctor.',500);
+					show_error('This record is already private from that hcp.',500);
 					return;					
 				}
 				$res = $this->permissions_model->delete_permission($hcp_id,$medical_record_id);
 			}
 		}
-		// If doctor: check if he/she has permission to see it
-		else if($this->auth->get_type() === 'doctor'){
+		// If hcp: check if he/she has permission to see it
+		else if($this->auth->get_type() === 'hcp'){
 				show_error('Permission Denied.',500);
 				return;
 		}
@@ -215,7 +215,7 @@ class MedicalRecords extends Controller {
 				$error = TRUE;
 				break;
 			default:
-				$mainview = 'This record is now private to that doctor.';
+				$mainview = 'This record is now private to that hcp.';
 				$sideview = '';
 				break;
 		}
@@ -223,7 +223,7 @@ class MedicalRecords extends Controller {
 		$this->ajax->view(array($mainview,$sideview));
 	}
 
-	// Set medical record to viewable: public to your doctor(s)
+	// Set medical record to viewable: public to your hcp(s)
 	function set_public($medical_record_id, ,$hcp_id) {
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
@@ -236,17 +236,17 @@ class MedicalRecords extends Controller {
 				show_error('This is not your record. Permission Denied.',500);
 				return;
 			} else {
-				// Check if its already allowed to be seen by doctor
+				// Check if its already allowed to be seen by hcp
 				$result = $this->permissions_model->get_permission_status($hcp_id,$medical_record_id);
 				if($result){
-					show_error('This record is already public to this doctor.',500);
+					show_error('This record is already public to this hcp.',500);
 					return;					
 				}
 				$res = $this->permissions_model->allow_permission($hcp_id,$medical_record_id);
 			}
 		}
-		// If doctor: check if he/she has permission to see it
-		else if($this->auth->get_type() === 'doctor'){
+		// If hcp: check if he/she has permission to see it
+		else if($this->auth->get_type() === 'hcp'){
 				show_error('Permission Denied.',500);
 				return;
 		}
@@ -261,7 +261,7 @@ class MedicalRecords extends Controller {
 				$error = TRUE;
 				break;
 			default:
-				$mainview = 'This record is now public to that doctor.';
+				$mainview = 'This record is now public to that hcp.';
 				$sideview = '';
 				break;
 		}

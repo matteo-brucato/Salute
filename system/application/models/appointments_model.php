@@ -53,7 +53,7 @@ class Appointments_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *  -5 appointment id does not exist
-	 *   Array with all the whole tuple from Appointments table, plus patient first_name and last_name, doctor first_name and last_name 
+	 *   Array with all the whole tuple from Appointments table, plus patient first_name and last_name, hcp first_name and last_name 
 	 *   emtpy array() if no tuples
 	 * */
 	 function get_appointment($inputs){
@@ -84,10 +84,10 @@ class Appointments_model extends Model {
 	 
 	 
 	/**
-	 * Patient requests an appointment with a doctor
+	 * Patient requests an appointment with a hcp
 	 * 
 	 * @param $inputs
-	 *   Is of the form: array(patient_id, doctor_id, descryption, date_time (YY-MM-DD HH-MM-SS))
+	 *   Is of the form: array(patient_id, hcp_id, descryption, date_time (YY-MM-DD HH-MM-SS))
 	 * @return
 	 *  -1 in case of error in a query
 	 *   0 if everything goes fine and an entry into the appointments table is made
@@ -121,10 +121,10 @@ class Appointments_model extends Model {
 	
 
 	/**
-	 * 	View all appointments a patient has ever had OR all appointments a doctor has ever issued (approved as well as not approved)
+	 * 	View all appointments a patient has ever had OR all appointments a hcp has ever issued (approved as well as not approved)
 	 * 
 	 * @param $inputs
-	 *   Is of the form: array(account_id, type of account(doctor or patient))
+	 *   Is of the form: array(account_id, type of account(hcp or patient))
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all appointments
@@ -148,7 +148,7 @@ class Appointments_model extends Model {
 			return array();	
 		}
 
-		//lists all appointments a doctor has issued
+		//lists all appointments a hcp has issued
 		$sql = "Select A.appointment_id, P2.first_name, P2.last_name, A.amount, A.descryption, A.date_time, A.cleared
 			FROM appointments A, patient_account P, patient_account P2
 			WHERE A.patient_id = P.account_id AND A.hcp_id = ? AND A.patient_id == P2.account_id";
@@ -165,10 +165,10 @@ class Appointments_model extends Model {
 	
 	
 	/**
-	 * View all upcoming appointments a patient has OR all upcoming appointments a doctor has (approved as well as not approved)
+	 * View all upcoming appointments a patient has OR all upcoming appointments a hcp has (approved as well as not approved)
 	 * 
 	 * @param $inputs
-	 *   Is of the form: array(account_id, type of account(doctor or patient))
+	 *   Is of the form: array(account_id, type of account(hcp or patient))
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all upcoming appointments
@@ -194,7 +194,7 @@ class Appointments_model extends Model {
 			return array();	
 		}
 
-		//lists all upcoming appointments a doctor has
+		//lists all upcoming appointments a hcp has
 		$sql = "Select A.appointment_id, P2.first_name, P2.last_name, A.amount, A.descryption, A.date_time, A.cleared
 			FROM appointments A, patient_account P, patient_account P2
 			WHERE A.patient_id = P.account_id AND A.hcp_id = ? AND A.patient_id == P2.account_id and A.date_time >= NOW()";
@@ -211,10 +211,10 @@ class Appointments_model extends Model {
 	
 
 	/**
-	 * View all past appointments a patient has had OR all past appointments a doctor has had (approved as well as not approved)
+	 * View all past appointments a patient has had OR all past appointments a hcp has had (approved as well as not approved)
 	 * 
 	 * @param $inputs
-	 *   Is of the form: array(account_id, type of account(doctor or patient))
+	 *   Is of the form: array(account_id, type of account(hcp or patient))
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all past appointments
@@ -240,7 +240,7 @@ class Appointments_model extends Model {
 			return array();	
 		}
 
-		//lists all past appointments a doctor has had
+		//lists all past appointments a hcp has had
 		$sql = "Select A.appointment_id, P2.first_name, P2.last_name, A.amount, A.descryption, A.date_time, A.cleared
 			FROM appointments A, patient_account P, patient_account P2
 			WHERE A.patient_id = P.account_id AND A.hcp_id = ? AND A.patient_id == P2.account_id and A.date_time < NOW()";
@@ -257,7 +257,7 @@ class Appointments_model extends Model {
 	
 	
 	/**
-	 * Doctor approves an appointment request
+	 * hcp approves an appointment request
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(appointment_id)
@@ -295,7 +295,7 @@ class Appointments_model extends Model {
 	
 
 	/**
-	 * Patient OR doctor cancels appointment
+	 * Patient OR hcp cancels appointment
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(appointment_id)
@@ -331,7 +331,7 @@ class Appointments_model extends Model {
 
 	
 	/**
-	 * Patient reschedules appointment with the doctor
+	 * Patient reschedules appointment with the hcp
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(appointment_id, date_time (YY-MM-DD HH-MM-SS))

@@ -30,7 +30,7 @@ class Appointments extends Controller {
 	/*
 	 * fn all 
 	 * lists all appointments of the logged in user
-	 * @todo: need a view to list appointments: Date Time Descrip Doctor Name Actions(Reschedule,Cancel)	
+	 * @todo: need a view to list appointments: Date Time Descrip hcp Name Actions(Reschedule,Cancel)	
 	 * */
 	function all() {
 		$this->auth->check_logged_in();
@@ -48,7 +48,7 @@ class Appointments extends Controller {
 	/*
 	 * fn upcoming 
 	 * lists all upcoming appointments of the logged in user
-	 * @todo: need a view to list appointments: Date Time Descrip Doctor Name Actions(Reschedule,Cancel)	
+	 * @todo: need a view to list appointments: Date Time Descrip hcp Name Actions(Reschedule,Cancel)	
 	 * */
 	function upcoming(){
 		$this->auth->check_logged_in();
@@ -67,7 +67,7 @@ class Appointments extends Controller {
 	/*
 	 * fn past 
 	 * lists all past appointments of the logged in user
-	 * @todo: need a view to list appointments: Date Time Descrip Doctor_Name 	
+	 * @todo: need a view to list appointments: Date Time Descrip hcp_Name 	
 	 * */
 	function past(){
 		$this->auth->check_logged_in();
