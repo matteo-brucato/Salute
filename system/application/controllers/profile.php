@@ -81,23 +81,23 @@ class Profile extends Controller {
 	
 	/**
 	 * Prints another user's profile under the condition that they are connected
-	 * @param id is used to check type(hcp or patient) of the user who's profile is to be viewed
+	 * @param 	id is used to check type(hcp or patient) of the user who's profile is to be viewed
 	 * 			checks if they are connected
-	 * @return loads the friend's profile in the main panel || error page
-	 * @tests all successful and complete.
-	 * 			invalid id input
-	 * 			non-existent id #
-	 * 			pat trying to view patient: 'Sorry! Patients cannot be connected with other patients'
-	 * 			pat trying to view unconnected hcp: 'You are not connected. Permission Denied.' 
-	 * 			pat trying to view connected hcp: shows hcp profile + actions
-	 * 			pat trying to view pending hcp: 'You are not connected. Permission Denied. '		
+	 * @return 	loads the friend's profile in the main panel || error page
+	 * @tests 	all successful and complete.
+	 * 				invalid id input
+	 * 				non-existent id #
+	 *	 			pat trying to view patient: 'Sorry! Patients cannot be connected with other patients'
+	 * 				pat trying to view unconnected hcp: 'You are not connected. Permission Denied.' 
+	 * 				pat trying to view connected hcp: shows hcp profile + actions
+	 * 				pat trying to view pending hcp: 'You are not connected. Permission Denied. '		
 	 * 
-	 * 			hcp trying to view pending patient : Sorry! An HCP can only view profiles of connected patients
-	 *  		hcp trying to view unconnected patient: 'Sorry! An HCP can only view profiles of connected patients'
-	 * 			hcp trying to view pending hcp: denies permission
-	 * 			hcp trying to view connected hcp: Profile + actions
-	 * 			hcp trying to view unconnected hcp: 'You are not connected. Permission Denied.'
-	 * 			hcp trying to view connected patient: Sorry! An HCP can only view profiles of connected patients
+	 * 	 			hcp trying to view pending patient : Sorry! An HCP can only view profiles of connected patients
+	 *  			hcp trying to view unconnected patient: 'Sorry! An HCP can only view profiles of connected patients'
+	 * 				hcp trying to view pending hcp: denies permission
+	 * 				hcp trying to view connected hcp: Profile + actions
+	 *  			hcp trying to view unconnected hcp: 'You are not connected. Permission Denied.'
+	 * 				hcp trying to view connected patient: Sorry! An HCP can only view profiles of connected patients
 	 * 
 	 * */
 	function user($id = NULL) {
@@ -131,7 +131,7 @@ class Profile extends Controller {
 			neither to an HCP nor a patient');
 			return;
 		}
-		echo $id_type;
+		
 		if( $info === -1 ){
 			$this->ajax->view(array('Query error grom get_doctor/get_patient function!',''));
 			return;		
@@ -187,11 +187,9 @@ class Profile extends Controller {
 	}
 
 	/*
-	 * fn edit
-	 * loads a form that allows the logged in user to edit their personal info
-	 * @return database is updated || error page
-	 * @todo this is not tested, unsure about logic. 
-	 * */
+	 * Loads a form that allows the user to edit their info
+	 * @attention view/form needs missing
+	  * */
 	function edit() {
 		$this->auth->check_logged_in();
 
@@ -200,55 +198,55 @@ class Profile extends Controller {
 					$this->load->view('sidepane/default', '', TRUE)
 				));
 	}
-	
+
+	/* *	
+	 * Allows user to edit their personal information
+	 * 
+	 * @attention: will post  break if nothing is passed into those fields?
+	 * */
 	function edit_do() {
 		$this->auth->check_logged_in();
-
-		$first_name = $this->input->post('first_name');
-		$middle_name = $this->input->post('middle_name');
-		$last_name = $this->input->post('last_name');
-		$dob = $this->input->post('dob');
-		$sex = $this->input->post('sex');
-		$ssn = $this->input->post('ssn');
-		$tel_no = $this->input->post('tel_no');
-		$fax_no = $this->input->post('fax_no');
-		$address = $this->input->post('address');
-
+		
 		if ( $this->auth->get_type() === 'patient'){
 			$this->load->model('patient_model');
 			$this->patient_model->update_personal_info(array(
-								'account_id' => $account_id, 
-								'first_name' => $first_name, 
-								'last_name' => $last_name,
-								'middle_name' => $middle_name, 
-								'ssn' => $ssn, 
-								'dob' => $dob, 
-								'sex' => $sex, 
-								'tel_number' => $tel_no, 
-								'fax_number' => $fax_no, 
-								'address' => $address
-							)); 
+																$this->auth->get_account_id(), 
+																$this->input->post('firstname'),
+																$this->input->post('middlename'),
+																$this->input->post('lastname'),
+																$this->input->post('dob'),
+																$this->input->post('sex'),
+																$this->input->post('ssn'),
+																$this->input->post('tel'),
+																$this->input->post('fax'),
+																$this->input->post('address'),
+														)); 
 		}
 
 		else if ($this->auth->get_type() === 'hcp'){
 			$this->load->model('hcp_model');
 			$this->hcp_model->update_personal_info(array(
-								'account_id' => $account_id, 
-								'first_name' => $first_name, 
-								'last_name' => $last_name,
-								'middle_name' => $middle_name, 
-								'ssn' => $ssn, 
-								'dob' => $dob, 
-								'sex' => $sex, 
-								'tel_number' => $tel_no, 
-								'fax_number' => $fax_no, 
-								'address' => $address
-						)); 
+										$this->auth->get_account_id(), 
+																$this->input->post('firstname'),
+																$this->input->post('middlename'),
+																$this->input->post('lastname'),
+																$this->input->post('dob'),
+																$this->input->post('sex'),
+																$this->input->post('ssn'),
+																$this->input->post('tel'),
+																$this->input->post('fax'),
+																$this->input->post('org'),
+																$this->input->post('spec'),
+																$this->input->post('address'),
+														)); 
 		}
 		else{
 			show_error('Unknown Error.', 500);
 			return;
 		}
+		
+		$this->ajax->view(array('Your changes have been made.',''));
+		$this->ajax->view(array('call my info view...',''));
 	}
 }
 /** @} */

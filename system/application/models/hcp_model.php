@@ -176,7 +176,7 @@ class Hcp_model extends Model {
 		$sql = "UPDATE hcp_account
 			SET first_name = ?, last_name = ?, middle_name = ?, tel_number = ?, fax_number = ?, specialization = ?, org_name = ?, address = ?
 			WHERE account_id = ?";
-		$query = $this->db->query($data, array($inputs[1], $inputs[2], $inputs[3], $inputs[4], $inputs[5],
+		$query = $this->db->query($sql, array($inputs[1], $inputs[2], $inputs[3], $inputs[4], $inputs[5],
 						       $inputs[6], $inputs[7], $inputs[8], $inputs[0]));
 						       
 		if ($this->db->trans_status() === FALSE)
