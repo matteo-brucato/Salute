@@ -128,6 +128,18 @@ CREATE TABLE payment(
 );
 
 
+--Permissions Medical Recorda Table
+CREATE TABLE permission(
+	permission_id SERIAL NOT NULL,
+	medical_rec_id SERIAL NOT NULL,
+	account_id SERIAL NOT NULL,
+	date_created DATE NOT NULL,
+	PRIMARY KEY (permission_id),
+	FOREIGN KEY (medical_rec_id) REFERENCES medical_record(medical_rec_id),
+	FOREIGN KEY (account_id) REFERENCES accounts(account_id)
+
+);
+
 --
 --RELATIONSHIP TABLES
 --
@@ -155,18 +167,6 @@ CREATE TABLE d_d_connection(
 	FOREIGN KEY (accepter_id) REFERENCES hcp_account(account_id)
 );
 
-
---Permissions Medical Recorda Table
-CREATE TABLE permission(
-	permission_id SERIAL NOT NULL,
-	medical_rec_id SERIAL NOT NULL,
-	account_id SERIAL NOT NULL,
-	date_created DATE NOT NULL,
-	PRIMARY KEY (permission_id),
-	FOREIGN KEY (medical_rec_id) REFERENCES medical_record(medical_rec_id),
-	FOREIGN KEY (account_id) REFERENCES accounts(account_id)
-
-);
 
 CREATE TABLE ci_sessions (
 	session_id varchar(40) DEFAULT '0' NOT NULL,
