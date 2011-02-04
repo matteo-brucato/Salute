@@ -7,6 +7,28 @@ class Account_model extends Model {
 	}
 
 
+
+	/**
+	 * Checks if an account is active
+	 * 
+	 * @params $inputs
+	 *  Is of the form: array(account_id)
+	 * @return
+	 * -1 in case of error in a query
+	 * FALSE if not active
+	 * TRUE if active
+	 * */
+	function is_active($account_id){
+		$sql = "SELECT *
+				FROM accounts a
+				WHERE a.active = 't' AND a.account_id = ?";
+		$query = $this->db->query($sql, $account_id);
+											  
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		return ($query->num_rows() > 0);
+	}
 	/**
 	 * Deactivates an account
 	 * 

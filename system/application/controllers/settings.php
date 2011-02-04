@@ -153,11 +153,8 @@ class Settings extends Controller {
 		if ($results === -1){
 			show_error('Query Error',500);
 			return;
-		} else if ($results === -4){
-			show_error('Sorry, account does not exist.',500);
-			return;
-		} else
-			$this->ajax->view(array('Your Account has been reactivated. Click here to login.',''));		
+		}
+		$this->ajax->view(array('Your Account has been reactivated. Click here to login.',''));		
 	}
 }
 /** @} */
