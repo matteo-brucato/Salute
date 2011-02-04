@@ -142,8 +142,22 @@ class Settings extends Controller {
 		$this->ajax->view(array('Your account has been deactivated.',''));
 	}
 	
-	function activate(){
-		
+	// need view to hold the account id, to give to activate_do
+	function activate($account_id){
+		$this->ajax->view(array('Your Account is de-active. Are you sure you want to reactivate?',''));		
+	}
+	
+	function activate_do($account_id){
+		$this->load->model('account_model');
+		$results = $this->account_model->activate(array($account_id));
+		if ($results === -1){
+			show_error('Query Error',500);
+			return;
+		} else if ($results === -4){
+			show_error('Sorry, account does not exist.',500);
+			return;
+		} else
+			$this->ajax->view(array('Your Account has been reactivated. Click here to login.',''));		
 	}
 }
 /** @} */
