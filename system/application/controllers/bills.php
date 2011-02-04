@@ -25,8 +25,8 @@ class Bills extends Controller {
 	}
   	
 	/* List all bills  */      	   
-	// @todo: patient main panel view : to list bills : ( Date, Title, hcp Name, Amount, Status(unpaid/paid/pending), Actions (Pay Now, View Receipt)  
-	// @todo: hcp main panel view : to list bills : ( Date, Title, hcp Name, Amount, Status(unpaid/paid/pending), Actions (Delete,View Receipt)  
+	// @todo: patient main panel view : to list bills : ( Date, Title, hcp Name_first,hcp Name_last, Amount, Status(unpaid/paid/pending), Actions (Pay Now, View Receipt)  
+	// @todo: hcp main panel view : to list bills : ( Date, Title, patient name first, patient name last, Amount, Status(unpaid/paid/pending), Actions (Delete,View Receipt)  
 	// array $results sent to view in order:  bill_id, first_name(hcp or Patient), last_name(hcp or patient), B.amount, B.descryption, B.due_date, B.cleared
 	function all()	{
 		
@@ -35,41 +35,31 @@ class Bills extends Controller {
 
 		if($this->auth->get_type() === 'patient'){
 			$results = $this->bills_model->view_all(array($this->auth->get_account_id(),$this->auth->get_type()));
-			
-			switch ($results) {
-				case -1:
-					$mainview = 'Query error!';
-					$sideview = '';
-					break;
-				default:
-					$mainview = $this->load->view('mainpane/____________',
-						array('list_name' => '________', 'list' => $results, 'status' => 'connected') , TRUE);
-					$sideview = $this->load->view($sidepane, '', TRUE);
-					
-					return;
-					break;
-			}
+			$sidepane = 'sidepane/patient-profile';
+
 		}
 			
 		else if($this->auth->get_type() === 'hcp'){
 			$results = $this->bills_model->view_all(array($this->auth->get_account_id(),$this->auth->get_type()));
-			switch ($results) {
-				case -1:
-					$mainview = 'Query error!';
-					$sideview = '';
-					break;
-				default:
-					$mainview = $this->load->view('mainpane/____________',
-						array('list_name' => '________', 'list' => $results, 'status' => 'connected') , TRUE);
-					$sideview = $this->load->view($sidepane, '', TRUE);
-					break;
-			}
+			$sidepane = 'sidepane/hcp-profile';
 		} 
 		else{
 			show_error('Error: unable to list your bills.', 500);
 			return;		
 		}
-		
+		switch ($results) {
+			case -1:
+				$mainview = 'Query error!';
+				$sideview = '';
+				break;
+			default:
+				//echo $results[1]['bill_id'];
+				//return;
+				$mainview = $this->load->view('mainpane/list_bills',
+					array('list_name' => 'My bills', 'list' => $results) , TRUE);
+				$sideview = $this->load->view($sidepane, '', TRUE);
+				break;
+		}
 	
 		// Give results to the client
 		$this->ajax->view(array($mainview,$sideview));
@@ -81,16 +71,17 @@ class Bills extends Controller {
 		$this->load->model('bills_model');
 		if($this->auth->get_type() === 'patient'){
 			$results = $this->bills_model->view_current(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$this->ajax->view(array($this->load->view('mainpane/____________', $results, TRUE),''));
+			//$this->ajax->view(array($this->load->view('mainpane/____________', $results, TRUE),''));
 		} 
 		else if($this->auth->get_type() === 'hcp'){
 			$results = $this->bills_model->view_current(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$this->ajax->view(array($this->load->view('mainpane/____________', $results, TRUE),''));
+			//$this->ajax->view(array($this->load->view('mainpane/____________', $results, TRUE),''));
 		} 
 		else{
 			show_error('Error: unable to list your bills.', 500);
 			return;		
 		}
+		echo $results[0]['first_name'];
 	}
 
 	/* Lists past bills */	
