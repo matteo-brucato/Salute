@@ -48,9 +48,8 @@ class Home extends Controller {
 	 * */
 	function login()
 	{
-		if ($this->auth->is_logged_in()) {
+		if ($this->auth->is_logged_in())
 			$this->ajax->redirect('/profile');
-		}
 		
 		// get email & password
 		$email = $this->input->post('email');
@@ -62,41 +61,48 @@ class Home extends Controller {
 		}
 		
 		$this->load->model('login_model');
+		$this->load->model('account_model');
 		
 		// verify login
 		//returns array: of an array that has : 1st element = type, 2nd element= whole user's tuple
 		$results = $this->login_model->authorize(array("email" => $email,"password" => $password));
-		
+				
 		// login fails : error view
-		if ($results === NULL)
-		{
-			$this->ajax->view(array(
-				'',
+		if ($results === NULL) {
+			$this->ajax->view(array('',
 				$this->load->view('sidepane/login_failed', '', TRUE)
 			));
 		}
-
 		// login successful : store info for session id, go to user profile
-		else
-		{
+		else {
 			if ($results[0] != 'patient' && $results[0] != 'hcp') {
 				$this->ajax->view(array(
 					'',
 					$this->load->view('sidepane/login_failed', '', TRUE)
 				));
-			} else {
-				$login_data = array(
-					'account_id' => $results[1]["account_id"],
-					'email' => $results[1]["email"],
-					'type' => $results[0],
-					'first_name' => $results[1]["first_name"],
-					'last_name' => $results[1]["last_name"]
-				);
-				$this->session->set_userdata($login_data);
-				$this->ajax->redirect('/profile');
-			}
+			} 
+			$active_status = $this->account_model->is_active(array($results[1]["account_id"]));
+			if ( $active_status === -1 ){
+				show_error('Query Error',500);
+				return;
+			} else if ( $active_status === -4 ){
+				$this->ajax->view('Sorry! That account does not exist.', '');
+				return;
+			} else if ( !$active_status ){
+				$this->ajax->redirect('/settings/activate/'.$results[1]["account_id"]);
+				return;
+			}	
+			$login_data = array(
+				'account_id' => $results[1]["account_id"],
+				'email' => $results[1]["email"],
+				'type' => $results[0],
+				'first_name' => $results[1]["first_name"],
+				'last_name' => $results[1]["last_name"]
+			);
+			$this->session->set_userdata($login_data);
+			$this->ajax->redirect('/profile');
+			
 		}
-
 	}
 
 	/**

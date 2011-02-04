@@ -7,6 +7,28 @@ class Account_model extends Model {
 	}
 
 
+
+	/**
+	 * Checks if an account is active
+	 * 
+	 * @params $inputs
+	 *  Is of the form: array(account_id)
+	 * @return
+	 * -1 in case of error in a query
+	 * FALSE if not active
+	 * TRUE if active
+	 * */
+	function is_active($account_id){
+		$sql = "SELECT *
+				FROM accounts a
+				WHERE a.active = 't' AND a.account_id = ?";
+		$query = $this->db->query($sql, $account_id);
+											  
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		return ($query->num_rows() > 0);
+	}
 	/**
 	 * Deactivates an account
 	 * 
@@ -44,6 +66,42 @@ class Account_model extends Model {
 		return 0;
 	}
 	
+	/**
+	 * Activates an account
+	 * 
+	 * @params $inputs
+	 *  Is of the form: array(account_id)
+	 * @return
+	 * -1 in case of error in a query
+	 * -4 if account doesnt exist
+	 *  0 if everything goes fine and the account is deactivated
+	 * */
+	function activate($inputs){
+		
+		//test to see if the account exists
+		$sql = "SELECT *
+			FROM accounts
+			WHERE account_id = ?";
+		$query = $this->db->query($sql, $inputs);
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if( $query->num_rows() < 1)
+			return -4;
+		
+		//$data = array('active' => FALSE);
+		//$this->db->update('Accounts', $data, 'account_id' => $inputs);
+		
+		$sql = "UPDATE accounts
+			SET active = TRUE
+			WHERE account_id = ?";
+		$query = $this->db->query($sql, $inputs);
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		return 0;
+	}
 	
 	/**
 	 * Create an account
