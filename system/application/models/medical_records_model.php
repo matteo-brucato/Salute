@@ -18,7 +18,8 @@ class Medical_Records_model extends Model {
 	}
 	
 	/**
-	 * Retreives all records for a patient
+	 * Retreives all records for a patient along with the patient information and the account information of the person that 
+	 * upload the medical record
 	 * 
 	 * @params $inputs
 	 *  Is of the form: array(patient_id)
@@ -27,9 +28,9 @@ class Medical_Records_model extends Model {
 	 * emtpy array if patient has no medical records
 	 * */
 	function list_my_records($inputs){
-		$sql = "SELECT *
-			FROM medical_records
-			WHERE patient_id = ?";
+		$sql = "SELECT M.*, P.*, A.*
+			FROM medical_records M, Patient_Account P, Accounts A
+			WHERE patient_id = ? AND M.patient_id = P.account_id AND M.account_id = A.acount_id";
 		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)
 			return -1;	
