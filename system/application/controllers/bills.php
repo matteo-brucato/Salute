@@ -36,9 +36,7 @@ class Bills extends Controller {
 		if($this->auth->get_type() === 'patient'){
 			$results = $this->bills_model->view_all(array($this->auth->get_account_id(),$this->auth->get_type()));
 			$sidepane = 'sidepane/patient-profile';
-
-		}
-			
+		}		
 		else if($this->auth->get_type() === 'hcp'){
 			$results = $this->bills_model->view_all(array($this->auth->get_account_id(),$this->auth->get_type()));
 			$sidepane = 'sidepane/hcp-profile';
@@ -53,8 +51,6 @@ class Bills extends Controller {
 				$sideview = '';
 				break;
 			default:
-				//echo $results[1]['bill_id'];
-				//return;
 				$mainview = $this->load->view('mainpane/list_bills',
 					array('list_name' => 'My bills', 'list' => $results) , TRUE);
 				$sideview = $this->load->view($sidepane, '', TRUE);
@@ -64,24 +60,36 @@ class Bills extends Controller {
 		// Give results to the client
 		$this->ajax->view(array($mainview,$sideview));
 	}
-
 	/* List Current Bills */
 	function current(){
 		$this->auth->check_logged_in();
 		$this->load->model('bills_model');
 		if($this->auth->get_type() === 'patient'){
 			$results = $this->bills_model->view_current(array($this->auth->get_account_id(),$this->auth->get_type()));
+			$sidepane = 'sidepane/patient-profile';
 			//$this->ajax->view(array($this->load->view('mainpane/____________', $results, TRUE),''));
 		} 
 		else if($this->auth->get_type() === 'hcp'){
 			$results = $this->bills_model->view_current(array($this->auth->get_account_id(),$this->auth->get_type()));
+			$sidepane = 'sidepane/hcp-profile';
 			//$this->ajax->view(array($this->load->view('mainpane/____________', $results, TRUE),''));
 		} 
 		else{
 			show_error('Error: unable to list your bills.', 500);
 			return;		
 		}
-		echo $results[0]['first_name'];
+		switch ($results) {
+			case -1:
+				$mainview = 'Query error!';
+				$sideview = '';
+				break;
+			default:
+				$mainview = $this->load->view('mainpane/list_bills',
+					array('list_name' => 'My bills', 'list' => $results) , TRUE);
+				$sideview = $this->load->view($sidepane, '', TRUE);
+				break;
+		}
+		$this->ajax->view(array($mainview,$sideview));
 	}
 
 	/* Lists past bills */	
@@ -90,16 +98,28 @@ class Bills extends Controller {
 		$this->load->model('bills_model');
 		if($this->auth->get_type() === 'patient'){
 			$results = $this->bills_model->view_past(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$this->ajax->view(array($this->load->view('mainpane/____________', $results, TRUE),''));
+			$sidepane = 'sidepane/patient-profile';
 		} 
 		else if($this->auth->get_type() === 'hcp'){
 			$results = $this->bills_model->view_past(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$this->ajax->view(array($this->load->view('mainpane/____________', $results, TRUE),''));
+			$sidepane = 'sidepane/hcp-profile';
 		} 
 		else{
 			show_error('Error: unable to list your bills.', 500);
 			return;		
 		}
+		switch ($results) {
+			case -1:
+				$mainview = 'Query error!';
+				$sideview = '';
+				break;
+			default:
+				$mainview = $this->load->view('mainpane/list_bills',
+					array('list_name' => 'My bills', 'list' => $results) , TRUE);
+				$sideview = $this->load->view($sidepane, '', TRUE);
+				break;
+		}
+		$this->ajax->view(array($mainview,$sideview));
 	}
 
 	// load form , charge patient an amount for an procedure/appointment/test, upload itemized receipt	
