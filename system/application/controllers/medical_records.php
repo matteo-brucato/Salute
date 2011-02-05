@@ -8,14 +8,12 @@
  * @{
  */
 
-class MedicalRecords extends Controller {
+class Medical_records extends Controller {
 
 	function __construct(){
 		parent::Controller();
 		$this->load->library('ajax');
-		$this->load->library('auth');	
-		$this->type = $this->session->userdata('type');	
-		$this->account_id = $this->session->userdata('account_id');	
+		$this->load->library('auth');
 	}
 
 	/*
@@ -38,12 +36,13 @@ class MedicalRecords extends Controller {
 	*/
 	function list_med_recs()
 	{
+		$this->output->enable_profiler(TRUE);
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
 
 		// if patient, show all their med recs
 		if ($this->auth->get_type() === 'patient') {
-			$res = $this->medical_record->list_my_records(array('account_id' => $this->auth->get_account_id() )); 
+			$res = $this->medical_records_model->list_my_records(array('account_id' => $this->auth->get_account_id() )); 
 		}
 		// if hcp, redirect to My Patients search List
 		else if ( $this->auth->get_type() === 'hcp') {
@@ -59,12 +58,9 @@ class MedicalRecords extends Controller {
 				$mainview = 'Query error!';
 				$sideview = '';
 				break;
-			case -2:
-				$mainview = 'You have no medical records.';
-				$sideview = '';
-				break;
 			default:
-				$mainview = $this->load->view('mainpane/myrecords', array('med_rec_list' => $res) , TRUE);
+				$mainview = $this->load->view('mainpane/list_medical_records',
+					array('list_name' => 'Medical Records', 'list' => $res) , TRUE);
 				$sideview = '';
 				break;
 		}
@@ -83,7 +79,6 @@ class MedicalRecords extends Controller {
 								$this->load->view('mainpane/_____', '' , TRUE),
 								''
 						));	
-		}
 	}
 	/*
 	 * Add the new medical record
@@ -224,7 +219,7 @@ class MedicalRecords extends Controller {
 	}
 
 	// Set medical record to viewable: public to your hcp(s)
-	function set_public($medical_record_id, ,$hcp_id) {
+	function set_public($medical_record_id, $hcp_id) {
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
 		$this->load->model('permissions_model');
@@ -273,7 +268,7 @@ class MedicalRecords extends Controller {
 	// ONLY patient should be able to do this
 	// should be able to delete multiple recs at once
 	/* @todo: waiting is_myrecord model function*/
-	function destroy($medical_record_id, ,$hcp_id) {
+	function destroy($medical_record_id, $hcp_id) {
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
 		if( $this->medical_records_model->is_myrecord(array($this->auth->get_account_id(),$medical_record_id)) ){
