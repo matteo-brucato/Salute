@@ -29,26 +29,28 @@ What tools and technology we used..
 Salute uses PostgreSQL 8.4 as its database management software.
 \paragraph{Entity Relationship Diagram (ERD)}
 try to place the ER here
+
 \paragraph{Entities & Attributes}
-Entities are represented in the ER diagram as rectangles.  Each entity represents a table in the database that holds all of the information or attributes that represents that entity.  In the ER diagram, each attribute is represented with a oval.
-\subparagraph{Messages}
-Holds all of the information regarding messages sent from patient to hcp or vice versa. It has two total 1:N relationships with the Accounts entity.
+Entities are represented in the ER diagram as rectangles.  Each entity represents a table in the database that holds all of the information or attributes that represents that entity.  In the ER diagram, each attribute is represented with a oval.\\ \\
 
-Attribrutes:
-SERIAL message_id- ID to uniquely identify the message from other messages. SERIAL datatype automatically creates the message_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be NULL.
+\subparagraph{Messages}\\
+Holds all of the information regarding messages sent from patient to hcp or vice versa. It has two total 1:N relationships with the Accounts entity.\\ \\
 
-TEXT subject- Subject of the message being sent. TEXT datatype allows unlimited number of characters.  Cannot be NULL.
+Attribrutes:\\
+SERIAL message_id- ID to uniquely identify the message from other messages. SERIAL datatype automatically creates the message_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be NULL.\\
 
-TEXT content- Where the sender can writte what they would like to send to the receiver.  TEXT datatype allows unlimited number of characters.  Cannot be NULL.
+TEXT subject- Subject of the message being sent. TEXT datatype allows unlimited number of characters.  Cannot be NULL.\\
 
-TIMESTAMP date_time- Date and time of when the message is sent.  TIMESTAMP datatype format YY:MM:DD HH:MM:SS.  Cannot be NULL.
+TEXT content- Where the sender can writte what they would like to send to the receiver.  TEXT datatype allows unlimited number of characters.  Cannot be NULL.\\
 
-BOOLEAN sender_kept- To determine if the sender would like to delete the message from their outbox.  BOOLEAN value is either TRUE or FALSE.  Cannot be NULL.  By default it is TRUE.  Changing the status to FALSE means it gets deleted.
+TIMESTAMP date_time- Date and time of when the message is sent.  TIMESTAMP datatype format YY:MM:DD HH:MM:SS.  Cannot be NULL.\\
 
-BOOLEAN receiver_kept- To determine if the receiver would like to delete the message from their inbox.  BOOLEAN value is either TRUE or FALSE.  Cannot be NULL.  By default it is TRUE.  Changing the status to FALSE means it gets deleted.
+BOOLEAN sender_kept- To determine if the sender would like to delete the message from their outbox.  BOOLEAN value is either TRUE or FALSE.  Cannot be NULL.  By default it is TRUE.  Changing the status to FALSE means it gets deleted.\\
+
+BOOLEAN receiver_kept- To determine if the receiver would like to delete the message from their inbox.  BOOLEAN value is either TRUE or FALSE.  Cannot be NULL.  By default it is TRUE.  Changing the status to FALSE means it gets deleted.\\ \\
 
 \subparagraph{Accounts}\\
-Holds all of the primary information every patient and hcp account needs to log into Salute.  The entities Patient_Account and HCP_Account both inherit from Accounts using an IS A relationship.  It has a partial N:1 relationship with the Permission and Medical_Records entities.\\ \\
+Holds all of the primary information every patient and hcp account needs to log into Salute.  The entities Patient_Account and HCP_Account both inherit from Accounts using an IS A relationship.  It has a partial N:1 relationship with the Messages, Permission, and Medical_Records entities.\\ \\
 
 Attributes:\\
 SERIAL account_id- ID to uniquely identify the account from other accounts. SERIAL datatype automatically creates the account_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be NULL.\\
@@ -60,7 +62,7 @@ VARCHAR(15) password-  Password of the account holder.  It is used to log into S
 BOOLEAN active- To determine wheather the account is active or not.  BOOLEAN datatype value is either TRUE or FALSE.  By default it is TRUE.  Changing the stauts to FALSE means the account gets deactivated.\\  \\
 
 \subparagraph{Patient_Account}\\
-Holds all of the personal information for every patient.  It inherits from the Accounts entity with an IS A relationship.  It has a partial N:1 relationship with the Medical_Records entity and the p_d_connection relationship.\\ \\
+Holds all of the personal information for every patient.  It inherits from the Accounts entity with an IS A relationship.  It has a partial N:1 relationship with the Medical_Records entity and a partial N:M relationship with the p_d_connection relationship.\\ \\
 
 Attributes:\\
 SERIAL account_id- ID to uniquely identify the account from other accounts. SERIAL datatype automatically creates the account_id when a new tuple is inserted into the table.  This ID is inherited from the Accounts entity. Primary key of the table.  Cannot be NULL.\\
@@ -84,7 +86,7 @@ VARCHAR(11) fax_number- Fax number of the patient.  VARCHAR(11) datatype allows 
 TEXT address- Primary address of the patient.  TEXT datatype allows unlimited number of characters.\\ \\
 
 \subparagraph{HCP_Account}\\
-Holds all of the personal information for every hcp.  It inherits from the Accounts entity with an IS A relationship.  It has a partial N:1 relationship with the Appointments entity and the d_d_connection relationship.\\ \\
+Holds all of the personal information for every hcp.  It inherits from the Accounts entity with an IS A relationship.  It has a partial N:1 relationship with the Appointments and Payment entities, as well as a partial N:M relationship with the p_d_connection and d_d_connection relationship.\\ \\
 
 Attributes:\\
 SERIAL account_id- ID to uniquely identify the account from other accounts. SERIAL datatype automatically creates the account_id when a new tuple is inserted into the table.  This ID is inherited from the Accounts entity. Primary key of the table.  Cannot be NULL.\\
@@ -128,7 +130,7 @@ TIMESTAMP date_time- Time and day of the appointment the patient requestes to th
 BOOLEAN approved- Status of the appointment that the patient requests to the hcp.  BOOLEAN datatype value is either TRUE or FALSE.  By default it is FALSE.  HCP can accept the appointment and change the status to TRUE.\\ \\
 
 \subparagraph{Medical_Record}\\
-Holds all of the information for every medical record a patient has on Salute.  ???\\ \\
+Holds all of the information for every medical record a patient has on Salute.  It has a partial N:1 relationship with the Permission entity and a total 1:N relationship with the Accounts and Patient_Account entities.\\ \\
 
 SERIAL medical_rec_id- ID to uniquely identify the medical record from other medical records. SERIAL datatype automatically creates the medical_rec_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be NULL.\\
 
@@ -143,7 +145,7 @@ TEXT suplementary_info- Any suplementary infomation that anybody (patient/hcp) w
 TEXT file_path- Path where the file can be found and downloaded from the server.  TEXT datatype allows unlimited number of characters.  Cannot be NULL.\\ \\
 
 \subparagraph{Payment}\\
-Holds all of the information for every bill that a patient receives and a hcp issues.  ???\\ \\
+Holds all of the information for every bill that a patient receives and a hcp issues.  It has a total 1:N relationship with the Patient_Account and HCP_Account entities.\\ \\
 
 SERIAL bill_id SERIAL-  ID to uniquely identify the bill from other bills. SERIAL datatype automatically creates the bill_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be NULL.\\
 
@@ -160,7 +162,7 @@ DATE due_date- Date by which the bill must be paid by.  DATE datetype of the for
 BOOLEAN cleared- States wheather the bill was paid or not.  BOOLEAN datatype value is either TRUE or FALSE.  By default it is FALSE.  If patient pays the bill, its status is changed to TRUE.\\ \\
 
 \subparagraph{Permission}\\
-Holds information regarding which medical records a hcp that is connected with a patient can view.  ???\\ \\
+Holds information regarding which medical records a hcp that is connected with a patient can view.  It has a total 1:N relationship with the Accounts and Medical_Records entities.\\ \\
 
 SERIAL permission_id-  ID to uniquely identify the permission from other permissions. SERIAL datatype automatically creates the permission_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be NULL.\\
 
@@ -170,13 +172,43 @@ SERIAL account_id- Unique ID of the hcp that can view the medical record.  This 
 
 DATE date_created-  Date in which the patient allowed the hcp to view the medical record.  DATE datatype is of the form YY:MM:DD.  Cannot be NULL.\\
 
+\subparagraph{p_d_connection}\\
+Holds all of the information for every connection between a patient and a hcp.  This relationship has a patial N:M relationship with the HCP_Account and the Patient_Account entities.\\ \\
+
+SERIAL patient_id- Unique account ID of the patient that establishes a connection with a hcp.  The combination of patient_id and hcp_id is the primary key for this table.  This is also the foreign key to the Patient_Account entity.  Cannot be NULL.\\  
+
+SERIAL hcp_id- Unique account ID of the hcp that accepts the connection request sent from the patient.  The combination of hcp_id and patient_id is the primary key for this table.  This is also the foreign key to the HCP_Account entity.  Cannot be NULL.\\
+
+BOOLEAN accepted- States wheather the request was accepted by the hcp.  BOOLEAN datatype value is either TRUE or FALSE.  By default it is FALSE.  If hcp accepts the request, its status is changed to TRUE.\\
+
+DATE date_connected- Date in which the request was sent by the patient to the hcp.  DATE datatype is of the form YY:MM:DD.  Canot be NULL.\\
+
+\subparagraph{d_d_connection}\\
+Holds all of the information for every connection between a hcp and another hcp.  This relationship has two patial N:M relationships with the HCP_Account entity.\\ \\
+
+SERIAL requester_id- Unique account ID of the hcp that establishes a connection with another hcp.  The combination of requester_id and accepter_id is the primary key for this table.  This is also a foreign key to the HCP_Account entity.  Cannot be NULL.\\  
+
+SERIAL accepter_id- Unique account ID of the hcp that accepts the connection request sent from hcp.  The combination of accepter_id and requester_id is the primary key for this table.  This is also a foreign key to the HCP_Account entity.  Cannot be NULL.\\
+
+BOOLEAN accepted- States wheather the request was accepted by the hcp.  BOOLEAN datatype value is either TRUE or FALSE.  By default it is FALSE.  If hcp accepts the request, its status is changed to TRUE.\\
+
+DATE date_connected- Date in which the request was sent by the hcp to the other hcp.  DATE datatype is of the form YY:MM:DD.  Canot be NULL.\\
+
+\paragraph{Suplementary Database Implementation Information}\\
+We used many scripts to create the database described above.  First of all we have a bash script called start_everything.sh which as its name implies, starts everything.  It starts the apache server, creates a PostgreSQL database, and then it uses an sql file called create_tables.sql to create all of the tables described in the ER diagram.  It then calls the file load_data.sql which loads all of the tables with test data.  In case we want to drop all of the test data we have an sql file called drop.sql.  In case we wanted to delete everything and start over, we have a bash script called delete_everything.sh.     
 
 \subsection{MVC Design}
 
-Intro... bla bla bla
+MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives to anticipate for future changes. 
+[Insert Diagram here]
 \paragraph{Models}
+The model [explain what it does]
+
 \paragraph{Controllers}
+The controller [explain what it does]
+
 \paragraph{Views}
+The view [explain what it does]
 
 \subsection{Interface Design}
 \subsection{Server Design}
@@ -184,7 +216,10 @@ Intro... bla bla bla
 \section{Implementation View}
 
 \section{Tests}
+
 \subsection{Controller Tests}
+The controller calls both models and views, and therefore has two sources of data that it will need to validate.
+
 \subsection{Database Tests}
 
 
