@@ -28,10 +28,12 @@ class Medical_Records_model extends Model {
 	 * emtpy array if patient has no medical records
 	 * */
 	function list_my_records($inputs){
-		$sql = "SELECT M.*, P.*, A.*
-			FROM medical_records M, Patient_Account P, Accounts A
-			WHERE patient_id = ? AND M.patient_id = P.account_id AND M.account_id = A.acount_id";
+		$sql = "SELECT M.*, P.*, A.*, H.* 
+			FROM medical_records M, patient_account P, accounts A, hcp_account H
+			WHERE M.patient_id = ? AND M.patient_id = P.account_id AND M.account_id = A.acount_id AND 
+				((A.account_id = H.account_id) OR (A.account_id = P.account_id))";
 		$query = $this->db->query($sql, $inputs);
+		
 		if ($this->db->trans_status() === FALSE)
 			return -1;	
 		if( $query->num_rows() > 0){

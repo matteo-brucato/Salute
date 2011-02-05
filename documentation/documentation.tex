@@ -194,11 +194,12 @@ BOOLEAN accepted- States wheather the request was accepted by the hcp.  BOOLEAN 
 
 DATE date_connected- Date in which the request was sent by the hcp to the other hcp.  DATE datatype is of the form YY:MM:DD.  Canot be NULL.\\
 
-
+\paragraph{Suplementary Database Implementation Information}\\
+We used many scripts to create the database described above.  First of all we have a bash script called start_everything.sh which as its name implies, starts everything.  It starts the apache server, creates a PostgreSQL database, and then it uses an sql file called create_tables.sql to create all of the tables described in the ER diagram.  It then calls the file load_data.sql which loads all of the tables with test data.  In case we want to drop all of the test data we have an sql file called drop.sql.  In case we wanted to delete everything and start over, we have a bash script called delete_everything.sh.     
 
 \subsection{MVC Design}
 
-MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives to anticipate for future changes.
+MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives to anticipate for future changes. 
 [Insert Diagram here]
 \paragraph{Models}
 The model [explain what it does]
