@@ -144,7 +144,7 @@ class Bills_model extends Model {
 		if( $inputs[1] == 'patient'){
 			$sql = "Select B.bill_id, H2.first_name, H2.last_name, B.amount, B.descryption, B.due_date, B.cleared
 				FROM payment B, hcp_account H, hcp_account H2
-				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id = H2.account_id AND B.due_date < curdate()";
+				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id = H2.account_id AND B.due_date < current_date";
 			$query = $this->db->query($sql, $inputs[0]);
 			
 			if ($this->db->trans_status() === FALSE)
