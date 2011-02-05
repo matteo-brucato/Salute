@@ -30,7 +30,7 @@ $table['td_class'] = array('id_keeper', '', '', '', '', '');
 $table['tuples'] = $list;
 
 // Attributes to display
-$table['attr'] = array('medical_rec_id', 'patient_id', 'account_id', 'issue', 'suplementary_info', 'file');
+$table['attr'] = array('medical_rec_id', 'pat_first_name', 'first_name', 'issue', 'suplementary_info', 'file');
 
 // Special values for file downloading
 for ($i = 0; $i < count($table['tuples']); $i++) {
