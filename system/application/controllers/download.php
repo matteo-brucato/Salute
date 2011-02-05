@@ -83,7 +83,7 @@ class Download extends Controller {
 		
 		// Read the file's contents and download it
 		$data = file_get_contents($filepath);
-		force_download($filename, $data);
+		force_download($filepath, $data);
 	}
 }
 ?>
