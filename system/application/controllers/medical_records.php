@@ -39,6 +39,8 @@ class Medical_records extends Controller {
 	 * 
 	 * @bug The medical records model has a problem giving back
 	 * information of records created by patients
+	 * 
+	 * @test Tested
 	*/
 	function myrecs()
 	{
@@ -68,12 +70,12 @@ class Medical_records extends Controller {
 				break;
 			default:
 				$mainview = $this->load->view('mainpane/list_medical_records',
-					array('list_name' => 'Medical Records', 'list' => $res) , TRUE);
+					array('list_name' => 'My Medical Records', 'list' => $res) , TRUE);
 				$sideview = '';
 				break;
 		}
 		
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ajax->view(array($mainview, $sideview));
 	}
 	
 	/**
@@ -83,29 +85,83 @@ class Medical_records extends Controller {
 	 * @attention Called only by hpcs
 	 * @attention Must access table Permissions to list ONLY records that
 	 * have been shared with the current hcp
+	 * 
+	 * @tested
 	 * */
-	function patient($patient_id) {
+	function patient($patient_id = NULL) {
 		$this->output->enable_profiler(TRUE);
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
+		$this->load->model('hcp_model');
+		$this->load->model('connections_model');
+		
+		if ($patient_id == NULL) {
+			show_error('No patient id specified');
+			return;
+		}
+		
+		// Current user must be an hcp
+		if ($this->auth->get_type() != 'hcp') {
+			show_error('Only HCPs have access to this funtionality.<br />
+			To see your medical records go <a href="/medical_records">here</a>');
+			return;
+		}
+		
+		// Current user must be connected with the patient
+		$check = $this->connections_model->is_connected_with(
+			$this->auth->get_account_id(), $patient_id
+		);
+		if ($check === -1) {
+			$mainview = 'Query error';
+			$sideview = '';
+		}
+		else if ($check == FALSE) {
+			$mainview = 'You are not connected with this patient';
+			$sideview = '';
+		} else {
+			// Get the list of medical records from the model
+			$recs = $this->medical_records_model->get_patient_records(
+				array($patient_id, $this->auth->get_account_id())
+			);
+			if ($recs === -1) {
+				$mainview = 'Query error';
+				$sideview = '';
+				return;
+			} else {
+				$mainview = $this->load->view('mainpane/list_medical_records',
+					array('list_name' => 'Medical Records', 'list' => $recs) , TRUE);
+				$sideview = '';
+			}
+		}
+		
+		// View the list
+		$this->ajax->view(array($mainview, $sideview));
 	}
 	
 	/*
 	 * Loads view that allows you to upload a medical record
-	 * @todo need a view
+	 * 
+	 * @test Tested
 	 * */
-	function upload() {
+	function upload($pid = NULL) {
 		$this->auth->check_logged_in();
 		
+		// Get the patient_id of the medical record to upload
 		if ($this->auth->get_type() === 'patient') {
 			$sideview = $this->load->view('sidepane/patient-profile', '' , TRUE);
+			$patient_id = $this->auth->get_account_id();
 		} else {
 			$sideview = $this->load->view('sidepane/hcp-profile', '' , TRUE);
+			if ($pid == NULL || ! is_numeric($pid)) {
+				show_error('No patient specified');
+				return;
+			}
+			$patient_id = $pid;
 		}
 		
 		$this->ajax->view(array(
 			$this->load->view('mainpane/forms/upload_medrec',
-				array('patient_id' => $this->auth->get_account_id()) , TRUE),
+				array('patient_id' => $patient_id) , TRUE),
 			$sideview
 		));
 	}
@@ -208,6 +264,8 @@ class Medical_records extends Controller {
 
 	/**
 	 * Set medical record to hidden: not visible to your specified hcp
+	 * 
+	 * @todo Check it!
 	 * */
 	function set_private($medical_record_id, $hcp_id) {
 		$this->auth->check_logged_in();
@@ -256,6 +314,8 @@ class Medical_records extends Controller {
 
 	/**
 	 * Set medical record to viewable: public to your specified hcp
+	 * 
+	 * @todo Check it!
 	 * */
 	function set_public($medical_record_id, $hcp_id) {
 		$this->auth->check_logged_in();
@@ -307,6 +367,7 @@ class Medical_records extends Controller {
 	 * 
 	 * @attention ONLY patient should be able to do this
 	 * 
+	 * @test Tested
 	 * */
 	function delete($medical_record_id = FALSE) {
 		$this->output->enable_profiler(TRUE);

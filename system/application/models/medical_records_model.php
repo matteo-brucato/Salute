@@ -183,7 +183,7 @@ class Medical_records_model extends Model {
 	function is_allowed($inputs){
 		
 		$sql = "SELECT *
-			FROM permissions P
+			FROM permission P
 			WHERE P.account_id = ? and P.medical_rec_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)

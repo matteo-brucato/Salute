@@ -40,7 +40,7 @@ function get_action_strings($actions, $tuple) {
 			case 'pay-bill':
 				$str .= '<li><a href="/bills/pay/'.$tuple['bill_id'].'">Pay Bill</a></li>';
 				break;
-			case 'see-medrecs':
+			case 'see-med-recs':
 				$str .= '<li><a href="/medical_records/patient/'.$tuple['account_id'].'">Medical Records</a></li>';
 				break;
 		}

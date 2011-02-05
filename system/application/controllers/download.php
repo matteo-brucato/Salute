@@ -25,6 +25,12 @@ class Download extends Controller {
 		show_error('Access denied');
 	}
 	
+	/**
+	 * Download a medical record
+	 * 
+	 * @attention Only the patient him/herself or an hcp connected with
+	 * him/her can download a medical record
+	 * */
 	function medical_record($patient_id = NULL, $medical_record_id = NULL) {
 		$this->auth->check_logged_in();
 		$this->load->model('connections_model');
@@ -45,7 +51,8 @@ class Download extends Controller {
 			}
 			
 			// And also check if I have permissions to see this record
-			$perm = $this->permissions_model->is_allowed($this->auth->get_account_id(), $medical_record_id);
+			$perm = $this->medical_records_model->is_allowed(
+				array($this->auth->get_account_id(), $medical_record_id));
 			if ($perm === -1) {
 				show_error('Query error!');
 				return;
