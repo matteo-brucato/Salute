@@ -152,7 +152,7 @@ class Profile extends Controller {
 		if ($is_my_friend === -1){
 			$this->ajax->view(array('Query error from is_connected_with function!',''));
 			return;		
-		}else if (!$is_my_friend){
+		}else if (!$is_my_friend && $id_type === 'patient' ){
 			$this->ajax->view(array('You are not connected. Permission Denied.',''));
 			return;		
 		}
