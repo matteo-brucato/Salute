@@ -306,8 +306,8 @@ class Medical_records_model extends Model {
 	 function get_patient_records($inpts){
 		 
 		$sql = "SELECT *
-			FROM medical_record M,
-			WHERE M.patient_id = ? and M.account_id = ?";
+			FROM medical_record M, permission P
+			WHERE M.patient_id = ? AND M.medical_rec_id = P.medical_rec_id AND P.account_id = ?
 		$query = $this->db->query($inputs);
 		
 		if ($this->db->trans_status() === FALSE)
