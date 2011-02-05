@@ -30,6 +30,7 @@ class Medical_records_model extends Model {
 			FROM medical_record M, patient_account P, accounts A, hcp_account H
 			WHERE M.patient_id = ? AND M.patient_id = P.account_id AND M.account_id = A.account_id AND 
 				((A.account_id = H.account_id) OR (A.account_id = P.account_id))";
+				
 		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
@@ -89,24 +90,40 @@ class Medical_records_model extends Model {
 	}
 	
 	/**
-	 * Add a medical record
+	 * Add a medical record.  If a doctor is adding it, it automatically gives him permission to view it
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(patient_id, account_id (person adding), issue, suplementary_info, file_path)
 	 * @return
 	 *   -1 if error in insert
-	 *   1 if medical record was properly inserted
+	 *    1 if medical record was properly inserted
 	 * */
 	function add_medical_record($inputs){
 	
 		//$data = array( 'patient_id' => $inputs[0], 'account_id' => $inputs[1], 'issue' => $inputs[2], 'suplementary_info' => $inputs[3], 'file_path' => $inputs[4]);
 		//$this->db->insert('Medical_Records', $data);	
 		
+		$this->db->trans_start();
 		$sql = "INSERT INTO medical_record (patient_id, account_id, issue, suplementary_info, file_path)
 			VALUES (?, ?, ?, ?, ?)";
 		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)
 			return -1;
+		
+		//give the doctor permission to view the medical record since he added it	
+		if ($inputs[0] != $inputs[1]) {
+			//get the last medical_rec_id inserted 
+			$sql = "select last_value from medical_record_medical_rec_id_seq";
+			$query = $this->db->query($sql);
+			if ($this->db->trans_status() === FALSE)
+				return -1;
+		
+			//automatically give the person that added it permission to view the file
+			return allow_permission(array($query, $inputs[1]));
+			if( $this->db->trans_status() === FALSE )
+				return -1;	
+		}
+		$this->db->trans_complete();
 		return 1;
 	}
 	
@@ -275,6 +292,32 @@ class Medical_records_model extends Model {
 		
 		return 0;
 	}
+	
+	
+	/**
+	 * Lists all of the medical records a hcp can view for a certain patient
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(patient_id, hcp_id)
+	 * @return
+	 *   -1 if error in query
+	 *    Array with all of the medical records
+	 * */
+	 function get_patient_records($inpts){
+		 
+		$sql = "SELECT *
+			FROM medical_record M, permission P
+			WHERE M.patient_id = ? AND M.medical_rec_id = P.medical_rec_id AND P.account_id = ?
+		$query = $this->db->query($inputs);
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		
+		if ($query->num_rows() > 0)
+				return $query->result_array();
+
+			return array();	
+	 }
 }
 /** @} */
 ?>

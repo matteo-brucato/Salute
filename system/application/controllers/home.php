@@ -42,9 +42,6 @@ class Home extends Controller {
 	 * if login successful, store session info
 	 * @return redirect to profile || error (if already logged in || authorization fails)
 	 * 
-	 * @bug It does not check properly the result from the model. What happes
-	 * if the model returns -1, for instance?
-	 * @bug what if logs in inactive user
 	 * */
 	function login()
 	{
@@ -75,6 +72,9 @@ class Home extends Controller {
 			$this->ajax->view(array('',
 				$this->load->view('sidepane/login_failed', '', TRUE)
 			));
+		} else if ($results === -1) {
+			$this->ajax->view(array('Query Error!',''));
+			return;
 		}
 		// login successful : store info for session id, go to user profile
 		else {
@@ -118,10 +118,7 @@ class Home extends Controller {
 		$this->ajax->redirect('/');
 	}
 	function retrieve_password(){
-		// check if logged in
-		$this->auth->check_logged_in();
-		// load view
-		
+				
 		$this->ajax->view(array('need view!', ''));
 	}
 	

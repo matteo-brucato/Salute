@@ -138,7 +138,7 @@ class Medical_records extends Controller {
 		$this->ajax->view(array($mainview, $sideview));
 	}
 	
-	/*
+	/**
 	 * Loads view that allows you to upload a medical record
 	 * 
 	 * @test Tested
@@ -166,7 +166,7 @@ class Medical_records extends Controller {
 		));
 	}
 	
-	/*
+	/**
 	 * Add the new medical record
 	 * @attention should the patient approve this first before having it added to their list of records?
 	 *
