@@ -29,28 +29,26 @@ What tools and technology we used..
 Salute uses PostgreSQL 8.4 as its database management software.
 \paragraph{Entity Relationship Diagram (ERD)}
 try to place the ER here
-
 \paragraph{Entities & Attributes}
-Entities are represented in the ER diagram as rectangles.  Each entity represents a table in the database that holds all of the information or attributes that represents that entity.  In the ER diagram, each attribute is represented with a oval.\\ \\
+Entities are represented in the ER diagram as rectangles.  Each entity represents a table in the database that holds all of the information or attributes that represents that entity.  In the ER diagram, each attribute is represented with a oval.
+\subparagraph{Messages}
+Holds all of the information regarding messages sent from patient to hcp or vice versa. It has two total 1:N relationships with the Accounts entity.
 
-\subparagraph{Messages}\\
-Holds all of the information regarding messages sent from patient to hcp or vice versa. It has two total 1:N relationships with the Accounts entity.\\ \\
+Attribrutes:
+SERIAL message_id- ID to uniquely identify the message from other messages. SERIAL datatype automatically creates the message_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be NULL.
 
-Attribrutes:\\
-SERIAL message_id- ID to uniquely identify the message from other messages. SERIAL datatype automatically creates the message_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be NULL.\\
+TEXT subject- Subject of the message being sent. TEXT datatype allows unlimited number of characters.  Cannot be NULL.
 
-TEXT subject- Subject of the message being sent. TEXT datatype allows unlimited number of characters.  Cannot be NULL.\\
+TEXT content- Where the sender can writte what they would like to send to the receiver.  TEXT datatype allows unlimited number of characters.  Cannot be NULL.
 
-TEXT content- Where the sender can writte what they would like to send to the receiver.  TEXT datatype allows unlimited number of characters.  Cannot be NULL.\\
+TIMESTAMP date_time- Date and time of when the message is sent.  TIMESTAMP datatype format YY:MM:DD HH:MM:SS.  Cannot be NULL.
 
-TIMESTAMP date_time- Date and time of when the message is sent.  TIMESTAMP datatype format YY:MM:DD HH:MM:SS.  Cannot be NULL.\\
+BOOLEAN sender_kept- To determine if the sender would like to delete the message from their outbox.  BOOLEAN value is either TRUE or FALSE.  Cannot be NULL.  By default it is TRUE.  Changing the status to FALSE means it gets deleted.
 
-BOOLEAN sender_kept- To determine if the sender would like to delete the message from their outbox.  BOOLEAN value is either TRUE or FALSE.  Cannot be NULL.  By default it is TRUE.  Changing the status to FALSE means it gets deleted.\\
-
-BOOLEAN receiver_kept- To determine if the receiver would like to delete the message from their inbox.  BOOLEAN value is either TRUE or FALSE.  Cannot be NULL.  By default it is TRUE.  Changing the status to FALSE means it gets deleted.\\ \\
+BOOLEAN receiver_kept- To determine if the receiver would like to delete the message from their inbox.  BOOLEAN value is either TRUE or FALSE.  Cannot be NULL.  By default it is TRUE.  Changing the status to FALSE means it gets deleted.
 
 \subparagraph{Accounts}\\
-Holds all of the primary information every patient and hcp account needs to log into Salute.  The entities Patient_Account and HCP_Account both inherit from Accounts using an IS A relationship.  It has a partial N:1 relationship with the Messages, Permission, and Medical_Records entities.\\ \\
+Holds all of the primary information every patient and hcp account needs to log into Salute.  The entities Patient_Account and HCP_Account both inherit from Accounts using an IS A relationship.  It has a partial N:1 relationship with the Permission and Medical_Records entities.\\ \\
 
 Attributes:\\
 SERIAL account_id- ID to uniquely identify the account from other accounts. SERIAL datatype automatically creates the account_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be NULL.\\
@@ -62,7 +60,7 @@ VARCHAR(15) password-  Password of the account holder.  It is used to log into S
 BOOLEAN active- To determine wheather the account is active or not.  BOOLEAN datatype value is either TRUE or FALSE.  By default it is TRUE.  Changing the stauts to FALSE means the account gets deactivated.\\  \\
 
 \subparagraph{Patient_Account}\\
-Holds all of the personal information for every patient.  It inherits from the Accounts entity with an IS A relationship.  It has a partial N:1 relationship with the Medical_Records entity and a partial N:M relationship with the p_d_connection relationship.\\ \\
+Holds all of the personal information for every patient.  It inherits from the Accounts entity with an IS A relationship.  It has a partial N:1 relationship with the Medical_Records entity and the p_d_connection relationship.\\ \\
 
 Attributes:\\
 SERIAL account_id- ID to uniquely identify the account from other accounts. SERIAL datatype automatically creates the account_id when a new tuple is inserted into the table.  This ID is inherited from the Accounts entity. Primary key of the table.  Cannot be NULL.\\
@@ -86,7 +84,7 @@ VARCHAR(11) fax_number- Fax number of the patient.  VARCHAR(11) datatype allows 
 TEXT address- Primary address of the patient.  TEXT datatype allows unlimited number of characters.\\ \\
 
 \subparagraph{HCP_Account}\\
-Holds all of the personal information for every hcp.  It inherits from the Accounts entity with an IS A relationship.  It has a partial N:1 relationship with the Appointments and Payment entities, as well as a partial N:M relationship with the p_d_connection and d_d_connection relationship.\\ \\
+Holds all of the personal information for every hcp.  It inherits from the Accounts entity with an IS A relationship.  It has a partial N:1 relationship with the Appointments entity and the d_d_connection relationship.\\ \\
 
 Attributes:\\
 SERIAL account_id- ID to uniquely identify the account from other accounts. SERIAL datatype automatically creates the account_id when a new tuple is inserted into the table.  This ID is inherited from the Accounts entity. Primary key of the table.  Cannot be NULL.\\
@@ -130,7 +128,7 @@ TIMESTAMP date_time- Time and day of the appointment the patient requestes to th
 BOOLEAN approved- Status of the appointment that the patient requests to the hcp.  BOOLEAN datatype value is either TRUE or FALSE.  By default it is FALSE.  HCP can accept the appointment and change the status to TRUE.\\ \\
 
 \subparagraph{Medical_Record}\\
-Holds all of the information for every medical record a patient has on Salute.  It has a partial N:1 relationship with the Permission entity and a total 1:N relationship with the Accounts and Patient_Account entities.\\ \\
+Holds all of the information for every medical record a patient has on Salute.  ???\\ \\
 
 SERIAL medical_rec_id- ID to uniquely identify the medical record from other medical records. SERIAL datatype automatically creates the medical_rec_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be NULL.\\
 
@@ -145,7 +143,7 @@ TEXT suplementary_info- Any suplementary infomation that anybody (patient/hcp) w
 TEXT file_path- Path where the file can be found and downloaded from the server.  TEXT datatype allows unlimited number of characters.  Cannot be NULL.\\ \\
 
 \subparagraph{Payment}\\
-Holds all of the information for every bill that a patient receives and a hcp issues.  It has a total 1:N relationship with the Patient_Account and HCP_Account entities.\\ \\
+Holds all of the information for every bill that a patient receives and a hcp issues.  ???\\ \\
 
 SERIAL bill_id SERIAL-  ID to uniquely identify the bill from other bills. SERIAL datatype automatically creates the bill_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be NULL.\\
 
@@ -162,7 +160,7 @@ DATE due_date- Date by which the bill must be paid by.  DATE datetype of the for
 BOOLEAN cleared- States wheather the bill was paid or not.  BOOLEAN datatype value is either TRUE or FALSE.  By default it is FALSE.  If patient pays the bill, its status is changed to TRUE.\\ \\
 
 \subparagraph{Permission}\\
-Holds information regarding which medical records a hcp that is connected with a patient can view.  It has a total 1:N relationship with the Accounts and Medical_Records entities.\\ \\
+Holds information regarding which medical records a hcp that is connected with a patient can view.  ???\\ \\
 
 SERIAL permission_id-  ID to uniquely identify the permission from other permissions. SERIAL datatype automatically creates the permission_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be NULL.\\
 
@@ -171,29 +169,6 @@ medical_rec_id- Unique ID of the medical record that a hcp can view.  This is th
 SERIAL account_id- Unique ID of the hcp that can view the medical record.  This is a foreign key to the Accounts entity.  Cannot be NULL.\\
 
 DATE date_created-  Date in which the patient allowed the hcp to view the medical record.  DATE datatype is of the form YY:MM:DD.  Cannot be NULL.\\
-
-\subparagraph{p_d_connection}\\
-Holds all of the information for every connection between a patient and a hcp.  This relationship has a patial N:M relationship with the HCP_Account and the Patient_Account entities.\\ \\
-
-SERIAL patient_id- Unique account ID of the patient that establishes a connection with a hcp.  The combination of patient_id and hcp_id is the primary key for this table.  This is also the foreign key to the Patient_Account entity.  Cannot be NULL.\\  
-
-SERIAL hcp_id- Unique account ID of the hcp that accepts the connection request sent from the patient.  The combination of hcp_id and patient_id is the primary key for this table.  This is also the foreign key to the HCP_Account entity.  Cannot be NULL.\\
-
-BOOLEAN accepted- States wheather the request was accepted by the hcp.  BOOLEAN datatype value is either TRUE or FALSE.  By default it is FALSE.  If hcp accepts the request, its status is changed to TRUE.\\
-
-DATE date_connected- Date in which the request was sent by the patient to the hcp.  DATE datatype is of the form YY:MM:DD.  Canot be NULL.\\
-
-\subparagraph{d_d_connection}\\
-Holds all of the information for every connection between a hcp and another hcp.  This relationship has two patial N:M relationships with the HCP_Account entity.\\ \\
-
-SERIAL requester_id- Unique account ID of the hcp that establishes a connection with another hcp.  The combination of requester_id and accepter_id is the primary key for this table.  This is also a foreign key to the HCP_Account entity.  Cannot be NULL.\\  
-
-SERIAL accepter_id- Unique account ID of the hcp that accepts the connection request sent from hcp.  The combination of accepter_id and requester_id is the primary key for this table.  This is also a foreign key to the HCP_Account entity.  Cannot be NULL.\\
-
-BOOLEAN accepted- States wheather the request was accepted by the hcp.  BOOLEAN datatype value is either TRUE or FALSE.  By default it is FALSE.  If hcp accepts the request, its status is changed to TRUE.\\
-
-DATE date_connected- Date in which the request was sent by the hcp to the other hcp.  DATE datatype is of the form YY:MM:DD.  Canot be NULL.\\
-
 
 
 \subsection{MVC Design}
@@ -224,59 +199,48 @@ There are three types of users: non-members, patients, and health care providers
 A non-member should only be able to view the default home page, or register. All other functions were tested to assure that a non-member could not access any other functionalities. 
 
 A patient is able to do the following:
-\bullet Login
-\bullet Logout
+\bullet Login, Logout
 \bullet Requesting a connection with a healthcare provider
-\bullet Viewing all healthcare providers
-\bullet Viewing pending requests with healthcare providers
-\bullet Viewing connected healthcare providers
-\bullet Viewing their medical record
-\bullet Make an appointment 
-\bullet Cancel an appointment
-\bullet Change their email
-\bullet Change their password
-\bullet Retrieve their password if forgotten
+\bullet Delete a connection with their healthcare provider
+\bullet Viewing all, pending, or connected healthcare providers
+\bullet Viewing their medical records
+\bullet Make an appointment with a connected doctor
+\bullet Cancel an appointment 
+\bullet View all,upcoming, or past appointments
+\bullet Change their email, or password
+\bullet Retrieve their password if forgotten via email
 \bullet Edit their information
-\bullet Deactivate their account
-\bullet Reactivate their account
+\bullet Deactivate, reactivate their account
+\bullet View all, current, or past bills.
 \bullet Pay their bills (Note: This is not linked to any credit card/bank system ) 
-
-A patient is denied from doing the following:
-\bullet Registration with the same email or SSN 
-\bullet Viewing another patient's profile
-\bullet Connecting with another patient
-\bullet Viewing a list of registered patients
-\bullet Accessing their account while deactivated
+\bullet Add or delete a medical record
+\bullet View all their medical records
+\bullet Set each medical record to hidden or public to specific healthcare providers
 
 A health care provider is able to do the following:
-\bullet Login
-\bullet Logout
+\bullet Login, Logout
 \bullet Requesting a connection with a healthcare provider
+\bullet Accept a connection request from another health care provider or patient
+\bullet Reject a connection request from another health care provider or patient
+\bullet Delete a connection with their patient or collegue
 \bullet Viewing all healthcare providers
 \bullet Viewing pending incoming requests with other healthcare providers
 \bullet Viewing pending outgoing requests with other healthcare providers
-\bullet Viewing connected collegues
-\bullet Viewing their patients
-\bullet Viewing their patient's medical records (the ones they are authorized to see)
-\bullet Make an appointment with their patients
-\bullet Cancel an appointment with their patients
-\bullet Change their email
-\bullet Change their password
-\bullet Retrieve their password if forgotten
+\bullet Viewing connected collegues, and patients
+\bullet Accept a requested appointment from their patients
+\bullet Cancel an existing appointment
+\bullet View all,upcoming, and past appointments
+\bullet Change their email or password
+\bullet Retrieve their password if forgotten via email
 \bullet Edit their information
-\bullet Deactivate their account
-\bullet Reactivate their account
+\bullet Deactivate, and reactivate their account
+\bullet View all, current, or past bills.
 \bullet Issue bills to connected patients
-
-A health care provider is denied from doing the following:
-\bullet Registration with the same email or SSN 
-\bullet Viewing a patient's profile that they're not connected with
-\bullet Viewing their patient's medical that they're not authorized to see
-\bullet Viewing a list of registered patients
-\bullet Accessing their account while deactivated
+\bullet Add a medical record to a specific patient
+\bullet Viewing their patient's medical records (the ones they are authorized to see)
+\bullet Set each medical record to hidden or public to specific healthcare providers
 
 \subsection{Database Tests}
-
 
 \chapter{Operating Manual}
 \subsection{How-to's}
