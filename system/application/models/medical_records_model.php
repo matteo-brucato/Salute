@@ -130,9 +130,9 @@ class Medical_records_model extends Model {
 			}
 			
 			//automatically give the person that added it permission to view the file
-			return $this->allow_permission(array($med_rec_id, $inputs[1]));
-			if( $this->db->trans_status() === FALSE )
-				return -1;	
+			$res = $this->allow_permission(array($med_rec_id, $inputs[1]));
+			if ($res === -1)
+				return -1;
 		}
 		$this->db->trans_complete();
 		return 1;
@@ -172,7 +172,7 @@ class Medical_records_model extends Model {
 
 		$sql = "INSERT INTO permission (medical_rec_id, account_id, date_created)
 			VALUES (?, ?, current_date)";
-		$query = $this->db->query($data, $inputs);
+		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 		return 1;

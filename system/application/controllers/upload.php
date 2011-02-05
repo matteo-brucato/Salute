@@ -101,6 +101,9 @@ class Upload extends Controller {
 				$mainview = 'Error recording the uploaded file in the database.';
 				/** @bug This can lead to untracket uploaded files in the server */
 				break;
+			case -2:
+				$mainview = 'Error adding permissions to the database.';
+				break;
 			default:
 				$mainview = $this->load->view('mainpane/forms/upload_medrec_success', '', TRUE);
 				break;
