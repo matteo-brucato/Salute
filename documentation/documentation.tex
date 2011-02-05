@@ -170,10 +170,34 @@ SERIAL account_id- Unique ID of the hcp that can view the medical record.  This 
 
 DATE date_created-  Date in which the patient allowed the hcp to view the medical record.  DATE datatype is of the form YY:MM:DD.  Cannot be NULL.\\
 
+\subparagraph{p_d_connection}\\
+Holds all of the information for every connection between a patient and a hcp.  This relationship has a patial N:M relationship with the HCP_Account and the Patient_Account entities.\\ \\
+
+SERIAL patient_id- Unique account ID of the patient that establishes a connection with a hcp.  The combination of patient_id and hcp_id is the primary key for this table.  This is also the foreign key to the Patient_Account entity.  Cannot be NULL.\\  
+
+SERIAL hcp_id- Unique account ID of the hcp that accepts the connection request sent from the patient.  The combination of hcp_id and patient_id is the primary key for this table.  This is also the foreign key to the HCP_Account entity.  Cannot be NULL.\\
+
+BOOLEAN accepted- States wheather the request was accepted by the hcp.  BOOLEAN datatype value is either TRUE or FALSE.  By default it is FALSE.  If hcp accepts the request, its status is changed to TRUE.\\
+
+DATE date_connected- Date in which the request was sent by the patient to the hcp.  DATE datatype is of the form YY:MM:DD.  Canot be NULL.\\
+
+\subparagraph{d_d_connection}\\
+Holds all of the information for every connection between a hcp and another hcp.  This relationship has two patial N:M relationships with the HCP_Account entity.\\ \\
+
+SERIAL requester_id- Unique account ID of the hcp that establishes a connection with another hcp.  The combination of requester_id and accepter_id is the primary key for this table.  This is also a foreign key to the HCP_Account entity.  Cannot be NULL.\\  
+
+SERIAL accepter_id- Unique account ID of the hcp that accepts the connection request sent from hcp.  The combination of accepter_id and requester_id is the primary key for this table.  This is also a foreign key to the HCP_Account entity.  Cannot be NULL.\\
+
+BOOLEAN accepted- States wheather the request was accepted by the hcp.  BOOLEAN datatype value is either TRUE or FALSE.  By default it is FALSE.  If hcp accepts the request, its status is changed to TRUE.\\
+
+DATE date_connected- Date in which the request was sent by the hcp to the other hcp.  DATE datatype is of the form YY:MM:DD.  Canot be NULL.\\
+
+\paragraph{Suplementary Database Implementation Information}\\
+We used many scripts to create the database described above.  First of all we have a bash script called start_everything.sh which as its name implies, starts everything.  It starts the apache server, creates a PostgreSQL database, and then it uses an sql file called create_tables.sql to create all of the tables described in the ER diagram.  It then calls the file load_data.sql which loads all of the tables with test data.  In case we want to drop all of the test data we have an sql file called drop.sql.  In case we wanted to delete everything and start over, we have a bash script called delete_everything.sh.     
 
 \subsection{MVC Design}
 
-MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives to anticipate for future changes.
+MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives to anticipate for future changes. 
 [Insert Diagram here]
 \paragraph{Models}
 The model [explain what it does]
