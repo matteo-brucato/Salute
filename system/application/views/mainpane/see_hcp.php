@@ -1,4 +1,4 @@
-<h2>Doctor Profile</h2>
+<h2>HCP Profile</h2>
 
 <table class="tables-1">
 	<tr>
@@ -47,18 +47,13 @@
 	</tr>
 </table>
 
-<?php if (! $is_my_friend) : ?>
-<ul>
-	<li><a href="">Ask connection to this HCP</a></li>
-</ul>
-<? else : ?>
-<ul>
-	<li><a href="">Send message</a></li>
-</ul>
-<ul>
-	<li><a href="">Ask new appointment</a></li>
-</ul>
-<ul>
-	<li><a href="">Delete connection with this HCP</a></li>
-</ul>
-<? endif ?>
+<?php
+$this->load->helper('actions_helper');
+echo '<ul>';
+if ($is_my_friend) {
+	echo get_action_strings(array('send-email','request-app','delete-conn'), $info);
+} else {
+	
+}
+echo '</ul>';
+?>

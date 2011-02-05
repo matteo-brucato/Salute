@@ -65,7 +65,10 @@ class Home extends Controller {
 		$results = $this->login_model->authorize(array("email" => $email,"password" => $password));
 				
 		// login fails : error view
-		if ($results === NULL) {
+		if ($results === -1) {
+			$this->ajax->view(array('Query error!',''));
+		}
+		else if (sizeof($results) == 0) {
 			$this->ajax->view(array('',
 				$this->load->view('sidepane/login_failed', '', TRUE)
 			));

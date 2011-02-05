@@ -8,10 +8,8 @@
  * @{
  */
 
-class Medical_Records_model extends Model {
+class Medical_records_model extends Model {
 	
-
-
 	function __construct() {
 		parent::Model();
 		$this->load->database();
@@ -35,10 +33,9 @@ class Medical_Records_model extends Model {
 		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
-			return -1;	
-		if( $query->num_rows() > 0){
-			$result = $query->result_array();
-			return $result;
+			return -1;
+		if( $query->num_rows() > 0) {
+			return $query->result_array();
 		}
 		return array();
 	}

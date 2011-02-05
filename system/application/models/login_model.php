@@ -29,7 +29,7 @@ class Login_model extends Model {
 		
 		if( $query->num_rows() > 0){
 			$result = $query->result_array();
-			return array( "patient", $result[0] );
+			return array("patient", $result[0]);
 		}
 
 		//test to see if the user is a hcp
@@ -41,7 +41,7 @@ class Login_model extends Model {
 			return -1;
 		if( $query->num_rows() > 0){
 			$result = $query->result_array();
-			return array( "hcp", $result[0] );
+			return array("hcp", $result[0]);
 		}	
 	
 		return array();
