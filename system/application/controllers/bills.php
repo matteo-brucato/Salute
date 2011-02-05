@@ -52,7 +52,7 @@ class Bills extends Controller {
 				break;
 			default:
 				$mainview = $this->load->view('mainpane/list_bills',
-					array('list_name' => 'My bills', 'list' => $results) , TRUE);
+					array('list_name' => 'My Bills', 'list' => $results) , TRUE);
 				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
 		}
@@ -85,7 +85,7 @@ class Bills extends Controller {
 				break;
 			default:
 				$mainview = $this->load->view('mainpane/list_bills',
-					array('list_name' => 'My bills', 'list' => $results) , TRUE);
+					array('list_name' => 'My Current Bills', 'list' => $results) , TRUE);
 				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
 		}
@@ -115,7 +115,7 @@ class Bills extends Controller {
 				break;
 			default:
 				$mainview = $this->load->view('mainpane/list_bills',
-					array('list_name' => 'My bills', 'list' => $results) , TRUE);
+					array('list_name' => 'My Past Bills', 'list' => $results) , TRUE);
 				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
 		}
