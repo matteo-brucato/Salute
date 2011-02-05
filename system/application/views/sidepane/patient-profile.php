@@ -17,9 +17,9 @@
 	
 	<li><a href="/bills">Bills</a>
 		<ul>
-			<li href="#introduction"><a href="">All</a></li>
-			<li href="#may"><a href="">Current</a></li>
-			<li href="#may"><a href="">Past</a></li>
+			<li href="#introduction"><a href="/bills/all">All</a></li>
+			<li href="#current"><a href="/bills/current">Current</a></li>
+			<li href="#past"><a href="/bills/past">Past</a></li>
 		</ul>
 	</li>
 	

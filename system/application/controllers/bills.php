@@ -20,8 +20,8 @@ class Bills extends Controller {
 	function index(){
 		//$this->auth->check_logged_in();
 		//$this->ajax->redirect('/bills/all');
-		echo 'asd';
-		//$this->all();
+		//echo 'asd';
+		$this->all();
 	}
   	
 	/* List all bills  */      	   
