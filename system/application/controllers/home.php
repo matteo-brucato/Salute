@@ -118,10 +118,7 @@ class Home extends Controller {
 		$this->ajax->redirect('/');
 	}
 	function retrieve_password(){
-		// check if logged in
-		$this->auth->check_logged_in();
-		// load view
-		
+				
 		$this->ajax->view(array('need view!', ''));
 	}
 	

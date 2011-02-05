@@ -37,16 +37,17 @@ We provide a high-level description of the database using the famous ER diagram,
 
 \chapter{MVC Design}
 
-MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives to anticipate for future changes. 
+MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives for high cohesion and low coupling which is essential in anticipating for future changes.
 [Insert Diagram here]
-\section{Models}
-The model [explain what it does]
 
-\section{Controllers}
-The controller [explain what it does]
+\section{Models}
+The model is the tool used to access and modify the database. Everytime a user needs information, the models are queried to retrieve the information. If a user wants to add or modify, this too must be added into the database. 
 
 \section{Views}
-The view [explain what it does]
+The view is the the user interface, what the user sees and interacts with. In our case, its a medical management website. So, it is important to make sure that the website is user-friendly. If the layout and design of the view is difficult to navigate and/or inconsistent, the user will not desire to use the product. 
+
+\section{Controllers}
+The controller is the middle man. It's in charge of loading the view(webpage) for the user, and calling the corresponding models to execute the functionality that the user has selected via the view. 
 
 \chapter{Interface Design}
 
@@ -183,23 +184,8 @@ Holds all of the information for every connection between a hcp and another hcp.
 \item date date\_connected- date in which the request was sent by the hcp to the other hcp.  date datatype is of the form YY:MM:DD.  Canot be null.
 \end{description}
 
-<<<<<<< HEAD
-\subsection{MVC Design}
-
-MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives to anticipate for future changes.
-[Insert Diagram here]
-\paragraph{Models}
-The model [explain what it does]
-
-\paragraph{Controllers}
-The controller [explain what it does]
-
-\paragraph{Views}
-The view [explain what it does]
-=======
 \subsubsection{Scripts to start the server and load the data}
 We used many scripts to create the database described above.  First of all we have a bash script called start\_everything.sh which as its name implies, starts everything.  It starts the PostgreSQL server, creates a PostgreSQL database, and then it uses an sql file called create\_tables.sql to create all of the tables described in the ER diagram.  It then calls the file load\_data.sql which loads all of the tables with test data.  In case we want to drop all of the test data we have an sql file called drop.sql.  In case we wanted to delete everything and start over, we have a bash script called delete\_everything.sh. 
->>>>>>> d4443b05b1086a60252187fedd9a60e68c25a86d
 
 \section{MVC implementation}
 [ doxygen here... ]
@@ -216,7 +202,6 @@ Talk about class="ajaxlink" and JQuery triggers. Talk about class "Ajax" server-
 
 \subsection{Controller Tests}
 
-\paragraph{} 
 There are three types of users: non-members, patients, and health care providers. Each type have been tested individually.
 
 A non-member should only be able to view the default home page, or register. All other functions were tested to assure that a non-member could not access any other functionalities. 
@@ -240,6 +225,7 @@ A patient is able to do the following:
 \item Add or delete a medical record
 \item View all their medical records
 \item Set each medical record to hidden or public to specific healthcare providers
+\item Send a message to doctors
 \end{itemize}
 A health care provider is able to do the following:
 \begin{itemize}
@@ -264,6 +250,8 @@ A health care provider is able to do the following:
 \item Add a medical record to a specific patient
 \item Viewing their patient's medical records (the ones they are authorized to see)
 \item Set each medical record to hidden or public to specific healthcare providers
+\item Send a message their patients or collegues
+
 \end{itemize}
 
 \subsection{Database Tests}
