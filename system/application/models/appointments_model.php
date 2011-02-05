@@ -348,7 +348,7 @@ class Appointments_model extends Model {
 		$sql = "SELECT *
 			FROM appointments A
 			WHERE A.appointment_id = ?";
-		$query = $this->db->query($sql, array($inputs[0]));
+		$query = $this->db->query($sql, array($inputs['appointment_id']));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;	
@@ -361,7 +361,7 @@ class Appointments_model extends Model {
 		$sql = "UPDATE appointments
 				SET date_time = ?
 				WHERE appointment_id = ?";
-		$query = $this->db->query($sql, array($inputs[1], $inputs[0]));
+		$query = $this->db->query($sql, array($inputs['date_time'], $inputs['appointment_id']));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
