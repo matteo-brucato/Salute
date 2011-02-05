@@ -1,4 +1,5 @@
 \documentclass[12pt]{report}
+\usepackage{graphicx}
 
 \title{SALUTE \\ WEB-BASED MEDICAL MANAGEMENT \\ MILESTONE 0}
 \author{Matteo \\ Musa \\ Nada \\ Aswhwin}
@@ -32,13 +33,17 @@ Bla bla bla... general description ... why we chose to implement it like this...
 \subsection{Entity Relationship Diagram (ERD)}
 We provide a high-level description of the database using the famous ER diagram, for those who are familiar with it\footnote{Entities are represented in the ER diagram as rectangles.  Each entity represents a table in the database that holds all of the information or attributes that represents that entity.  In the ER diagram, each attribute is represented with a oval.}. Then we will describe the database structure in more details.
 
-[try to place the ER here]
-
+\includegraphics[scale=0.6,angle=180]{cs180_ER_draft4.pdf}
 
 \chapter{MVC Design}
 
 MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives for high cohesion and low coupling which is essential in anticipating for future changes.
-[Insert Diagram here]
+
+\includegraphics[scale=0.2]{mvc-diag.png}\\
+\includegraphics[scale=1]{MVC-Diagram2.jpeg}\\
+\includegraphics[scale=1]{MVC-Diagram3.png}\\
+\includegraphics[scale=1]{mvc-diagram4.png}\\
+\includegraphics[scale=1]{MVC-Diagram.jpg}\\
 
 \section{Models}
 The model is the tool used to access and modify the database. Everytime a user needs information, the models are queried to retrieve the information. If a user wants to add or modify, this too must be added into the database. 
@@ -150,7 +155,7 @@ Holds all of the information for every bill that a patient receives and a hcp is
 \item serial hcp\_id- Unique account ID of the hcp that issued the bill.  This is the foreign key to the HCP\_Account entity.  Cannot be null.
 \item decimal(9,2) amount- The amount due to the hcp.  decimal datatype allows charge to be up to 9 digits long, with 2 digits of percision.  Cannot be null.
 \item text descryption- Descryption of what the bill is being issued for.  text datatype allows unlimited number of characters. Cannot be null.
-\item date due\_date- date by which the bill must be paid by.  date datetype of the form YY:MM:DD.  Cannot be null.
+\item timestamp due\_date- date by which the bill must be paid by.  timestamp datatype of the form YY:MM:DD HH:MM:SS.  Cannot be null.
 \item boolean cleared- States wheather the bill was paid or not.  boolean datatype value is either true or false.  By default it is false.  If patient pays the bill, its status is changed to true.
 \end{description}
 
@@ -189,6 +194,13 @@ We used many scripts to create the database described above.  First of all we ha
 
 \section{MVC implementation}
 [ doxygen here... ]
+
+\subsection{Assumptions}
+\begin{itemize}
+\item Doctors cannot delete medical records even if they uploaded them, only patients can
+\item Both doctors and patients can upload medical records
+\item When a doctor uploads a medical record, he has automatic viewing priveleges
+\end{itemize}
 
 \section{Interface implementation}
 \subsection{Layouts}
