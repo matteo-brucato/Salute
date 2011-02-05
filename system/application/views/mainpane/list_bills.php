@@ -30,8 +30,18 @@ $table['td_class'] = array( '', '', '', '', '', '', '', '');
 $table['tuples'] = $list;
 
 // Attributes to display
-$table['attr'] = array( 'first_name', 'last_name', 'amount', 'descryption', 'due_date', 'cleared');
+$table['attr'] = array( 'first_name', 'last_name', 'amount', 'descryption', 'due_date', 'cleared', 'actions');
 
+if ($this->auth->get_type() === 'patient') {
+		$actions = array('pay-bill');
+} else {
+		$actions = array('delete-bill');
+}
+for ($i = 0; $i < count($table['tuples']); $i++) {
+	$table['tuples'][$i]['actions'] = '<ul>';
+	$table['tuples'][$i]['actions'] .= get_action_strings($actions, $list[$i]);
+	$table['tuples'][$i]['actions'] .= '<ul>';
+}
 
 /*
 // Special columns to dislpay
