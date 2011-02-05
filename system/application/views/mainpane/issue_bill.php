@@ -3,8 +3,8 @@
 
 <form method="post" action="/bills/issue_new_bill" id="issue-bill">
 	<fieldset id="issue-bill-fieldset">
-		<legend> Issue bill to <?php echo $results['first_name'].' '.$results['last_name'];?> </legend>
-		<input type="hidden" name="patient_id" value="<?php echo $results['patient_id'];?>" />
+		<legend> Issue bill to <?php echo $results[0]['first_name'].' '.$results[0]['last_name'];?> </legend>
+		<input type="hidden" name="patient_id" value="<?php echo $results[0]['account_id'];?>" />
 		<table>
 			<tr>
 				<td><label for="amount-input">Amount</label></td>

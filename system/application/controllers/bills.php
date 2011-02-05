@@ -20,8 +20,8 @@ class Bills extends Controller {
 	function index(){
 		//$this->auth->check_logged_in();
 		//$this->ajax->redirect('/bills/all');
-
-		$this->all();
+		echo 'asd';
+		//$this->all();
 	}
   	
 	/* List all bills  */      	   
@@ -122,14 +122,18 @@ class Bills extends Controller {
 		$this->ajax->view(array($mainview,$sideview));
 	}
 
-	function issue($patient_id) {
+	function issue($patient_id){
+		echo 'start';
+
 		$this->auth->check_logged_in();
 		$this->load->model('patient_model');
 		if( $this->auth->get_type() === 'hcp' ){
-			$results = this->patient_model->get_patient(array($patient_id));	
+			echo 'before get patient';
+			$results = $this->patient_model->get_patient(array($patient_id));	
+			echo 'after get patient';
 			switch( $results ) {
 				case -1:
-					$mainview = 'Query error!'
+					$mainview = 'Query error!';
 					$sideview = '';
 					break;
 				default:
@@ -138,6 +142,7 @@ class Bills extends Controller {
 						return;	
 					}
 					else{
+						echo 'before calling view';
 						$this->ajax->view(array($this->load->view('mainpane/issue_bill', array('results'=>$results), TRUE), $this->load->view('sidepane/hcp-profile', '', TRUE)));
 					}						
 			}
@@ -147,12 +152,9 @@ class Bills extends Controller {
 		//check if patient first
 		//get full tuple patient
 		//if patient, provide form
-		
-		
-		
-
 
 	}
+	
 	// load form , charge patient an amount for an procedure/appointment/test, upload itemized receipt	
 	// update database
 	// Only available for hcps
@@ -188,6 +190,8 @@ class Bills extends Controller {
 		}
 		$this->ajax->redirect('/bills');
 	}
+	
+	
 
 }
 /** @} */
