@@ -96,6 +96,7 @@ class Medical_records_model extends Model {
 	 *   Is of the form: array(patient_id, account_id (person adding), issue, suplementary_info, file_path)
 	 * @return
 	 *   -1 if error in insert
+	 *   -2 cannot retrieve medical record id of last inserted tuple
 	 *    1 if medical record was properly inserted
 	 * */
 	function add_medical_record($inputs){
@@ -117,9 +118,16 @@ class Medical_records_model extends Model {
 			$query = $this->db->query($sql);
 			if ($this->db->trans_status() === FALSE)
 				return -1;
-		
+			
+			if ($query->num_rows() > 0) {
+				$res = $query->result_array();
+				$med_rec_id = $res[0]['last_value'];
+			} else {
+				return -2;
+			}
+			
 			//automatically give the person that added it permission to view the file
-			return allow_permission(array($query, $inputs[1]));
+			return $this->allow_permission(array($med_rec_id, $inputs[1]));
 			if( $this->db->trans_status() === FALSE )
 				return -1;	
 		}
@@ -159,9 +167,9 @@ class Medical_records_model extends Model {
 		//$this->db->insert( 'Permissions', $data);
 		
 
-		$sql = "INSERT INTO permissions (medical_rec_id, account_id)
+		$sql = "INSERT INTO permission (medical_rec_id, account_id)
 			VALUES (?, ?)";
-		$query = $this->db->query($data, $inputs);
+		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 		return 1;
@@ -189,15 +197,15 @@ class Medical_records_model extends Model {
 	}
 	
 	/**
-	 * Determines if a medical record can be viewed by a hcp
+	 * Determines if a medical record can be viewed by another account
 	 * 
 	 * @param $inputs
-	 *   Is of the form: array(hcp_id, medical_rec_id)
+	 *   Is of the form: array(account_id, medical_rec_id)
 	 * @return
 	 *   True or Flase
 	 *   -1 if error in query
 	 * */
-	function is_allowed($inputs){
+	function is_account_allowed($inputs){
 		
 		$sql = "SELECT *
 			FROM permission P
@@ -206,7 +214,7 @@ class Medical_records_model extends Model {
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 		if( $query->num_rows() > 0)
-			return TRUE;	
+			return TRUE;
 		return FALSE;
 	}
 	
@@ -303,21 +311,21 @@ class Medical_records_model extends Model {
 	 *   -1 if error in query
 	 *    Array with all of the medical records
 	 * */
-	 function get_patient_records($inpts){
+	function get_patient_records($inputs) {
 		 
 		$sql = "SELECT *
 			FROM medical_record M, permission P
-			WHERE M.patient_id = ? AND M.medical_rec_id = P.medical_rec_id AND P.account_id = ?
-		$query = $this->db->query($inputs);
+			WHERE M.patient_id = ? AND M.medical_rec_id = P.medical_rec_id AND P.account_id = ?";
+		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 		
 		if ($query->num_rows() > 0)
-				return $query->result_array();
+			return $query->result_array();
 
-			return array();	
-	 }
+		return array();	
+	}
 }
 /** @} */
 ?>

@@ -41,6 +41,6 @@
 <?php
 $this->load->helper('actions_helper');
 echo '<ul>';
-echo get_action_strings(array('send-email','delete-conn','see-med-recs','upload-med-rec'), $info);
+echo get_action_strings(array('send-email','delete-conn','list-med-recs','upload-med-rec'), $info);
 echo '</ul>';
 ?>

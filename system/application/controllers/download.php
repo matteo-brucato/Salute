@@ -51,7 +51,7 @@ class Download extends Controller {
 			}
 			
 			// And also check if I have permissions to see this record
-			$perm = $this->medical_records_model->is_allowed(
+			$perm = $this->medical_records_model->is_account_allowed(
 				array($this->auth->get_account_id(), $medical_record_id));
 			if ($perm === -1) {
 				show_error('Query error!');
