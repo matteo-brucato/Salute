@@ -170,34 +170,10 @@ SERIAL account_id- Unique ID of the hcp that can view the medical record.  This 
 
 DATE date_created-  Date in which the patient allowed the hcp to view the medical record.  DATE datatype is of the form YY:MM:DD.  Cannot be NULL.\\
 
-\subparagraph{p_d_connection}\\
-Holds all of the information for every connection between a patient and a hcp.  This relationship has a patial N:M relationship with the HCP_Account and the Patient_Account entities.\\ \\
-
-SERIAL patient_id- Unique account ID of the patient that establishes a connection with a hcp.  The combination of patient_id and hcp_id is the primary key for this table.  This is also the foreign key to the Patient_Account entity.  Cannot be NULL.\\  
-
-SERIAL hcp_id- Unique account ID of the hcp that accepts the connection request sent from the patient.  The combination of hcp_id and patient_id is the primary key for this table.  This is also the foreign key to the HCP_Account entity.  Cannot be NULL.\\
-
-BOOLEAN accepted- States wheather the request was accepted by the hcp.  BOOLEAN datatype value is either TRUE or FALSE.  By default it is FALSE.  If hcp accepts the request, its status is changed to TRUE.\\
-
-DATE date_connected- Date in which the request was sent by the patient to the hcp.  DATE datatype is of the form YY:MM:DD.  Canot be NULL.\\
-
-\subparagraph{d_d_connection}\\
-Holds all of the information for every connection between a hcp and another hcp.  This relationship has two patial N:M relationships with the HCP_Account entity.\\ \\
-
-SERIAL requester_id- Unique account ID of the hcp that establishes a connection with another hcp.  The combination of requester_id and accepter_id is the primary key for this table.  This is also a foreign key to the HCP_Account entity.  Cannot be NULL.\\  
-
-SERIAL accepter_id- Unique account ID of the hcp that accepts the connection request sent from hcp.  The combination of accepter_id and requester_id is the primary key for this table.  This is also a foreign key to the HCP_Account entity.  Cannot be NULL.\\
-
-BOOLEAN accepted- States wheather the request was accepted by the hcp.  BOOLEAN datatype value is either TRUE or FALSE.  By default it is FALSE.  If hcp accepts the request, its status is changed to TRUE.\\
-
-DATE date_connected- Date in which the request was sent by the hcp to the other hcp.  DATE datatype is of the form YY:MM:DD.  Canot be NULL.\\
-
-\paragraph{Suplementary Database Implementation Information}\\
-We used many scripts to create the database described above.  First of all we have a bash script called start_everything.sh which as its name implies, starts everything.  It starts the apache server, creates a PostgreSQL database, and then it uses an sql file called create_tables.sql to create all of the tables described in the ER diagram.  It then calls the file load_data.sql which loads all of the tables with test data.  In case we want to drop all of the test data we have an sql file called drop.sql.  In case we wanted to delete everything and start over, we have a bash script called delete_everything.sh.     
 
 \subsection{MVC Design}
 
-MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives to anticipate for future changes. 
+MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives to anticipate for future changes.
 [Insert Diagram here]
 \paragraph{Models}
 The model [explain what it does]
@@ -223,46 +199,49 @@ There are three types of users: non-members, patients, and health care providers
 A non-member should only be able to view the default home page, or register. All other functions were tested to assure that a non-member could not access any other functionalities. 
 
 A patient is able to do the following:
-\bullet Login, Logout
-\bullet Requesting a connection with a healthcare provider
-\bullet Delete a connection with their healthcare provider
-\bullet Viewing all, pending, or connected healthcare providers
-\bullet Viewing their medical records
-\bullet Make an appointment with a connected doctor
-\bullet Cancel an appointment 
-\bullet View all,upcoming, or past appointments
-\bullet Change their email, or password
-\bullet Retrieve their password if forgotten via email
-\bullet Edit their information
-\bullet Deactivate, reactivate their account
-\bullet View all, current, or past bills.
-\bullet Pay their bills (Note: This is not linked to any credit card/bank system ) 
-\bullet Add or delete a medical record
-\bullet View all their medical records
-\bullet Set each medical record to hidden or public to specific healthcare providers
-
+\begin{itemize}
+\item Login, Logout
+\item Requesting a connection with a healthcare provider
+\item Delete a connection with their healthcare provider
+\item Viewing all, pending, or connected healthcare providers
+\item Viewing their medical records
+\item Make an appointment with a connected doctor
+\item Cancel an appointment 
+\item View all,upcoming, or past appointments
+\item Change their email, or password
+\item Retrieve their password if forgotten via email
+\item Edit their information
+\item Deactivate, reactivate their account
+\item View all, current, or past bills.
+\item Pay their bills (Note: This is not linked to any credit card/bank system ) 
+\item Add or delete a medical record
+\item View all their medical records
+\item Set each medical record to hidden or public to specific healthcare providers
+\end{itemize}
 A health care provider is able to do the following:
-\bullet Login, Logout
-\bullet Requesting a connection with a healthcare provider
-\bullet Accept a connection request from another health care provider or patient
-\bullet Reject a connection request from another health care provider or patient
-\bullet Delete a connection with their patient or collegue
-\bullet Viewing all healthcare providers
-\bullet Viewing pending incoming requests with other healthcare providers
-\bullet Viewing pending outgoing requests with other healthcare providers
-\bullet Viewing connected collegues, and patients
-\bullet Accept a requested appointment from their patients
-\bullet Cancel an existing appointment
-\bullet View all,upcoming, and past appointments
-\bullet Change their email or password
-\bullet Retrieve their password if forgotten via email
-\bullet Edit their information
-\bullet Deactivate, and reactivate their account
-\bullet View all, current, or past bills.
-\bullet Issue bills to connected patients
-\bullet Add a medical record to a specific patient
-\bullet Viewing their patient's medical records (the ones they are authorized to see)
-\bullet Set each medical record to hidden or public to specific healthcare providers
+\begin{itemize}
+\item Login, Logout
+\item Requesting a connection with a healthcare provider
+\item Accept a connection request from another health care provider or patient
+\item Reject a connection request from another health care provider or patient
+\item Delete a connection with their patient or collegue
+\item Viewing all healthcare providers
+\item Viewing pending incoming requests with other healthcare providers
+\item Viewing pending outgoing requests with other healthcare providers
+\item Viewing connected collegues, and patients
+\item Accept a requested appointment from their patients
+\item Cancel an existing appointment
+\item View all,upcoming, and past appointments
+\item Change their email or password
+\item Retrieve their password if forgotten via email
+\item Edit their information
+\item Deactivate, and reactivate their account
+\item View all, current, or past bills.
+\item Issue bills to connected patients
+\item Add a medical record to a specific patient
+\item Viewing their patient's medical records (the ones they are authorized to see)
+\item Set each medical record to hidden or public to specific healthcare providers
+\end{itemize}
 
 \subsection{Database Tests}
 
