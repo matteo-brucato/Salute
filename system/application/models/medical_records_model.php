@@ -26,12 +26,15 @@ class Medical_records_model extends Model {
 	 * emtpy array if patient has no medical records
 	 * */
 	function list_my_records($inputs){
-		$sql = "SELECT M.*, P.first_name AS pat_first_name, A.*, H.*
-			FROM medical_record M, patient_account P, accounts A, hcp_account H
-			WHERE M.patient_id = ? AND M.patient_id = P.account_id AND M.account_id = A.account_id AND 
-				((A.account_id = H.account_id) OR (A.account_id = P.account_id))";
+		$sql = "(SELECT M.*, P.first_name AS pat_first_name, P.last_name AS pat_last_name, A.*, H.first_name, H.last_name
+			FROM patient_account P, accounts A, hcp_account H, medical_record M
+			WHERE M.patient_id = ? AND M.patient_id = P.account_id AND M.account_id = A.account_id AND A.account_id = H.account_id)
+			UNION
+			(SELECT M.*, P.first_name AS pat_first_name, P.last_name AS pat_last_name, A.*, P2.first_name , P2.last_name
+			FROM patient_account P, patient_account P2, accounts A, medical_record M
+			WHERE M.patient_id = ? AND M.patient_id = P.account_id AND M.account_id = A.account_id AND A.account_id = P2.account_id)";
 				
-		$query = $this->db->query($sql, $inputs);
+		$query = $this->db->query($sql, array($inputs[0], $inputs[0]));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -159,8 +162,8 @@ class Medical_records_model extends Model {
 		//$this->db->insert( 'Permissions', $data);
 		
 
-		$sql = "INSERT INTO permissions (medical_rec_id, account_id)
-			VALUES (?, ?)";
+		$sql = "INSERT INTO permissions (medical_rec_id, account_id, date_created)
+			VALUES (?, ?, current_date)";
 		$query = $this->db->query($data, $inputs);
 		if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -303,11 +306,15 @@ class Medical_records_model extends Model {
 	 *   -1 if error in query
 	 *    Array with all of the medical records
 	 * */
-	 function get_patient_records($inpts){
-		 
-		$sql = "SELECT *
-			FROM medical_record M, permission P
-			WHERE M.patient_id = ? AND M.medical_rec_id = P.medical_rec_id AND P.account_id = ?
+	 function get_patient_records($inpts){			 
+		$sql = "(SELECT M.*, P.first_name AS pat_first_name, P.last_name AS pat_last_name, A.*, H.first_name, H.last_name
+			FROM patient_account P, accounts A, hcp_account H, medical_record M, permission PR
+			WHERE M.patient_id = ? AND M.patient_id = P.account_id AND M.medical_rec_id = PR.medical_rec_id AND P.account_id = ? AND P.account_id = A.account_id AND A.ccount_id = H.account_id)
+			UNION
+			(SELECT M.*, P.first_name AS pat_first_name, P.last_name AS pat_last_name, A.*, P2.first_name, P2.last_name
+			FROM patient_account P, accounts A, hcp_account H, medical_record M, permission PR
+			WHERE M.patient_id = ? AND M.patient_id = P.account_id AND M.medical_rec_id = PR.medical_rec_id AND P.account_id = ? AND P.account_id = A.account_id AND A.ccount_id = P2.account_id)";
+			
 		$query = $this->db->query($inputs);
 		
 		if ($this->db->trans_status() === FALSE)
@@ -316,7 +323,7 @@ class Medical_records_model extends Model {
 		if ($query->num_rows() > 0)
 				return $query->result_array();
 
-			return array();	
+		return array();	
 	 }
 }
 /** @} */
