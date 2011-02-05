@@ -34,7 +34,7 @@ $table['attr'] = array('medical_rec_id', 'pat_first_name', 'first_name', 'issue'
 
 // Special values for file downloading
 for ($i = 0; $i < count($table['tuples']); $i++) {
-	$table['tuples'][$i]['file'] = '<a href="/download/'.
+	$table['tuples'][$i]['file'] = '<a href="/download/medical_record/'.$table['tuples'][$i]['patient_id'].'/'.
 	$table['tuples'][$i]['file_path'].'">Download File</a>';
 }
 
