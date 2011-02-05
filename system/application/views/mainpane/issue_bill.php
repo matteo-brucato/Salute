@@ -3,9 +3,7 @@
 
 <form method="post" action="/bills/issue_new_bill" id="issue-bill">
 	<fieldset id="issue-bill-fieldset">
-		//use name from contoller to display name here, x,y is index of first name last name
-		<legend> Issue bill to <?php echo $results['first_name'] $results['last_name'];?> </legend>
-		//z is index to patient id
+		<legend> Issue bill to <?php echo $results['first_name'].' '.$results['last_name'];?> </legend>
 		<input type="hidden" name="patient_id" value="<?php echo $results['patient_id'];?>" />
 		<table>
 			<tr>
