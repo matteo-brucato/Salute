@@ -23,9 +23,10 @@ class Appointments extends Controller {
 	 * redirects to page to list upcoming appointments
 	 * */
 	function index(){
-		$this->auth->check_logged_in();
-		$this->ajax->redirect('/appointments/upcoming');
-	}  	
+		//$this->auth->check_logged_in();
+		//$this->ajax->redirect('/appointments/upcoming');
+		$this->upcoming();
+	}
 
 	/**
 	 * fn all 

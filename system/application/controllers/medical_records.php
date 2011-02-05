@@ -14,6 +14,7 @@ class Medical_records extends Controller {
 		parent::Controller();
 		$this->load->library('ajax');
 		$this->load->library('auth');
+		$this->load->helper(array('form', 'url'));
 	}
 
 	/*
@@ -24,17 +25,22 @@ class Medical_records extends Controller {
 	{
 		//$this->auth->check_logged_in();
 		//$this->ajax->redirect('/medical_records/list_med_recs');
-		$this->list_med_recs();
+		$this->myrecs();
 	}
 
 	/*
-	 * lists all medical records
+	 * Lists all medical records of the current patient
 	 * 
 	 * @return
 	 *		if patient-list your records
 	 * 		if hcp, redirect to list of his/her patients
+	 * 
+	 * @attention Only a patient can view this list
+	 * 
+	 * @bug The medical records model has a problem giving back
+	 * information of records created by patients
 	*/
-	function list_med_recs()
+	function myrecs()
 	{
 		$this->output->enable_profiler(TRUE);
 		$this->auth->check_logged_in();
@@ -42,14 +48,16 @@ class Medical_records extends Controller {
 
 		// if patient, show all their med recs
 		if ($this->auth->get_type() === 'patient') {
-			$res = $this->medical_records_model->list_my_records(array('account_id' => $this->auth->get_account_id() )); 
+			$res = $this->medical_records_model->list_my_records(
+				array($this->auth->get_account_id())
+			); 
 		}
 		// if hcp, redirect to My Patients search List
 		else if ( $this->auth->get_type() === 'hcp') {
-			$this->ajax->redirect('/search/patient');
+			$this->ajax->redirect('/connections/mypatients');
 			return;
 		} else {
-			show_error('Unknown Error.', 500);
+			show_error('Server Error.', 500);
 			return;
 		}
 		
@@ -65,26 +73,48 @@ class Medical_records extends Controller {
 				break;
 		}
 		
-		$this->ajax->view(array($mainview,$sideview));		
+		$this->ajax->view(array($mainview,$sideview));
 	}
-
+	
+	/**
+	 * Shows all medical records that a certain patient is sharing with
+	 * me.
+	 * 
+	 * @attention Called only by hpcs
+	 * @attention Must access table Permissions to list ONLY records that
+	 * have been shared with the current hcp
+	 * */
+	function patient($patient_id) {
+		$this->output->enable_profiler(TRUE);
+		$this->auth->check_logged_in();
+		$this->load->model('medical_records_model');
+	}
+	
 	/*
 	 * Loads view that allows you to upload a medical record
 	 * @todo need a view
 	 * */
-	function upload(){
+	function upload() {
 		$this->auth->check_logged_in();
-
+		
+		if ($this->auth->get_type() === 'patient') {
+			$sideview = $this->load->view('sidepane/patient-profile', '' , TRUE);
+		} else {
+			$sideview = $this->load->view('sidepane/hcp-profile', '' , TRUE);
+		}
+		
 		$this->ajax->view(array(
-								$this->load->view('mainpane/_____', '' , TRUE),
-								''
-						));	
+			$this->load->view('mainpane/forms/upload_medrec',
+				array('patient_id' => $this->auth->get_account_id()) , TRUE),
+			$sideview
+		));
 	}
+	
 	/*
 	 * Add the new medical record
 	 * @attention should the patient approve this first before having it added to their list of records?
-	 */ 
-	function add()
+	 *
+	function upload_do()
 	{
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
@@ -122,15 +152,19 @@ class Medical_records extends Controller {
 				$this->ajax->redirect('/medical_records/list_med_recs');
 				break; 
 		}	
-	}
+	}*/
 
-	// gets called when an individual medical record is selected to be viewed
-	// loads a view that prints Name, Expanded Info, Date, ...etc
-	// should list all hcps who have permission to see it
-	// should have a button that lets you give another hcp permission , or remove permission 
-	// should have a button to delete a medical record
-	/* @todo: need a view that lists medical records: Name, Description, link to file */
-	function medical_record($med_rec_id) {
+	/**
+	 * Gets called when an individual medical record is selected to be viewed
+	 * loads a view that prints Name, Expanded Info, Date, ...etc
+	 * should list all hcps who have permission to see it
+	 * should have a button that lets you give another hcp permission , or remove permission 
+	 * should have a button to delete a medical record
+	 * @todo Implement this function and then make it 'public' (remove _ at
+	 * the beginning of the name)
+	 * @todo: need a view that lists medical records: Name, Description, link to file
+	 * */
+	function _view($med_rec_id) {
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
 		
@@ -172,8 +206,10 @@ class Medical_records extends Controller {
 		$this->ajax->view(array($this->load->view('mainpane/______', $res, TRUE),''));	
 	}
 
-	// Set medical record to hidden: not public to your hcp(s)
-	function set_private($medical_record_id,$hcp_id) {
+	/**
+	 * Set medical record to hidden: not visible to your specified hcp
+	 * */
+	function set_private($medical_record_id, $hcp_id) {
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
 		$this->load->model('permissions_model');
@@ -218,7 +254,9 @@ class Medical_records extends Controller {
 		$this->ajax->view(array($mainview,$sideview));
 	}
 
-	// Set medical record to viewable: public to your hcp(s)
+	/**
+	 * Set medical record to viewable: public to your specified hcp
+	 * */
 	function set_public($medical_record_id, $hcp_id) {
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
@@ -264,21 +302,58 @@ class Medical_records extends Controller {
 		$this->ajax->view(array($mainview,$sideview));
 	}
 
-	// Delete medical record 
-	// ONLY patient should be able to do this
-	// should be able to delete multiple recs at once
-	/* @todo: waiting is_myrecord model function*/
-	function destroy($medical_record_id, $hcp_id) {
+	/**
+	 * Delete medical record 
+	 * 
+	 * @attention ONLY patient should be able to do this
+	 * 
+	 * */
+	function delete($medical_record_id = FALSE) {
+		$this->output->enable_profiler(TRUE);
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
-		if( $this->medical_records_model->is_myrecord(array($this->auth->get_account_id(),$medical_record_id)) ){
-			$this->medical_records_model->delete_medical_record($medical_record_id);		
-		}
- 		else{
-			show_error('This is not your record.', 500);
+		
+		// Check input
+		if ($medical_record_id == FALSE) {
+			show_error('Invalid input');
 			return;
 		}
-		$this->ajax->redirect('/medical_records/list_med_recs');
+		
+		// Only the patient can delete it
+		$get = $this->medical_records_model->get_medicalrecord($medical_record_id);
+		
+		if ($get === -1) {
+			$mainview = 'Query error!';
+		}
+		else if (sizeof($get) == 0) {
+			$mainview = 'Medical record does not exist';
+		}
+		else if ($get[0]['patient_id'] != $this->auth->get_account_id()) {
+			$mainview = 'You don\'t have permissions to delete this record.';
+		}
+		else {
+			$filename = $get[0]['file_path'];
+			
+			$del = $this->medical_records_model->delete_medical_record(array($medical_record_id));
+			
+			if ($del === -1) {
+				$mainview = 'Query error, cannot delete medical record entry!';
+			} else {
+				// Delete file from file system
+				$filepath = 'resources/medical_records/'
+					.$this->auth->get_account_id().'/'.$filename;
+				if (! is_file($filepath)) {
+					$mainview = 'Medical record entry deleted, but file does not exist!';
+				}
+				else if (! unlink($filepath)) {
+					$mainview = 'Medical record entry deleted, but file still in the server!';
+				} else {
+					$mainview = 'Medical record deleted successfully!';
+				}
+			}
+		}
+		
+		$this->ajax->view(array($mainview, ''));
 	}
 }
 /** @} */

@@ -38,16 +38,9 @@
 	</tr>
 </table>
 
-<ul>
-	<li><a href="">Send message</a></li>
-</ul>
-<ul>
-	<li><a href="">Delete connection with this patient</a></li>
-</ul>
-
 <?php
 $this->load->helper('actions_helper');
 echo '<ul>';
-echo get_action_strings(array('send-email','delete-conn'), $info);
+echo get_action_strings(array('send-email','delete-conn','see-medrecs'), $info);
 echo '</ul>';
 ?>
