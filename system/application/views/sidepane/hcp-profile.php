@@ -1,25 +1,25 @@
 <h3>HCP Account</h3>
 <nl>
-	<li><a href="">Messages</a>
+	<li><a href="/messages">Messages</a>
 		<ul>
-			<li href="#introduction"><a href="">Inbox</a></li>
-			<li href="#may"><a href="">Sent</a></li>
-			<li href="#should"><a href="">Compose</a></li>
+			<!--li><a href="">Inbox</a></li>
+			<li><a href="">Sent</a></li-->
+			<li><a href="/messages/compose">Compose</a></li>
 		</ul>
 	</li>
 	
-	<li><a href="">Appointments</a>
+	<li><a href="/appointments">Appointments</a>
 		<ul>
-			<li href="#introduction"><a href="">Upcoming</a></li>
-			<li href="#introduction"><a href="">Requests</a></li>
+			<li><a href="/appointments/upcoming">Upcoming</a></li>
+			<!--li><a href="/appointments/request">Requests</a></li-->
 		</ul>
 	</li>
 	
-	<li><a href="">Bills</a>
+	<li><a href="/bills">Bills</a>
 		<ul>
-			<li href="#introduction"><a href="">All</a></li>
-			<li href="#may"><a href="">Current</a></li>
-			<li href="#may"><a href="">Past</a></li>
+			<li><a href="/bills/all">All</a></li>
+			<li><a href="/bills/current">Current</a></li>
+			<li><a href="/bills/past">Past</a></li>
 		</ul>
 	
 	<li><a href="/connections/mypatients" class="ajaxlink">My Patients</a>

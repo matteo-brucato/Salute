@@ -34,6 +34,15 @@ function get_action_strings($actions, $tuple) {
 			case 'issue-bill':
 				$str .= '<li><a href="/bills/issue/'.$tuple['account_id'].'">Issue Bill</a></li>';
 				break;
+			case 'delete-bill':
+				$str .= '<li><a href="/bills/delete/'.$tuple['bill_id'].'">Delete Bill</a></li>';
+				break;
+			case 'pay-bill':
+				$str .= '<li><a href="/bills/pay/'.$tuple['bill_id'].'">Pay Bill</a></li>';
+				break;
+			case 'see-medrecs':
+				$str .= '<li><a href="/medical_records/patient/'.$tuple['account_id'].'">Medical Records</a></li>';
+				break;
 		}
 	}
 	return $str;

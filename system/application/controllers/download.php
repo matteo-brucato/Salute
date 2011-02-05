@@ -22,14 +22,60 @@ class Download extends Controller {
 	 */ 
 	function index()
 	{
-		//$this->auth->check_logged_in();
-		//$this->ajax->redirect('/medical_records/list_med_recs');
-		//$this->list_med_recs();
+		show_error('Access denied');
 	}
 	
-	function medical_record($type, $filename) {
-		// Read the file's contents
-		$data = file_get_contents('/resources/'.$type.'/'.$filename);
+	function medical_record($patient_id = NULL, $medical_record_id = NULL) {
+		$this->auth->check_logged_in();
+		$this->load->model('connections_model');
+		$this->load->model('medical_records_model');
+		
+		// Check if there is input
+		if ($patient_id == NULL || $medical_record_id == NULL) {
+			show_error('It\'s necessary to specify a patient and a medical record id');
+			return;
+		}
+		
+		// Check if I am the patient_id of the file to download
+		if ($patient_id !== $this->auth->get_account_id()) {
+			// Check if I'm an HCP connected with this patient
+			if (! $this->connections_model->is_connected_with($patient_id, $this->auth->get_account_id())) {
+				show_error('You are not connected with this patient');
+				return;
+			}
+			
+			// And also check if I have permissions to see this record
+			$perm = $this->permissions_model->is_allowed($this->auth->get_account_id(), $medical_record_id);
+			if ($perm === -1) {
+				show_error('Query error!');
+				return;
+			}
+			else if ($perm == FALSE) {
+				show_error('You don\'t have permissions to download this medical record!');
+				return;
+			}
+		}
+		
+		// Get tuple for this medical record
+		$get = $this->medical_records_model->get_medicalrecord(array($medical_record_id));
+		if ($get === -1) {
+			show_error('Query error!');
+			return;
+		}
+		else if (sizeof($get) == 0) {
+			show_error('Medical record specified does not exist');
+		}
+		
+		$filepath = 'resources/medical_records/'.$patient_id.'/'.$get[0]['file_path'];
+		
+		// Check if the file exist
+		if (! is_file($filepath)) {
+			show_error('File does not exist!');
+			return;
+		}
+		
+		// Read the file's contents and download it
+		$data = file_get_contents($filepath);
 		force_download($filename, $data);
 	}
 }

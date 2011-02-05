@@ -30,12 +30,17 @@ $table['td_class'] = array('id_keeper', '', '', '', '', '');
 $table['tuples'] = $list;
 
 // Attributes to display
-$table['attr'] = array('medical_rec_id', 'patient_id', 'account_id', 'issue', 'suplementary_info', 'file');
+$table['attr'] = array('medical_rec_id', 'pat_first_name', 'first_name', 'issue', 'suplementary_info', 'file');
 
 // Special values for file downloading
 for ($i = 0; $i < count($table['tuples']); $i++) {
-	$table['tuples'][$i]['file'] = '<a href="/download/'.
-	$table['tuples'][$i]['file_path'].'">Download File</a>';
+	$table['tuples'][$i]['file'] = '<ul>';
+	$table['tuples'][$i]['file'] .= '<li><a href="/download/medical_record/'
+		.$table['tuples'][$i]['patient_id'].'/'
+		.$table['tuples'][$i]['medical_rec_id'].'">Download</a></li>';
+	$table['tuples'][$i]['file'] .= '<li><a href="/medical_records/delete/'
+		.$table['tuples'][$i]['medical_rec_id'].'">Delete</a></li>';
+	$table['tuples'][$i]['file'] .= '</ul>';
 }
 
 

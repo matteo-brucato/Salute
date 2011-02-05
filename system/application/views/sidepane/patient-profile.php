@@ -1,25 +1,25 @@
 <h3>Patient Account</h3>
 <nl>
-	<li><a href="">Messages</a>
+	<li><a href="/messages">Messages</a>
 		<ul>
 			<!--li href="#introduction"><a href="">Inbox</a></li>
 			<li href="#may"><a href="">Sent</a></li-->
-			<li href="#should"><a href="">Compose</a></li>
+			<li><a href="/messages/compose">Compose</a></li>
 		</ul>
 	</li>
 	
-	<li><a href="">Appointments</a>
+	<li><a href="/appointments">Appointments</a>
 		<ul>
-			<li href="#introduction"><a href="">Upcoming</a></li>
-			<li href="#may"><a href="">Schedule one</a></li>
+			<li><a href="/appointments/upcoming">Upcoming</a></li>
+			<li><a href="/appointments/request">Schedule one</a></li>
 		</ul>
 	</li>
 	
 	<li><a href="/bills">Bills</a>
 		<ul>
-			<li href="#introduction"><a href="">All</a></li>
-			<li href="#may"><a href="">Current</a></li>
-			<li href="#may"><a href="">Past</a></li>
+			<li><a href="/bills/all">All</a></li>
+			<li><a href="/bills/current">Current</a></li>
+			<li><a href="/bills/past">Past</a></li>
 		</ul>
 	</li>
 	
@@ -30,6 +30,9 @@
 	</li>
 	
 	<li><a href="/medical_records">Medical Records</a>
+		<ul>
+			<li><a href="/medical_records/upload">Upload</a></li>
+		</ul>
 	
 	<li><a href="/search">Advanced Search</a>
 	<form method="post" action="/" id="quick-search-form">

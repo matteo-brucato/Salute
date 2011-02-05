@@ -158,7 +158,7 @@ class Bills_model extends Model {
 		//list all past bills a hcp has issued
 		$sql = "Select B.bill_id, P2.first_name, P2.last_name, B.amount, B.descryption, B.due_date, B.cleared
 			FROM payment B, patient_account P, patient_account P2
-			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id AND B.due_date < curdate()";
+			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id AND B.due_date < current_date";
 		$query = $this->db->query($sql, $inputs[0]);
 		
 		if ($this->db->trans_status() === FALSE)
@@ -229,7 +229,7 @@ class Bills_model extends Model {
 		//$this->db->insert('Payment', $data);
 		
 		$sql = "INSERT INTO payment (patient_id, hcp_id, amount, descryption, due_date)
-			VALUES (?, ?, ?, ?)";
+			VALUES (?, ?, ?, ?, ?)";
 		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)

@@ -20,7 +20,7 @@ class Bills extends Controller {
 	function index(){
 		//$this->auth->check_logged_in();
 		//$this->ajax->redirect('/bills/all');
-
+		//echo 'asd';
 		$this->all();
 	}
   	
@@ -52,7 +52,7 @@ class Bills extends Controller {
 				break;
 			default:
 				$mainview = $this->load->view('mainpane/list_bills',
-					array('list_name' => 'My bills', 'list' => $results) , TRUE);
+					array('list_name' => 'My Bills', 'list' => $results) , TRUE);
 				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
 		}
@@ -85,7 +85,7 @@ class Bills extends Controller {
 				break;
 			default:
 				$mainview = $this->load->view('mainpane/list_bills',
-					array('list_name' => 'My bills', 'list' => $results) , TRUE);
+					array('list_name' => 'My Current Bills', 'list' => $results) , TRUE);
 				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
 		}
@@ -115,23 +115,57 @@ class Bills extends Controller {
 				break;
 			default:
 				$mainview = $this->load->view('mainpane/list_bills',
-					array('list_name' => 'My bills', 'list' => $results) , TRUE);
+					array('list_name' => 'My Past Bills', 'list' => $results) , TRUE);
 				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
 		}
 		$this->ajax->view(array($mainview,$sideview));
 	}
 
+	function issue($patient_id){
+		echo 'start';
+
+		$this->auth->check_logged_in();
+		$this->load->model('patient_model');
+		if( $this->auth->get_type() === 'hcp' ){
+			echo 'before get patient';
+			$results = $this->patient_model->get_patient(array($patient_id));	
+			echo 'after get patient';
+			switch( $results ) {
+				case -1:
+					$mainview = 'Query error!';
+					$sideview = '';
+					break;
+				default:
+					if( sizeof($results) < 1 ){
+						show_error('Error: unable to create a bill.', 500);
+						return;	
+					}
+					else{
+						echo 'before calling view';
+						$this->ajax->view(array($this->load->view('mainpane/issue_bill', array('results'=>$results), TRUE), $this->load->view('sidepane/hcp-profile', '', TRUE)));
+					}						
+			}
+			
+			
+		}
+		//check if patient first
+		//get full tuple patient
+		//if patient, provide form
+
+	}
+	
 	// load form , charge patient an amount for an procedure/appointment/test, upload itemized receipt	
 	// update database
 	// Only available for hcps
 	function issue_new_bill() {
+		//check patient and doctor
 		$this->auth->check_logged_in();
 		$this->load->model('bills_model');
 		if($this->auth->get_type() === 'hcp'){
 			$patient_id = $this->input->post('patient_id');
 			$amount = $this->input->post('amount');
-			$description = $this->input->post('description');
+			$description = $this->input->post('descryption');
 			$due_date = $this->input->post('due_date');
 			$this->bills_model->issue_bill(array($patient_id,$this->auth->get_account_id(),$amount,$description,$due_date));
 		}
@@ -156,6 +190,8 @@ class Bills extends Controller {
 		}
 		$this->ajax->redirect('/bills');
 	}
+	
+	
 
 }
 /** @} */
