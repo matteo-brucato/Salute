@@ -90,7 +90,7 @@ class Medical_records extends Controller {
 		$this->load->model('medical_records_model');
 	}
 	
-	/*
+	/**
 	 * Loads view that allows you to upload a medical record
 	 * @todo need a view
 	 * */
@@ -110,7 +110,7 @@ class Medical_records extends Controller {
 		));
 	}
 	
-	/*
+	/**
 	 * Add the new medical record
 	 * @attention should the patient approve this first before having it added to their list of records?
 	 *
