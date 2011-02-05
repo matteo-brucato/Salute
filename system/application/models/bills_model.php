@@ -229,7 +229,7 @@ class Bills_model extends Model {
 		//$this->db->insert('Payment', $data);
 		
 		$sql = "INSERT INTO payment (patient_id, hcp_id, amount, descryption, due_date)
-			VALUES (?, ?, ?, ?)";
+			VALUES (?, ?, ?, ?, ?)";
 		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)

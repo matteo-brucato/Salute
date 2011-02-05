@@ -27,9 +27,16 @@ class Download extends Controller {
 		//$this->list_med_recs();
 	}
 	
-	function medical_record($type, $filename) {
+	function medical_record($patient_id, $filename) {
+		// Check if I have permission to download the document
+		if (! $patient_id == $this->auth->get_account_id()) {
+			// Check if I'm an HCP connected with this patient
+			if (! true) {
+				show_error('You don\'t have permission to download this medical record');
+			}
+		}
 		// Read the file's contents
-		$data = file_get_contents('/resources/'.$type.'/'.$filename);
+		$data = file_get_contents('resources/medical_records/'.$patient_id.'/'.$filename);
 		force_download($filename, $data);
 	}
 }
