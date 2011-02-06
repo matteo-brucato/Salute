@@ -260,7 +260,30 @@ Talk about class="ajaxlink" and JQuery triggers. Talk about class "Ajax" server-
 \section{Tests}
 
 \subsection{Controller Tests}
-The controllers were tested in the following 
+The each controller's functions were tested in several ways to anticipate possible user's actions. In general, they were tested for:
+\begin{itemize}
+\item \textbf{Value Types}
+\begin{itemize}
+\item Correctly typed values. This is to ensure that the functions do their basic purpose.
+\item Incorrectly typed values. This is to prevent database errors or the SQL injection security threat.
+\end{itemize}
+\item \textbf{Authorization} In order to access a majority of the functionality, a user must be logged in. So, authorization was tested in the following ways: 
+\begin{itemize}
+\item  Valid login. By providing a valid login, we checked to see if the website capabilities were allowed. 
+\item Invalid login. By providing an invalid login, we checked to see if the website capabilities were denied when the user tried to type the paths in the URL.
+\item Not logged in. By providing not logging in, we checked to see if the website capabilities were denied when the user tried to type the paths in the URL.
+\end{itemize}
+\item\textbf{Accessibility} Per specifications, a health care provider and a patient have different permissions and functionality on the website. 
+\begin{itemize}
+\item Health Care Provider Accessibility. We tested that health care providers were only allowed to do permitted actions, per the specifications. For example, doctor's should not be able to request a patient connection. The action is never displayed as a link on the Salute website, so it would be difficult for a user to do this. However, we tested it by typing the path in the URL to assure that even if a user managed to find a way, the controller would not allow for such an action to be carried out. 
+\item Patient Accessibility. We tested that patients were only allowed to do permitted actions, per the specifications. For example, a patient should not be able to request a connection with another patient. The action is never displayed as a link on the Salute website, so it would be difficult for a user to do this. However, we tested it by typing the path in the URL to assure that even if a user managed to find a way, the controller would not allow for such an action to be carried out. 
+\end{itemize}
+\item \textbf{Errors}
+\begin{itemize} 
+\item Query errors. If the controller codel a model function, and the model function experienced an error from the query, an error code is passed back to the controller function. The controller function then respectively prints an error code. 
+\item Internal server errors. We included error catch code segments within the controller to handle the cases that weren't captured by the other tests. These cases would be where there was an internal server error. This helped for debugging our logic.  
+\end{itemize}
+\end{itemize}
 
 \subsection{Database Tests}
 
