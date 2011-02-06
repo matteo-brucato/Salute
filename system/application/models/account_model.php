@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file account_model.php
+ * @brief Model to give access to the account table in the database
+ *
+ * @defgroup mdl Models
+ * @ingroup mdl
+ * @{
+ */
+
 class Account_model extends Model {
 	
 	function __construct() {
@@ -222,4 +231,5 @@ class Account_model extends Model {
 		return $query->result_array();
 	 }
 }
+/** @} */
 ?>

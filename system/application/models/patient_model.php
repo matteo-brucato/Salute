@@ -3,7 +3,7 @@
  * @file patient_model.php
  * @brief Model to give access to the Patient table in the database
  *
- * @defgroup mdl Model
+ * @defgroup mdl Models
  * @ingroup mdl
  * @{
  */

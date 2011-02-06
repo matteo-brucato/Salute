@@ -1,4 +1,11 @@
 <?php
+/**
+ * @file actions_helper.php
+ * @brief Contains functions to help handling action links in the interface
+ * 
+ * @defgroup hlp Helpers
+ * @ingroup hlp
+ * */
 function get_action_strings($actions, $tuple) {
 	$CI = get_instance();
 	$str = '';
@@ -80,4 +87,5 @@ function get_action_strings($actions, $tuple) {
 	}
 	return $str;
 }
+/**@}*/
 ?>

@@ -3,7 +3,7 @@
  * @file medical_records_model.php
  * @brief Model to give access to the medical_records table in the database
  *
- * @defgroup mdl Model
+ * @defgroup mdl Models
  * @ingroup mdl
  * @{
  */
