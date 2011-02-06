@@ -244,7 +244,7 @@ class Connections_model extends Model {
 	 * Tells whether an account is in connection with another account
 	 * 
 	 * @params $inputs
-	 * 	 Is of the form: array(account_id)
+	 * 	 Is of the form: array(account_id, account_id)
 	 * @return
 	 *  -1 in case of error in a query
 	 *   TRUE if $a_id is in connection with $b_id
@@ -272,6 +272,7 @@ class Connections_model extends Model {
 			
 		return ($query->num_rows() > 0);
 	}
+	
 	
 	/**
 	 * Tells whether an account is almost in connection with another account.

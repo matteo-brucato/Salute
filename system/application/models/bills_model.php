@@ -53,6 +53,16 @@ class Bills_model extends Model {
 	 	return FALSE;
 	 }
 	 
+	/**
+	 * Gets a bill specified by the input
+	 * 
+	 * @param $inputs
+	 *   Is of the form: bill_id
+	 * @return
+	 *  -1 in case of error in a query
+	 *   Array with the bill
+	 *   empty array() if there are no bills
+	 * */
 	 function get_bill($input){
 		 
 		$sql = "SELECT *
