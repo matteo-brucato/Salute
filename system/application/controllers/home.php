@@ -17,6 +17,7 @@ class Home extends Controller {
 	}
 	
 	/**
+	 * Default home 
 	 * If not logged in load default welcome page and login side panel
 	 * else already logged in, load their profile
 	 * */
@@ -36,7 +37,7 @@ class Home extends Controller {
 	}
 
 	/**
-	 * fn login
+	 * Verifies user login
 	 * @input -- email, password
 	 * verify input, check authorization
 	 * if login successful, store session info
@@ -117,19 +118,24 @@ class Home extends Controller {
 		$this->session->sess_destroy();
 		$this->ajax->redirect('/');
 	}
+	
+	/**
+	 * Loads view when user clicks 'Forgot Password'
+	 * prompts for email address
+	 * */
 	function retrieve_password(){
 				
 		$this->ajax->view(array('need view!', ''));
+		/*$this->ajax->view(array(
+			$this->load->view('mainpane/', '', TRUE),
+			$this->load->view('sidepane/', '', TRUE)
+		));*/
 	}
 	
 	/*
 	 * fn retrieve_password
-	 * @input -- email
-	 * look up password
+	 * @input -- email address
 	 * @return send password via email to user, with link to login again. || error(invalid email)
-	 * @todo -- this is not tested, unsure about logic. 
-	 * @todo -- view needed
-	 * @error 
 	 * @testing
 	 * 		working and tested.
 	 * 		only needs to be tested with view/input
@@ -187,16 +193,15 @@ class Home extends Controller {
 	 * 			email is already registered
 	 * 			type is not hcp nor patient
 	 * 			account id is already registered in patient||hcp table
+	 * 		confirmation email
 	 * @error tests
 	 * 		mandatory email/password field succes
 	 * 		patient registration success
 	 * 		hcp registration success 
 	 * @attention dob is VERY sensitive...
-	 * @todo- Confirmation Email
 	 * */
 	function register_do($type = NULL)
 	{
-		echo $type;
 		if( $type == NULL || ( $type !== 'patient' && $type !== 'hcp' ) ){
 			show_error('Invalid type.',500);
 			return;
@@ -273,7 +278,8 @@ class Home extends Controller {
 				'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
 
 			$this->email->send();
-			$view = 'Congratulations, you are now registered. A confirmation email has been sent to you.';
+			$view = 'Congratulations, you are now registered. A confirmation email has been sent to you.'.
+			' Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.';
 		}
 		$this->ajax->view(array($view,''));
 	}

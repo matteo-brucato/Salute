@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file messages_records_model.php
+ * @brief Model to allow patients and hcp to message each other
+ *
+ * @defgroup mdl Model
+ * @ingroup mdl
+ * @{
+ */
+ 
 class Messages_model extends Model{
 	
 	function __construct() {
@@ -99,8 +108,8 @@ class Messages_model extends Model{
 	 * */
 	function delete($inputs){
 	}
-	
 }
+/** @} */
 ?>
 
 

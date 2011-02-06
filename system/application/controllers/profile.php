@@ -17,8 +17,8 @@ class Profile extends Controller {
 	}
 
 	/**
-	 * Fn index -- default 
-	 * checks that user is logged in
+	 * Default profile function
+	 * @attention user must be logged in
 	 * loads the main welcome screen for when a patient or hcp is logged in. 
 	 * if patient, load respective views
 	 * else if hcp, load respective views
@@ -50,7 +50,8 @@ class Profile extends Controller {
 	}
 
 	/**
-	 * Checks that user is logged in
+	 * Loads logged-in user's information
+	 * @attention user must be logged in
 	 * loads the user's information in the main panel
 	 * loads the user's menu bar in the side panel  
 	 * if patient, load respective views
@@ -189,7 +190,7 @@ class Profile extends Controller {
 	/*
 	 * Loads a form that allows the user to edit their info
 	 * @attention view/form needs missing
-	  * */
+	 * */
 	function edit() {
 		$this->auth->check_logged_in();
 
@@ -200,9 +201,8 @@ class Profile extends Controller {
 	}
 
 	/* *	
-	 * Allows user to edit their personal information
+	 * Updates database with user's editted personal information
 	 * 
-	 * @attention: will post  break if nothing is passed into those fields?
 	 * */
 	function edit_do() {
 		$this->auth->check_logged_in();
@@ -245,8 +245,9 @@ class Profile extends Controller {
 			return;
 		}
 		
-		$this->ajax->view(array('Your changes have been made.',''));
-		$this->ajax->view(array('call my info view...',''));
+		$view = 'Your changes have been made. Click <a href="https://'.$_SERVER['SERVER_NAME'].'/profile/myinfo/">here</a>'.
+				' to see the changes';
+		$this->ajax->view(array($view,''));		
 	}
 }
 /** @} */
