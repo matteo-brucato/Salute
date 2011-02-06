@@ -10,8 +10,10 @@
 	
 	<li><a href="/appointments">Appointments</a>
 		<ul>
+			<li><a href="/appointments/All">All</a></li>
 			<li><a href="/appointments/upcoming">Upcoming</a></li>
-			<li><a href="/appointments/request">Schedule one</a></li>
+			<li><a href="/appointments/past">Past</a></li>
+			<li><a href="/appointments/request">Schedule</a></li>
 		</ul>
 	</li>
 	
