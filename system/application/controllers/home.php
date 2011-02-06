@@ -125,11 +125,10 @@ class Home extends Controller {
 	 * */
 	function retrieve_password(){
 				
-		$this->ajax->view(array('need view!', ''));
-		/*$this->ajax->view(array(
-			$this->load->view('mainpane/', '', TRUE),
-			$this->load->view('sidepane/', '', TRUE)
-		));*/
+		$this->ajax->view(array(
+			$this->load->view('mainpane/forgot_password', '', TRUE),
+			''
+		));
 	}
 	
 	/*
@@ -148,7 +147,7 @@ class Home extends Controller {
 		}
 		$this->load->model('account_model');
 		
-		$result = $this->account_model->get_password(array($email)); 
+		$result = $this->account_model->get_account(array($email)); 
 		$password = $result[0]['password'];
 		
 		if ($password == NULL){
@@ -160,7 +159,7 @@ class Home extends Controller {
 		$config['mailtype'] = 'html';
 		$this->email->initialize($config);
 		$this->email->from('salute-noreply@salute.com');
-		$this->email->to($results['email']);
+		$this->email->to($result[0]['email']);
 		$this->email->subject('Password Retrieval');
 		$this->email->message(
 			'You have requested for retrieval of your password. Your password is:'.$password.' '.
