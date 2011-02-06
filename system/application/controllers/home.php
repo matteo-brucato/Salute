@@ -42,7 +42,6 @@ class Home extends Controller {
 	 * verify input, check authorization
 	 * if login successful, store session info
 	 * @return redirect to profile || error (if already logged in || authorization fails)
-	 * 
 	 * */
 	function login()
 	{
@@ -110,6 +109,7 @@ class Home extends Controller {
 	}
 
 	/**
+	 * Logout User
 	 * Clears current session info
 	 * @return redirect to default page
 	 * */
@@ -133,12 +133,11 @@ class Home extends Controller {
 	}
 	
 	/*
-	 * fn retrieve_password
+	 * retrieve_password
 	 * @input -- email address
 	 * @return send password via email to user, with link to login again. || error(invalid email)
 	 * @testing
 	 * 		working and tested.
-	 * 		only needs to be tested with view/input
 	 * */
 	function retrieve_password_do(){
 		$email = $this->input->post('email');
@@ -184,7 +183,7 @@ class Home extends Controller {
 
 	/*
 	 * registers new user 
-	 * @args
+	 * @param
 	 * 		takes in text from user(registration form)
 	 * @return
 	 * 		error 

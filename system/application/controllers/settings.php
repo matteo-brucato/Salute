@@ -128,9 +128,10 @@ class Settings extends Controller {
 			
 	}
 	
-	// Deactivate Account
-	// @todo: popup: are you sure?
-	// @attention: need a reactivate function
+	/** Deactivate Account
+	 * @return Deactivation Confirmation + Email. || error
+	 * @todo popup: are you sure?
+	 **/ 
 	function deactivate() {
 		$this->auth->check_logged_in();
 				
@@ -144,7 +145,6 @@ class Settings extends Controller {
 			return;
 		}
 		
-		// Confirmation email: should have a link to reactivate? 
 		$this->load->library('email');
 		$config['mailtype'] = 'html';
 		$this->email->initialize($config);
@@ -158,7 +158,12 @@ class Settings extends Controller {
 		$this->session->sess_destroy();
 	}
 	
-	// need view to hold the account id, to give to activate_do
+	/**
+	 * Activate Account Prompt 
+	 * loads a statement that user is deactive. Link to reactivate
+	 * @param account_id -- the account_id of the user who tried to login but is deactive
+	 * @todo popup: are you sure?
+	 **/ 
 	function activate($account_id){
 		$view = 'Your Account is de-active.'.	
 		'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/settings/activate_do/'.$account_id.
@@ -166,6 +171,11 @@ class Settings extends Controller {
 		$this->ajax->view(array($view,''));
 	}
 	
+	/** 
+	 * Activate Account
+	 * @param account_id -- the account_id of the user who tried to login but is deactive
+	 * @return error || Confirmation statement + Link to login. 
+	 **/ 
 	function activate_do($account_id){
 		$this->load->model('account_model');
 		$results = $this->account_model->activate(array($account_id));

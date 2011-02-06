@@ -188,8 +188,7 @@ class Profile extends Controller {
 	}
 
 	/*
-	 * Loads a form that allows the user to edit their info
-	 * @attention view/form needs missing
+	 * Loads a form that shows their current information, with ability to change and submit.
 	 * */
 	function edit() {
 		$this->auth->check_logged_in();
@@ -226,8 +225,7 @@ class Profile extends Controller {
 
 	/* *	
 	 * Updates database with user's editted personal information
-	 * @bug	
-	 * 		if you leave the fields blank, it will insert blank values in place of existing data.
+	 * @return confirmation statement + email || error
 	 * */
 	function edit_do() {
 		$this->auth->check_logged_in();
