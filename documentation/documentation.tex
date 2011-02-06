@@ -51,7 +51,25 @@ The view is the the user interface, what the user sees and interacts with. In ou
 The controller is the middle man. It's in charge of loading the view(webpage) for the user, and calling the corresponding models to execute the functionality that the user has selected via the view. 
 
 \section{Interface Design}
-Since this is a Web application, the interface is basically a set of HTML pages that a client gets from the server as it requests them. As for every Web page, the interface is a mixture between different technologies, like HTML, CSS, Javascript and so forth. It is also dependant in some degree by some server features.
+Since this is a Web application, the interface is basically a set of HTML pages that a client gets from the server as it requests them. As for every Web page, the interface is a mixture between different technologies, like HTML, CSS, Javascript and so forth. It is also dependant in some degree by some server features. To keep everything simple the interface design only defines a very high view of the user system. To allow for a better separation of concerns, we divided the ''content'' of the Web page from the ''presentation'' of it.
+\subsection{UI design}
+The GUI is composed by:
+    a header
+  o
+    a navigation bar
+  o
+    a footer
+  o
+    two dynamic panels
+  o
+        a main panel to display the main content
+        a side panel to display additional information
+        These two panels are dynamic in the sense that their content depends on
+           the URI requested by the user. The header, navigation bar and footer have
+           always the same content.
+
+
+\subsection{Content vs. Presentation}
 
 \section{Server Design}
 
