@@ -261,22 +261,63 @@ class Bills extends Controller {
 	function delete($bill_id) {
 		$this->auth->check_logged_in();
 		$this->load->model('bills_model');
+		
+		
+		
+		
 		if( $this->auth->get_type() === 'hcp' ){
 			$sidepane = 'sidepane/hcp-profile';
-			$results = $this->bills_model->is_mybill( array($this->auth->get_account_id(),$bill_id) );
-			if( $results === -1 ){
-				$mainview = 'Query error: could not check if that is your bill';
-			}
-			else if( $results === FALSE ){
-				$mainview = 'Error: cannot perform delete on this bill. It might not exist, or you are not the HCP.';
-			}
-			else if( $results === TRUE){
-				$results = $this->bills_model->delete_bill( $bill_id );
-				if( $results === 0 ){
-					$mainview = 'Successfully deleted the bill.';
+			$results = $this->bills_model->get_bill( $bill_id );
+			if( $results === -1 )
+				$mainview = 'Query error: could not get your bill';
+			if( count($results) < 1 )
+				$mainview = 'Error: cannot perform delete on this bill. This bill does not exist anymore.';
+			else{
+				if( $results[0]['hcp_id'] === $this->auth->get_account_id() ){
+					if( $results[0]['hcp_kept'] === 't' ){
+						$results = $this->bills_model->delete_bill( array($bill_id, 'hcp'));
+						if( $results === 0 ){
+							$mainview = 'Successfully deleted the bill.';
+						}
+						else{
+							$mainview = 'Query Error: could not delete bill.';
+						}
+					}
+					else
+						$mainview = 'Error: This bill has already been deleted';					
 				}
 				else{
-					$mainview = 'Query Error: could not delete bill.';
+					$mainview = 'Error: You do not have permission to delete this bill';
+				}
+			}
+		}
+		else if( $this->auth->get_type() === 'patient' ){
+			$sidepane = 'sidepane/patient-profile';
+			$results = $this->bills_model->get_bill( $bill_id );
+			if( $results === -1 )
+				$mainview = 'Query error: could not get your bill';
+			if( count($results) < 1 )
+				$mainview = 'Error: cannot perform delete on this bill. This bill does not exist anymore.';
+			else{
+				if( $results[0]['patient_id'] === $this->auth->get_account_id() ){
+					if( $results[0]['patient_kept'] === 't' ){
+						if( $results[0]['cleared'] === 't' || $results[0]['hcp_kept'] === 'f' ){
+							$results = $this->bills_model->delete_bill( array($bill_id, 'patient'));
+							if( $results === 0 ){
+								$mainview = 'Successfully deleted the bill.';
+							}
+							else{
+								$mainview = 'Query Error: could not delete bill.';
+							}
+						}
+						else
+							$mainview = 'Error: this is still an active bill.';
+					}
+					else
+						$mainview = 'Error: This bill has already been deleted.';					
+				}
+				else{
+					$mainview = 'Error: You do not have permission to delete this bill';
 				}
 			}
 		}
@@ -303,21 +344,35 @@ class Bills extends Controller {
 		$this->load->model('bills_model');
 		if( $this->auth->get_type() === 'patient' ){
 			$sidepane = 'sidepane/patient-profile';
-			$results = $this->bills_model->is_mybill( array($this->auth->get_account_id(),$bill_id) );
-			if( $results === -1 ){
+			$results = $this->bills_model->get_bill( $bill_id );
+			switch( $results ){
+			case -1:
 				$mainview = 'Query error: could not check if that is your bill';
-			}
-			else if( $results === FALSE ){
-				$mainview = 'Error: cannot perform pay on this bill. It might not exist, or you are not the patient.';
-			}
-			else if( $results === TRUE){
-				$results = $this->bills_model->pay_bill( $bill_id );
-				if( $results === 0 ){
-					$mainview = 'Successfully paid the bill.';
+			default:
+				if( count($results) < 1 ){
+					$$mainview = 'Error: cannot pay this bill. This bill does not exist anymore.';
 				}
 				else{
-					$mainview = 'Query Error: could not pay bill.';
-				}
+					if( $results[0]['patient_id'] === $this->auth->get_account_id() ){
+						if( $results[0]['hcp_kept'] === 't' ){
+							if( $results[0]['cleared'] === 'f' ){				
+								$results = $this->bills_model->pay_bill( $bill_id );
+								if( $results === 0 ){
+									$mainview = 'Successfully paid the bill.';
+								}
+								else{
+									$mainview = 'Query Error: could not pay bill.';
+								}
+							}
+							else
+								$mainview = 'This bill has already been cleared.';
+						}
+						else
+							$mainview = 'This bill was already deleted by the doctor.';
+					}
+					else
+						$mainview = 'Error: You do not have permission to pay this bill';
+				}		
 			}
 		}
 		else{

@@ -11,11 +11,20 @@ function get_action_strings($actions, $tuple) {
 			case 'send-email':
 				$str .= '<li><a href="/messages/compose/'.$tuple['account_id'].'">Send Email</a></li>';
 				break;
-			
+				
 			case 'request-app':
 				$str .= '<li><a href="/appointments/request/'.$tuple['account_id'].'">Request Appointment</a></li>';
+				break;	
+			case 'cancel-app':
+				$str .= '<li><a href="/appointments/cancel/'.$tuple['appointment_id'].'">Cancel</a></li>';
 				break;
-			
+			case 'reschedule-app':
+				$str .= '<li><a href="/appointments/reschedule/'.$tuple['appointment_id'].'">Reschedule</a></li>';
+				break;	
+			case 'accept-app':
+				$str .= '<li><a href="/appointments/accept_appointment/'.$tuple['appointment_id'].'">Accept</a></li>';
+				break;	
+
 			case 'delete-conn':
 				$str .= '<li><a href="/connections/destroy/'.$tuple['account_id'].'">Delete Connection</a></li>';
 				break;

@@ -121,6 +121,9 @@ CREATE TABLE payment(
 	descryption TEXT NOT NULL,
 	due_date TIMESTAMP(0) WITH TIME ZONE NOT NULL,
 	cleared BOOLEAN NOT NULL DEFAULT FALSE,
+	hcp_kept BOOLEAN NOT NULL DEFAULT TRUE,
+	patient_kept BOOLEAN NOT NULL DEFAULT TRUE, 
+	creation_date TIMESTAMP DEFAULT now(),
 	PRIMARY KEY(bill_id),
 	FOREIGN KEY (patient_id) REFERENCES patient_account(account_id),
 	FOREIGN KEY (hcp_id) REFERENCES hcp_account(account_id)
