@@ -19,6 +19,11 @@ class Settings extends Controller {
 	// Default
 	function index(){
 		$this->auth->check_logged_in();
+		
+		$this->ajax->view(array(
+				$this->load->view('mainpane/settings', '', TRUE),
+				''
+			));
 		// load view that provides the following links: 
 		//	deactivate account(link to fn below)
 		//	edit my info(link to profile controller fn called 'edit_info')
@@ -28,7 +33,10 @@ class Settings extends Controller {
 	function change_password(){
 		$this->auth->check_logged_in();	
 		
-		$this->ajax->view(array('Change Password',''));
+		$this->ajax->view(array(
+				$this->load->view('mainpane/change_password', '', TRUE),
+				''
+			));
 		
 	}
 
@@ -40,19 +48,21 @@ class Settings extends Controller {
 				show_error('Password Invalid',500);
 				return;
 			}
-			$check = $this->account_model->update_account($this->auth->get_account_id(),$this->auth->get_email(),$password);
+			$check = $this->account_model->update_account(array($this->auth->get_account_id(),$this->auth->get_email(),$password));
 			if ($check === -1){
 				$this->ajax->view(array('Query Error!',''));
+				return;
 			}
 			else if ($check === -4){
-					$this->ajax->view(array('Account does not exist!',''));
+				$this->ajax->view(array('Account does not exist!',''));
+				return;
 			}
 			
 			$this->load->library('email');
 			$config['mailtype'] = 'html';
 			$this->email->initialize($config);
 			$this->email->from('salute-noreply@salute.com');
-			$this->email->to($email);
+			$this->email->to($this->auth->get_email());
 			$this->email->subject('Your password has been changed.');
 			$this->email->message(
 				'Your password has been successfully changed. It is now: '.$password.'. '.
@@ -67,7 +77,10 @@ class Settings extends Controller {
 	function change_email(){
 		$this->auth->check_logged_in();	
 		
-		$this->ajax->view(array('Change Email',''));
+		$this->ajax->view(array(
+				$this->load->view('mainpane/change_email', '', TRUE),
+				''
+			));
 	}
 
 	function change_email_do(){
@@ -79,7 +92,8 @@ class Settings extends Controller {
 				show_error('Email Invalid',500);
 				return;
 			}	
-			$password = $this->account_model->get_password($this->auth->get_email());
+			
+			$password = $this->account_model->get_account($this->auth->get_email());
 			if ($password == NULL){
 				show_error('Failed to retrieve password.',500);
 				return;
@@ -88,7 +102,8 @@ class Settings extends Controller {
 				return;
 			}
 			
-			$check = $this->account_model->update_account($this->auth->get_account_id(),$email,$this->auth->get_password());
+			$check = $this->account_model->update_account(array($this->auth->get_account_id(),$email,$password[0]['password']));
+			
 			if ($check === -1){
 				$this->ajax->view(array('Query Error!',''));
 				return;
@@ -140,11 +155,15 @@ class Settings extends Controller {
 		$this->email->send();
 		
 		$this->ajax->view(array('Your account has been deactivated.',''));
+		$this->session->sess_destroy();
 	}
 	
 	// need view to hold the account id, to give to activate_do
 	function activate($account_id){
-		$this->ajax->view(array('Your Account is de-active. Are you sure you want to reactivate?',''));		
+		$view = 'Your Account is de-active.'.	
+		'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/settings/activate_do/'.$account_id.
+		'/ ">here</a> to reactivate.';
+		$this->ajax->view(array($view,''));
 	}
 	
 	function activate_do($account_id){
@@ -154,7 +173,8 @@ class Settings extends Controller {
 			show_error('Query Error',500);
 			return;
 		}
-		$this->ajax->view(array('Your Account has been reactivated. Click here to login.',''));		
+		$view = 'Your Account has been reactivated. Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.';
+		$this->ajax->view(array($view,''));		
 	}
 }
 /** @} */

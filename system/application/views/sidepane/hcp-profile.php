@@ -37,6 +37,9 @@
 		</ul>
 	</li>
 	
+	<li><a href="/settings" class="ajaxlink">Settings</a>
+	</li>
+	
 	<li><a href="/search">Advanced Search</a>
 	<form method="post" action="/" id="quick-search-form">
 		<fieldset id="quick-search-fs">
