@@ -73,9 +73,9 @@ class Bills_model extends Model {
 	
 		//lists all bills a patient has received
 		if( $inputs[1] === 'patient'){
-			$sql = "Select B.bill_id, H2.first_name, H2.last_name, B.amount, B.descryption, B.due_date, B.cleared
+			$sql = "Select B.*, H2.first_name, H2.last_name
 				FROM payment B, hcp_account H, hcp_account H2
-				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id = H2.account_id";
+				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id = H2.account_id AND patient_kept = TRUE";
 			$query = $this->db->query($sql, $inputs[0]);
 			
 			if ($this->db->trans_status() === FALSE)
@@ -87,9 +87,9 @@ class Bills_model extends Model {
 		}
 
 		//lists all bills a hcp has issued
-		$sql = "Select B.bill_id, P2.first_name, P2.last_name, B.amount, B.descryption, B.due_date, B.cleared
+		$sql = "Select B.*, P2.first_name, P2.last_name
 			FROM payment B, patient_account P, patient_account P2
-			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id";
+			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id AND hcp_kept = TRUE";
 		$query = $this->db->query($sql, $inputs[0]);
 
 		if ($this->db->trans_status() === FALSE)
@@ -115,9 +115,9 @@ class Bills_model extends Model {
 
 		//lists all current bills a patient has received
 		if( $inputs[1] == 'patient'){
-			$sql = "Select B.bill_id, H2.first_name, H2.last_name, B.amount, B.descryption, B.due_date, B.cleared
+			$sql = "Select B.*, H2.first_name, H2.last_name
 				FROM payment B, hcp_account H, hcp_account H2
-				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id = H2.account_id AND B.due_date >= current_date";
+				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id = H2.account_id AND B.due_date >= current_date AND patient_kept = TRUE";
 			$query = $this->db->query($sql, $inputs[0]);
 			
 			if ($this->db->trans_status() === FALSE)
@@ -129,9 +129,9 @@ class Bills_model extends Model {
 		}
 
 		//list all current bills a hcp has issued
-		$sql = "Select B.bill_id, P2.first_name, P2.last_name, B.amount, B.descryption, B.due_date, B.cleared
+		$sql = "Select B.*, P2.first_name, P2.last_name
 			FROM payment B, patient_account P, patient_account P2
-			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id AND B.due_date >= current_date";
+			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id AND B.due_date >= current_date AND hcp_kept = TRUE";
 		$query = $this->db->query($sql, $inputs[0]);
 		
 		if ($this->db->trans_status() === FALSE)
@@ -157,9 +157,9 @@ class Bills_model extends Model {
 
 		//lists all past bills a patient has received
 		if( $inputs[1] == 'patient'){
-			$sql = "Select B.bill_id, H2.first_name, H2.last_name, B.amount, B.descryption, B.due_date, B.cleared
+			$sql = "Select B.*, H2.first_name, H2.last_name
 				FROM payment B, hcp_account H, hcp_account H2
-				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id = H2.account_id AND B.due_date < current_date";
+				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id = H2.account_id AND B.due_date < current_date AND patient_kept = TRUE";
 			$query = $this->db->query($sql, $inputs[0]);
 			
 			if ($this->db->trans_status() === FALSE)
@@ -171,9 +171,9 @@ class Bills_model extends Model {
 		}
 
 		//list all past bills a hcp has issued
-		$sql = "Select B.bill_id, P2.first_name, P2.last_name, B.amount, B.descryption, B.due_date, B.cleared
+		$sql = "Select B.*, P2.first_name, P2.last_name
 			FROM payment B, patient_account P, patient_account P2
-			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id AND B.due_date < current_date";
+			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id AND B.due_date < current_date AND hcp_kept = TRUE";
 		$query = $this->db->query($sql, $inputs[0]);
 		
 		if ($this->db->trans_status() === FALSE)
@@ -201,7 +201,7 @@ class Bills_model extends Model {
 		if( $inputs[1] == 'patient'){
 			$sql = "Select B.bill_id, H2.first_name, H2.last_name, B.amount, B.descryption, B.due_date, B.cleared
 				FROM payment B, hcp_account H, hcp_account H2
-				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id = H2.account_id AND B.due_date < curdate() AND B.cleared == FALSE";
+				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id = H2.account_id AND B.due_date < curdate() AND B.cleared == FALSE  AND patient_kept = TRUE";
 			$query = $this->db->query($sql, $inputs[0]);
 				
 			if ($this->db->trans_status() === FALSE)
@@ -215,7 +215,7 @@ class Bills_model extends Model {
 		//list all past bills a hcp has issued that are NOT CLEARED
 		$sql = "Select B.bill_id, P2.first_name, P2.last_name, B.amount, B.descryption, B.due_date, B.cleared
 			FROM payment B, patient_account P, patient_account P2
-			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id AND B.due_date < curdate() AND B.cleared = FALSE";
+			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id AND B.due_date < curdate() AND B.cleared = FALSE  AND hcp_kept = TRUE";
 		$query = $this->db->query($sql, $inputs[0]);
 		
 		if ($this->db->trans_status() === FALSE)
@@ -307,16 +307,29 @@ class Bills_model extends Model {
 		$sql = "SELECT *
 			FROM payment P
 			WHERE P.bill_id = ?";
-		$query = $this->db->query($sql, $inputs);
+		$query = $this->db->query($sql, $inputs[0]);
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 		if ($query->num_rows() < 1)
 			return -6;
-	 
-	 	$sql = "DELETE FROM payment
-	 		WHERE bill_id = ?";
-	 	$query = $this->db->query($sql, $inputs);
+		
+		if( $inputs[1] === 'hcp' ){
+			$sql = "UPDATE payment
+				SET hcp_kept = FALSE
+				WHERE bill_id = ?";
+		}	
+		else{
+			$sql = "UPDATE payment
+				SET patient_kept = FALSE
+				WHERE bill_id = ?";			
+			
+		}
+
+
+	 //	$sql = "DELETE FROM payment
+	 //		WHERE bill_id = ?";
+	 	$query = $this->db->query($sql, $inputs[0]);
 	 	
 	 	if ($this->db->trans_status() === FALSE)
 			return -1;

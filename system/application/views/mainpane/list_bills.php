@@ -20,7 +20,7 @@ echo '<h2>'.$list_name.'</h2>';
 $table['table-name'] = 'mybills-table';
 
 // Names of the headers in the table
-$table['th'] = array( 'First Name', 'Last Name', 'Amount', 'Description', 'Due date', 'Status', 'Actions');
+$table['th'] = array( 'First Name', 'Last Name', 'Amount', 'Description', 'Due date', 'Date posted', 'Status', 'Actions');
 
 // Classes for columns (order matters)
 $table['th_class'] = array( '', '', '', '', '', '', '', '');
@@ -30,17 +30,21 @@ $table['td_class'] = array( '', '', '', '', '', '', '', '');
 $table['tuples'] = $list;
 
 // Attributes to display
-$table['attr'] = array( 'first_name', 'last_name', 'amount', 'descryption', 'due_date', 'cleared', 'actions');
+$table['attr'] = array( 'first_name', 'last_name', 'amount', 'descryption', 'due_date','creation_date', 'cleared', 'actions');
 
 if ($this->auth->get_type() === 'patient') {
-		$actions = array('pay-bill');
+		$actions = array('pay-bill', 'delete_bill');
 } else {
 		$actions = array('delete-bill');
 }
 for ($i = 0; $i < count($table['tuples']); $i++) {
 	
-	if( $table['tuples'][$i]['cleared'] === 't' )
+	
+	
+	if( $table['tuples'][$i]['cleared'] === 't' ){
 		$table['tuples'][$i]['cleared'] = 'paid';
+		
+	}
 	else
 		$table['tuples'][$i]['cleared'] = 'unpaid';
 
@@ -48,5 +52,9 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 	$table['tuples'][$i]['actions'] .= get_action_strings($actions, $list[$i]);
 	$table['tuples'][$i]['actions'] .= '<ul>';
 }
+
+
+
 view_table($table);
 ?>
+
