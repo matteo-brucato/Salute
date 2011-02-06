@@ -39,14 +39,68 @@ class Messages extends Controller {
 		$this->auth->check_logged_in();
 	}
 	
-	/*Compose an email*/
-	function compose() {
+	/*
+	 * Load Form to Compose an Email
+	 * @param the account_id of the recipient
+	 * */
+	function compose($account_id) {
 		$this->auth->check_logged_in();
+		$this->load->model('account_model');
+		$this->load->model('patient_model');
+		$this->load->model('hcp_model');
+		$is_patient= $this->patient_model->is_patient(array($account_id));
+		$is_hcp = $this->hcp_model->is_hcp(array($account_id));
+		
+		if($is_patient === -1 || $is_hcp === -1){
+			show_error('Query Error!',500);
+			return;
+		}
+		if($is_patient === TRUE)
+			$res = $this->patient_model->get_patient(array($account_id));	
+		else if ($is_hcp === TRUE)
+			$res = $this->hcp_model->get_hcp(array($account_id));			
+		else{
+			show_error('Internal Server Error',500);
+			return;
+		}
+		$acc = $this->account_model->get_account_email(array($account_id));
+		
+		if($res === -1 || $acc === -1){
+			show_error('Query Error!',500);
+			return;
+		}
+		$this->ajax->view(array($this->load->view('mainpane/send_message', array('info'=> $res[0],'acc'=>$acc[0]), TRUE),''));
 	}
 	
-	/*Send the email (called from compose function) */
-	function send() {
+	/**
+	 * Sends the email (called by compose function)
+	 * @input email address(to), subject, the message(body)
+	 * @return error || confirmation 
+	**/
+	function send($to) {
 		$this->auth->check_logged_in();
+		$this->load->model('account_model');
+		
+		$acc = $this->account_model->get_account_email(array($to));
+		if($acc === -1){
+			show_error('Query Error!',500);
+			return;
+		}
+		$to_email = $acc[0]['email'];
+		
+		$subject = $this->input->post('subject');
+		$body = $this->input->post('body');
+		
+		$this->load->library('email');
+		$config['mailtype'] = 'html';
+		$this->email->initialize($config);
+		$this->email->from($this->auth->get_email());
+		$this->email->to($to_email);
+		$this->email->subject($subject);
+		$this->email->message($body);
+
+		$this->email->send();
+		$this->ajax->view(array('Your message has been sent.',''));
 	}	
 
 	// Delete an email

@@ -15,8 +15,6 @@ class Account_model extends Model {
 		$this->load->database();
 	}
 
-
-
 	/**
 	 * Checks if an account is active
 	 * 
@@ -198,6 +196,31 @@ class Account_model extends Model {
 	 	$sql = "SELECT *
 			FROM accounts A
 			WHERE A.email = ?";
+	 	$query = $this->db->query($sql, $inputs);
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;	
+		if( $query->num_rows() < 1)
+			return array();	 	
+
+		return $query->result_array();
+	 }
+	 
+	 	/**
+	 * Gets the email of the account
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array($account_id)
+	 * @return
+	 *  -1 in case of error in a query
+	 *   Array with the email
+	 *   empty array() if the email does not exist
+	 * */
+	 function get_account_email($inputs){
+	 
+	 	$sql = "SELECT *
+			FROM accounts A
+			WHERE A.account_id = ?";
 	 	$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
