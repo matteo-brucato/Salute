@@ -188,66 +188,93 @@ class Profile extends Controller {
 	}
 
 	/*
-	 * Loads a form that allows the user to edit their info
-	 * @attention view/form needs missing
+	 * Loads a form that shows their current information, with ability to change and submit.
 	 * */
 	function edit() {
 		$this->auth->check_logged_in();
-
+		$this->load->model('patient_model');
+		$this->load->model('hcp_model');
+		
+		// Get my current info
+		if ($this->auth->get_type() === 'patient') {
+			$res = $this->patient_model->get_patient(array($this->auth->get_account_id()));
+			$mainview = 'mainpane/edit_patient_info';
+		}
+		else if ($this->auth->get_type() === 'hcp') {
+			$res = $this->hcp_model->get_hcp(array($this->auth->get_account_id()));
+			$mainview = 'mainpane/edit_hcp_info';
+		} else {
+			show_error('Server error');
+			return;
+		}
+		
+		if ($res === -1) {
+			show_error('Query error');
+			return;
+		}
+		else if (count($res) <= 0) {
+			show_error('Server error');
+			return;
+		}
+		
 		$this->ajax->view(array(
-					$this->load->view('mainpane/edit_info', '', TRUE),
-					$this->load->view('sidepane/default', '', TRUE)
-				));
+			$this->load->view($mainview, array('curr_info' => $res[0]), TRUE),
+			''
+		));
 	}
 
 	/* *	
 	 * Updates database with user's editted personal information
-	 * 
+	 * @return confirmation statement + email || error
 	 * */
 	function edit_do() {
 		$this->auth->check_logged_in();
 		
 		if ( $this->auth->get_type() === 'patient'){
 			$this->load->model('patient_model');
-			$this->patient_model->update_personal_info(array(
-																$this->auth->get_account_id(), 
+			$res = $this->patient_model->update_personal_info(array(
 																$this->input->post('firstname'),
 																$this->input->post('middlename'),
 																$this->input->post('lastname'),
 																$this->input->post('dob'),
 																$this->input->post('sex'),
-																$this->input->post('ssn'),
 																$this->input->post('tel'),
 																$this->input->post('fax'),
 																$this->input->post('address'),
+																$this->auth->get_account_id()
 														)); 
 		}
 
 		else if ($this->auth->get_type() === 'hcp'){
 			$this->load->model('hcp_model');
-			$this->hcp_model->update_personal_info(array(
-										$this->auth->get_account_id(), 
+			$res = $this->hcp_model->update_personal_info(array(
 																$this->input->post('firstname'),
 																$this->input->post('middlename'),
 																$this->input->post('lastname'),
 																$this->input->post('dob'),
 																$this->input->post('sex'),
-																$this->input->post('ssn'),
 																$this->input->post('tel'),
 																$this->input->post('fax'),
-																$this->input->post('org'),
 																$this->input->post('spec'),
+																$this->input->post('org'),
 																$this->input->post('address'),
+																$this->auth->get_account_id()
 														)); 
 		}
 		else{
-			show_error('Unknown Error.', 500);
+			show_error('Server Error.', 500);
 			return;
 		}
 		
-		$view = 'Your changes have been made. Click <a href="https://'.$_SERVER['SERVER_NAME'].'/profile/myinfo/">here</a>'.
-				' to see the changes';
-		$this->ajax->view(array($view,''));		
+		if ($res === -1) {
+			$this->ajax->view(array('Query error',''));
+			return;
+		}
+		
+		$view = 'Your changes have been made. Please <a href="https://'.$_SERVER['SERVER_NAME'].
+				'/home/logout/">logout</a> and log back in for changes to take full effect.';
+				
+		$this->ajax->view(array($view,''));
 	}
 }
 /** @} */

@@ -9,6 +9,9 @@
  * @subpackage	Libraries
  * @category	Libraries
  * @author		Matteo Brucato
+ * 
+ * @defgroup lib Libraries
+ * @ingroup lib
  */
 
 class Layout {
@@ -46,7 +49,7 @@ class Layout {
 	 * The others can be every other view that you want to append to
 	 * the final output.
 	 * */
-	function view($views = array()) {
+	function get_layout($views = array()) {
 		$CI =& get_instance();
 		
 		// Applicatoin needs 2 dynamic views
@@ -61,9 +64,9 @@ class Layout {
 					'navbar' => $CI->load->view('static/navbar', '', TRUE),
 					'footer' => $CI->load->view('static/footer', '', TRUE),
 					// The following is the dynamic content of this layout
-					'left_column'	=> ($views[0] != '' ? $views[0] :
+					'mainpane'	=> ($views[0] != '' ? $views[0] :
 						$CI->load->view('mainpane/default', '', TRUE)),
-					'right_column'	=> ($views[1] != '' ? $views[1] : 
+					'sidepane'	=> ($views[1] != '' ? $views[1] : 
 						$CI->load->view('sidepane/default', '', TRUE))
 				);
 				break;

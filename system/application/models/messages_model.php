@@ -3,7 +3,7 @@
  * @file messages_records_model.php
  * @brief Model to allow patients and hcp to message each other
  *
- * @defgroup mdl Model
+ * @defgroup mdl Models
  * @ingroup mdl
  * @{
  */

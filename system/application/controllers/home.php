@@ -42,7 +42,6 @@ class Home extends Controller {
 	 * verify input, check authorization
 	 * if login successful, store session info
 	 * @return redirect to profile || error (if already logged in || authorization fails)
-	 * 
 	 * */
 	function login()
 	{
@@ -110,6 +109,7 @@ class Home extends Controller {
 	}
 
 	/**
+	 * Logout User
 	 * Clears current session info
 	 * @return redirect to default page
 	 * */
@@ -125,20 +125,18 @@ class Home extends Controller {
 	 * */
 	function retrieve_password(){
 				
-		$this->ajax->view(array('need view!', ''));
-		/*$this->ajax->view(array(
-			$this->load->view('mainpane/', '', TRUE),
-			$this->load->view('sidepane/', '', TRUE)
-		));*/
+		$this->ajax->view(array(
+			$this->load->view('mainpane/forgot_password', '', TRUE),
+			''
+		));
 	}
 	
 	/*
-	 * fn retrieve_password
+	 * retrieve_password
 	 * @input -- email address
 	 * @return send password via email to user, with link to login again. || error(invalid email)
 	 * @testing
 	 * 		working and tested.
-	 * 		only needs to be tested with view/input
 	 * */
 	function retrieve_password_do(){
 		$email = $this->input->post('email');
@@ -149,7 +147,7 @@ class Home extends Controller {
 		}
 		$this->load->model('account_model');
 		
-		$result = $this->account_model->get_password(array($email)); 
+		$result = $this->account_model->get_account(array($email)); 
 		$password = $result[0]['password'];
 		
 		if ($password == NULL){
@@ -161,7 +159,7 @@ class Home extends Controller {
 		$config['mailtype'] = 'html';
 		$this->email->initialize($config);
 		$this->email->from('salute-noreply@salute.com');
-		$this->email->to($results['email']);
+		$this->email->to($result[0]['email']);
 		$this->email->subject('Password Retrieval');
 		$this->email->message(
 			'You have requested for retrieval of your password. Your password is:'.$password.' '.
@@ -184,7 +182,7 @@ class Home extends Controller {
 
 	/*
 	 * registers new user 
-	 * @args
+	 * @param
 	 * 		takes in text from user(registration form)
 	 * @return
 	 * 		error 

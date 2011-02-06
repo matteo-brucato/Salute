@@ -3,7 +3,7 @@
  * @file medical_records_model.php
  * @brief Model to give access to the medical_records table in the database
  *
- * @defgroup mdl Model
+ * @defgroup mdl Models
  * @ingroup mdl
  * @{
  */
@@ -163,13 +163,25 @@ class Medical_records_model extends Model {
 	 *   Is of the form: array(medical_rec_id, account_id)
 	 * @return
 	 *  -1 if error in insert
+	 *  -2 if account_id does not exist
 	 *  1 otherwise
+	 * 
+	 * @note We are forcing permission only to other doctors
 	 * */
 	function allow_permission($inputs){
 		//$data = array( 'medical_rec_id' => $inputs[0], 'account_id' => $inputs[1]);
 		//$this->db->insert( 'Permissions', $data);
 		
-
+		$sql = "SELECT *
+			FROM hcp_account A
+			WHERE A.account_id = ?";
+		$query = $this->db->query($sql, array($inputs[1]));
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if ($query->num_rows() <= 0) {
+			return -2;
+		}
+		
 		$sql = "INSERT INTO permission (medical_rec_id, account_id, date_created)
 			VALUES (?, ?, current_date)";
 		$query = $this->db->query($sql, $inputs);
@@ -187,16 +199,15 @@ class Medical_records_model extends Model {
 	 * @return
 	 *   Deletes a row in the Permissions table
 	 * */
-	function delete_permission($inputs){
-	
+	function delete_permission($inputs) {
 		//$this->db->delete('Permissions', array( 'medical_rec_id' => $inputs[0], 'account_id' => $inputs[1]);
 		
-		$sql = "DELETE FROM permissions
+		$sql = "DELETE FROM permission
 			WHERE medical_rec_id = ? AND account_id = ?";
-		$query = $this->db->query($data, $inputs);
+		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)
 			return -1;
-		return 1;		
+		return 1;
 	}
 	
 	/**
@@ -219,6 +230,33 @@ class Medical_records_model extends Model {
 		if( $query->num_rows() > 0)
 			return TRUE;
 		return FALSE;
+	}
+	
+	/**
+	 * Get all the accounts (HCPs for now) that have access to this
+	 * medical record.
+	 * 
+	 * @param $mid
+	 * 		A medical record id
+	 * @return
+	 * 		-1 in case of query error
+	 * 		an array with all the allowed accounts
+	 * 		an empty array if no allowed account is present
+	 * */
+	function get_medrec_allowed_accounts($mid) {
+		$sql = "
+			SELECT H.*, M.medical_rec_id
+			FROM   medical_record M, hcp_account H, permission P, p_d_connection C
+			WHERE  M.medical_rec_id = ? AND M.medical_rec_id = P.medical_rec_id
+				   AND P.account_id = H.account_id
+				   AND C.hcp_id = P.account_id AND C.patient_id = M.patient_id";
+		$query = $this->db->query($sql, $mid);
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if ($query->num_rows() <= 0)
+			return array();
+		return $query->result_array();
+
 	}
 	
 	
@@ -313,6 +351,9 @@ class Medical_records_model extends Model {
 	 * @return
 	 *   -1 if error in query
 	 *    Array with all of the medical records
+	 * 
+	 * @bug It seems that gives back medical records to doctors even if
+	 * they are not connected... see my e-mail about it.... (matteo)
 	 * */
 	 function get_patient_records($inputs) {
 		$sql = "(SELECT M.*, P.first_name AS pat_first_name, P.last_name AS pat_last_name, A.*, H.first_name, H.last_name

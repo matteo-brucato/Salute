@@ -86,4 +86,5 @@ class Download extends Controller {
 		force_download($filepath, $data);
 	}
 }
+/**@}*/
 ?>

@@ -3,7 +3,7 @@
 		<table>
 			<tr>
 				<td><label for="password-input">Please Enter New Password:</label></td>
-				<td><input type="text" name="password" class="input-field" /><br /></td>
+				<td><input type="password" name="password" class="input-field" /><br /></td>
 			</tr>
 		</table>
 		<p>
@@ -11,4 +11,3 @@
 		</p>
 	</fieldset>
 </form>
-

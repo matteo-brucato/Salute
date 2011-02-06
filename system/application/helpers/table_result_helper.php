@@ -1,4 +1,11 @@
 <?php
+/**
+ * @file table_result_helper.php
+ * @brief Contains functions to help visualize common table results
+ * 
+ * @defgroup hlp Helpers
+ * @ingroup hlp
+ * */
 function view_table($table) {
 	echo '<table class="tables-1" id="'.$table['table-name'].'" cellpadding="0" cellspacing="0">';
 	echo '<tr>';
@@ -15,4 +22,5 @@ function view_table($table) {
 	}
 	echo '</table>';
 }
+/**@}*/
 ?>

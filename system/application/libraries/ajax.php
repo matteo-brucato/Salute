@@ -9,6 +9,9 @@
  * @subpackage	Libraries
  * @category	Libraries
  * @author		Matteo Brucato
+ * 
+ * @defgroup lib Libraries
+ * @ingroup lib
  */
 
 class Ajax {
@@ -41,7 +44,7 @@ class Ajax {
 			// View the previously specified layout
 			// You must know how many views it needs and pass them
 			// in an array
-			$this->CI->layout->view($views);
+			$this->CI->layout->get_layout($views);
 		}
 	}
 	
@@ -55,7 +58,7 @@ class Ajax {
 				'sidepane'	=> $views1
 			));
 		} else {
-			$this->CI->layout->view(array($view0, $view1));
+			$this->CI->layout->get_layout(array($view0, $view1));
 		}
 	}
 	

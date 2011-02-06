@@ -323,7 +323,7 @@ class Appointments extends Controller {
 				$sideview = '';
 			default:
 				$mainview = 'The appointment has been successfully approved.';
-				$sideview = 'sidepane/hcp-profile';
+				$sideview = $this->load->view('sidepane/patient-profile', '', TRUE);
 				break;
 			}
 			

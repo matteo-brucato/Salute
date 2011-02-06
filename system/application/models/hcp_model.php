@@ -3,7 +3,7 @@
  * @file hcp_model.php
  * @brief Model to give access to the HCP table in the database
  *
- * @defgroup mdl Model
+ * @defgroup mdl Models
  * @ingroup mdl
  * @{
  */
@@ -150,11 +150,14 @@ class Hcp_model extends Model {
 	 * Update hcp information
 	 * 
 	 * @param $inputs 
-	 *   Is of the form: array(account_id, first_name, last_name, middle_name, tel_number, fax_number, specialization, orgname, address)
+	 *   Is of the form: array(first_name, last_name, middle_name, dob,
+	 *                         sex, tel_number, fax_number, specialization, 
+	 *                         orgname, address, account_id)
 	 * @return
 	 *  -1 in case of error in update
 	 *  -7 if the account_id does not exist
 	 *   0 if everything goes fine and the tuple is updated in the hcp_account table
+	 * @bug will overwrite all info if anything left blank.
 	 * */
 	function update_personal_info($inputs){
 		
@@ -162,7 +165,7 @@ class Hcp_model extends Model {
 		$sql = "SELECT H.account_id
 			FROM hcp_account H
 			WHERE H.account_id = ?";
-		$query = $this->db->query($sql, array($inputs[0]));
+		$query = $this->db->query($sql, array($inputs[10]));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -174,10 +177,10 @@ class Hcp_model extends Model {
 		//$this->db->update('HCP_Account', $data, array('account_id' => $inputs[0]));
 		
 		$sql = "UPDATE hcp_account
-			SET first_name = ?, last_name = ?, middle_name = ?, tel_number = ?, fax_number = ?, specialization = ?, org_name = ?, address = ?
-			WHERE account_id = ?";
-		$query = $this->db->query($sql, array($inputs[1], $inputs[2], $inputs[3], $inputs[4], $inputs[5],
-						       $inputs[6], $inputs[7], $inputs[8], $inputs[0]));
+				SET first_name = ?, last_name = ?, middle_name = ?, dob = ?, sex = ?,
+				tel_number = ?, fax_number = ?, specialization = ?, org_name = ?, address = ?
+				WHERE account_id = ?";
+		$query = $this->db->query($sql, $inputs);
 						       
 		if ($this->db->trans_status() === FALSE)
 			return -1;

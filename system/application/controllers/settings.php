@@ -16,7 +16,12 @@ class Settings extends Controller {
 		$this->load->library('auth');
 	}
 
-	// Default
+	/**
+	 * Default Settings View: lists possible actions:
+	 * 		Change Password
+	 * 		Change Email
+	 * 		Deactivate
+	 * */
 	function index(){
 		$this->auth->check_logged_in();
 		
@@ -24,12 +29,11 @@ class Settings extends Controller {
 				$this->load->view('mainpane/settings', '', TRUE),
 				''
 			));
-		// load view that provides the following links: 
-		//	deactivate account(link to fn below)
-		//	edit my info(link to profile controller fn called 'edit_info')
-		// 	edit permissions(link to list of med recs)
 	}
 	
+	/**
+	 * Loads form  to let user change their password
+	 * */
 	function change_password(){
 		$this->auth->check_logged_in();	
 		
@@ -40,6 +44,11 @@ class Settings extends Controller {
 		
 	}
 
+	/**
+	 * Changes user password
+	 * @input new password
+	 * @return error || email confirmation + success message
+	 * */
 	function change_password_do(){
 			$this->auth->check_logged_in();	
 			$this->load->model('account_model');		
@@ -74,6 +83,9 @@ class Settings extends Controller {
 			$this->ajax->view(array($view,''));	
 	}
 
+	/**
+	 * Loads form for user to change their email
+	 * */
 	function change_email(){
 		$this->auth->check_logged_in();	
 		
@@ -83,6 +95,11 @@ class Settings extends Controller {
 			));
 	}
 
+	/**
+	 * Changes user's email
+	 * @param new email address
+	 * @return error || confirmation email + success message
+	 * */
 	function change_email_do(){
 			$this->auth->check_logged_in();	
 			$this->load->model('account_model');		
@@ -128,9 +145,10 @@ class Settings extends Controller {
 			
 	}
 	
-	// Deactivate Account
-	// @todo: popup: are you sure?
-	// @attention: need a reactivate function
+	/** Deactivate Account
+	 * @return Deactivation Confirmation + Email. || error
+	 * @todo popup: are you sure?
+	 **/ 
 	function deactivate() {
 		$this->auth->check_logged_in();
 				
@@ -144,7 +162,6 @@ class Settings extends Controller {
 			return;
 		}
 		
-		// Confirmation email: should have a link to reactivate? 
 		$this->load->library('email');
 		$config['mailtype'] = 'html';
 		$this->email->initialize($config);
@@ -158,7 +175,12 @@ class Settings extends Controller {
 		$this->session->sess_destroy();
 	}
 	
-	// need view to hold the account id, to give to activate_do
+	/**
+	 * Activate Account Prompt 
+	 * loads a statement that user is deactive. Link to reactivate
+	 * @param account_id -- the account_id of the user who tried to login but is deactive
+	 * @todo popup: are you sure?
+	 **/ 
 	function activate($account_id){
 		$view = 'Your Account is de-active.'.	
 		'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/settings/activate_do/'.$account_id.
@@ -166,6 +188,11 @@ class Settings extends Controller {
 		$this->ajax->view(array($view,''));
 	}
 	
+	/** 
+	 * Activate Account
+	 * @param account_id -- the account_id of the user who tried to login but is deactive
+	 * @return error || Confirmation statement + Link to login. 
+	 **/ 
 	function activate_do($account_id){
 		$this->load->model('account_model');
 		$results = $this->account_model->activate(array($account_id));

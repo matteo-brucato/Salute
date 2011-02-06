@@ -3,7 +3,7 @@
  * @file connections_model.php
  * @brief Model to give access to the two connection tables in the database
  *
- * @defgroup mdl Model
+ * @defgroup mdl Models
  * @ingroup mdl
  * @{
  */
