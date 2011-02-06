@@ -166,27 +166,41 @@ class Appointments extends Controller {
 		
 		$this->auth->check_logged_in();
 		
-		if($this->appointments_model->is_myappointment(array($this->auth->get_account_id(),$apt_id))){
-			/* @to do: pop up-- are you sure you want to cancel appointment?*/
-			$results = $this->appointments_model->cancel(array($apt_id));
+		$this->load->model('appointments_model');
+		
+		$result = $this->appointments_model->is_myappointment(array($this->auth->get_account_id(),$apt_id));
+		if ( $result === -1){
+				$mainview = 'Query error';
+				$sideview = '';
+		}
+		elseif ( $relust === -5){
+				$mainview = 'Appointment ID does not exist!';
+				$sideview = ''
+		}
+		elseif ( $result ==== TRUE){
+				/* @to do: pop up-- are you sure you want to cancel appointment?*/
+				$results = $this->appointments_model->cancel(array($apt_id));
 			
-			if ($this->auth->get_type() === 'patient')
-				$sidepane = 'sidepane/patient-profile';
-			$sidepane = 'sidepane/hcp-profile';
+				if ($this->auth->get_type() === 'patient'){
+					$sidepane = 'sidepane/patient-profile';
+				}
+				else {
+				$sidepane = 'sidepane/hcp-profile';
+				}
 				
-			switch ($results) {
-			case -1:
-				$mainview = 'Query error!';
-				$sideview = '';
-				break;
-			case -5:
-				$mainview = 'Appointment does not exist!';
-				$sideview = '';
-			default:
-				$mainview = 'The appointment was successfully canceled.';
-				$sideview = $this->load->view($sidepane, '', TRUE);
-				break;
-			}
+				switch ($results) {
+				case -1:
+					$mainview = 'Query error!';
+					$sideview = '';
+					break;
+				case -5:
+					$mainview = 'Appointment does not exist!';
+					$sideview = '';
+				default:
+					$mainview = 'The appointment was successfully canceled.';
+					$sideview = $this->load->view($sidepane, '', TRUE);
+					break;
+				}
 		}
 		else{
 			show_error('This is not your appointment. Permission Denied.', 500);
@@ -255,7 +269,7 @@ class Appointments extends Controller {
 			
 			switch ($results) {
 			case -1:
-				$mainview = 'Query error!';
+				$mainview = 'Query Error!';
 				$sideview = '';
 				break;
 			case -5:
@@ -325,33 +339,80 @@ class Appointments extends Controller {
  	 * @MATEO:
 	 * 	I ASSUME THE VIEW NAME WILL BE request
 	 * */
-	function request_do(){
+	function request_do($account_id){
 		$this->auth->check_logged_in();
+		$this->load->model('appointments_model');
+		$this->load->model('patient_model');
+		$this->load->model('connections_model');
 		
-		if ($this->auth->get_type() == 'hcp'){
+		if ($this->auth->get_type() === 'hcp')
+		{
 			show_error('Doctors are not allowed to request appointments', 500);
 			return;
 		}
-
-		//$this->ajax->view(array($this->load->view('mainpane/request', '' , TRUE), ''));
-		$hcp_id = $this->input->post('hcp_id'); // @todo:fix this -- view should pass this to me based on the tuple they click..
-		$desc = $this->input->post('description');
-		$time = $this->input->post('time');
-		$results = $this->appointments_model->request(array( 'patient_id' => $this->auth->get_account_id(), 
-									'hcp_id' => $hcp_id , 
-									'desc' => $desc ,
-									'time' => $time ));
-									 
-		switch ($results) {
-			case -1:
-				$mainview = 'Query error!';
-			default:
-				$mainview = 'Your request has been submitted.';
-				break;
+		
+		//test to see if the accound_id belongs to a hcp
+		$is_hcp = $this->hcp_model->is_hcp(array($account_id));
+		if ( $is_hcp === -1 )
+		{
+			$mainview = 'Querry Error';
+			$sideview = '';
+		}
+		elseif ($is_hcp === TRUE)
+		{
+			
+			//test to see if the person loged in is connected with the hcp
+			$is_connected = $this->connections_model->is_connected_with(array($account_id, $this->auth->get_acccount_id()));
+			
+			if($is_connected === -1)
+			{
+				$mainview = 'Querry Error';
+				$sideview = '';
 			}
+			elseif ($is_connected === TRUE)
+			{
+				
+				$this->ajax->view(array($this->load->view('mainpane/request', '' , TRUE), ''));
+				$hcp_id = $this->input->post('hcp_id'); // @todo:fix this -- view should pass this to me based on the tuple they click..
+				$desc = $this->input->post('description');
+				$time = $this->input->post('time');
+				
+				//test to see if the time and description are TRUE and not NULL
+				if( $desc !== FALSE && $desc !== '' && $time !== FALSE && $time !== '')
+				{
+					$results = $this->appointments_model->request(array( 'patient_id' => $this->auth->get_account_id(), 
+											'hcp_id' => $account_id, 
+											'desc' => $desc ,
+											'time' => $time ));					 
+					switch ($results)
+					{
+						case -1:
+						$mainview = 'Query error!';
+						default:
+						$mainview = 'Your request has been submitted.';
+						break;
+					}
+				}
+				else
+				{
+					show_error('Please fill out the Time and Date and Description', 500);
+					return;
+				}
+			}
+			else
+			{
+				show_error('This account is not connected with the healthcare provider specified to request an appointment', 500);
+				return;
+			}
+		}
+		else
+		{
+			show_error('The healthcare provider ID does not exist.', 500);
+			return;
+		}
 			
 		// Give results to the client
-		$this->ajax->view(array($mainview,''));
+		$this->ajax->view(array($mainview,''));					
 	}
 	
 	/**
