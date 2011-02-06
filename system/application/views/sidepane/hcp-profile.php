@@ -39,6 +39,7 @@
 	</li>
 	
 	<li><a href="/search">Advanced Search</a>
+	<li><a href="/home/logout">Logout</a>
 	<form method="post" action="/" id="quick-search-form">
 		<fieldset id="quick-search-fs">
 			<legend>Quick Serach</legend>
