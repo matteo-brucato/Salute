@@ -2,7 +2,7 @@
 \usepackage{graphicx}
 
 \title{SALUTE \\ WEB-BASED MEDICAL MANAGEMENT \\ MILESTONE 0}
-\author{Musa Rayyan \\ Nada Hashem \\ Matteo Brucato \\ Ashwin Gopalakrishnan}
+\author{Matteo \\ Musa \\ Nada \\ Aswhwin}
 
 \begin{document}
 \maketitle
@@ -24,7 +24,6 @@ What tools and technology we used..
 
 
 \part{Design}
-
 \chapter{High Level View}
 Bla bla bla..
 
@@ -36,7 +35,7 @@ We provide a high-level description of the database using the famous ER diagram,
 
 \includegraphics[scale=0.6,angle=180]{cs180_ER_draft4.pdf}
 
-\section{MVC Design}
+\chapter{MVC Design}
 
 MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives for high cohesion and low coupling which is essential in anticipating for future changes.
 
@@ -46,39 +45,18 @@ MVC stands for Model View Controller, and is a software architecture and an arch
 \includegraphics[scale=1]{mvc-diagram4.png}\\
 \includegraphics[scale=1]{MVC-Diagram.jpg}\\
 
-\subsection{Models}
+\section{Models}
 The model is the tool used to access and modify the database. Everytime a user needs information, the models are queried to retrieve the information. If a user wants to add or modify, this too must be added into the database. 
 
-\subsection{Views}
+\section{Views}
 The view is the the user interface, what the user sees and interacts with. In our case, its a medical management website. So, it is important to make sure that the website is user-friendly. If the layout and design of the view is difficult to navigate and/or inconsistent, the user will not desire to use the product. 
 
-\subsection{Controllers}
+\section{Controllers}
 The controller is the middle man. It's in charge of loading the view(webpage) for the user, and calling the corresponding models to execute the functionality that the user has selected via the view. 
 
-\section{Interface Design}
-Since this is a Web application, the interface is basically a set of HTML pages that a client gets from the server as it requests them. As for every Web page, the interface is a mixture between different technologies, like HTML, CSS, Javascript and so forth. It is also dependant in some degree by some server features. To keep everything simple the interface design only defines a very high view of the user system. To allow for a better separation of concerns, we divided the ''content'' of the Web page from the ''presentation'' of it.
-\subsection{UI design}
-The GUI is composed by:
-    a header
-  o
-    a navigation bar
-  o
-    a footer
-  o
-    two dynamic panels
-  o
-        a main panel to display the main content
-        a side panel to display additional information
-        These two panels are dynamic in the sense that their content depends on
-           the URI requested by the user. The header, navigation bar and footer have
-           always the same content.
+\chapter{Interface Design}
 
-
-\subsection{Content vs. Presentation}
-
-\section{Server Design}
-
-
+\chapter{Server Design}
 
 \chapter{Implementation View}
 [ doxygen here.. ]
