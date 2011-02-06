@@ -16,7 +16,12 @@ class Settings extends Controller {
 		$this->load->library('auth');
 	}
 
-	// Default
+	/**
+	 * Default Settings View: lists possible actions:
+	 * 		Change Password
+	 * 		Change Email
+	 * 		Deactivate
+	 * */
 	function index(){
 		$this->auth->check_logged_in();
 		
@@ -24,12 +29,11 @@ class Settings extends Controller {
 				$this->load->view('mainpane/settings', '', TRUE),
 				''
 			));
-		// load view that provides the following links: 
-		//	deactivate account(link to fn below)
-		//	edit my info(link to profile controller fn called 'edit_info')
-		// 	edit permissions(link to list of med recs)
 	}
 	
+	/**
+	 * Loads form  to let user change their password
+	 * */
 	function change_password(){
 		$this->auth->check_logged_in();	
 		
@@ -40,6 +44,11 @@ class Settings extends Controller {
 		
 	}
 
+	/**
+	 * Changes user password
+	 * @input new password
+	 * @return error || email confirmation + success message
+	 * */
 	function change_password_do(){
 			$this->auth->check_logged_in();	
 			$this->load->model('account_model');		
@@ -74,6 +83,9 @@ class Settings extends Controller {
 			$this->ajax->view(array($view,''));	
 	}
 
+	/**
+	 * Loads form for user to change their email
+	 * */
 	function change_email(){
 		$this->auth->check_logged_in();	
 		
@@ -83,6 +95,11 @@ class Settings extends Controller {
 			));
 	}
 
+	/**
+	 * Changes user's email
+	 * @param new email address
+	 * @return error || confirmation email + success message
+	 * */
 	function change_email_do(){
 			$this->auth->check_logged_in();	
 			$this->load->model('account_model');		
