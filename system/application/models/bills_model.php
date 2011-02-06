@@ -32,8 +32,9 @@ class Bills_model extends Model {
 	 
 	 	$sql = "SELECT *
 	 		FROM payment P
-	 		WHERE P.patient_id = ? AND P.bill_id = ?";
-	 	$query = $this->db->query($sql, $inputs);
+	 		WHERE (P.patient_id = ? AND P.bill_id = ?) OR
+					(P.hcp_id = ? AND P.bill_id = ?)";
+	 	$query = $this->db->query($sql, array($inputs[0], $inputs[1], $inputs[0], $inputs[1]));
 	 	
 	 	if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -41,6 +42,20 @@ class Bills_model extends Model {
 			return TRUE;
 			
 	 	return FALSE;
+	 }
+	 
+	 function get_bill($input){
+		 
+		$sql = "SELECT *
+			FROM payment P
+			WHERE P.bill_id = ?";
+		$query = $this->db->query($sql, $input);
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if ($query->num_rows() > 0)
+			return $query->result_array();
+		return array();
 	 }
 
 
@@ -300,7 +315,7 @@ class Bills_model extends Model {
 			return -6;
 	 
 	 	$sql = "DELETE FROM payment
-	 		WHERE hcp_id = ? AND bill_id = ?";
+	 		WHERE bill_id = ?";
 	 	$query = $this->db->query($sql, $inputs);
 	 	
 	 	if ($this->db->trans_status() === FALSE)
