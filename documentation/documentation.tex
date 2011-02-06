@@ -2,7 +2,7 @@
 \usepackage{graphicx}
 
 \title{SALUTE \\ WEB-BASED MEDICAL MANAGEMENT \\ MILESTONE 0}
-\author{Matteo \\ Musa \\ Nada \\ Aswhwin}
+\author{Musa Rayyan \\ Nada Hashem \\ Matteo Brucato \\ Ashwin Gopalakrishnan}
 
 \begin{document}
 \maketitle
@@ -24,8 +24,16 @@ What tools and technology we used..
 
 
 \part{Design}
+
 \chapter{High Level View}
 Bla bla bla..
+
+\section{System Design}
+A Web application can be simplified as a collection of resources placed on a server which are accessible to a great number of users (clients). The access to these resources must be governed by policies and permissions. From a very general point of view, our application has two kinds of resources: \emph{public} and \emph{private} resources. For instance, the login page must be a public resource, whereas the setting page should be private.
+
+You can think of a resource as either some data inside a database, a functionality that you ask to your application or even the result of some kind of operation. Based on this view, we decided to use a well-known design approach called MVC (Model-View-Controller) that works very well with this kind of settings. A controller is some executing code that performs exactly the action that the user asked to the server via an URL. In this way, a URL becomes the medium to ask for functionalities and a controller will be a merely executor. A model will be the medium to access data into a database and a view will be a result for the user, in a interface-depending fashion.
+
+In this chapter we will describe our design from a high-level viewpoint, living the implementation for the next chapter.
 
 \section{Database Design}
 Bla bla bla... general description ... why we chose to implement it like this... what problems we faced... etc...
@@ -35,7 +43,7 @@ We provide a high-level description of the database using the famous ER diagram,
 
 \includegraphics[scale=0.6,angle=180]{cs180_ER_draft4.pdf}
 
-\chapter{MVC Design}
+\section{MVC Design}
 
 MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives for high cohesion and low coupling which is essential in anticipating for future changes.
 
@@ -45,18 +53,43 @@ MVC stands for Model View Controller, and is a software architecture and an arch
 \includegraphics[scale=1]{mvc-diagram4.png}\\
 \includegraphics[scale=1]{MVC-Diagram.jpg}\\
 
-\section{Models}
+\subsection{Models}
 The model is the tool used to access and modify the database. Everytime a user needs information, the models are queried to retrieve the information. If a user wants to add or modify, this too must be added into the database. 
 
-\section{Views}
+\subsection{Views}
 The view is the the user interface, what the user sees and interacts with. In our case, its a medical management website. So, it is important to make sure that the website is user-friendly. If the layout and design of the view is difficult to navigate and/or inconsistent, the user will not desire to use the product. 
 
-\section{Controllers}
+\subsection{Controllers}
 The controller is the middle man. It's in charge of loading the view(webpage) for the user, and calling the corresponding models to execute the functionality that the user has selected via the view. 
 
-\chapter{Interface Design}
+\section{Interface Design}
+Since this is a Web application, the interface is basically a set of HTML pages that a client gets from the server as it requests them. As for every Web page, the interface is a mixture between different technologies, like HTML, CSS, Javascript and so forth. It is also dependant in some degree by some server features. To keep everything simple, the interface design only defines a very high view of the user system. To allow for a better separation of concerns, we also divided the ''content'' of the Web page from the ''presentation'' of it.
+\subsection{UI design}
+The GUI is composed by:
+\begin{itemize}
+\item a header
+\item a navigation bar
+\item a footer
+\item two \emph{dynamic} panels
+	\begin{itemize}
+	\item a main panel to display the main content of the page
+    \item a side panel to display additional information about the main content
+	\end{itemize}
+\end{itemize}
+The header basically contains the branding. The navigation bar allows a user to navigate between all the \emph{public} resources of the entire application and the footer has an extra set of public resources, not directly related to the use of the Web site.
 
-\chapter{Server Design}
+The two panels are \emph{dynamic} in the sense that their content depends on the current resource the user is accessing on a particular moment. They change during the application use, request after request.
+
+\subsection{Ajax}
+To follow a generic principle in Software Engineering, we decided to anticipate the change, creating our system capable to do every request using the famous technology Ajax. To be more precise, using requests to server called XMLHTTPRequest. Our interface is ready for that change, and the two dynamic panels are the ones that would change after a XHR request. Both the client and the server are aware of this and whenever the server receives an XHR request, it will answer with only the content for the two dynamic panels. Whereas, if the request is a normal HTTP request, it will provide the whole interface to the client. We will discuss later how we implemented it.
+
+\subsection{Layout}
+It's really hard to set a limit between content and presentation in an environment governed by HTML, but something can be done. We created all our views regardless of presentation aspects, focusing only on the most simple aspects of HTML. Our purpose is to separate this two concerns and leave to the \emph{layout} the task to add colours, change positions of the elements and this kind of things. Doing so we also provided the possibility to change the layout in the future, or even dynamically.
+
+\section{Server Design}
+
+
+\section{Server Design}
 
 \chapter{Implementation View}
 [ doxygen here.. ]

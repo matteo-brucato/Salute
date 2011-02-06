@@ -232,7 +232,7 @@ class Medical_records extends Controller {
 		else if($this->auth->get_type() === 'hcp'){
 			$result = $this->permissions_model->____(array($this->auth->get_account_id(), $med_rec_id)); /*@todo: update fn call*/
 		}
-		else{
+		else {
 				show_error('Internal Logic Error.',500);
 				return;
 		}
@@ -261,100 +261,205 @@ class Medical_records extends Controller {
 		
 		$this->ajax->view(array($this->load->view('mainpane/______', $res, TRUE),''));	
 	}
-
+	
+	/**
+	 * Show a form to ask for an hcp to add permission to
+	 * 
+	 * @attention Accessible only to patients
+	 * 
+	 * @test Tested
+	 * */
+	function add_permission($mrec_id) {
+		$this->auth->check_logged_in();
+		
+		$this->ajax->view(array(
+			$this->load->view('mainpane/forms/add_permission', array('medrec_id' => $mrec_id), TRUE),
+			''
+		));
+	}
+	
+	/**
+	 * Show a form to ask for an hcp to remove permission to
+	 * 
+	 * @test Tested
+	 * */
+	function remove_permission($mrec_id) {
+		$this->auth->check_logged_in();
+		
+		$this->ajax->view(array(
+			$this->load->view('mainpane/forms/remove_permission', array('medrec_id' => $mrec_id), TRUE),
+			''
+		));
+	}
+	
+	function see_permissions($mid) {
+		$this->auth->check_logged_in();
+		
+		if ($mid == NULL) {
+			$this->ajax->view(array('Missing input: medical record id',''));
+			return;
+		}
+		
+		// Get tuple for this medical record
+		$get = $this->medical_records_model->get_medicalrecord(array($mid));
+		if ($get === -1) {
+			$this->ajax->view(array('Query error',''));
+			return;
+		}
+		else if (sizeof($get) == 0) {
+			$this->ajax->view(array('Medical record specified does not exist',''));
+			return;
+		}
+		else if ($get[0]['patient_id'] != $this->auth->get_account_id()) {
+			$this->ajax->view(array('Only the owner can modify this medical record',''));
+			return;
+		}
+		
+		// Try to see permissions
+		if ($this->auth->get_type() === 'patient') {
+			/** @todo */
+		}
+	}
+	
 	/**
 	 * Set medical record to hidden: not visible to your specified hcp
 	 * 
-	 * @todo Check it!
+	 * @test Tested
 	 * */
-	function set_private($medical_record_id, $hcp_id) {
+	function remove_permission_do($mid) {
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
-		$this->load->model('permissions_model');
 		
-		// Check if the medical record belongs to user
-		if($this->auth->get_type() === 'patient'){
-			$result = $this->medical_records_model->is_myrecord(array($this->auth->get_account_id(), $med_record_id));
-			if(!$result){
-				show_error('This is not your record. Permission Denied.',500);
+		if ($mid == NULL) {
+			$this->ajax->view(array('Missing input: medical record id',''));
+			return;
+		}
+		
+		// the account that will lose permission
+		$account_id = $this->input->post('account_id');
+		if ($account_id == '' || $account_id == FALSE) {
+			$this->ajax->view(array('No account id specified',''));
+			return;
+		}
+		
+		// Get tuple for this medical record
+		$get = $this->medical_records_model->get_medicalrecord(array($mid));
+		if ($get === -1) {
+			$this->ajax->view(array('Query error',''));
+			return;
+		}
+		else if (sizeof($get) == 0) {
+			$this->ajax->view(array('Medical record specified does not exist',''));
+			return;
+		}
+		else if ($get[0]['patient_id'] != $this->auth->get_account_id()) {
+			$this->ajax->view(array('Only the owner can modify this medical record',''));
+			return;
+		}
+		
+		// Try to change permission
+		if ($this->auth->get_type() === 'patient') {
+			
+			// Check if its already allowed to be seen by hcp
+			$isalready = $this->medical_records_model->is_account_allowed(array($account_id, $mid));
+			if ($isalready === -1) {
+				$this->ajax->view(array('Query error',''));
 				return;
-			} else {
-				// Check if its already hidden from hcp
-				$result = $this->permissions_model->get_permission_status($hcp_id,$medical_record_id);
-				if(!$result){
-					show_error('This record is already private from that hcp.',500);
-					return;					
-				}
-				$res = $this->permissions_model->delete_permission($hcp_id,$medical_record_id);
 			}
-		}
-		// If hcp: check if he/she has permission to see it
-		else if($this->auth->get_type() === 'hcp'){
-				show_error('Permission Denied.',500);
+			if (! $isalready) {
+				$this->ajax->view(array('This record is already forbidden to this hcp.',''));
 				return;
+			}
+			$res = $this->medical_records_model->delete_permission(array($mid, $account_id));
+			
+		} else {
+			$this->ajax->view(array('Only patients can modify permissions',''));
+			return;
 		}
-		else{
-				show_error('Internal Logic Error.',500);
-				return;
-		}
+		
 		switch ($res) {
 			case -1:
 				$mainview = 'Query error!';
 				$sideview = '';
-				$error = TRUE;
 				break;
 			default:
-				$mainview = 'This record is now private to that hcp.';
+				$mainview = 'This record is now forbidden to that HCP.';
 				$sideview = '';
 				break;
 		}
 		
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ajax->view(array($mainview, $sideview));
 	}
 
 	/**
-	 * Set medical record to viewable: public to your specified hcp
+	 * Add permission to see the specified medical record to the 
+	 * specified hcp.
 	 * 
-	 * @todo Check it!
+	 * @test Tested
 	 * */
-	function set_public($medical_record_id, $hcp_id) {
+	function add_permission_do($mid = NULL) {
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
-		$this->load->model('permissions_model');
 		
-		// Check if the medical record belongs to user
-		if($this->auth->get_type() === 'patient'){
-			$result = $this->medical_records_model->is_myrecord(array($this->auth->get_account_id(), $med_record_id));
-			if(!$result){
-				show_error('This is not your record. Permission Denied.',500);
+		if ($mid == NULL) {
+			$this->ajax->view(array('Missing input: medical record id',''));
+			return;
+		}
+		
+		// the account that will have permission
+		$account_id = $this->input->post('account_id');
+		if ($account_id == '' || $account_id == FALSE) {
+			$this->ajax->view(array('No account id specified',''));
+			return;
+		}
+		
+		// Get tuple for this medical record
+		$get = $this->medical_records_model->get_medicalrecord(array($mid));
+		if ($get === -1) {
+			$this->ajax->view(array('Query error',''));
+			return;
+		}
+		else if (sizeof($get) == 0) {
+			$this->ajax->view(array('Medical record specified does not exist',''));
+			return;
+		}
+		else if ($get[0]['patient_id'] != $this->auth->get_account_id()) {
+			$this->ajax->view(array('Only the owner can modify this medical record',''));
+			return;
+		}
+		
+		// Try to change permission
+		if ($this->auth->get_type() === 'patient') {
+			
+			// Check if its already allowed to be seen by hcp
+			$isalready = $this->medical_records_model->is_account_allowed(array($account_id, $mid));
+			if ($isalready === -1) {
+				$this->ajax->view(array('Query error',''));
 				return;
-			} else {
-				// Check if its already allowed to be seen by hcp
-				$result = $this->permissions_model->get_permission_status($hcp_id,$medical_record_id);
-				if($result){
-					show_error('This record is already public to this hcp.',500);
-					return;					
-				}
-				$res = $this->permissions_model->allow_permission($hcp_id,$medical_record_id);
 			}
-		}
-		// If hcp: check if he/she has permission to see it
-		else if($this->auth->get_type() === 'hcp'){
-				show_error('Permission Denied.',500);
+			if ($isalready) {
+				$this->ajax->view(array('This record is already allowed to this hcp.',''));
 				return;
+			}
+			$res = $this->medical_records_model->allow_permission(array($mid, $account_id));
+			
+		} else {
+			$this->ajax->view(array('Only patients can modify permissions',''));
+			return;
 		}
-		else{
-				show_error('Internal Logic Error.',500);
-				return;
-		}
+		
 		switch ($res) {
 			case -1:
 				$mainview = 'Query error!';
 				$sideview = '';
-				$error = TRUE;
+				break;
+			case -2:
+				$mainview = 'The account specified does not exist or you
+				are trying to give an authorize account access';
+				$sideview = '';
 				break;
 			default:
-				$mainview = 'This record is now public to that hcp.';
+				$mainview = 'This record is now public to that HCP.';
 				$sideview = '';
 				break;
 		}
