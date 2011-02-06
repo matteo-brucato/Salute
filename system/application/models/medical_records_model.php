@@ -163,13 +163,25 @@ class Medical_records_model extends Model {
 	 *   Is of the form: array(medical_rec_id, account_id)
 	 * @return
 	 *  -1 if error in insert
+	 *  -2 if account_id does not exist
 	 *  1 otherwise
+	 * 
+	 * @note We are forcing permission only to other doctors
 	 * */
 	function allow_permission($inputs){
 		//$data = array( 'medical_rec_id' => $inputs[0], 'account_id' => $inputs[1]);
 		//$this->db->insert( 'Permissions', $data);
 		
-
+		$sql = "SELECT *
+			FROM hcp_account A
+			WHERE A.account_id = ?";
+		$query = $this->db->query($sql, array($inputs[1]));
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if ($query->num_rows() <= 0) {
+			return -2;
+		}
+		
 		$sql = "INSERT INTO permission (medical_rec_id, account_id, date_created)
 			VALUES (?, ?, current_date)";
 		$query = $this->db->query($sql, $inputs);
@@ -187,16 +199,15 @@ class Medical_records_model extends Model {
 	 * @return
 	 *   Deletes a row in the Permissions table
 	 * */
-	function delete_permission($inputs){
-	
+	function delete_permission($inputs) {
 		//$this->db->delete('Permissions', array( 'medical_rec_id' => $inputs[0], 'account_id' => $inputs[1]);
 		
-		$sql = "DELETE FROM permissions
+		$sql = "DELETE FROM permission
 			WHERE medical_rec_id = ? AND account_id = ?";
-		$query = $this->db->query($data, $inputs);
+		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)
 			return -1;
-		return 1;		
+		return 1;
 	}
 	
 	/**

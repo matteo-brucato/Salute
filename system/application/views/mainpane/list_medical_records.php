@@ -37,7 +37,8 @@ if ($this->auth->get_type() === 'patient') {
 	for ($i = 0; $i < count($table['tuples']); $i++) {
 		$table['tuples'][$i]['actions'] = '<ul>';
 		$table['tuples'][$i]['actions'] .= get_action_strings(
-			array('see-med-rec', 'download-med-rec', 'delete-med-rec'), $table['tuples'][$i]);
+			array('add-perm', 'delete-perm', 'view-all-perm', 'download-med-rec', 'delete-med-rec'),
+			$table['tuples'][$i]);
 		$table['tuples'][$i]['actions'] .= '</ul>';
 	}
 } else {

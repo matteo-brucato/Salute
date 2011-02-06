@@ -45,9 +45,9 @@ function get_action_strings($actions, $tuple) {
 			case 'list-med-recs':
 				$str .= '<li><a href="/medical_records/patient/'.$tuple['account_id'].'">Medical Records</a></li>';
 				break;
-			case 'see-med-rec':
+			/*case 'see-med-rec':
 				$str .= '<li><a href="/medical_records/see/'.$tuple['medical_rec_id'].'">See</a></li>';
-				break;
+				break;*/
 			case 'upload-med-rec':
 				$str .= '<li><a href="/medical_records/upload/'.$tuple['account_id'].'">Upload Medical Record</a></li>';
 				break;
@@ -56,6 +56,16 @@ function get_action_strings($actions, $tuple) {
 				break;
 			case 'delete-med-rec':
 				$str .= '<li><a href="/medical_records/delete/'.$tuple['medical_rec_id'].'">Delete</a></li>';
+				break;
+			
+			case 'add-perm':
+				$str .= '<li><a href="/medical_records/add_permission/'.$tuple['medical_rec_id'].'">Add a permission</a></li>';
+				break;
+			case 'delete-perm':
+				$str .= '<li><a href="/medical_records/remove_permission/'.$tuple['medical_rec_id'].'">Remove a permission</a></li>';
+				break;
+			case 'view-all-perm':
+				$str .= '<li><a href="/medical_records/see_permissions/'.$tuple['medical_rec_id'].'">View all permissions</a></li>';
 				break;
 		}
 	}
