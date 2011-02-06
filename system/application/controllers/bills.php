@@ -252,9 +252,15 @@ class Bills extends Controller {
 	/**
 	 * allows HCP to delete bill
 	 * @attention
-	 * 		only HCPs can delete a bill
+	 * 		allows users to delete a bill
+	 * 		patient can delete bill if inactive( paid or the doctor deleted it )
+	 * 		doctor can delete bill at any time
+	 * @param
+	 * 		bill_id
 	 * @return
-	 *		error if non-HCP is calling function
+	 *		error if patient tries to delete active bill
+	 * 		error if anyone tried to delete an already deleted bill
+	 * 		error if unauthorized to delete the bill(not your bill)
 	 * 		error upon database query errors
 	 * 		success: redirect to a success page message
 	**/
@@ -330,8 +336,14 @@ class Bills extends Controller {
 	 * @attention
 	 * 		only patient can pay a bill
 	 * 		no actual method to pay a bill has been implemented
+	 * 		patient can only pay if bill is active( uncleared and doctor hasn't deleted
+	 * 
+	 * @param
+	 * 		bill_id
+	 * 
 	 * @return
 	 *		error if non-patient is calling function
+	 * 		error if trying to pay an inactive bill
 	 * 		error upon database query errors
 	 * 		success: changes attribute 'cleared' of type bool from false to true
 	**/
