@@ -1,4 +1,13 @@
 <?php
+/**
+ * @file bills_model.php
+ * @brief Model to give access to the bill table into the database
+ *
+ * @defgroup mdl Models
+ * @ingroup mdl
+ * @{
+ */
+
 class Bills_model extends Model {
 	
 	function __construct() {
@@ -337,4 +346,5 @@ class Bills_model extends Model {
 		return 0;
 	 }	
 }
+/**@}*/
 ?>
