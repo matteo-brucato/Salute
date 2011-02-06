@@ -81,6 +81,13 @@ class Messages extends Controller {
 		$this->auth->check_logged_in();
 		$this->load->model('account_model');
 		
+		$acc = $this->account_model->get_account_email(array($to));
+		if($acc === -1){
+			show_error('Query Error!',500);
+			return;
+		}
+		$to_email = $acc[0]['email'];
+		
 		$subject = $this->input->post('subject');
 		$body = $this->input->post('body');
 		
@@ -88,12 +95,12 @@ class Messages extends Controller {
 		$config['mailtype'] = 'html';
 		$this->email->initialize($config);
 		$this->email->from($this->auth->get_email());
-		$this->email->to($to);
+		$this->email->to($to_email);
 		$this->email->subject($subject);
 		$this->email->message($body);
 
 		$this->email->send();
-		$this->ajax->view(array('Your password has been sent.',''));
+		$this->ajax->view(array('Your message has been sent.',''));
 	}	
 
 	// Delete an email
