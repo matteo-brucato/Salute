@@ -12,7 +12,7 @@ class Appointments extends Controller {
 
 	function __construct(){
 		parent::Controller();
-		$this->load->library('ajax');	
+		$this->load->library('ajax');
 		$this->load->library('auth');
 		$this->load->model('appointments_model');
 	}
