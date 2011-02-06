@@ -1,13 +1,14 @@
 <h3>HCP Account</h3>
 <nl>
-	<li><a href="/messages">Messages</a>
+<!--	<li><a href="/messages">Messages</a>
 		<ul>
-			<!--li><a href="">Inbox</a></li>
-			<li><a href="">Sent</a></li-->
+
+			<li><a href="">Inbox</a></li>
+			<li><a href="">Sent</a></li>
 			<li><a href="/messages/compose">Compose</a></li>
 		</ul>
 	</li>
-	
+-->	
 	<li><a href="/appointments">Appointments</a>
 		<ul>
 			<li><a href="/appointments/all">All</a></li>
