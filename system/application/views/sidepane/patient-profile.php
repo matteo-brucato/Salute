@@ -33,7 +33,7 @@
 		<ul>
 			<li><a href="/medical_records/upload">Upload</a></li>
 		</ul>
-	
+	<li><a href="/settings">Settings</a></li>
 	<li><a href="/search">Advanced Search</a>
 	<form method="post" action="/" id="quick-search-form">
 		<fieldset id="quick-search-fs">

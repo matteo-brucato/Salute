@@ -19,6 +19,11 @@ class Settings extends Controller {
 	// Default
 	function index(){
 		$this->auth->check_logged_in();
+		
+		$this->ajax->view(array(
+				$this->load->view('mainpane/settings', '', TRUE),
+				''
+			));
 		// load view that provides the following links: 
 		//	deactivate account(link to fn below)
 		//	edit my info(link to profile controller fn called 'edit_info')
@@ -28,7 +33,12 @@ class Settings extends Controller {
 	function change_password(){
 		$this->auth->check_logged_in();	
 		
-		$this->ajax->view(array('Change Password',''));
+//		$this->ajax->view(array('Change Password',''));
+
+		$this->ajax->view(array(
+				$this->load->view('mainpane/change_password', '', TRUE),
+				''
+			));
 		
 	}
 
@@ -45,7 +55,7 @@ class Settings extends Controller {
 				$this->ajax->view(array('Query Error!',''));
 			}
 			else if ($check === -4){
-					$this->ajax->view(array('Account does not exist!',''));
+				$this->ajax->view(array('Account does not exist!',''));
 			}
 			
 			$this->load->library('email');
@@ -67,7 +77,12 @@ class Settings extends Controller {
 	function change_email(){
 		$this->auth->check_logged_in();	
 		
-		$this->ajax->view(array('Change Email',''));
+//		$this->ajax->view(array('Change Email',''));
+
+		$this->ajax->view(array(
+				$this->load->view('mainpane/change_email', '', TRUE),
+				''
+			));
 	}
 
 	function change_email_do(){
