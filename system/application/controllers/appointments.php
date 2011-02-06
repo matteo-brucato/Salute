@@ -256,6 +256,13 @@ class Appointments extends Controller {
 		$this->ajax->view(array($mainview,$sideview));
 	}
 
+	//input account id of person you want appointment with
+	function request($account_id)
+	{
+		$this->auth->check_logged_in();
+		$this->load->model('appointments_model');
+		
+	}
 	/**
 	 * fn request 
 	 * request an apptointment with a hcp
@@ -267,7 +274,7 @@ class Appointments extends Controller {
  	 * @MATEO:
 	 * 	I ASSUME THE VIEW NAME WILL BE request
 	 * */
-	function request(){
+	function request_do(){
 		$this->auth->check_logged_in();
 		$this->load->model('appointments_model');
 		
