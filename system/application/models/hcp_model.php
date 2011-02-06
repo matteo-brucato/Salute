@@ -155,6 +155,7 @@ class Hcp_model extends Model {
 	 *  -1 in case of error in update
 	 *  -7 if the account_id does not exist
 	 *   0 if everything goes fine and the tuple is updated in the hcp_account table
+	 * @bug will overwrite all info if anything left blank.
 	 * */
 	function update_personal_info($inputs){
 		
@@ -174,8 +175,8 @@ class Hcp_model extends Model {
 		//$this->db->update('HCP_Account', $data, array('account_id' => $inputs[0]));
 		
 		$sql = "UPDATE hcp_account
-			SET first_name = ?, last_name = ?, middle_name = ?, tel_number = ?, fax_number = ?, specialization = ?, org_name = ?, address = ?
-			WHERE account_id = ?";
+				SET first_name = ?, last_name = ?, middle_name = ?, tel_number = ?, fax_number = ?, specialization = ?, org_name = ?, address = ?
+				WHERE account_id = ?";
 		$query = $this->db->query($sql, array($inputs[1], $inputs[2], $inputs[3], $inputs[4], $inputs[5],
 						       $inputs[6], $inputs[7], $inputs[8], $inputs[0]));
 						       

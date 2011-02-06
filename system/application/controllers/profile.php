@@ -204,7 +204,6 @@ class Profile extends Controller {
 	 * Updates database with user's editted personal information
 	 * @bug	
 	 * 		if you leave the fields blank, it will insert blank values in place of existing data.
-	 * 		login fails afterwards...dont know why
 	 * */
 	function edit_do() {
 		$this->auth->check_logged_in();
@@ -245,8 +244,9 @@ class Profile extends Controller {
 			return;
 		}
 		
-		$view = 'Your changes have been made. Click <a href="https://'.$_SERVER['SERVER_NAME'].'/profile/myinfo/">here</a>'.
-				' to see the changes';
+		$view = 'Your changes have been made. Please <a href="https://'.$_SERVER['SERVER_NAME'].
+				'/home/logout/">logout</a> and log back in for changes to take full effect.';
+				
 		$this->ajax->view(array($view,''));		
 	}
 }
