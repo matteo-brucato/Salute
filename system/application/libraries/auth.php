@@ -9,6 +9,9 @@
  * @subpackage	Libraries
  * @category	Libraries
  * @author		Matteo Brucato
+ * 
+ * @defgroup lib Libraries
+ * @ingroup lib
  */
 
 class Auth {

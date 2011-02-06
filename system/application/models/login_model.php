@@ -3,7 +3,7 @@
  * @file login_model.php
  * @brief Model to allow both patients and hcp to log into their respective accounts
  *
- * @defgroup mdl Model
+ * @defgroup mdl Models
  * @ingroup mdl
  * @{
  */

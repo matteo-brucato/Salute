@@ -3,7 +3,7 @@
  * @file hcp_model.php
  * @brief Model to give access to the HCP table in the database
  *
- * @defgroup mdl Model
+ * @defgroup mdl Models
  * @ingroup mdl
  * @{
  */
