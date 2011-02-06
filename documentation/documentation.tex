@@ -102,124 +102,124 @@ We will list all the tables... bla bla bla... for each table we will describe al
 Holds all of the information regarding messages sent from patient to hcp or vice versa. It has two total 1:N relationships with the Accounts entity.
 
 \begin{description}
-\item serial message\_id- ID to uniquely identify the message from other messages. serial datatype automatically creates the message\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
-\item text subject- Subject of the message being sent. text datatype allows unlimited number of characters.  Cannot be null.
-\item text content- Where the sender can writte what they would like to send to the receiver.  text datatype allows unlimited number of characters.  Cannot be null.
-\item serial message\_id- ID to uniquely identify the message from other messages. serial datatype automatically creates the message\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
-\item timestamp date\_time- date and time of when the message is sent.  timestamp datatype format YY:MM:DD HH:MM:SS.  Cannot be null.
-\item boolean sender\_kept- To determine if the sender would like to delete the message from their outbox.  boolean value is either true or false.  Cannot be null.  By default it is true.  Changing the status to false means it gets deleted.
-\item boolean receiver\_kept- To determine if the receiver would like to delete the message from their inbox.  boolean value is either true or false.  Cannot be null.  By default it is true.  Changing the status to false means it gets deleted.
+\item serial \textit{message\_id}- ID to uniquely identify the message from other messages. serial datatype automatically creates the message\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item text \textit{subject}- Subject of the message being sent. text datatype allows unlimited number of characters.  Cannot be null.
+\item text \textit{content}- Where the sender can writte what they would like to send to the receiver.  text datatype allows unlimited number of characters.  Cannot be null.
+\item serial \textit{message\_id}- ID to uniquely identify the message from other messages. serial datatype automatically creates the message\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item timestamp \textit{date\_time}- Date and time of when the message is sent.  timestamp datatype format YY:MM:DD HH:MM:SS.  Cannot be null.
+\item boolean \textit{sender\_kept}- To determine if the sender would like to delete the message from their outbox.  boolean value is either true or false.  Cannot be null.  By default it is true.  Changing the status to false means it gets deleted.
+\item boolean \textit{receiver\_kept}- To determine if the receiver would like to delete the message from their inbox.  boolean value is either true or false.  Cannot be null.  By default it is true.  Changing the status to false means it gets deleted.
 \end{description}
 
 \subsubsection{Accounts}
 Holds all of the primary information every patient and hcp account needs to log into Salute.  The entities Patient\_Account and HCP\_Account both inherit from Accounts using an IS A relationship.  It has a partial N:1 relationship with the Permission and Medical\_Records entities.
 
 \begin{description}
-\item serial account\_id- ID to uniquely identify the account from other accounts. serial datatype automatically creates the account\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
-\item varchar(40) email- Email of the account holder. It is used to log into Salute along with the user password.  varchar(40) datatype allows for a maximum of 40 characters.  Cannot be null.
-\item varchar(15) password-  Password of the account holder.  It is used to log into Salute along with the user email address.  varchar(15) datatype allows for a maximum of 15 characters.  Cannot be null.
-\item boolean active- To determine wheather the account is active or not.  boolean datatype value is either true or false.  By default it is true.  Changing the stauts to false means the account gets deactivated.
+\item serial \textit{account\_id}- ID to uniquely identify the account from other accounts. serial datatype automatically creates the account\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item varchar(40) \textit{email}- Email of the account holder. It is used to log into Salute along with the user password.  varchar(40) datatype allows for a maximum of 40 characters.  Cannot be null.
+\item varchar(15) \textit{password}-  Password of the account holder.  It is used to log into Salute along with the user email address.  varchar(15) datatype allows for a maximum of 15 characters.  Cannot be null.
+\item boolean \textit{active}- To determine wheather the account is active or not.  boolean datatype value is either true or false.  By default it is true.  Changing the stauts to false means the account gets deactivated.
 \end{description}
 
 \subsubsection{Patient\_Account}
 Holds all of the personal information for every patient.  It inherits from the Accounts entity with an IS A relationship.  It has a partial N:1 relationship with the Medical\_Records entity and a partial N:M relationship with the p\_d\_connection relationship.
 
 \begin{description}
-\item serial account\_id- ID to uniquely identify the account from other accounts. serial datatype automatically creates the account\_id when a new tuple is inserted into the table.  This ID is inherited from the Accounts entity. Primary key of the table.  Cannot be null.
-\item varchar(30) first\_name-  First name of the patient.  varchar(30) datatype allows for a maximum of 30 characters.  Cannot be null.
-\item varchar(30) last\_name- Last name of the patient.  varchar(30) datatype allows for a maximum of 30 characters.  Cannot be null.
-\item varchar(30) middle\_name- Middle name of the patient. varchar(30) datatype allows for a maximum of 30 characters.
-\item numeric(9,0) ssn- Social Security Number of the patient. numeric(9,0) datatype allows exactly 9 numeric characters.  Cannot be null.
-\item date dob- date of Birth of the patient.  date datatype is of the format YY:MM:DD.  Cannot be null.
-\item char(6) sex- Sex of the patient. char(6) datatyep allows for a maximum of 6 characters.  It has to be either "male" or "female".  Cannot be null.
-\item varchar(11) tel\_number- Primary telephone number of the patient.  varchar(11) datatype allows a maximum of 11 characters.
-\item varchar(11) fax\_number- Fax number of the patient.  varchar(11) datatype allows a maximum of 11 characteres.
-\item text address- Primary address of the patient.  text datatype allows unlimited number of characters.
+\item serial \textit{account\_id}- ID to uniquely identify the account from other accounts. serial datatype automatically creates the account\_id when a new tuple is inserted into the table.  This ID is inherited from the Accounts entity. Primary key of the table.  Cannot be null.
+\item varchar(30) \textit{first\_name}-  First name of the patient.  varchar(30) datatype allows for a maximum of 30 characters.  Cannot be null.
+\item varchar(30) \textit{last\_name}- Last name of the patient.  varchar(30) datatype allows for a maximum of 30 characters.  Cannot be null.
+\item varchar(30) \textit{middle\_name}- Middle name of the patient. varchar(30) datatype allows for a maximum of 30 characters.
+\item numeric(9,0) \textit{ssn}- Social Security Number of the patient. numeric(9,0) datatype allows exactly 9 numeric characters.  Cannot be null.
+\item date \textit{dob}- Date of Birth of the patient.  date datatype is of the format YY:MM:DD.  Cannot be null.
+\item char(6) \textit{sex}- Sex of the patient. char(6) datatyep allows for a maximum of 6 characters.  It has to be either "male" or "female".  Cannot be null.
+\item varchar(11) \textit{tel\_number}- Primary telephone number of the patient.  varchar(11) datatype allows a maximum of 11 characters.
+\item varchar(11) \textit{fax\_number}- Fax number of the patient.  varchar(11) datatype allows a maximum of 11 characteres.
+\item text \textit{address}- Primary address of the patient.  text datatype allows unlimited number of characters.
 \end{description}
 
 \subsubsection{HCP\_Account}
 Holds all of the personal information for every hcp.  It inherits from the Accounts entity with an IS A relationship.  It has a partial N:1 relationship with the Appointments and Payment entities, as well as a partial N:M relationship with the p\_d\_connection and d\_d\_connection relationship.
 
 \begin{description}
-\item serial account\_id- ID to uniquely identify the account from other accounts. serial datatype automatically creates the account\_id when a new tuple is inserted into the table.  This ID is inherited from the Accounts entity. Primary key of the table.  Cannot be null.
-\item varchar(30) first\_name-  First name of the hcp.  varchar(30) datatype allows for a maximum of 30 characters.  Cannot be null.
-\item varchar(30) last\_name- Last name of the hcp.  varchar(30) datatype allows for a maximum of 30 characters.  Cannot be null.
-\item varchar(30) middle\_name- Middle name of the hcp. varchar(30) datatype allows for a maximum of 30 characters.
-\item numeric(9,0) ssn- Social Security Number of the hcp. numeric(9,0) datatype allows exactly 9 numeric characters.  Cannot be null.
-\item date dob- date of Birth of the hcp.  date datatype is of the format YY:MM:DD.  Cannot be null.
+\item serial \textit{account\_id}- ID to uniquely identify the account from other accounts. serial datatype automatically creates the account\_id when a new tuple is inserted into the table.  This ID is inherited from the Accounts entity. Primary key of the table.  Cannot be null.
+\item varchar(30) \textit{first\_name}-  First name of the hcp.  varchar(30) datatype allows for a maximum of 30 characters.  Cannot be null.
+\item varchar(30) \textit{last\_name}- Last name of the hcp.  varchar(30) datatype allows for a maximum of 30 characters.  Cannot be null.
+\item varchar(30) \textit{middle\_name}- Middle name of the hcp. varchar(30) datatype allows for a maximum of 30 characters.
+\item numeric(9,0) \textit{ssn}- Social Security Number of the hcp. numeric(9,0) datatype allows exactly 9 numeric characters.  Cannot be null.
+\item date \textit{dob}- Date of Birth of the hcp.  date datatype is of the format YY:MM:DD.  Cannot be null.
 \item char(6) sex- Sex of the hcp. char(6) datatyep allows for a maximum of 6 characters.  It has to be either "male" or "female".  Cannot be null.
-\item varchar(11) tel\_number- Primary office telephone number of the hcp.  varchar(11) datatype allows a maximum of 11 characters.
-\item varchar(11) fax\_number- Primary fax number of the hcp.  varchar(11) datatype allows a maximum of 11 characteres.
-\item text specialization- What the hcp specializes in.  text datatype allows unlimited number of characters.
-\item varchar(30) org\_name- Name of the organization for which the hcp works for.  varchar(30) datatype allows a maximum of 30 characteres.
-\item text address- Primary address of the hcp place of business.  text datatype allows unlimited number of characters.
+\item varchar(11) \textit{tel\_number}- Primary office telephone number of the hcp.  varchar(11) datatype allows a maximum of 11 characters.
+\item varchar(11) \textit{fax\_number}- Primary fax number of the hcp.  varchar(11) datatype allows a maximum of 11 characteres.
+\item text \textit{specialization}- What the hcp specializes in.  text datatype allows unlimited number of characters.
+\item varchar(30) \textit{org\_name}- Name of the organization for which the hcp works for.  varchar(30) datatype allows a maximum of 30 characteres.
+\item text \textit{address}- Primary address of the hcp place of business.  text datatype allows unlimited number of characters.
 \end{description}
 
 \subsubsection{Appointments}
 Holds all of the information for every appointment a patient makes with a hcp.  It has a total 1:N relationship with the HCP\_Account and Patient\_Account entities.
 
 \begin{description}
-\item serial appointment\_id- ID to uniquely identify the appointment from other appointments. serial datatype automatically creates the appointment\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
-\item serial patient\_id-  Unique account ID of the patient that requests the appointment.  This is the foreign key to the Patient\_Account entity.  Cannot be null.
-\item serial hcp\_id- Unique account ID of the hcp that receives the appointment request.  This is the foreign key to the HCP\_Account entity.  Cannot be null.
-\item text descryption- Description of the appointment that the patient requests to the hcp.  text datatype allows unlimited number of characters.  Cannot be null.
-\item timestamp date\_time- Time and day of the appointment the patient requestes to the hcp.  timestamp datatype of the form YY:MM:DD HH:MM:SS.  Cannot be null.
-\item boolean approved- Status of the appointment that the patient requests to the hcp.  boolean datatype value is either true or false.  By default it is false.  HCP can accept the appointment and change the status to true.
+\item serial \textit{appointment\_id}- ID to uniquely identify the appointment from other appointments. serial datatype automatically creates the appointment\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item serial \textit{patient\_id}-  Unique account ID of the patient that requests the appointment.  This is the foreign key to the Patient\_Account entity.  Cannot be null.
+\item serial \textit{hcp\_id}- Unique account ID of the hcp that receives the appointment request.  This is the foreign key to the HCP\_Account entity.  Cannot be null.
+\item text \textit{descryption}- Description of the appointment that the patient requests to the hcp.  text datatype allows unlimited number of characters.  Cannot be null.
+\item timestamp \textit{date\_time}- Time and day of the appointment the patient requestes to the hcp.  timestamp datatype of the form YY:MM:DD HH:MM:SS.  Cannot be null.
+\item boolean \textit{approved}- Status of the appointment that the patient requests to the hcp.  boolean datatype value is either true or false.  By default it is false.  HCP can accept the appointment and change the status to true.
 \end{description}
 
 \subsubsection{Medical\_Record}
 Holds all of the information for every medical record a patient has on Salute.  It has a partial N:1 relationship with the Permission entity and a total 1:N relationship with the Accounts and Patient\_Account entities.
 
 \begin{description}
-\item serial medical\_rec\_id- ID to uniquely identify the medical record from other medical records. serial datatype automatically creates the medical\_rec\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
-\item serial patient\_id- Unique account ID of the patient that owns the medical record.  This is the foreign key to the Patient\_Account entity.  Cannot be null.
-\item serial account\_id- Unique account ID of the user(patient/hcp) that uploads the medical record.  This is the foreign key to the Accounts entity.  Cannot be null.
-\item text issue-  What the medical record deals with.  text datatype allows unlimited number of characters.  Cannot be null.
-\item text suplementary\_info- Any suplementary infomation that anybody (patient/hcp) would want to add to the medical record.  text datatype allows unlimited number of characters.
-\item text file\_path- Path where the file can be found and downloaded from the server.  text datatype allows unlimited number of characters.  Cannot be null.
+\item serial \textit{medical\_rec\_id}- ID to uniquely identify the medical record from other medical records. serial datatype automatically creates the medical\_rec\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item serial \textit{patient\_id}- Unique account ID of the patient that owns the medical record.  This is the foreign key to the Patient\_Account entity.  Cannot be null.
+\item serial \textit{account\_id}- Unique account ID of the user(patient/hcp) that uploads the medical record.  This is the foreign key to the Accounts entity.  Cannot be null.
+\item text \textit{issue}-  What the medical record deals with.  text datatype allows unlimited number of characters.  Cannot be null.
+\item text \textit{suplementary\_info}- Any suplementary infomation that anybody (patient/hcp) would want to add to the medical record.  text datatype allows unlimited number of characters.
+\item text \textit{file\_path}- Path where the file can be found and downloaded from the server.  text datatype allows unlimited number of characters.  Cannot be null.
 \end{description}
 
 \subsubsection{Payment}
 Holds all of the information for every bill that a patient receives and a hcp issues.  It has a total 1:N relationship with the Patient\_Account and HCP\_Account entities.
 
 \begin{description}
-\item serial bill\_id serial-  ID to uniquely identify the bill from other bills. serial datatype automatically creates the bill\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
-\item serial patient\_id- Unique account ID of the patient that received the bill.  This is the foreign key to the Patient\_Account entity.  Cannot be null.
-\item serial hcp\_id- Unique account ID of the hcp that issued the bill.  This is the foreign key to the HCP\_Account entity.  Cannot be null.
-\item decimal(9,2) amount- The amount due to the hcp.  decimal datatype allows charge to be up to 9 digits long, with 2 digits of percision.  Cannot be null.
-\item text descryption- Descryption of what the bill is being issued for.  text datatype allows unlimited number of characters. Cannot be null.
-\item timestamp due\_date- date by which the bill must be paid by.  timestamp datatype of the form YY:MM:DD HH:MM:SS.  Cannot be null.
-\item boolean cleared- States wheather the bill was paid or not.  boolean datatype value is either true or false.  By default it is false.  If patient pays the bill, its status is changed to true.
+\item serial \textit{bill\_id}-  ID to uniquely identify the bill from other bills. serial datatype automatically creates the bill\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item serial \textit{patient\_id}- Unique account ID of the patient that received the bill.  This is the foreign key to the Patient\_Account entity.  Cannot be null.
+\item serial \textit{hcp\_id}- Unique account ID of the hcp that issued the bill.  This is the foreign key to the HCP\_Account entity.  Cannot be null.
+\item decimal(9,2) \textit{amount}- The amount due to the hcp.  decimal datatype allows charge to be up to 9 digits long, with 2 digits of percision.  Cannot be null.
+\item text \textit{descryption}- Descryption of what the bill is being issued for.  text datatype allows unlimited number of characters. Cannot be null.
+\item timestamp \textit{due\_date}- Date by which the bill must be paid by.  timestamp datatype of the form YY:MM:DD HH:MM:SS.  Cannot be null.
+\item boolean \textit{cleared}- States wheather the bill was paid or not.  boolean datatype value is either true or false.  By default it is false.  If patient pays the bill, its status is changed to true.
 \end{description}
 
 \subsubsection{Permission}
 Holds information regarding which medical records a hcp that is connected with a patient can view.  It has a total 1:N relationship with the Accounts and Medical\_Records entities.
 
 \begin{description}
-\item serial permission\_id-  ID to uniquely identify the permission from other permissions. serial datatype automatically creates the permission\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
-\item medical\_rec\_id- Unique ID of the medical record that a hcp can view.  This is the foreign key to the Medical\_Records entity.  Cannot be null.
-\item serial account\_id- Unique ID of the hcp that can view the medical record.  This is a foreign key to the Accounts entity.  Cannot be null.
-\item date date\_created-  date in which the patient allowed the hcp to view the medical record.  date datatype is of the form YY:MM:DD.  Cannot be null.
+\item serial \textit{permission\_id}-  ID to uniquely identify the permission from other permissions. serial datatype automatically creates the permission\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item \textit{medical\_rec\_id}- Unique ID of the medical record that a hcp can view.  This is the foreign key to the Medical\_Records entity.  Cannot be null.
+\item serial \textit{account\_id}- Unique ID of the hcp that can view the medical record.  This is a foreign key to the Accounts entity.  Cannot be null.
+\item date \textit{date\_created}-  Date in which the patient allowed the hcp to view the medical record.  date datatype is of the form YY:MM:DD.  Cannot be null.
 \end{description}
 
 \subsubsection{p\_d\_connection}
 Holds all of the information for every connection between a patient and a hcp.  This relationship has a patial N:M relationship with the HCP\_Account and the Patient\_Account entities.
 
 \begin{description}
-\item serial patient\_id- Unique account ID of the patient that establishes a connection with a hcp.  The combination of patient\_id and hcp\_id is the primary key for this table.  This is also the foreign key to the Patient\_Account entity.  Cannot be null.
-\item serial hcp\_id- Unique account ID of the hcp that accepts the connection request sent from the patient.  The combination of hcp\_id and patient\_id is the primary key for this table.  This is also the foreign key to the HCP\_Account entity.  Cannot be null.
-\item boolean accepted- States wheather the request was accepted by the hcp.  boolean datatype value is either true or false.  By default it is false.  If hcp accepts the request, its status is changed to true.
-\item date date\_connected- date in which the request was sent by the patient to the hcp.  date datatype is of the form YY:MM:DD.  Canot be null.
+\item serial \textit{patient\_id}- Unique account ID of the patient that establishes a connection with a hcp.  The combination of patient\_id and hcp\_id is the primary key for this table.  This is also the foreign key to the Patient\_Account entity.  Cannot be null.
+\item serial \textit{hcp\_id}- Unique account ID of the hcp that accepts the connection request sent from the patient.  The combination of hcp\_id and patient\_id is the primary key for this table.  This is also the foreign key to the HCP\_Account entity.  Cannot be null.
+\item boolean \textit{accepted}- States wheather the request was accepted by the hcp.  boolean datatype value is either true or false.  By default it is false.  If hcp accepts the request, its status is changed to true.
+\item date \textit{date\_connected}- Date in which the request was sent by the patient to the hcp.  date datatype is of the form YY:MM:DD.  Canot be null.
 \end{description}
 
 \subsubsection{d\_d\_connection}
 Holds all of the information for every connection between a hcp and another hcp.  This relationship has two patial N:M relationships with the HCP\_Account entity.
 
 \begin{description}
-\item serial requester\_id- Unique account ID of the hcp that establishes a connection with another hcp.  The combination of requester\_id and accepter\_id is the primary key for this table.  This is also a foreign key to the HCP\_Account entity.  Cannot be null.  
-\item serial accepter\_id- Unique account ID of the hcp that accepts the connection request sent from hcp.  The combination of accepter\_id and requester\_id is the primary key for this table.  This is also a foreign key to the HCP\_Account entity.  Cannot be null.
-\item boolean accepted- States wheather the request was accepted by the hcp.  boolean datatype value is either true or false.  By default it is false.  If hcp accepts the request, its status is changed to true.
-\item date date\_connected- date in which the request was sent by the hcp to the other hcp.  date datatype is of the form YY:MM:DD.  Canot be null.
+\item serial \textit{requester\_id}- Unique account ID of the hcp that establishes a connection with another hcp.  The combination of requester\_id and accepter\_id is the primary key for this table.  This is also a foreign key to the HCP\_Account entity.  Cannot be null.  
+\item serial \textit{accepter\_id}- Unique account ID of the hcp that accepts the connection request sent from hcp.  The combination of accepter\_id and requester\_id is the primary key for this table.  This is also a foreign key to the HCP\_Account entity.  Cannot be null.
+\item boolean \textit{accepted}- States wheather the request was accepted by the hcp.  boolean datatype value is either true or false.  By default it is false.  If hcp accepts the request, its status is changed to true.
+\item date \textit{date\_connected}- Date in which the request was sent by the hcp to the other hcp.  date datatype is of the form YY:MM:DD.  Canot be null.
 \end{description}
 
 \subsubsection{Scripts to start the server and load the data}
@@ -300,10 +300,56 @@ A health care provider is able to do the following:
 \item Viewing their patient's medical records (the ones they are authorized to see)
 \item Set each medical record to hidden or public to specific healthcare providers
 \item Send a message their patients or collegues
-
 \end{itemize}
 
 \subsection{Database Tests}
+
+In order to test the database schema and the Model View Controller design implementation we had to load the database with test data.  The test data is formated exactly so that it fits each database table schema.  There are ten different files with test data(approximately one for every table):\\
+
+\textbf{accounts.txt:}
+\begin{itemize}
+\item Test login
+\item Test creation of an account (patient or healthcare provider)
+\item Test if account is active or not
+\item Test account updates
+\item Test creation of a medical record
+\item Test permissions to a medical record
+\end{itemize}
+
+\textbf{appointments.txt}
+\begin{itemize}
+\item Test creation of an appointment
+\item Test acception of an appointment
+\item Test cancelation of an appointment
+\item Test rescheduling of an appointment
+\item Test if an appointment belongs to a patient
+\item Test if an appointment belongs to a healthcare provider
+\item Test if we can view all, upcoming, and past appointments for a patien
+\item Test if we can view all, upcoming, and past appointments for a heathcare provier
+\end{itemize}
+
+\textbf{d\_d\_connection.txt}
+\begin{itemize}
+\item Test if we can see all of the colleagues of a doctor
+\item Test the incoming requests a heathcare provider gets from other healthcare providers
+\item Test the outgoing requests a healthcare provider has to other healthcare providers
+\item Test if a healthcare provider can add, accept, and delete another healthcare provider
+\item Test if a healthcare provider can delete pending requests
+\item Test if a healthcare provider is connected to another healthcare provider
+\end{itemize}
+
+\textbf{payment.txt}
+\begin{itemize}
+\item Test if a bill belongs to a patient
+\item Test if a bill was issued by a healthcare provider
+\item Test if we can view all, upcoming, and past bills for a patient
+\item Test if we can view all, upcoming, and past bills issued by a healthcare provider
+\item Test if we can view bills that have been paid as well as not paid
+\item Test if a healthcare provider can issue a bill to a patient
+\item Test if a patient can pay for a bill
+\item Test if only a healthcare provider can delete a bill
+\end{itemize}
+
 
 \part{Operating Manual}
 \chapter{How-to's}
