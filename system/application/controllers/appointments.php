@@ -37,8 +37,6 @@ class Appointments extends Controller {
 	 * */
 	function all() {
 		$this->auth->check_logged_in();
-		
-		$this->load->model('appointments_model');
 
 		if ($this->auth->get_type() === 'patient'){
 			
@@ -81,8 +79,6 @@ class Appointments extends Controller {
 	 * */
 	function upcoming(){
 		$this->auth->check_logged_in();
-		
-		$this->load->model('appointments_model');
 
 		if ($this->auth->get_type() === 'patient'){
 			
@@ -127,8 +123,6 @@ class Appointments extends Controller {
 	function past(){
 		$this->auth->check_logged_in();
 		
-		$this->load->model('appointments_model');
-
 		if ($this->auth->get_type() === 'patient'){
 			
 			$results = $this->appointments_model->view_past(array('account_id' => $this->auth->get_account_id(),
@@ -172,8 +166,6 @@ class Appointments extends Controller {
 		
 		$this->auth->check_logged_in();
 		
-		$this->load->model('appointments_model');
-		
 		if($this->appointments_model->is_myappointment(array($this->auth->get_account_id(),$apt_id))){
 			/* @to do: pop up-- are you sure you want to cancel appointment?*/
 			$results = $this->appointments_model->cancel(array($apt_id));
@@ -206,6 +198,36 @@ class Appointments extends Controller {
 	}
 	
 	/**
+	 * Shows a form to change an appointment date and time
+	 * */
+	function reschedule($apt_id) {
+		$this->auth->check_logged_in();
+		
+		// Only patient can request
+		if ($this->auth->get_type() != 'patient') {
+			show_error('Doctors are not allowed to request appointments');
+			return;
+		}
+		
+		// Get appointment tuple from the model
+		$app = $this->appointments_model->get_appointment(array($apt_id));
+		if ($hcp === -1) {
+			$this->ajax->view(array('Query error',''));
+			return;
+		}
+		else if (count($app) <= 0) {
+			$this->ajax->view(array('This appointment does not exist',''));
+			return;
+		}
+		
+		$this->ajax->view(array(
+			$this->load->view('mainpane/forms/change_appointment',
+				array('app' => $app[0]), TRUE),
+				''
+		));
+	}
+	
+	/**
 	 * fn reschedule 
 	 * reschedule an existing appointment (date/time)
 	 * @param apt_id, the appointment id number to modifty in database
@@ -216,9 +238,8 @@ class Appointments extends Controller {
  	 * @MATEO:
 	 * 	I ASSUME THE VIEW NAME WILL BE reschedule	 
 	 * */
-	function reschedule($apt_id){
+	function reschedule_do($apt_id){
 		$this->auth->check_logged_in();
-		$this->load->model('appointments_model');
 		
 		if ($this->auth->get_type() === 'hcp'){
 			show_error('Doctors are not allowed to reschedule appointments', 500);
@@ -256,16 +277,46 @@ class Appointments extends Controller {
 		$this->ajax->view(array($mainview,$sideview));
 	}
 
-	//input account id of person you want appointment with
-	function request($account_id)
+	
+	/**
+	 * Dislpays a form for a new appointment request
+	 * 
+	 * @param $aid
+	 * 		account id of person you want appointment with
+	 * 
+	 * @attention Right now only patient can ask appointments
+	 * */
+	function request($aid)
 	{
 		$this->auth->check_logged_in();
-		$this->load->model('appointments_model');
+		$this->load->model('hcp_model');
 		
+		// Only patient can request
+		if ($this->auth->get_type() != 'patient') {
+			show_error('Doctors are not allowed to request appointments');
+			return;
+		}
+		
+		// Get doctor tuple from the model
+		$hcp = $this->hcp_model->get_hcp(array($aid));
+		if ($hcp === -1) {
+			$this->ajax->view(array('Query error',''));
+			return;
+		}
+		else if (count($hcp) <= 0) {
+			$this->ajax->view(array('Sorry, you can request appointments only to HCPs',''));
+			return;
+		}
+		
+		$this->ajax->view(array(
+			$this->load->view('mainpane/forms/request_appointment',
+				array('hcp' => $hcp[0]), TRUE),
+				''
+		));
 	}
-	/**
-	 * fn request 
-	 * request an apptointment with a hcp
+	/** 
+	 * Request an apptointment with a hcp
+	 * 
 	 * @input -- appointment date/time, description
 	 * @return -- confirmation statement
 	 * @todo: need reschedule appt form / view
@@ -276,14 +327,13 @@ class Appointments extends Controller {
 	 * */
 	function request_do(){
 		$this->auth->check_logged_in();
-		$this->load->model('appointments_model');
 		
-		if ($this->auth->get_type() === 'hcp'){
+		if ($this->auth->get_type() == 'hcp'){
 			show_error('Doctors are not allowed to request appointments', 500);
 			return;
 		}
 
-		$this->ajax->view(array($this->load->view('mainpane/request', '' , TRUE), ''));
+		//$this->ajax->view(array($this->load->view('mainpane/request', '' , TRUE), ''));
 		$hcp_id = $this->input->post('hcp_id'); // @todo:fix this -- view should pass this to me based on the tuple they click..
 		$desc = $this->input->post('description');
 		$time = $this->input->post('time');
@@ -301,7 +351,7 @@ class Appointments extends Controller {
 			}
 			
 		// Give results to the client
-		$this->ajax->view(array($mainview,''));					
+		$this->ajax->view(array($mainview,''));
 	}
 	
 	/**
@@ -315,7 +365,6 @@ class Appointments extends Controller {
 	 * */
 	 function accept_appointment($apt_id){
 		 $this->auth->check_logged_in();
-		 $this->load->model('appointments_model');
 		 
 		 if ($this->auth->get_type() === 'patient'){
 			show_error('Patients are not allowed to accept appointments!', 500);
