@@ -1,7 +1,7 @@
 \documentclass[12pt]{report}
 
 \title{SALUTE \\ WEB-BASED MEDICAL MANAGEMENT \\ MILESTONE 0}
-\author{Matteo \\ Musa \\ Nada \\ Aswhwin}
+\author{Musa Rayyan \\ Nada Hashem \\ Matteo Brucato \\ Ashwin Gopalakrishnan}
 
 \begin{document}
 \maketitle
@@ -23,6 +23,7 @@ What tools and technology we used..
 
 
 \part{Design}
+
 \chapter{High Level View}
 Bla bla bla..
 
@@ -35,22 +36,44 @@ We provide a high-level description of the database using the famous ER diagram,
 [try to place the ER here]
 
 
-\chapter{MVC Design}
+\section{MVC Design}
 
-MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives to anticipate for future changes. 
+MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives for high cohesion and low coupling which is essential in anticipating for future changes.
 [Insert Diagram here]
-\section{Models}
-The model [explain what it does]
 
-\section{Controllers}
-The controller [explain what it does]
+\subsection{Models}
+The model is the tool used to access and modify the database. Everytime a user needs information, the models are queried to retrieve the information. If a user wants to add or modify, this too must be added into the database. 
 
-\section{Views}
-The view [explain what it does]
+\subsection{Views}
+The view is the the user interface, what the user sees and interacts with. In our case, its a medical management website. So, it is important to make sure that the website is user-friendly. If the layout and design of the view is difficult to navigate and/or inconsistent, the user will not desire to use the product. 
 
-\chapter{Interface Design}
+\subsection{Controllers}
+The controller is the middle man. It's in charge of loading the view(webpage) for the user, and calling the corresponding models to execute the functionality that the user has selected via the view. 
 
-\chapter{Server Design}
+\section{Interface Design}
+Since this is a Web application, the interface is basically a set of HTML pages that a client gets from the server as it requests them. As for every Web page, the interface is a mixture between different technologies, like HTML, CSS, Javascript and so forth. It is also dependant in some degree by some server features. To keep everything simple the interface design only defines a very high view of the user system. To allow for a better separation of concerns, we divided the ''content'' of the Web page from the ''presentation'' of it.
+\subsection{UI design}
+The GUI is composed by:
+    a header
+  o
+    a navigation bar
+  o
+    a footer
+  o
+    two dynamic panels
+  o
+        a main panel to display the main content
+        a side panel to display additional information
+        These two panels are dynamic in the sense that their content depends on
+           the URI requested by the user. The header, navigation bar and footer have
+           always the same content.
+
+
+\subsection{Content vs. Presentation}
+
+\section{Server Design}
+
+
 
 \chapter{Implementation View}
 [ doxygen here.. ]
@@ -200,10 +223,60 @@ Talk about class="ajaxlink" and JQuery triggers. Talk about class "Ajax" server-
 \section{Tests}
 
 \subsection{Controller Tests}
-The controller calls both models and views, and therefore has two sources of data that it will need to validate.
+
+There are three types of users: non-members, patients, and health care providers. Each type have been tested individually.
+
+A non-member should only be able to view the default home page, or register. All other functions were tested to assure that a non-member could not access any other functionalities. 
+
+A patient is able to do the following:
+\begin{itemize}
+\item Login, Logout
+\item Requesting a connection with a healthcare provider
+\item Delete a connection with their healthcare provider
+\item Viewing all, pending, or connected healthcare providers
+\item Viewing their medical records
+\item Make an appointment with a connected doctor
+\item Cancel an appointment 
+\item View all,upcoming, or past appointments
+\item Change their email, or password
+\item Retrieve their password if forgotten via email
+\item Edit their information
+\item Deactivate, reactivate their account
+\item View all, current, or past bills.
+\item Pay their bills (Note: This is not linked to any credit card/bank system ) 
+\item Add or delete a medical record
+\item View all their medical records
+\item Set each medical record to hidden or public to specific healthcare providers
+\item Send a message to doctors
+\end{itemize}
+A health care provider is able to do the following:
+\begin{itemize}
+\item Login, Logout
+\item Requesting a connection with a healthcare provider
+\item Accept a connection request from another health care provider or patient
+\item Reject a connection request from another health care provider or patient
+\item Delete a connection with their patient or collegue
+\item Viewing all healthcare providers
+\item Viewing pending incoming requests with other healthcare providers
+\item Viewing pending outgoing requests with other healthcare providers
+\item Viewing connected collegues, and patients
+\item Accept a requested appointment from their patients
+\item Cancel an existing appointment
+\item View all,upcoming, and past appointments
+\item Change their email or password
+\item Retrieve their password if forgotten via email
+\item Edit their information
+\item Deactivate, and reactivate their account
+\item View all, current, or past bills.
+\item Issue bills to connected patients
+\item Add a medical record to a specific patient
+\item Viewing their patient's medical records (the ones they are authorized to see)
+\item Set each medical record to hidden or public to specific healthcare providers
+\item Send a message their patients or collegues
+
+\end{itemize}
 
 \subsection{Database Tests}
-
 
 \part{Operating Manual}
 \chapter{How-to's}
