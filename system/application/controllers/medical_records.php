@@ -292,11 +292,24 @@ class Medical_records extends Controller {
 		));
 	}
 	
+	/**
+	 * Displays a list of all HCPs that have access to a particular
+	 * medica record
+	 * 
+	 * @attention only accessible to patients
+	 * */
 	function see_permissions($mid) {
 		$this->auth->check_logged_in();
+		$this->load->model('medical_records_model');
 		
 		if ($mid == NULL) {
 			$this->ajax->view(array('Missing input: medical record id',''));
+			return;
+		}
+		
+		// Only for patients
+		if ($this->auth->get_type() != 'patient') {
+			$this->ajax->view(array('Only patients can access this functionality',''));
 			return;
 		}
 		
@@ -315,10 +328,21 @@ class Medical_records extends Controller {
 			return;
 		}
 		
-		// Try to see permissions
-		if ($this->auth->get_type() === 'patient') {
-			/** @todo */
+		// Try to list permissions
+		$res = $this->medical_records_model->get_medrec_allowed_accounts(array($mid));
+		//$this->load->model('hcp_model');
+		//$res = $this->hcp_model->get_hcps(array($mid));
+		
+		if ($res === -1) {
+			$this->ajax->view(array('Query error',''));
+			return;
 		}
+		
+		$this->ajax->view(array(
+			$this->load->view('mainpane/list_permissions',
+				array('list_name' => 'Permissions for medical record '.$mid, 'list' => $res), TRUE),
+			$this->load->view('sidepane/patient-profile', '', TRUE)
+		));
 	}
 	
 	/**
@@ -395,11 +419,15 @@ class Medical_records extends Controller {
 	 * Add permission to see the specified medical record to the 
 	 * specified hcp.
 	 * 
+	 * @attention Cannot add a permission to another user you are
+	 * not connected with
+	 * 
 	 * @test Tested
 	 * */
 	function add_permission_do($mid = NULL) {
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
+		$this->load->model('connections_model');
 		
 		if ($mid == NULL) {
 			$this->ajax->view(array('Missing input: medical record id',''));
@@ -410,6 +438,20 @@ class Medical_records extends Controller {
 		$account_id = $this->input->post('account_id');
 		if ($account_id == '' || $account_id == FALSE) {
 			$this->ajax->view(array('No account id specified',''));
+			return;
+		}
+		
+		// You must be connected with that account first
+		$conn = $this->connections_model->is_connected_with(
+			$this->auth->get_account_id(), $account_id
+		);
+		if ($conn === -1) {
+			$this->ajax->view(array('Query error',''));
+			return;
+		}
+		else if ($conn == FALSE) {
+			$this->ajax->view(array('You must be connected to this account
+			to grant it access to your medical records!',''));
 			return;
 		}
 		

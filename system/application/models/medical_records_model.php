@@ -232,6 +232,33 @@ class Medical_records_model extends Model {
 		return FALSE;
 	}
 	
+	/**
+	 * Get all the accounts (HCPs for now) that have access to this
+	 * medical record.
+	 * 
+	 * @param $mid
+	 * 		A medical record id
+	 * @return
+	 * 		-1 in case of query error
+	 * 		an array with all the allowed accounts
+	 * 		an empty array if no allowed account is present
+	 * */
+	function get_medrec_allowed_accounts($mid) {
+		$sql = "
+			SELECT H.*, M.medical_rec_id
+			FROM   medical_record M, hcp_account H, permission P, p_d_connection C
+			WHERE  M.medical_rec_id = ? AND M.medical_rec_id = P.medical_rec_id
+				   AND P.account_id = H.account_id
+				   AND C.hcp_id = P.account_id AND C.patient_id = M.patient_id";
+		$query = $this->db->query($sql, $mid);
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if ($query->num_rows() <= 0)
+			return array();
+		return $query->result_array();
+
+	}
+	
 	
 	/**
 	 * Gives a hcp permission to view all of a patients medical records
@@ -324,6 +351,9 @@ class Medical_records_model extends Model {
 	 * @return
 	 *   -1 if error in query
 	 *    Array with all of the medical records
+	 * 
+	 * @bug It seems that gives back medical records to doctors even if
+	 * they are not connected... see my e-mail about it.... (matteo)
 	 * */
 	 function get_patient_records($inputs) {
 		$sql = "(SELECT M.*, P.first_name AS pat_first_name, P.last_name AS pat_last_name, A.*, H.first_name, H.last_name

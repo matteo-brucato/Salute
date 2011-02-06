@@ -64,7 +64,7 @@ class Patient_model extends Model {
 			$result = $query->result_array();
 			return $result;
 		}
-		return array();	
+		return array();
 	}
 	
 	
@@ -97,7 +97,7 @@ class Patient_model extends Model {
 	 * updates the Patient_Account table
 	 * 
 	 * @params $inputs
-	 *  Is of the form: array(account_id, first_name, last_name, middle_name, tel_number, fax_number, address)
+	 *  Is of the form: array(first_name, middle_name, last_name, dob, sex, tel_number, fax_number, address, account_id)
 	 * @return
 	 * -1 in case of error in a update
 	 * 1 otherwise
@@ -110,17 +110,16 @@ class Patient_model extends Model {
 		//$this->db->update('Patient_Account', $data, array('account_id' => $inputs[0]));
 		
 		$sql = "UPDATE patient_account
-				SET first_name = ?, last_name = ?, middle_name = ?, tel_number = ?, fax_number = ?, address = ?
+				SET first_name = ?,  middle_name = ?, last_name = ?, dob = ?, sex = ?, tel_number = ?, fax_number = ?, address = ?
 				WHERE account_id = ?";
 			
 		/*$sql = "UPDATE patient_account
 				SET first_name LIKE'%?', last_name LIKE'%?', middle_name LIKE'%?', 
 					tel_number LIKE'%?', fax_number LIKE'%?', address LIKE'%?' 
 				WHERE account_id = ?"; */
-		$query = $this->db->query($sql, array($inputs[1], $inputs[2], $inputs[3], $inputs[4], $inputs[5],
-						       $inputs[6], $inputs[0]));
+		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)
-			return -1;	
+			return -1;
 		return 1;
 	}
 }
