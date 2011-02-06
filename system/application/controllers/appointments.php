@@ -33,7 +33,7 @@ class Appointments extends Controller {
 	 * lists all appointments of the logged in user
 	 * @todo: need a view to list appointments: Date Time Descrip Doctor Name Actions(Reschedule,Cancel)
 	 * @MATEO:
-	 * 	I ASSUME THE VIEW NAME WILL BE all_appointments	
+	 * 	I ASSUME THE VIEW NAME WILL BE list_appointments	
 	 * */
 	function all() {
 		$this->auth->check_logged_in();
@@ -49,7 +49,7 @@ class Appointments extends Controller {
 		else if ($this->auth->get_type() === 'hcp'){
 			$results = $this->appointments_model->view_all(array('account_id' => $this->auth->get_account_id(),
 																 'type' => $this->auth->get_type()));
-			$sidepane = 'sidepane/doctor-profile';
+			$sidepane = 'sidepane/hcp-profile';
 		}
 		else {
 			show_error('Internal server logic error.', 500);
@@ -62,7 +62,7 @@ class Appointments extends Controller {
 		    	$sideview = '';
 				break;
 			default:
-				$mainview = $this->load->view('mainpane/all_appointments',
+				$mainview = $this->load->view('mainpane/list_appointments',
 					array('list_name' => 'My Appointments', 'list' => $results) , TRUE);
 				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
@@ -77,7 +77,7 @@ class Appointments extends Controller {
 	 * lists all upcoming appointments of the logged in user
 	 * @todo: need a view to list appointments: Date Time Descrip Doctor Name Actions(Reschedule,Cancel)
 	 * @MATEO:
-	 * 	I ASSUME THE VIEW NAME WILL BE upcoming_appointments	
+	 * 	I ASSUME THE VIEW NAME WILL BE list_appointments	
 	 * */
 	function upcoming(){
 		$this->auth->check_logged_in();
@@ -93,7 +93,7 @@ class Appointments extends Controller {
 		else if ($this->auth->get_type() === 'hcp'){
 			$results = $this->appointments_model->view_upcoming(array('account_id' => $this->auth->get_account_id(),
 																 'type' => $this->auth->get_type()));
-			$sidepane = 'sidepane/doctor-profile';
+			$sidepane = 'sidepane/hcp-profile';
 		}
 		else {
 			show_error('Internal server logic error.', 500);
@@ -106,7 +106,7 @@ class Appointments extends Controller {
 				$sideview = '';
 				break;
 			default:
-				$mainview = $this->load->view('mainpane/upcoming_appointments',
+				$mainview = $this->load->view('mainpane/list_appointments',
 					array('list_name' => 'My Upcoming Appointments', 'list' => $results) , TRUE);
 				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
@@ -122,7 +122,7 @@ class Appointments extends Controller {
 	 * lists all past appointments of the logged in user
 	 * @todo: need a view to list appointments: Date Time Descrip Doctor_Name 
 	 * @MATEO:
-	 * 	I ASSUME THE VIEW NAME WILL BE past_appointments	
+	 * 	I ASSUME THE VIEW NAME WILL BE list_appointments	
 	 * */
 	function past(){
 		$this->auth->check_logged_in();
@@ -138,7 +138,7 @@ class Appointments extends Controller {
 		else if ($this->auth->get_type() === 'hcp'){
 			$results = $this->appointments_model->view_past(array('account_id' => $this->auth->get_account_id(),
 																 'type' => $this->auth->get_type()));
-			$sidepane = 'sidepane/doctor-profile';
+			$sidepane = 'sidepane/hcp-profile';
 		}
 		else {
 			show_error('Internal server logic error.', 500);
@@ -151,7 +151,7 @@ class Appointments extends Controller {
 				$sideview = '';
 				break;
 			default:
-				$mainview = $this->load->view('mainpane/past_appointments',
+				$mainview = $this->load->view('mainpane/list_appointments',
 					array('list_name' => 'My Past Appointments', 'list' => $results) , TRUE);
 				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
@@ -180,7 +180,7 @@ class Appointments extends Controller {
 			
 			if ($this->auth->get_type() === 'patient')
 				$sidepane = 'sidepane/patient-profile';
-			$sidepane = 'sidepane/doctor-profile';
+			$sidepane = 'sidepane/hcp-profile';
 				
 			switch ($results) {
 			case -1:
@@ -188,10 +188,10 @@ class Appointments extends Controller {
 				$sideview = '';
 				break;
 			case -5:
-				$mainview = 'Appointment does not exist';
+				$mainview = 'Appointment does not exist!';
 				$sideview = '';
 			default:
-				$mainview = $this->ajax->redirect('/appointments/upcoming');
+				$mainview = 'The appointment was successfully canceled.';
 				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
 			}
@@ -320,13 +320,15 @@ class Appointments extends Controller {
 		switch ($results) {
 			case -1:
 				$mainview = 'Query error!';
+				$sideview = '';
 			default:
-				$mainview = 'The appointment has been approved.';
+				$mainview = 'The appointment has been successfully approved.';
+				$sideview = 'sidepane/hcp-profile';
 				break;
 			}
 			
 		// Give results to the client
-		$this->ajax->view(array($mainview,''));	
+		$this->ajax->view(array($mainview,$sideview));	
 		 
 	 }
 }
