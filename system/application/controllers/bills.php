@@ -261,10 +261,6 @@ class Bills extends Controller {
 	function delete($bill_id) {
 		$this->auth->check_logged_in();
 		$this->load->model('bills_model');
-		
-		
-		
-		
 		if( $this->auth->get_type() === 'hcp' ){
 			$sidepane = 'sidepane/hcp-profile';
 			$results = $this->bills_model->get_bill( $bill_id );
@@ -376,7 +372,7 @@ class Bills extends Controller {
 			}
 		}
 		else{
-			show_error('Server Error', 500);
+			show_error('Error: You do not have permission to pay this bill.', 500);
 			return;
 		}
 		$sideview = $this->load->view($sidepane, '', TRUE);
