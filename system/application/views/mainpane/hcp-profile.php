@@ -8,6 +8,7 @@
 
 <div id="profile-log-actions">
 	<ul>
+		<li><a href="/profile/edit">Edit Info</a></li>
 		<li><a href="/home/logout">Log out</a></li>
 	</ul>
 </div>
