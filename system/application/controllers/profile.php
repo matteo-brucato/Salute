@@ -202,7 +202,9 @@ class Profile extends Controller {
 
 	/* *	
 	 * Updates database with user's editted personal information
-	 * 
+	 * @bug	
+	 * 		if you leave the fields blank, it will insert blank values in place of existing data.
+	 * 		login fails afterwards...dont know why
 	 * */
 	function edit_do() {
 		$this->auth->check_logged_in();
@@ -216,7 +218,6 @@ class Profile extends Controller {
 																$this->input->post('lastname'),
 																$this->input->post('dob'),
 																$this->input->post('sex'),
-																$this->input->post('ssn'),
 																$this->input->post('tel'),
 																$this->input->post('fax'),
 																$this->input->post('address'),
@@ -232,7 +233,6 @@ class Profile extends Controller {
 																$this->input->post('lastname'),
 																$this->input->post('dob'),
 																$this->input->post('sex'),
-																$this->input->post('ssn'),
 																$this->input->post('tel'),
 																$this->input->post('fax'),
 																$this->input->post('org'),
