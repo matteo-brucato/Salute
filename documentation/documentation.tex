@@ -25,7 +25,57 @@ This is just a brief introduction to the tools and technologies that we used in 
 
 \part{Requirements}
 \chapter{User Requirements}
+The user requirements presented by the client can be categorized into general, patient side, and healthcare provider side requirements.
+
+\section{General}
+\begin{itemize}
+\item A patient or healthcare provider should be able to crate, delete, and modify their respective account
+\item Accounts should be protected by a username and password combination
+\item Depending on the type of user account, each user will have a unique user profile within the system
+\item Depending on the type of user account, one of two social networking connection options are available. When requesting a social network connection, proper confirmation is required.  Upon forming a social network connection, the patient and provider will be listed in each other's respective list of contacts.
+\begin{itemize}
+\item (Patient to Healthcare Provider) This type of connection can only be requested by a patient and represents the "doctor-patient" relationship.  When this connection is formed, it allows the provider access to the patient's medical records and indicates a level of trust between the patient and healthcare provider.
+\item (Healthcare Provider to Healthcare Provider) This relationship only exists between providers and represents the providers network of health care professionals.
+\end{itemize}
+\item Under each user's account, the list of their current contacts will be readily available and linked to their respective profile pages
+\item Medical records may be uploaded by a patient or a healthcare provider that is connected to that patient
+\end{itemize}
+
+\section{Patient side}
+\begin{itemize}
+\item Patient accounts are exclusively for the use of patients
+\item A patient account may only be allowed to connect with a healthcare provider acccount
+\item No patient information will be available to other patient accounts
+\item Patient information is only available to healthcare providers to which the patient is connected with
+\item May organize their medical records
+\item May manage their privacy settings
+\item May connect, message, and interact with their healthcare providers
+\end{itemize}
+
+\section{Healthcare Provider Side}
+\begin{itemize}
+\item Healthcare provider accounts are exclusively for the use of healthcare providers
+\item A healthcare provider account may connect with either patient accounts or other healthcare provider accounts (specialists or colleagues)
+\item May view a listing of all their patient contacts
+\item May view the available medical records of an individual patient
+\item May schedule appointments
+\item May message, interact and connect with patients and other healthcare providers
+\end{itemize}
+
 \chapter{System Requirements}
+The system requirements are as follows:
+\begin{itemize}
+\item The system will be web-based
+\item The user will interact with the server through a web brower
+\item The server will be web-based, using an appropriately selected web server to handle communication requests.
+\item The brower must be able to handle communication with the webserver using https
+\item The server will only communicate with the client interface over https (secure http).  All other connections will be automatically switched to https.
+\item The server will maintain a list of cantacts for each user
+\item The server must be able to receive copies of the patients medical records
+\item All necessary system data will be stored in an appropriately selected and designed database, capable of interacting with the server.
+\item The user interface must be able to upload files to the server
+\end{itemize}
+
 \chapter{Current Status and Future Work}
 
 
@@ -102,7 +152,7 @@ It's really hard to set a limit between content and presentation in an environme
 
 \section{Database implementation}
 \subsection{Tables}
-We will list all the tables... bla bla bla... for each table we will describe all the attributes... bla bla bla...
+Our database is composed of ten tables: Messages, Accounts, Patient\_Account, HCP\_Account, Appointments, Medical\_Record, Payment, Permission, P\_D\_Connection, and D\_D\_Connection.  For each table, we will present a descryption of the table and the attributes in it, as well as its relationship with the other tables its connected with.
 
 \subsubsection{Messages}
 Holds all of the information regarding messages sent from patient to hcp or vice versa. It has two total 1:N relationships with the Accounts entity.
@@ -315,53 +365,9 @@ A health care provider is able to do the following:
 \end{itemize}
 
 \subsection{Database Tests}
+The database was initially tested with simple SELECT * queries to see if the database tables were created and loaded correctly using the automated scripts\footnote{The bash script start\_everything.sh was used to automate the database creation process.  It used create\_tables.sql and load\_data.sql to create and populate the database.}. The database was populated with test data from ten different files (approximately one for every table)\footnote{These test files are: accounts.txt, appointments.txt, d\_d\_connection.txt, hcp\_account.txt, medical\_records.txt, messages.txt, patient\_account.txt, payment.txt, p\_d\_connection.txt, and permissions.txt.}.  Then as the functions in each model were being implemented, the sql queries for each function would first be tested in the database to make sure that the correct result was returned.  Only after the sql query was tested and returned the correct information to the function in the model, would we determine that the function was fully implemented.  Additionaly, error checking is done in each function to determine if an sql query sent to the database was successfully executed.
 
-In order to test the database schema and the Model View Controller design implementation we had to load the database with test data.  The test data is formated exactly so that it fits each database table schema.  There are ten different files with test data(approximately one for every table):\\
-
-\textbf{accounts.txt:}
-\begin{itemize}
-\item Test login
-\item Test creation of an account (patient or healthcare provider)
-\item Test if account is active or not
-\item Test account updates
-\item Test creation of a medical record
-\item Test permissions to a medical record
-\end{itemize}
-
-\textbf{appointments.txt}
-\begin{itemize}
-\item Test creation of an appointment
-\item Test acception of an appointment
-\item Test cancelation of an appointment
-\item Test rescheduling of an appointment
-\item Test if an appointment belongs to a patient
-\item Test if an appointment belongs to a healthcare provider
-\item Test if we can view all, upcoming, and past appointments for a patien
-\item Test if we can view all, upcoming, and past appointments for a heathcare provier
-\end{itemize}
-
-\textbf{d\_d\_connection.txt}
-\begin{itemize}
-\item Test if we can see all of the colleagues of a doctor
-\item Test the incoming requests a heathcare provider gets from other healthcare providers
-\item Test the outgoing requests a healthcare provider has to other healthcare providers
-\item Test if a healthcare provider can add, accept, and delete another healthcare provider
-\item Test if a healthcare provider can delete pending requests
-\item Test if a healthcare provider is connected to another healthcare provider
-\end{itemize}
-
-\textbf{payment.txt}
-\begin{itemize}
-\item Test if a bill belongs to a patient
-\item Test if a bill was issued by a healthcare provider
-\item Test if we can view all, upcoming, and past bills for a patient
-\item Test if we can view all, upcoming, and past bills issued by a healthcare provider
-\item Test if we can view bills that have been paid as well as not paid
-\item Test if a healthcare provider can issue a bill to a patient
-\item Test if a patient can pay for a bill
-\item Test if only a healthcare provider can delete a bill
-\end{itemize}
-
+All of the test data files that are used to populate the database not only provide testing capabilities for the models, but also for the views and the controllers since they are interrelated.  For a list of all of the tests that the controllers test, read section 7.4.1 Controller Tests.
 
 \part{Operating Manual}
 \chapter{How-to's}
