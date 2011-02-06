@@ -184,9 +184,9 @@ class Account_model extends Model {
 	 *   Array with the passowrd
 	 *   empty array() if the email does not exist
 	 * */
-	 function get_password($inputs){
+	 function get_account($inputs){
 	 
-	 	$sql = "SELECT A.password
+	 	$sql = "SELECT *
 			FROM accounts A
 			WHERE A.email = ?";
 	 	$query = $this->db->query($sql, $inputs);

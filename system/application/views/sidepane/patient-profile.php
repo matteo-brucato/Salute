@@ -10,8 +10,10 @@
 	
 	<li><a href="/appointments">Appointments</a>
 		<ul>
+			<li><a href="/appointments/All">All</a></li>
 			<li><a href="/appointments/upcoming">Upcoming</a></li>
-			<li><a href="/appointments/request">Schedule one</a></li>
+			<li><a href="/appointments/past">Past</a></li>
+			<li><a href="/appointments/request">Schedule</a></li>
 		</ul>
 	</li>
 	
@@ -33,7 +35,7 @@
 		<ul>
 			<li><a href="/medical_records/upload">Upload</a></li>
 		</ul>
-	
+	<li><a href="/settings">Settings</a></li>
 	<li><a href="/search">Advanced Search</a>
 	<form method="post" action="/" id="quick-search-form">
 		<fieldset id="quick-search-fs">

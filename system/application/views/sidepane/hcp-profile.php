@@ -10,7 +10,9 @@
 	
 	<li><a href="/appointments">Appointments</a>
 		<ul>
+			<li><a href="/appointments/all">All</a></li>
 			<li><a href="/appointments/upcoming">Upcoming</a></li>
+			<li><a href="/appointments/past">Past</a></li>
 			<!--li><a href="/appointments/request">Requests</a></li-->
 		</ul>
 	</li>
@@ -33,6 +35,9 @@
 			<li><a href="/connections/pending/out">Pending outgoing</a></li>
 			<li><a href="/connections/pending/in">Pending incoming</a></li>
 		</ul>
+	</li>
+	
+	<li><a href="/settings" class="ajaxlink">Settings</a>
 	</li>
 	
 	<li><a href="/search">Advanced Search</a>
