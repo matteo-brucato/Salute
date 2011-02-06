@@ -32,26 +32,48 @@ $table['tuples'] = $list;
 // Attributes to display
 $table['attr'] = array( 'first_name', 'last_name', 'amount', 'descryption', 'due_date','creation_date', 'cleared', 'actions');
 
-if ($this->auth->get_type() === 'patient') {
-		$actions = array('pay-bill', 'delete_bill');
-} else {
-		$actions = array('delete-bill');
-}
+
 for ($i = 0; $i < count($table['tuples']); $i++) {
 	
-	
-	
-	if( $table['tuples'][$i]['cleared'] === 't' ){
-		$table['tuples'][$i]['cleared'] = 'paid';
-		
+	if( $this->auth->get_type() === 'patient' ){
+		if( $table['tuples'][$i]['cleared'] === 't' &&
+			$table['tuples'][$i]['hcp_kept'] === 't' ){
+				$table['tuples'][$i]['cleared'] = 'paid';
+				$actions = array('delete-bill');			
+		}
+		else if( $table['tuples'][$i]['cleared'] === 't' &&
+				$table['tuples'][$i]['hcp_kept'] === 'f' ){
+					$table['tuples'][$i]['cleared'] = 'paid';
+					$actions = array('delete-bill');
+		}
+		else if( $table['tuples'][$i]['cleared'] === 'f' &&
+				$table['tuples'][$i]['hcp_kept'] === 't' ){
+					$table['tuples'][$i]['cleared'] = 'unpaid';
+					$actions = array('pay-bill');
+				
+		}
+		else if( $table['tuples'][$i]['cleared'] === 'f' &&
+				$table['tuples'][$i]['hcp_kept'] === 'f' ){
+					$table['tuples'][$i]['cleared'] = 'void';
+					$actions = array('delete-bill');
+		}
 	}
-	else
-		$table['tuples'][$i]['cleared'] = 'unpaid';
+	else{
+		if( $table['tuples'][$i]['cleared'] === 't' ){
+				$table['tuples'][$i]['cleared'] = 'paid';
+				$actions = array('delete-bill');			
+		}
+		else if( $table['tuples'][$i]['cleared'] === 'f' ){
+					$table['tuples'][$i]['cleared'] = 'unpaid';
+					$actions = array('delete-bill');
+		}
+	}
+		
 
 	$table['tuples'][$i]['actions'] = '<ul>';
 	$table['tuples'][$i]['actions'] .= get_action_strings($actions, $list[$i]);
 	$table['tuples'][$i]['actions'] .= '<ul>';
-}
+}	
 
 
 
