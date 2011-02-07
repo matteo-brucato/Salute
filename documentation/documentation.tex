@@ -106,7 +106,7 @@ The system requirements are as follows:
 \end{itemize}
 
 \chapter{Current Status and Future Work}
-
+\paragraph{Messaging} Currently it is implemented by using users' existing email addresses, and emailing via the website. We have already implemented the messages table in the database in case for future interests to have our own messaging system.
 
 \part{Design}
 
@@ -130,23 +130,20 @@ We provide a high-level description of the database using the famous ER diagram,
 
 \section{MVC Design}
 
-MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives for high cohesion and low coupling which is essential in anticipating for future changes.
+MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives for high cohesion and low coupling which is essential in anticipating for future changes. There are several frameworks that follow this paradigm, such as Ruby on Rails, ASP.net, and CodeIgniter. We used CodeIgniter to aid the design of Salute, our product.  
 
-\includegraphics[scale=0.2]{mvc-diag.png}\\
-\includegraphics[scale=1]{MVC-Diagram2.jpeg}\\
-\includegraphics[scale=1]{MVC-Diagram3.png}\\
-\includegraphics[scale=1]{mvc-diagram4.png}\\
-\includegraphics[scale=1]{MVC-Diagram.jpg}\\
+\subsection{Controllers}
 
+The controller is the middle man. It's in charge of loading the view(webpage) for the user, and calling the corresponding models to execute the functionality that the user has selected via the view. 
+It is good practice to separate control into several controllers for separation of concerns. In our product Salute,the controllers were separated in this way\footnote{See MVC implementation 7.2.1}. Notice that many of these controllers depend on the fact that the user is logged in as a member of Salute. While many controllers depend on this Home Controller functionality for handling login and logout, this relation is minimal (low coupling) since we used a CodeIgniter's session class. This separated the concern of user authorization out from other controllers. 
+Also note that all the functions within a controller access, view, or modify the same elements of information(high cohesion). This division bewteen controllers allows for general flexibility and ease to adding, removing, or modifiying more functions in the future. If a whole new feature, e.g. diet log, is later decided to be added to Salute, a new controller can be created, and little to no changes would need to be made to the existing controllers. 
 \subsection{Models}
-The model is the tool used to access and modify the database. Everytime a user needs information, the models are queried to retrieve the information. If a user wants to add or modify, this too must be added into the database. 
+The model is the tool used to access and modify the database. Everytime a user needs information, the models are queried to retrieve the information. If a user wants to add or modify, this too must be added into the database. The results are then returned to the controller for further action.
+Models too are separated based on functionality. This separation correlates closely to how the database is implemented, and what the controller needs from the database\footnote{See MVC implementation 7.2.1}. This separation also accomodates for change. If a new feature is added to appointments, e.g. send email reminder 3 days before appointment, a new model function within the Appointments model can be written to retrieve such appointments for the controller to carry out this new feature. 
 
 \subsection{Views}
 The view is the the user interface, what the user sees and interacts with. In our case, its a medical management website. So, it is important to make sure that the website is user-friendly. If the layout and design of the view is difficult to navigate and/or inconsistent, the user will not desire to use the product. The views are called by the controller, and take user input and send it back to the controller to manage what action needs to be done. 
 Our product, Salute, divided the views into two main subcategories: main panel, and side panel. The main panel views are all the views that are called to be in the main panel of the screen. The side panel views are all the views that are called to be in the side panel. There are multiple views in each of these subcategories since each functionality needs a different display, and often functionalities differ based on the type of user(a non-member,a patient, or a healthcare provider). 
-
-\subsection{Controllers}
-The controller is the middle man. It's in charge of loading the view(webpage) for the user, and calling the corresponding models to execute the functionality that the user has selected via the view. 
 
 \section{Interface Design}
 Since this is a Web application, the interface is basically a set of HTML pages that a client gets from the server as it requests them. As for every Web page, the interface is a mixture between different technologies, like HTML, CSS, Javascript and so forth. It is also dependant in some degree by some server features. To keep everything simple, the interface design only defines a very high view of the user system. To allow for a better separation of concerns, we also divided the ''content'' of the Web page from the ''presentation'' of it.
@@ -413,81 +410,83 @@ An instance of this class is created automatically at the instantiation of each 
 \section{Tests}
 
 \subsection{Controller Tests}
-
-There are three types of users: non-members, patients, and health care providers. Each type have been tested individually.
-
-A non-member should only be able to view the default home page, or register. All other functions were tested to assure that a non-member could not access any other functionalities. 
-
-A patient is able to do the following:
+The each controller's functions were tested in several ways to anticipate possible user's actions. In general, they were tested for:
 \begin{itemize}
-\item Login, Logout
-\item Requesting a connection with a healthcare provider
-\item Delete a connection with their healthcare provider
-\item Viewing all, pending, or connected healthcare providers
-\item Viewing their medical records
-\item Make an appointment with a connected doctor
-\item Cancel an appointment 
-\item View all,upcoming, or past appointments
-\item Change their email, or password
-\item Retrieve their password if forgotten via email
-\item Edit their information
-\item Deactivate, reactivate their account
-\item View all, current, or past bills.
-\item Pay their bills (Note: This is not linked to any credit card/bank system) 
-\item Add or delete a medical record
-\item View all their medical records
-\item Set each medical record to hidden or public to specific healthcare providers
-\item Send a message to doctors
-\end{itemize}
-A health care provider is able to do the following:
+\item \textbf{Value Types}
 \begin{itemize}
-\item Login, Logout
-\item Requesting a connection with a healthcare provider
-\item Accept a connection request from another health care provider or patient
-\item Reject a connection request from another health care provider or patient
-\item Delete a connection with their patient or collegue
-\item Viewing all healthcare providers
-\item Viewing pending incoming requests with other healthcare providers
-\item Viewing pending outgoing requests with other healthcare providers
-\item Viewing connected collegues, and patients
-\item Accept a requested appointment from their patients
-\item Cancel an existing appointment
-\item View all,upcoming, and past appointments
-\item Change their email or password
-\item Retrieve their password if forgotten via email
-\item Edit their information
-\item Deactivate, and reactivate their account
-\item View all, current, or past bills.
-\item Issue bills to connected patients
-\item Add a medical record to a specific patient
-\item Viewing their patient's medical records (the ones they are authorized to see)
-\item Set each medical record to hidden or public to specific healthcare providers
-\item Send a message their patients or collegues
+\item Correctly typed values. This is to ensure that the functions do their basic purpose.
+\item Incorrectly typed values. This is to prevent database errors or the SQL injection security threat.
 \end{itemize}
+\item \textbf{Authorization} In order to access a majority of the functionality, a user must be logged in. So, authorization was tested in the following ways: 
+\begin{itemize}
+\item  Valid login. By providing a valid login, we checked to see if the website capabilities were allowed. 
+\item Invalid login. By providing an invalid login, we checked to see if the website capabilities were denied when the user tried to type the paths in the URL.
+\item Not logged in. By providing not logging in, we checked to see if the website capabilities were denied when the user tried to type the paths in the URL.
+\end{itemize}
+\item\textbf{Accessibility} Per specifications, a health care provider and a patient have different permissions and functionality on the website. 
+\begin{itemize}
+\item Health Care Provider Accessibility. We tested that health care providers were only allowed to do permitted actions, per the specifications. For example, doctor's should not be able to request a patient connection. The action is never displayed as a link on the Salute website, so it would be difficult for a user to do this. However, we tested it by typing the path in the URL to assure that even if a user managed to find a way, the controller would not allow for such an action to be carried out. 
+\item Patient Accessibility. We tested that patients were only allowed to do permitted actions, per the specifications. For example, a patient should not be able to request a connection with another patient. The action is never displayed as a link on the Salute website, so it would be difficult for a user to do this. However, we tested it by typing the path in the URL to assure that even if a user managed to find a way, the controller would not allow for such an action to be carried out. 
+\end{itemize}
+\item \textbf{Errors}
+\begin{itemize} 
+\item Query errors. If the controller codel a model function, and the model function experienced an error from the query, an error code is passed back to the controller function. The controller function then respectively prints an error code. 
+\item Internal server errors. We included error catch code segments within the controller to handle the cases that weren't captured by the other tests. These cases would be where there was an internal server error. This helped for debugging our logic.  
+\end{itemize}
+\end{itemize}
+
 
 \subsection{Database Tests}
 The database was initially tested with simple SELECT * queries to see if the database tables were created and loaded correctly using the automated scripts\footnote{The bash script start\_everything.sh was used to automate the database creation process.  It used create\_tables.sql and load\_data.sql to create and populate the database.}. The database was populated with test data from ten different files (approximately one for every table)\footnote{These test files are: accounts.txt, appointments.txt, d\_d\_connection.txt, hcp\_account.txt, medical\_records.txt, messages.txt, patient\_account.txt, payment.txt, p\_d\_connection.txt, and permissions.txt.}.  Then as the functions in each model were being implemented, the sql queries for each function would first be tested in the database to make sure that the correct result was returned.  Only after the sql query was tested and returned the correct information to the function in the model, would we determine that the function was fully implemented.  Additionaly, error checking is done in each function to determine if an sql query sent to the database was successfully executed.
 
 All of the test data files that are used to populate the database not only provide testing capabilities for the models, but also for the views and the controllers since they are interrelated.  For a list of all of the tests that the controllers test, read section 7.4.1 Controller Tests.
 
+
 \part{User Manual}
 
-\chapter{User Manual-HCP}
+\chapter{User Manual for Health Care Provider}
 \section{Registration and Login}
+
+\subsection{Registration}
+To register as a Health Care Provider you must:
+\begin{enumerate}
+\item Go to the homepage.
+\item Click the button \textit{Register}, located on the right-hand-side underneath \textit{Login} and \textit{Forgot your password?}
+\item Click on \textit{Health Care Provider} to register as a health care provider.
+\item Enter your information into the form and click \textit{submit}. If at any time you want to start over, click \textit{reset}.
+\item If you registered successfully, you will be given a congratulations message.
+\end{enumerate}
+
+\subsection{Login}
+To login you must:
+\begin{enumerate}
+\item Go to the homepage.
+\item Enter your login information( email and password ) and click \textit{submit}.
+\item Click on \textit{Health Care Provider} to register as a health care provider.
+\item Enter your information into the form and click \textit{submit}. If at any time you want to start over, click \textit{reset}.
+\item If you registered successfully, you will be given a congratulations message.
+\end{enumerate}
+
+
+\section{Viewing my profile}
+\section{Connection management}
+\section{How-to's}
+
+\chapter{User Manual for Patient}
+\section{Registration and Login}
+To register as a Patient you must:
+\begin{enumerate}
+\item Go to the homepage.
+\item Click the button \textit{Register}, located on the right-hand-side underneath \textit{Login} and \textit{Forgot your password?}
+\item Click on \textit{Patient} to register as a patient.
+\item Enter your information into the form and click \textit{submit}. If at any time you want to start over, click \textit{reset}.
+\item If you registered successfully, you will be given a congratulations message.
+\end{enumerate}
 \subsection{Registration}
 \subsection{Login}
 \section{Viewing my profile}
 \section{Connection management}
 \section{How-to's}
-
-\chapter{User Manual-Patient}
-\section{Registration and Login}
-\subsection{Registration}
-\subsection{Login}
-\section{Viewing my profile}
-\section{Connection management}
-\section{How-to's}
-
 
 \part{Credits}
 

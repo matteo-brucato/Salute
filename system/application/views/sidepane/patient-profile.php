@@ -1,19 +1,19 @@
 <h3>Patient Account</h3>
 <nl>
-	<li><a href="/messages">Messages</a>
+<!--	<li><a href="/messages">Messages</a>
 		<ul>
-			<!--li href="#introduction"><a href="">Inbox</a></li>
-			<li href="#may"><a href="">Sent</a></li-->
-			<li><a href="/messages/compose">Compose</a></li>
+			<li href="#introduction"><a href="">Inbox</a></li>
+			<li href="#may"><a href="">Sent</a></li>
+		<li><a href="/messages/compose">Compose</a></li>
 		</ul>
 	</li>
-	
+-->	
 	<li><a href="/appointments">Appointments</a>
 		<ul>
 			<li><a href="/appointments/All">All</a></li>
 			<li><a href="/appointments/upcoming">Upcoming</a></li>
 			<li><a href="/appointments/past">Past</a></li>
-			<li><a href="/appointments/request">Schedule</a></li>
+			<!--li><a href="/appointments/request">Schedule</a></li-->
 		</ul>
 	</li>
 	

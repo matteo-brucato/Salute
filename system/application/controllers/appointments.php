@@ -12,7 +12,7 @@ class Appointments extends Controller {
 
 	function __construct(){
 		parent::Controller();
-		$this->load->library('ajax');	
+		$this->load->library('ajax');
 		$this->load->library('auth');
 		$this->load->model('appointments_model');
 	}
@@ -37,8 +37,6 @@ class Appointments extends Controller {
 	 * */
 	function all() {
 		$this->auth->check_logged_in();
-		
-		$this->load->model('appointments_model');
 
 		if ($this->auth->get_type() === 'patient'){
 			
@@ -81,8 +79,6 @@ class Appointments extends Controller {
 	 * */
 	function upcoming(){
 		$this->auth->check_logged_in();
-		
-		$this->load->model('appointments_model');
 
 		if ($this->auth->get_type() === 'patient'){
 			
@@ -127,8 +123,6 @@ class Appointments extends Controller {
 	function past(){
 		$this->auth->check_logged_in();
 		
-		$this->load->model('appointments_model');
-
 		if ($this->auth->get_type() === 'patient'){
 			
 			$results = $this->appointments_model->view_past(array('account_id' => $this->auth->get_account_id(),
@@ -174,27 +168,39 @@ class Appointments extends Controller {
 		
 		$this->load->model('appointments_model');
 		
-		if($this->appointments_model->is_myappointment(array($this->auth->get_account_id(),$apt_id))){
-			/* @to do: pop up-- are you sure you want to cancel appointment?*/
-			$results = $this->appointments_model->cancel(array($apt_id));
+		$result = $this->appointments_model->is_myappointment(array($this->auth->get_account_id(),$apt_id));
+		if ( $result === -1){
+				$mainview = 'Query error';
+				$sideview = '';
+		}
+		elseif ( $result === -5){
+				$mainview = 'Appointment ID does not exist!';
+				$sideview = '';
+		}
+		elseif ( $result === TRUE){
+				/* @to do: pop up-- are you sure you want to cancel appointment?*/
+				$results = $this->appointments_model->cancel(array($apt_id));
 			
-			if ($this->auth->get_type() === 'patient')
-				$sidepane = 'sidepane/patient-profile';
-			$sidepane = 'sidepane/hcp-profile';
+				if ($this->auth->get_type() === 'patient'){
+					$sidepane = 'sidepane/patient-profile';
+				}
+				else {
+				$sidepane = 'sidepane/hcp-profile';
+				}
 				
-			switch ($results) {
-			case -1:
-				$mainview = 'Query error!';
-				$sideview = '';
-				break;
-			case -5:
-				$mainview = 'Appointment does not exist!';
-				$sideview = '';
-			default:
-				$mainview = 'The appointment was successfully canceled.';
-				$sideview = $this->load->view($sidepane, '', TRUE);
-				break;
-			}
+				switch ($results) {
+				case -1:
+					$mainview = 'Query error!';
+					$sideview = '';
+					break;
+				case -5:
+					$mainview = 'Appointment does not exist!';
+					$sideview = '';
+				default:
+					$mainview = 'The appointment was successfully canceled.';
+					$sideview = $this->load->view($sidepane, '', TRUE);
+					break;
+				}
 		}
 		else{
 			show_error('This is not your appointment. Permission Denied.', 500);
@@ -206,8 +212,38 @@ class Appointments extends Controller {
 	}
 	
 	/**
-	 * fn reschedule 
-	 * reschedule an existing appointment (date/time)
+	 * Shows a form to change an appointment date and time
+	 * */
+	function reschedule($apt_id) {
+		$this->auth->check_logged_in();
+		
+		// Only patient can request
+		if ($this->auth->get_type() != 'patient') {
+			show_error('Doctors are not allowed to request appointments');
+			return;
+		}
+		
+		// Get appointment tuple from the model
+		$app = $this->appointments_model->get_appointment(array($apt_id));
+		if ($app === -1) {
+			$this->ajax->view(array('Query error',''));
+			return;
+		}
+		else if (count($app) <= 0) {
+			$this->ajax->view(array('This appointment does not exist',''));
+			return;
+		}
+		
+		$this->ajax->view(array(
+			$this->load->view('mainpane/forms/change_appointment',
+				array('app' => $app[0]), TRUE),
+				''
+		));
+	}
+	
+	/**
+	 * Reschedule an existing appointment (date/time)
+	 * 
 	 * @param apt_id, the appointment id number to modifty in database
 	 * @input -- new appointment date/time
 	 * @return redirect to list of upcoming appointments || error(not their appointment)
@@ -216,9 +252,8 @@ class Appointments extends Controller {
  	 * @MATEO:
 	 * 	I ASSUME THE VIEW NAME WILL BE reschedule	 
 	 * */
-	function reschedule($apt_id){
+	function reschedule_do($apt_id) {
 		$this->auth->check_logged_in();
-		$this->load->model('appointments_model');
 		
 		if ($this->auth->get_type() === 'hcp'){
 			show_error('Doctors are not allowed to reschedule appointments', 500);
@@ -228,13 +263,13 @@ class Appointments extends Controller {
 		if($this->appointments_model->is_myappointment(array($this->auth->get_account_id(),$apt_id))){
 			$result = $this->appointments_model->get_appointment(array($apt_id));
 			
-			$this->ajax->view(array($this->load->view('mainpane/reschedule',$result, TRUE),''));
+			//$this->ajax->view(array($this->load->view('mainpane/reschedule',$result, TRUE),''));
 			$new_time = $this->input->post('appointment_time');
 			$results = $this->appointments_model->reschedule(array('appointment_id' => $apt_id, 'date_time' => $new_time )); 
 			
 			switch ($results) {
 			case -1:
-				$mainview = 'Query error!';
+				$mainview = 'Query Error!';
 				$sideview = '';
 				break;
 			case -5:
@@ -256,16 +291,46 @@ class Appointments extends Controller {
 		$this->ajax->view(array($mainview,$sideview));
 	}
 
-	//input account id of person you want appointment with
-	function request($account_id)
+	
+	/**
+	 * Dislpays a form for a new appointment request
+	 * 
+	 * @param $aid
+	 * 		account id of person you want appointment with
+	 * 
+	 * @attention Right now only patient can ask appointments
+	 * */
+	function request($aid)
 	{
 		$this->auth->check_logged_in();
-		$this->load->model('appointments_model');
+		$this->load->model('hcp_model');
 		
+		// Only patient can request
+		if ($this->auth->get_type() != 'patient') {
+			show_error('Doctors are not allowed to request appointments');
+			return;
+		}
+		
+		// Get doctor tuple from the model
+		$hcp = $this->hcp_model->get_hcp(array($aid));
+		if ($hcp === -1) {
+			$this->ajax->view(array('Query error',''));
+			return;
+		}
+		else if (count($hcp) <= 0) {
+			$this->ajax->view(array('Sorry, you can request appointments only to HCPs',''));
+			return;
+		}
+		
+		$this->ajax->view(array(
+			$this->load->view('mainpane/forms/request_appointment',
+				array('hcp' => $hcp[0]), TRUE),
+				''
+		));
 	}
-	/**
-	 * fn request 
-	 * request an apptointment with a hcp
+	/** 
+	 * Request an apptointment with a hcp
+	 * 
 	 * @input -- appointment date/time, description
 	 * @return -- confirmation statement
 	 * @todo: need reschedule appt form / view
@@ -274,34 +339,79 @@ class Appointments extends Controller {
  	 * @MATEO:
 	 * 	I ASSUME THE VIEW NAME WILL BE request
 	 * */
-	function request_do(){
+	function request_do($account_id){
 		$this->auth->check_logged_in();
-		$this->load->model('appointments_model');
+		$this->load->model('patient_model');
+		$this->load->model('hcp_model');
+		$this->load->model('connections_model');
 		
-		if ($this->auth->get_type() === 'hcp'){
+		if ($this->auth->get_type() === 'hcp')
+		{
 			show_error('Doctors are not allowed to request appointments', 500);
 			return;
 		}
-
-		$this->ajax->view(array($this->load->view('mainpane/request', '' , TRUE), ''));
-		$hcp_id = $this->input->post('hcp_id'); // @todo:fix this -- view should pass this to me based on the tuple they click..
-		$desc = $this->input->post('description');
-		$time = $this->input->post('time');
-		$results = $this->appointments_model->request(array( 'patient_id' => $this->auth->get_account_id(), 
-									'hcp_id' => $hcp_id , 
-									'desc' => $desc ,
-									'time' => $time ));
-									 
-		switch ($results) {
-			case -1:
-				$mainview = 'Query error!';
-			default:
-				$mainview = 'Your request has been submitted.';
-				break;
+		
+		//test to see if the accound_id belongs to a hcp
+		$is_hcp = $this->hcp_model->is_hcp(array($account_id));
+		if ( $is_hcp === -1 )
+		{
+			$mainview = 'Querry Error';
+			$sideview = '';
+		}
+		elseif ($is_hcp === TRUE)
+		{
+			
+			//test to see if the person loged in is connected with the hcp
+			$is_connected = $this->connections_model->is_connected_with($account_id, $this->auth->get_account_id());
+			
+			if($is_connected === -1)
+			{
+				$mainview = 'Querry Error';
+				$sideview = '';
 			}
+			elseif ($is_connected === TRUE)
+			{
+				
+				$desc = $this->input->post('description');
+				$time = $this->input->post('time');
+				
+				//test to see if the time and description are TRUE and not NULL
+				if( $desc !== FALSE && $desc !== '' && $time !== FALSE && $time !== '')
+				{
+					$results = $this->appointments_model->request(array($this->auth->get_account_id(), 
+											$account_id, 
+											$desc ,
+											$time ));					 
+					switch ($results)
+					{
+						case -1:
+							$mainview = 'Query error!';
+							break;
+						default:
+							$mainview = 'Your request has been submitted.';
+							break;
+					}
+				}
+				else
+				{
+					show_error('Please fill out the Time and Date and Description', 500);
+					return;
+				}
+			}
+			else
+			{
+				show_error('This account is not connected with the healthcare provider specified to request an appointment', 500);
+				return;
+			}
+		}
+		else
+		{
+			show_error('The healthcare provider ID does not exist.', 500);
+			return;
+		}
 			
 		// Give results to the client
-		$this->ajax->view(array($mainview,''));					
+		$this->ajax->view(array($mainview,''));
 	}
 	
 	/**
@@ -315,7 +425,6 @@ class Appointments extends Controller {
 	 * */
 	 function accept_appointment($apt_id){
 		 $this->auth->check_logged_in();
-		 $this->load->model('appointments_model');
 		 
 		 if ($this->auth->get_type() === 'patient'){
 			show_error('Patients are not allowed to accept appointments!', 500);
