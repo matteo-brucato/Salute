@@ -204,6 +204,16 @@ class Connections_model extends Model {
 		return array();
 	 }
 	
+	/**
+	 * List all a connection between two individuals
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id, account_id)
+	 * @return
+	 *  -1 in case of error in a query
+	 *   Array with the connection
+	 *   NULL if nothing
+	 * */
 	function get_connection($a_id, $b_id) {
 		// Try to get the connection from patient-hcp table
 		$sql = "SELECT *

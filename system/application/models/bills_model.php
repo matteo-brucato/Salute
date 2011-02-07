@@ -344,8 +344,7 @@ class Bills_model extends Model {
 				WHERE bill_id = ?";			
 			
 		}
-
-
+		
 	 //	$sql = "DELETE FROM payment
 	 //		WHERE bill_id = ?";
 	 	$query = $this->db->query($sql, $inputs[0]);
