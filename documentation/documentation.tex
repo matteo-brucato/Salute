@@ -106,12 +106,8 @@ The system requirements are as follows:
 \end{itemize}
 
 \chapter{Current Status and Future Work}
-<<<<<<< HEAD
 
-\textbf{Messaging:} Currently it is implemented by using users' existing email addresses, and emailing via the website. We have already implemented the messages table in the database in case for future interests to have our own messaging system.
-=======
 \paragraph{Messaging} Currently it is implemented by using users' existing email addresses, and emailing via the website. We have already implemented the messages table in the database in case for future interests to have our own messaging system.
->>>>>>> 9b12bc027b8c8146b89811d2c68b0c8c843e11ce
 
 \part{Design}
 
@@ -136,7 +132,7 @@ We provide a high-level description of the database using the famous ER diagram,
 \section{MVC Design}
 
 MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives for high cohesion and low coupling which is essential in anticipating for future changes. There are several frameworks that follow this paradigm, such as Ruby on Rails, ASP.net, and CodeIgniter. We used CodeIgniter to aid the design of Salute, our product.  
-
+\includegraphics[scale=0.7]{mvc.pdf}
 \subsection{Controllers}
 
 The controller is the middle man. It's in charge of loading the view(webpage) for the user, and calling the corresponding models to execute the functionality that the user has selected via the view. 
