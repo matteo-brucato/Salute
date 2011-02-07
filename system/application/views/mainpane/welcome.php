@@ -1,4 +1,9 @@
 <img src="" alt="Salute-logo" width="500" height="200" />
 <div id="salute-descr">
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus id quam purus, vel commodo felis. Maecenas vitae magna nec justo aliquet ultrices quis vitae quam. Integer suscipit placerat metus, et eleifend leo accumsan a. Nullam eros dolor, luctus luctus sodales at, congue in nibh. Sed in elit quam. Nulla sed ipsum ipsum. Proin sit amet nunc tellus. Curabitur euismod, risus nec euismod rhoncus, arcu odio dignissim metus, porttitor ullamcorper ipsum mi at enim. Nunc eleifend facilisis augue, vel sodales metus pellentesque sed. Phasellus feugiat, neque nec placerat tempus, tortor augue sagittis lorem, pulvinar consectetur sapien est at neque. In hac habitasse platea dictumst. Cras semper, mauris vestibulum rutrum tempus, dolor nunc venenatis magna, ut eleifend diam elit et ligula. Fusce sit amet velit ut tellus lacinia tincidunt.
+<h2>Welcome to the best medical management website! </h2>
+Salute allows patients to connect with the healthcare providers of their
+choice. As a patient, you can make appointments, message, pay and view all your health care providers. You can also upload
+your medical records, and give specialized permissions for individual health care providers to view your records. Salute allows
+health care providers to upload their patient's medical records and connect with their trusted collegues. 
+<b>ENJOY!</b>
 </div>
