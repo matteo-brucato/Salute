@@ -130,8 +130,9 @@ We provide a high-level description of the database using the famous ER diagram,
 
 \section{MVC Design}
 
-MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts,assigns responsibilities to each, and ensures that they can work together. This design method strives for high cohesion and low coupling which is essential in anticipating for future changes. There are several frameworks that follow this paradigm, such as Ruby on Rails, ASP.net, and CodeIgniter. We used CodeIgniter to aid the design of Salute, our product.  
-\includegraphics[scale=0.7]{mvc.pdf}
+MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts, assigns responsibilities to each, and ensures that they can work together. This design method strives for high cohesion and low coupling which is essential in anticipating for future changes. There are several frameworks that follow this paradigm, such as Ruby on Rails, ASP.net, and CodeIgniter. We used CodeIgniter to aid the design of Salute, our product.  In Appendix B we present a diagram for this architecture.
+
+
 \subsection{Controllers}
 
 The controller is the middle man. It's in charge of loading the view(webpage) for the user, and calling the corresponding models to execute the functionality that the user has selected via the view. 
@@ -492,7 +493,10 @@ To register as a Patient you must:
 
 
 \appendix
-\chapter{ER-Diagram}
+\chapter{ER diagram}
 \includegraphics[scale=0.6]{cs180_ER_draft4.pdf}
+
+\chapter{MVC diagram}
+\includegraphics[scale=0.7]{mvc.pdf}
 
 \end{document}

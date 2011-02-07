@@ -42,8 +42,8 @@ if ($this->auth->get_type() == 'patient') {
 		if ($table['tuples'][$i]['connected']) {
 			$table['tuples'][$i]['*actions'] = '
 			<ul>
-				<li><a href="">Send Email</a></li>
-				<li><a href="">Delete Connection</a></li>
+				<li><a href="/messages/compose/'.$table['tuples'][$i]['account_id'].'">Send Email</a></li>
+				<li><a href="/connections/destroy/'.$table['tuples'][$i]['account_id'].'">Delete Connection</a></li>
 			</ul>';
 		} else {
 			$table['tuples'][$i]['*actions'] = '<a href="/connections/request/'.
@@ -53,6 +53,5 @@ if ($this->auth->get_type() == 'patient') {
 	}
 }
 
-//require_once('table_result.php');
 view_table($table);
 ?>

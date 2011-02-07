@@ -12,7 +12,7 @@ class Profile extends Controller {
 
 	function __construct(){
 		parent::Controller();
-		$this->load->library('ajax');	
+		$this->load->library('ajax');
 		$this->load->library('auth');
 	}
 
@@ -100,6 +100,7 @@ class Profile extends Controller {
 	 *  			hcp trying to view unconnected hcp: 'You are not connected. Permission Denied.'
 	 * 				hcp trying to view connected patient: Sorry! An HCP can only view profiles of connected patients
 	 * 
+	 * @todo Add more checks for values from the model (error checking)
 	 * */
 	function user($id = NULL) {
 		$this->auth->check_logged_in();
@@ -135,14 +136,15 @@ class Profile extends Controller {
 		
 		if( $info === -1 ){
 			$this->ajax->view(array('Query error grom get_doctor/get_patient function!',''));
-			return;		
-		}
-		// check that logged in user is a hcp. 
-		if ($this->auth->get_type() == 'hcp' && $id_type != 'patient') {
-			show_error('Sorry! An HCP can only view profiles of connected patients');
 			return;
 		}
-		else if ($this->auth->get_type() == 'patient' && $id_type == 'patient') {
+		
+		// check that logged in user is a hcp. 
+		/*if ($this->auth->get_type() == 'hcp' && $id_type != 'patient') {
+			show_error('Sorry! An HCP can only view profiles of connected patients');
+			return;
+		}*/
+		if ($this->auth->get_type() == 'patient' && $id_type == 'patient') {
 			show_error('Sorry! Patients cannot be connected with other patients',500);
 			return;
 		}

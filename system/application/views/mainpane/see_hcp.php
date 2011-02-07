@@ -51,7 +51,7 @@
 $this->load->helper('actions_helper');
 echo '<ul>';
 if ($is_my_friend) {
-	echo get_action_strings(array('send-email','request-app','delete-conn'), $info);
+	echo get_action_strings(array('send-email','delete-conn'), $info);
 } else {
 	
 }

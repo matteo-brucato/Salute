@@ -175,9 +175,9 @@ class Home extends Controller {
 	function register()
 	{
 		$this->ajax->view(array(
-					$this->load->view('mainpane/registration', '', TRUE),
-					$this->load->view('sidepane/default', '', TRUE)
-				));
+			$this->load->view('mainpane/registration', '', TRUE),
+			$this->load->view('sidepane/default', '', TRUE)
+		));
 	}
 
 	/*
@@ -213,12 +213,16 @@ class Home extends Controller {
 			return;
 		}
 		
+		// Start a transaction now
+		$this->db->trans_start();
+		//$this->db->trans_begin();
+		
 		// load respective forms.
 		$this->load->model('account_model');
 		$result = $this->account_model->add_account(array('email' => $email, 'password' => $password)); 
-			
+		
 		if($result === -1){
-				$this->ajax->view(array('Query error!',''));
+				$this->ajax->view(array('Query error (1)!',''));
 				return;
 		}
 		
@@ -279,6 +283,11 @@ class Home extends Controller {
 			$view = 'Congratulations, you are now registered. A confirmation email has been sent to you.'.
 			' Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.';
 		}
+		
+		// End transaction
+		$this->db->trans_complete();
+		//$this->db->trans_rollback();
+		
 		$this->ajax->view(array($view,''));
 	}
 }
