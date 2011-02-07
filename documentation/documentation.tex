@@ -107,12 +107,132 @@ The system requirements are as follows:
 
 \chapter{Current Status and Future Work}
 
-\paragraph{Messaging} Currently it is implemented by using users' existing email addresses, and emailing via the website. We have already implemented the messages table in the database in case for future interests to have our own messaging system.
+\paragraph{Messaging}
+Current: 
+\begin{itemize}
+\item Uses users' existing email addresses, and emails via the website. 
+\end{itemize}
+Future: 
+\begin{itemize}
+\item in-site messaging with inbox, sent, drafts, and compose. (Note: We have already implemented the messages table in the database)
+\item add attach file capability
+\end{itemize}
+
+\paragraph{Medical Records}
+
+Current: 
+\begin{itemize}
+\item Upload medical record
+\item Download medical record
+\item Delete Medical record
+\end{itemize}
+
+Future:
+\begin{itemize}
+\item view medical record in the browser currently 
+\item improve ease of setting medical records as hidden or allowed
+\end{itemize}
+
+\paragraph{Appointments}
+
+Current: 
+\begin{itemize}
+\item Does not check for conflicting times 
+\item You cannot schedule an appointment after ~2038-01-18 21:30:00 because of the max time in our 32-bit operating system. 
+\end{itemize}
+
+Future: 
+\begin{itemize}
+\item Check for conflicting appointment times
+\end{itemize}
+
+\paragraph{Bills}
+
+Current:
+\begin{itemize}
+\item Issue a bill
+\item Button to pay a bill (no link to credit card/bank system)
+\end{itemize}
+
+Future:
+\begin{itemize}
+\item Connect payment to a credit-card/bank system.
+\item Add insurance companies
+\item pdf receipts of bills
+\end{itemize}
+
+\paragraph{Design}
+Current:
+\begin{itemize}
+\end{itemize}
+
+Future: 
+\begin{itemize}
+\item Improve graphics
+\item Add brand and logo
+\item Put server in the cloud
+\item Standardize error messages
+\item Add transactions
+\end{itemize}
+
+\paragraph{Security}
+Current:
+\begin{itemize}
+\item https
+\item checks for session cookies
+\end{itemize}
+Future: 
+\begin{itemize}
+\item validate user input (e.g. set max/min sizes for password)
+\item validate existence of email
+\item validate that Social Security Number
+\item allow for full delete of an account
+\item get a real SSL certificate from the CA (Certification Authority)
+\end{itemize}
+
+\paragraph{Advanced Search Function}
+Current:
+\begin{itemize}
+\item Gives a listing of all doctors registered with Salute.
+\end{itemize}
+
+Future: 
+\begin{itemize}
+\item Search by individual doctors 
+\item Search by patients
+\item Search by medical records 
+\item Search by messages
+\item Search by appointments
+\item Search by bill
+\end{itemize}
+
+\paragraph{Graph and Test Results}
+Future: 
+\begin{itemize}
+\item Allow for uploading graphs and test results
+\item Create a graphing system that logs progress of different health-related characteristics(blood pressure, sodium, cholesterol, etc...)
+\end{itemize}
+
+\paragraph{Employees}
+
+Current:
+\begin{itemize}
+\item 3 hours of sleep per night
+\item 1 meal a day
+\end{itemize}
+
+Future:
+\begin{itemize}
+\item Company weekend picnics
+\item Hire in-house massage therapist
+\item 7 course meals imported from around the globe
+\item Mandatory 8 hour sleep
+\end{itemize}
 
 \part{Design}
 
 \chapter{High Level View}
-Bla bla bla..
+This chapter provides a high level view of how \emph{Salute} was implemented.  We will be describing the design approach taken to wards implemeting the overall: System, Database, MVC, Interface, Server.
 
 \section{System Design}
 A Web application can be simplified as a collection of resources placed on a server which are accessible to a great number of users (clients). The access to these resources must be governed by policies and permissions. From a very general point of view, our application has two kinds of resources: \emph{public} and \emph{private} resources. For instance, the login page must be a public resource, whereas the setting page should be private.
@@ -122,10 +242,11 @@ You can think of a resource as either some data inside a database, a functionali
 In this chapter we will describe our design from a high-level viewpoint, living the implementation for the next chapter.
 
 \section{Database Design}
-Bla bla bla... general description ... why we chose to implement it like this... what problems we faced... etc...
+The database was implemented using PostgreSQL 8.4 as the database management software.  The primary reason why PostgreSQL was used is because of the fact that it is free, easy to obtain, and easy to use. Also everybody in the project group was already familiar with it.
+The overall database was designed while keeping the patient in mind.  Salute is very patient oriented, giving them power overall  power over their medical records, instead of their healthcare provider.
 
 \subsection{Entity Relationship Diagram (ERD)}
-We provide a high-level description of the database using the famous ER diagram, for those who are familiar with it\footnote{Entities are represented in the ER diagram as rectangles.  Each entity represents a table in the database that holds all of the information or attributes that represents that entity.  In the ER diagram, each attribute is represented with a oval.}. Then we will describe the database structure in more details. The diagram is in Appendix A.
+We provide a high-level description of the database using the famous ER diagram, for those who are familiar with it\footnote{Entities are represented in the ER diagram as rectangles.  Each entity represents a table in the database that holds all of the information or attributes that represents that entity.  In the ER diagram, each attribute is represented with a oval.}. Then we will describe the database structure in more detail in the implementation chapter. The diagram is in Appendix A.
 
 
 \section{MVC Design}
@@ -336,7 +457,7 @@ In this section we will provide detailed, low-level information about the MVC th
 All the models, views and controllers have been implemented incorporated into the CodeIgniter framework in Php. We used the Doxygen\footnote{www.doxygen.org} comment format to be able to create a complete and organized implementation documentation out of the comments. For this reason, all the documentation for the MVC is into a separate document called \emph{Salute - MVC Implementation}. There one can find all the necessary details, together with a list of ''todo's'', a list of ''tests'' and a list of ''bugs''.
 
 \subsection{Assumptions}
-We made these remarkable assumption during the implementation of the MVC.
+We made these remarkable assumptions during the implementation of the MVC.
 \begin{itemize}
 \item Doctors cannot delete medical records even if they uploaded them, only patients can
 \item Both doctors and patients can upload medical records
@@ -345,6 +466,7 @@ We made these remarkable assumption during the implementation of the MVC.
 \item patients cannot accept an appointment
 \item doctors aren't allowed to reschedule an appointment
 \item both doctors and patients can cancel an appointment
+\item can only deactivate their account. records will not be destroyed, but all information will be hidden. 
 \end{itemize}
 
 \section{Interface implementation}
@@ -446,8 +568,8 @@ All of the test data files that are used to populate the database not only provi
 \part{User Manual}
 
 \chapter{User Manual for Health Care Provider}
-\section{Registration and Login}
 
+\section{Registration and Login}
 \subsection{Registration}
 To register as a Health Care Provider you must:
 \begin{enumerate}
@@ -457,24 +579,149 @@ To register as a Health Care Provider you must:
 \item Enter your information into the form and click \textit{submit}. If at any time you want to start over, click \textit{reset}.
 \item If you registered successfully, you will be given a congratulations message.
 \end{enumerate}
-
 \subsection{Login}
 To login you must:
 \begin{enumerate}
 \item Go to the homepage.
 \item Enter your login information( email and password ) and click \textit{submit}.
-\item Click on \textit{Health Care Provider} to register as a health care provider.
-\item Enter your information into the form and click \textit{submit}. If at any time you want to start over, click \textit{reset}.
-\item If you registered successfully, you will be given a congratulations message.
+\item If successful, a welcoem page will load. Otherwise, an error page will load. 
 \end{enumerate}
 
-
 \section{Viewing my profile}
-\section{Connection management}
+Once you have logged in, you can always view your profile by clicking home.
+\section{Using the Side Panel}
+On the right-hand-side, you will see your Side Panel. Use it to navigate the site.
+
+Here are the features in your side panel:
+\begin{itemize}
+\item \textit{Appointments} - click here to see all of your appointment
+\begin{itemize}
+\item \textit{All} - click here to see all of your appointment
+\item \textit{Upcoming} - click here to see only your upcoming appointments
+\item \textit{Past} - click here to see only your past appointments
+\end{itemize}
+\item \textit{Bills} - click here to see all bills you have issued to patients
+\begin{itemize} 
+\item \textit{All} - click here to see all bills you have issued to patients
+\item \textit{Current} - click here to see all bills, paid and unpaid, that are not past their due date.
+\item \textit{Past}  - click here to see all bills, paid and unpaid, that are past their due date.
+\end{itemize}
+\item \textit{My Patients} - click here to see connections you have made with patients.
+\begin{itemize}
+\item \textit{Pending incoming}- click here See requests for connections patients have made to you.
+\end{itemize}
+\item \textit{My colleagues} - click here to see connections you have made with other health care providers.
+\begin{itemize}
+\item \textit{Pending outgoing} - clcik here to see requests for connections you have made to other health care providers.
+\item \textit{Pending incoming} - click here to see requests for connections health care providers have made to you.
+\end{itemize}
+\item \textit{Settings} - click here to view and manage your account settings
+\item \textit{Advanced Search} - click here to view a list of all the health care providers in the system.
+\item \textit{Logout} - click here to logout of your session.
+\end{itemize}
+
+
 \section{How-to's}
+
+\textbf{Check my appointment requests}
+\begin{enumerate}
+\item In the side panel, click \textit{ Appointments}.
+\item Look at the approved column. A requested appointment will have "Pending" here.
+\item Click \textit{Accept} to accept the appointment or \textit{Cancel} to reject the appointment.
+\end{enumerate}
+\textbf{Cancel an appointment}
+\begin{enumerate}
+\item In the side panel, click \textit{Appointments}.
+\item Find the appointment you want to cancel. 
+\item Click \textit{Cancel} in the corresponding action column.
+\end{enumerate}
+\textbf{See a profile of one of my patients}
+\begin{enumerate}
+\item In the side panel, click \textit{My patients}.
+\item Find the patient whose profile you want to view.
+\item Click \textit{See Profile} in the corresponding Actions column.
+\end{enumerate}
+\textbf{Send a message to one of my patients}
+\begin{enumerate}
+\item In the side panel, click \textit{My patients}.
+\item Find the patient whose profile you want to send a message to.
+\item Click \textit{Send Message} in the corresponding Actions column.
+\item Input the subject and the message body, then click \textit{Send}
+\end{enumerate}
+\textbf{Delete a connection with one of my patients}
+\begin{enumerate}
+\item In the side panel, click \textit{My patients}.
+\item Find the patient who you want to disconnect with.
+\item Click \textit{Delete Connection} in the corresponding Actions column.
+\end{enumerate}
+\textbf{Upload a medical record for one of my patients}
+\begin{enumerate}
+\item In the side panel, click \textit{My patients}.
+\item Find the patient who you want to upload a medical record for.
+\item Click \textit{Upload Medical Record} in the corresponding Actions column.
+\item Type in the Issue corresponding to the medical record and some information regarding the medical record.
+\item Then click \textit{Browse}. A file browser will pop up. Use the file browser to locate and select the medical record file you want to upload.
+\item Click \textit{Upload} to finish.
+\end{enumerate}
+\textbf{Issue a bill to one of my patients}
+\begin{enumerate}
+\item In the side panel, click \textit{My Patients}
+\item Find the patient you want to bill. 
+\item Click \textit{Issue Bill} in the corresponding actions column.
+\item Input the amount you want to bill, a description of the bill, and a due date. Click submit when done.
+\end{enumerate}
+\textbf{Delete/Cancel a bill}
+\begin{enumerate}
+\item In the side panel, click \textit{Bills}
+\item Find the bill you want to cancel.
+\item Click \textit{Delete Bill} in the corresponding actions column.
+\end{enumerate}
+\textbf{Make a connection request to another health care provider}
+\begin{enumerate}
+\item In the side panel, click \textit{Advanced Search} under \textit{My patients}.
+\item Click \textit{List of all doctors}.
+\item Find the health care provider you want to request a connection to.
+\item Click \textit{Request a connection} in the corresponding actions column to request a connection.
+\end{enumerate}
+\textbf{Accept/Reject a connection request from a patient}
+\begin{enumerate}
+\item In the side panel, click \textit{Pending Incoming} under \textit{My patients}.
+\item Find the connection you want to accept/reject.
+\item Click \textit{Accept} in the corresponding actions column to accept the connection or \textit{Reject} to reject the connection.
+\end{enumerate}
+\textbf{Accept/Reject a connection request from a health care provider}
+\begin{enumerate}
+\item In the side panel, click \textit{Pending Incoming} under \textit{My Colleagues}.
+\item Find the connection you want to accept/reject.
+\item Click \textit{Accept} in the corresponding actions column to accept the connection or \textit{Reject} to reject the connection.
+\end{enumerate}
+\textbf{Cancel a connection request I made to a health care provider}
+\begin{enumerate}
+\item In the side panel, click \textit{Pending Outgoing} under \textit{My Colleagues}.
+\item Find the connection request you want to cancel.
+\item Click \textit{Cancel Connection request} in the corresponding actions column to cancel the connection request.
+\end{enumerate}
+\textbf{Change my email or password}
+\begin{enumerate}
+\item In the side panel, click \textit{Settings}.
+\item A new window will load. Click \textit{Change Email} or \textit{Change Password} to bring up the corresponding form page.
+\item Input your new email or password and click \textit{Submit}.
+\end{enumerate}
+\textbf{Change my Name, contact information, other information}
+\begin{enumerate}
+\item Go to you user home page by clicking \textit{Home}.
+\item A new window will load. Click \textit{Edit Info} in the main panel.
+\item Only rewrite the information you want to change. Once you edited the information you want to change, click \textit{Submit}.
+\end{enumerate}
+\textbf{Deactivate my account}
+\begin{enumerate}
+\item In the side panel, click \textit{Settings}.
+\item A new window will load. Click \textit{Deactivate} to deactivate your account.
+\end{enumerate}
 
 \chapter{User Manual for Patient}
 \section{Registration and Login}
+\subsection{Registration}
 To register as a Patient you must:
 \begin{enumerate}
 \item Go to the homepage.
@@ -483,9 +730,16 @@ To register as a Patient you must:
 \item Enter your information into the form and click \textit{submit}. If at any time you want to start over, click \textit{reset}.
 \item If you registered successfully, you will be given a congratulations message.
 \end{enumerate}
-\subsection{Registration}
+
 \subsection{Login}
+To login you must:
+\begin{enumerate}
+\item Go to the homepage.
+\item Enter your login information( email and password ) and click \textit{submit}.
+\item If successful, a welcoem page will load. Otherwise, an error page will load. 
+\end{enumerate}
 \section{Viewing my profile}
+Once you have logged in, you can always view your profile by clicking home.
 \section{Connection management}
 \section{How-to's}
 
