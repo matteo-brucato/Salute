@@ -286,11 +286,11 @@ class Appointments extends Controller {
 			else
 			{
 				//test to see if the appointment is mine
-				if ($this->auth->get_account_id === $is_mine[0]['patient_id'])
+				if ($this->auth->get_account_id() === $is_mine[0]['patient_id'])
 				{
-					$new_time = $this->input->post('appointment_time');
+					$new_time = $this->input->post('time');
 					
-					if ($new_time !== FALSE and $new_time !== '')
+					if ($new_time !== FALSE && $new_time !== '')
 					{
 						$results = $this->appointments_model->reschedule(array('appointment_id' => $apt_id, 'date_time' => $new_time )); 
 			
@@ -305,7 +305,7 @@ class Appointments extends Controller {
 								$sideview = '';
 								break;
 							default:
-								$mainview = $this->ajax->redirect('/appointments/upcoming');
+								$mainview = 'Appointment was successfully rescheduled';
 								$sideview = $this->load->view('sidepane/patient-profile', '', TRUE);
 								break;
 						}
@@ -323,6 +323,7 @@ class Appointments extends Controller {
 				}
 
 			}
+		}
 		else
 		{
 			show_error('Appointment ID is not numeric.', 500);
