@@ -171,8 +171,29 @@ To follow a generic principle in Software Engineering, we decided to anticipate 
 It's really hard to set a limit between content and presentation in an environment governed by HTML, but something can be done. We created all our views regardless of presentation aspects, focusing only on the most simple aspects of HTML. Our purpose is to separate this two concerns and leave to the \emph{layout} the task to add colours, change positions of the elements and this kind of things. Doing so we also provided the possibility to change the layout in the future, or even dynamically.
 
 \section{Server Design}
+Salute is currently available locally only. A virtual image of the system is ready to be implemented on a web server(configuration will be neccessary).
 
+\subsection{Server Details}
+Salute uses LAPP(Linux, Apache, Postgresql, PHP ) solution stack.
+\begin{itemize}
+\item Linux Operating system- Ubuntu(Maverick Meerkat 4.1.0). 
+\item HTTP server- Apache(version 2.2.16 for Ubuntu)
+\item Database- postgresql(version 8.4)
+\item Server side language- PHP(version 5)
+\end{itemize}
 
+\subsection{Apache Modules}
+Module rewrite is used to provide:
+\begin{itemize}
+\item protection so that clients may not access files/folders of the file system
+\item rerouting of all http requests to https requests
+\item redirection of all requests to index.php (with the exception of /scripts and /layouts)
+\end{itemize}
+Module SSL is used to specify:
+\begin{itemize}
+\item the public certificate clients must accept to use Salute
+\item the private key to authenticate users
+\end{itemize}
 
 \chapter{Implementation View}
 This chapter will show in more details how we implemented all the requirements using the design that we discussed in the previous chapter. We will show the full database, MVC, interface and server implementation, along with a list of all the assumptions that we made during the development phase. We will also present a list of the tests that we made.
@@ -422,14 +443,51 @@ The database was initially tested with simple SELECT * queries to see if the dat
 All of the test data files that are used to populate the database not only provide testing capabilities for the models, but also for the views and the controllers since they are interrelated.  For a list of all of the tests that the controllers test, read section 7.4.1 Controller Tests.
 
 
+\part{User Manual}
 
-\part{Operating Manual}
-\chapter{How-to's}
-\chapter{Registration and login}
-\chapter{Viewing a user profile}
-\chapter{Connection management}
+\chapter{User Manual for Health Care Provider}
+\section{Registration and Login}
 
-\chapter{Screen-shots}
+\subsection{Registration}
+To register as a Health Care Provider you must:
+\begin{enumerate}
+\item Go to the homepage.
+\item Click the button \textit{Register}, located on the right-hand-side underneath \textit{Login} and \textit{Forgot your password?}
+\item Click on \textit{Health Care Provider} to register as a health care provider.
+\item Enter your information into the form and click \textit{submit}. If at any time you want to start over, click \textit{reset}.
+\item If you registered successfully, you will be given a congratulations message.
+\end{enumerate}
+
+\subsection{Login}
+To login you must:
+\begin{enumerate}
+\item Go to the homepage.
+\item Enter your login information( email and password ) and click \textit{submit}.
+\item Click on \textit{Health Care Provider} to register as a health care provider.
+\item Enter your information into the form and click \textit{submit}. If at any time you want to start over, click \textit{reset}.
+\item If you registered successfully, you will be given a congratulations message.
+\end{enumerate}
+
+
+\section{Viewing my profile}
+\section{Connection management}
+\section{How-to's}
+
+\chapter{User Manual for Patient}
+\section{Registration and Login}
+To register as a Patient you must:
+\begin{enumerate}
+\item Go to the homepage.
+\item Click the button \textit{Register}, located on the right-hand-side underneath \textit{Login} and \textit{Forgot your password?}
+\item Click on \textit{Patient} to register as a patient.
+\item Enter your information into the form and click \textit{submit}. If at any time you want to start over, click \textit{reset}.
+\item If you registered successfully, you will be given a congratulations message.
+\end{enumerate}
+\subsection{Registration}
+\subsection{Login}
+\section{Viewing my profile}
+\section{Connection management}
+\section{How-to's}
 
 \part{Credits}
 
