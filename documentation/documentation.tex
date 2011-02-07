@@ -107,7 +107,127 @@ The system requirements are as follows:
 
 \chapter{Current Status and Future Work}
 
-\paragraph{Messaging} Currently it is implemented by using users' existing email addresses, and emailing via the website. We have already implemented the messages table in the database in case for future interests to have our own messaging system.
+\paragraph{Messaging}
+Current: 
+\begin{itemize}
+\item Uses users' existing email addresses, and emails via the website. 
+\end{itemize}
+Future: 
+\begin{itemize}
+\item in-site messaging with inbox, sent, drafts, and compose. (Note: We have already implemented the messages table in the database)
+\item add attach file capability
+\end{itemize}
+
+\paragraph{Medical Records}
+
+Current: 
+\begin{itemize}
+\item Upload medical record
+\item Download medical record
+\item Delete Medical record
+\end{itemize}
+
+Future:
+\begin{itemize}
+\item view medical record in the browser currently 
+\item improve ease of setting medical records as hidden or allowed
+\end{itemize}
+
+\paragraph{Appointments}
+
+Current: 
+\begin{itemize}
+\item Does not check for conflicting times 
+\item You cannot schedule an appointment after ~2038-01-18 21:30:00 because of the max time in our 32-bit operating system. 
+\end{itemize}
+
+Future: 
+\begin{itemize}
+\item Check for conflicting appointment times
+\end{itemize}
+
+\paragraph{Bills}
+
+Current:
+\begin{itemize}
+\item Issue a bill
+\item Button to pay a bill (no link to credit card/bank system)
+\end{itemize}
+
+Future:
+\begin{itemize}
+\item Connect payment to a credit-card/bank system.
+\item Add insurance companies
+\item pdf receipts of bills
+\end{itemize}
+
+\paragraph{Design}
+Current:
+\begin{itemize}
+\end{itemize}
+
+Future: 
+\begin{itemize}
+\item Improve graphics
+\item Add brand and logo
+\item Put server in the cloud
+\item Standardize error messages
+\item Add transactions
+\end{itemize}
+
+\paragraph{Security}
+Current:
+\begin{itemize}
+\item https
+\item checks for session cookies
+\end{itemize}
+Future: 
+\begin{itemize}
+\item validate user input (e.g. set max/min sizes for password)
+\item validate existence of email
+\item validate that Social Security Number
+\item allow for full delete of an account
+\item get a real SSL certificate from the CA (Certification Authority)
+\end{itemize}
+
+\paragraph{Advanced Search Function}
+Current:
+\begin{itemize}
+\item Gives a listing of all doctors registered with Salute.
+\end{itemize}
+
+Future: 
+\begin{itemize}
+\item Search by individual doctors 
+\item Search by patients
+\item Search by medical records 
+\item Search by messages
+\item Search by appointments
+\item Search by bill
+\end{itemize}
+
+\paragraph{Graph and Test Results}
+Future: 
+\begin{itemize}
+\item Allow for uploading graphs and test results
+\item Create a graphing system that logs progress of different health-related characteristics(blood pressure, sodium, cholesterol, etc...)
+\end{itemize}
+
+\paragraph{Employees}
+
+Current:
+\begin{itemize}
+\item 3 hours of sleep per night
+\item 1 meal a day
+\end{itemize}
+
+Future:
+\begin{itemize}
+\item Company weekend picnics
+\item Hire in-house massage therapist
+\item 7 course meals imported from around the globe
+\item Mandatory 8 hour sleep
+\end{itemize}
 
 \part{Design}
 
@@ -336,7 +456,7 @@ In this section we will provide detailed, low-level information about the MVC th
 All the models, views and controllers have been implemented incorporated into the CodeIgniter framework in Php. We used the Doxygen\footnote{www.doxygen.org} comment format to be able to create a complete and organized implementation documentation out of the comments. For this reason, all the documentation for the MVC is into a separate document called \emph{Salute - MVC Implementation}. There one can find all the necessary details, together with a list of ''todo's'', a list of ''tests'' and a list of ''bugs''.
 
 \subsection{Assumptions}
-We made these remarkable assumption during the implementation of the MVC.
+We made these remarkable assumptions during the implementation of the MVC.
 \begin{itemize}
 \item Doctors cannot delete medical records even if they uploaded them, only patients can
 \item Both doctors and patients can upload medical records
@@ -345,6 +465,7 @@ We made these remarkable assumption during the implementation of the MVC.
 \item patients cannot accept an appointment
 \item doctors aren't allowed to reschedule an appointment
 \item both doctors and patients can cancel an appointment
+\item can only deactivate their account. records will not be destroyed, but all information will be hidden. 
 \end{itemize}
 
 \section{Interface implementation}
