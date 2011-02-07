@@ -131,8 +131,8 @@ class Home extends Controller {
 		));
 	}
 	
-	/*
-	 * retrieve_password
+	/**
+	 * Retrieve_password
 	 * @input -- email address
 	 * @return send password via email to user, with link to login again. || error(invalid email)
 	 * @testing
@@ -169,8 +169,8 @@ class Home extends Controller {
 		$this->ajax->view(array('Your password has been emailed to you.',''));
 	}
 
-	/*
-	 * loads registration form
+	/**
+	 * Loads registration form
 	 * */
 	function register()
 	{

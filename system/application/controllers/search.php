@@ -16,7 +16,9 @@ class Search extends Controller {
 		$this->load->library('auth');
 	}
 
-	// Default to the advanced search
+	/**
+	 * Default to the advanced search
+	 */
 	function index() {
 		$this->auth->check_logged_in();
 		$this->ajax->view(array(
@@ -54,20 +56,31 @@ class Search extends Controller {
 		));
 	}
 
-	// Search for patients 
-	// Note: Only for hcps, should only show patients they are connected with
+	/**
+	 * Search for patients
+	 * 
+	 * @todo Not implemented yet
+	 * */
 	function patients(){ 
 		$this->auth->check_logged_in();
 	}
 
-	// Search in my messages
+	/**
+	 * Search for messages
+	 * 
+	 * @todo Not implemented yet
+	 * */
 	function messages() {
 		$this->auth->check_logged_in();
 	}
 
-	// Search in medical records
-	// Note: if patient --> only search in my records
-	//	 if hcp --> only search in records i have access to
+	/**
+	 * Search for patients
+	 * 
+	 * @note if patient --> only search in my records
+	 * @note if hcp --> only search in records i have access to
+	 * @todo Not implemented yet
+	 * */
 	function medical_records() {
 		$this->auth->check_logged_in();
 	}

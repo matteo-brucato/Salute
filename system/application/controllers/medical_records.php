@@ -166,7 +166,7 @@ class Medical_records extends Controller {
 		));
 	}
 	
-	/**
+	/*
 	 * Add the new medical record
 	 * @attention should the patient approve this first before having it added to their list of records?
 	 *
@@ -219,7 +219,7 @@ class Medical_records extends Controller {
 	 * @todo Implement this function and then make it 'public' (remove _ at
 	 * the beginning of the name)
 	 * @todo: need a view that lists medical records: Name, Description, link to file
-	 * */
+	 * *
 	function _view($med_rec_id) {
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
@@ -230,7 +230,7 @@ class Medical_records extends Controller {
 		}
 		// If hcp: check if he/she has permission to see it
 		else if($this->auth->get_type() === 'hcp'){
-			$result = $this->permissions_model->____(array($this->auth->get_account_id(), $med_rec_id)); /*@todo: update fn call*/
+			$result = $this->permissions_model->____(array($this->auth->get_account_id(), $med_rec_id)); /*@todo: update fn call*
 		}
 		else {
 				show_error('Internal Logic Error.',500);
@@ -260,7 +260,7 @@ class Medical_records extends Controller {
 		$res = $this->medical_records_model->get_medicalrecord(array($med_rec_id));
 		
 		$this->ajax->view(array($this->load->view('mainpane/______', $res, TRUE),''));	
-	}
+	}*/
 	
 	/**
 	 * Show a form to ask for an hcp to add permission to

@@ -392,7 +392,7 @@ class Connections extends Controller {
 		$this->ajax->view(array($mainview,$sideview));
 	}
 
-	/*
+	/**
 	 * deletes connection (un-friend someone)
 	 * @param
 	 * 		id is the account_id of the hcp or patient the user would like to disconnect from
@@ -446,7 +446,7 @@ class Connections extends Controller {
 		$this->ajax->view(array($view,''));
 	}
 	
-	/*
+	/**
 	 * Removes a pending outgoing connection request
 	 * @param
 	 * 		id is the account_id of the hcp or patient the user would 
@@ -509,7 +509,7 @@ class Connections extends Controller {
 		$this->ajax->view(array($view,''));
 	}
 	
-	/*
+	/**
 	 * Removes a pending incoming connection request
 	 * @param
 	 * 		id is the account_id of the hcp or patient the user would 
