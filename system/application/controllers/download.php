@@ -17,7 +17,7 @@ class Download extends Controller {
 		$this->load->helper('download');
 	}
 
-	/*
+	/**
 	 * Default function call
 	 */ 
 	function index()

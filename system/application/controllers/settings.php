@@ -145,7 +145,8 @@ class Settings extends Controller {
 			
 	}
 	
-	/** Deactivate Account
+	/** 
+	 * Deactivate Account
 	 * @return Deactivation Confirmation + Email. || error
 	 * @todo popup: are you sure?
 	 **/ 

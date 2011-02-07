@@ -104,7 +104,9 @@ class Messages_model extends Model{
 	 *   Is of the form: array(message_id, account_id of deleter)
 	 * @return
 	 *   -1 if error in deletion
-	 *   1 otherwise
+	 *    1 otherwise
+	 * @note
+	 * 	  NOT INPLEMENTED
 	 * */
 	function delete($inputs){
 	}

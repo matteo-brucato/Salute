@@ -16,7 +16,7 @@ class Bills extends Controller {
 		$this->load->library('auth');
 	}
 
-	/*
+	/**
 	 * Default function call
 	 * @return  redirects to all() function
 	 * */ 

@@ -36,6 +36,7 @@ class Account_model extends Model {
 			
 		return ($query->num_rows() > 0);
 	}
+	
 	/**
 	 * Deactivates an account
 	 * 
@@ -206,7 +207,7 @@ class Account_model extends Model {
 		return $query->result_array();
 	 }
 	 
-	 	/**
+	/**
 	 * Gets the email of the account
 	 * 
 	 * @param $inputs

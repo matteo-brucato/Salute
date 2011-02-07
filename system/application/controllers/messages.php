@@ -19,27 +19,43 @@ class Messages extends Controller {
 		// $this->type = $this->session->userdata('type');	
 	}
 
-	// Default: call inbox function
+	/**
+	 * Default method
+	 * 
+	 * @todo Not implemented yet
+	 * */
 	function index(){
 		$this->auth->check_logged_in();
 	}
 
-  	/* List all messages in Inbox */      	   
+  	/**
+	 * Call inbox function
+	 * 
+	 * @todo Not implemented yet
+	 * */
 	function inbox() { 
 		$this->auth->check_logged_in();
 	}
 
-	/*View only sent messages*/
+	/**
+	 * View only sent messages
+	 * 
+	 * @todo Not implemented yet
+	 * */
 	function sent() {
 		$this->auth->check_logged_in();
 	}
 
-	/*View only messages saved as a draft*/	
+	/**
+	 * View only messages saved as a draft
+	 * 
+	 * @todo Not implemented yet
+	 * */
 	function drafts(){
 		$this->auth->check_logged_in();
 	}
 	
-	/*
+	/**
 	 * Load Form to Compose an Email
 	 * @param the account_id of the recipient
 	 * */
@@ -103,7 +119,11 @@ class Messages extends Controller {
 		$this->ajax->view(array('Your message has been sent.',''));
 	}	
 
-	// Delete an email
+	/**
+	 * Delete an email
+	 * 
+	 * @todo Not implemented yet
+	 * */
 	function delete() {
 		$this->auth->check_logged_in();
 	}
