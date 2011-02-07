@@ -252,41 +252,82 @@ class Appointments extends Controller {
  	 * @MATEO:
 	 * 	I ASSUME THE VIEW NAME WILL BE reschedule	 
 	 * */
-	function reschedule_do($apt_id) {
+	function reschedule_do($apt_id) {                          // test it belongs to me
 		$this->auth->check_logged_in();
 		
-		if ($this->auth->get_type() === 'hcp'){
+		if ($this->auth->get_type() === 'hcp')
+		{
 			show_error('Doctors are not allowed to reschedule appointments', 500);
 			return;
 		}
-	
-		if($this->appointments_model->is_myappointment(array($this->auth->get_account_id(),$apt_id))){
-			$result = $this->appointments_model->get_appointment(array($apt_id));
+		
+		//test to see if id is numeric
+		if (is_numeric($apt_id))
+		{
+
+			//get the appointment if it exits
+			$is_mine = $this->appointments_model->get_appointment($apt_id);
 			
-			//$this->ajax->view(array($this->load->view('mainpane/reschedule',$result, TRUE),''));
-			$new_time = $this->input->post('appointment_time');
-			$results = $this->appointments_model->reschedule(array('appointment_id' => $apt_id, 'date_time' => $new_time )); 
-			
-			switch ($results) {
-			case -1:
+			if($is_mine === -1)
+			{
 				$mainview = 'Query Error!';
 				$sideview = '';
-				break;
-			case -5:
-				$mainview = 'Appointment does not exist';
-				$sideview = '';
-				break;
-			default:
-				$mainview = $this->ajax->redirect('/appointments/upcoming');
-				$sideview = $this->load->view('sidepane/patient-profile', '', TRUE);
-				break;
+			} 
+			elseif ($is_mine === -5)
+			{
+				show_error('Appointment ID does not exist.', 500);
+				return;
 			}
-		}
-		else{
-			show_error('This is not your appointment. Permission Denied.', 500);
+			elseif (sizeof($is_mine) <= 0)
+			{
+				show_error('Appointment tupple does not exist in the database.', 500);
+				return;
+			}
+			else
+			{
+				//test to see if the appointment is mine
+				if ($this->auth->get_account_id === $is_mine[0]['patient_id'])
+				{
+					$new_time = $this->input->post('appointment_time');
+					
+					if ($new_time !== FALSE and $new_time !== '')
+					{
+						$results = $this->appointments_model->reschedule(array('appointment_id' => $apt_id, 'date_time' => $new_time )); 
+			
+						switch ($results) 
+						{
+							case -1:
+								$mainview = 'Query Error!';
+								$sideview = '';
+								break;
+							case -5:
+								$mainview = 'Appointment does not exist';
+								$sideview = '';
+								break;
+							default:
+								$mainview = $this->ajax->redirect('/appointments/upcoming');
+								$sideview = $this->load->view('sidepane/patient-profile', '', TRUE);
+								break;
+						}
+					}
+					else
+					{
+						show_error('Please fill out the Time and Date field', 500);
+						return;
+					}
+				}
+				else
+				{
+					show_error('Cannot reschedule an appointment that doesnt belong to me.', 500);
+					return;
+				}
+
+			}
+		else
+		{
+			show_error('Appointment ID is not numeric.', 500);
 			return;
 		}
-		
 		// Give results to the client
 		$this->ajax->view(array($mainview,$sideview));
 	}
@@ -331,7 +372,7 @@ class Appointments extends Controller {
 	/** 
 	 * Request an apptointment with a hcp
 	 * 
-	 * @input -- appointment date/time, description
+	 * @input -- account_id of the hcp to which the request is going to be made
 	 * @return -- confirmation statement
 	 * @todo: need reschedule appt form / view
 	 * @todo:fix this -- view should pass this to me based on the tuple they click..
