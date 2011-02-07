@@ -112,7 +112,7 @@ The system requirements are as follows:
 \part{Design}
 
 \chapter{High Level View}
-Bla bla bla..
+This chapter provides a high level view of how \emph{Salute} was implemented.  We will be describing the design approach taken to wards implemeting the overall: System, Database, MVC, Interface, Server.
 
 \section{System Design}
 A Web application can be simplified as a collection of resources placed on a server which are accessible to a great number of users (clients). The access to these resources must be governed by policies and permissions. From a very general point of view, our application has two kinds of resources: \emph{public} and \emph{private} resources. For instance, the login page must be a public resource, whereas the setting page should be private.
@@ -122,10 +122,11 @@ You can think of a resource as either some data inside a database, a functionali
 In this chapter we will describe our design from a high-level viewpoint, living the implementation for the next chapter.
 
 \section{Database Design}
-Bla bla bla... general description ... why we chose to implement it like this... what problems we faced... etc...
+The database was implemented using PostgreSQL 8.4 as the database management software.  The primary reason why PostgreSQL was used is because of the fact that it is free, easy to obtain, and easy to use. Also everybody in the project group was already familiar with it.
+The overall database was designed while keeping the patient in mind.  Salute is very patient oriented, giving them power overall  power over their medical records, instead of their healthcare provider.
 
 \subsection{Entity Relationship Diagram (ERD)}
-We provide a high-level description of the database using the famous ER diagram, for those who are familiar with it\footnote{Entities are represented in the ER diagram as rectangles.  Each entity represents a table in the database that holds all of the information or attributes that represents that entity.  In the ER diagram, each attribute is represented with a oval.}. Then we will describe the database structure in more details. The diagram is in Appendix A.
+We provide a high-level description of the database using the famous ER diagram, for those who are familiar with it\footnote{Entities are represented in the ER diagram as rectangles.  Each entity represents a table in the database that holds all of the information or attributes that represents that entity.  In the ER diagram, each attribute is represented with a oval.}. Then we will describe the database structure in more detail in the implementation chapter. The diagram is in Appendix A.
 
 
 \section{MVC Design}
