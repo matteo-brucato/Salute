@@ -136,7 +136,7 @@ class Bills_model extends Model {
 		if( $inputs[1] == 'patient'){
 			$sql = "Select B.*, H2.first_name, H2.last_name
 				FROM payment B, hcp_account H, hcp_account H2
-				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id = H2.account_id AND B.due_date >= current_date AND patient_kept = TRUE";
+				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id = H2.account_id AND B.due_date >= NOW() AND patient_kept = TRUE";
 			$query = $this->db->query($sql, $inputs[0]);
 			
 			if ($this->db->trans_status() === FALSE)
@@ -150,7 +150,7 @@ class Bills_model extends Model {
 		//list all current bills a hcp has issued
 		$sql = "Select B.*, P2.first_name, P2.last_name
 			FROM payment B, patient_account P, patient_account P2
-			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id AND B.due_date >= current_date AND hcp_kept = TRUE";
+			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id AND B.due_date >= NOW() AND hcp_kept = TRUE";
 		$query = $this->db->query($sql, $inputs[0]);
 		
 		if ($this->db->trans_status() === FALSE)
@@ -178,7 +178,7 @@ class Bills_model extends Model {
 		if( $inputs[1] == 'patient'){
 			$sql = "Select B.*, H2.first_name, H2.last_name
 				FROM payment B, hcp_account H, hcp_account H2
-				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id = H2.account_id AND B.due_date < current_date AND patient_kept = TRUE";
+				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id = H2.account_id AND B.due_date < NOW() AND patient_kept = TRUE";
 			$query = $this->db->query($sql, $inputs[0]);
 			
 			if ($this->db->trans_status() === FALSE)
@@ -192,7 +192,7 @@ class Bills_model extends Model {
 		//list all past bills a hcp has issued
 		$sql = "Select B.*, P2.first_name, P2.last_name
 			FROM payment B, patient_account P, patient_account P2
-			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id AND B.due_date < current_date AND hcp_kept = TRUE";
+			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id AND B.due_date < NOW() AND hcp_kept = TRUE";
 		$query = $this->db->query($sql, $inputs[0]);
 		
 		if ($this->db->trans_status() === FALSE)
