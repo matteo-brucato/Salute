@@ -90,7 +90,7 @@ class Messages extends Controller {
 		
 		$subject = $this->input->post('subject');
 		$body = $this->input->post('body');
-		
+	
 		$this->load->library('email');
 		$config['mailtype'] = 'html';
 		$this->email->initialize($config);
