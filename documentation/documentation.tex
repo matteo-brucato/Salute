@@ -10,9 +10,38 @@
 
 
 \part{Introduction}
-Bla bla bla...
+
+\chapter{About this document}
+
+This document is aimed at providing a deep description of the Web-based application that we are developing for the class \emph{CS180 - Introduction to Software Engineering} at the University of California Riverside during the Winter quarter. Our purpose is to provide a documentation that would possibly allow new team members to join the project quickly and easily. At the same time this documentation will help us to keep an audit trail of what we did and how we did it. We will discuss all our researches, problems and decision.
+
+The report is divided into 5 parts. The first one comprises this brief introduction along with an overview of the system we designed and implemented. The second part is a list of all the requirements needed, whereas the third part is a high-level view of the system, i.e its design and a low-level description, i.e. its implementation. Then, we added an operating manual for the end-user and a section for credits and acknowledgements.
+
 \chapter{Overview}
-Bla bla bla..
+Our application is a web-site, running through https (secure http), to manage patient's healthcare documents and resources. The logic and behaviour is centred on patients, rather than on Health Care Providers. In this view, all HCPs are considered as ''customers'' of patients. Patients can ask for ''social connections'' with HCPs, can upload or download their medical records and grant access to them to a specific set of doctors. They can also manage their appointments and bills.
+
+\section{Description/Motivation}
+We quote here the entire description given in the requirement paper for Milestone 0. We believe that this gives the best perspective in order to understand the whole system.
+\begin{quotation}
+   Modern medical offices rely on specialized software to manage the care and treatment of patients. Often,
+such software “locks” data into a proprietary format and/or behind excessive security protocols. These
+measures prevent the easy flow of information between patients and their doctors. As case in point, a
+patients medical records are often seen as the “property” of the health care provider rather than the patients
+personal property.
+   
+   The objective of this project is to create a web-based medical management portal in which a patient retains
+control over their own medical records, yet provides easy access to any authorized healthcare provider. This
+project is envisioned as part social network, part medical information database that will allow for patient
+authorized “sharing” of relevant medical records to various doctors and specialists.
+   
+   This application will provide a web-based health information portal for (at least) two distinct groups
+(patients and doctors). A patient will be allowed to create and manage their own profile, view and manage
+their medical records, create and withdrawal “sharing links” to their selected health care providers, and
+schedule/request appointments. Doctors will have a patient management service that will allow for the
+scheduling/authorizing appointments, managing patient care, and billing functionality.
+\end{quotation}
+
+
 \chapter{Tools and Technology}
 We immediately realized that the best way to implement a complex Web application like \emph{Salute} was using all the possible technologies that we were aware of. Firstly, we decided to use a well-known system design such as \emph{MVC} (Model-View-Controller). We also decided to use a framework named \emph{CodeIgniter}\footnote{www.codeigniter.com} that is written in Php\footnote{www.php.net}. We fixed \emph{LAPP} as our system environment stack. LAPP stands for \emph{Linux}, \emph{Apache}, \emph{PostgreSQL}, \emph{Php}. Then we decided to use \emph{XHTML} as a markup language to describe web pages because it is standardized and is an XML, and use a Javascript framework called \emph{JQuery}\footnote{www.jquery.com} to have a powerful set of tools that are easy to use and browser-independent. In order to separate the concern of "what to display" and "how to display it", we decided to use \emph{CSS} to manage layouts and presentational matters in the interface. We also decided to foresee the change and implemented Ajax natively.
 
@@ -25,9 +54,44 @@ This is just a brief introduction to the tools and technologies that we used in 
 
 \part{Requirements}
 \chapter{User Requirements}
+The user requirements presented by the client can be categorized into general, patient side, and healthcare provider side requirements.
+
+\section{General}
+\begin{itemize}
+\item A patient or healthcare provider should be able to crate, delete, and modify their respective account
+\item Accounts should be protected by a username and password combination
+\item Depending on the type of user account, each user will have a unique user profile within the system
+\item Depending on the type of user account, one of two social networking connection options are available. When requesting a social network connection, proper confirmation is required.  Upon forming a social network connection, the patient and provider will be listed in each other's respective list of contacts.
+\begin{itemize}
+\item (Patient to Healthcare Provider) This type of connection can only be requested by a patient and represents the "doctor-patient" relationship.  When this connection is formed, it allows the provider access to the patient's medical records and indicates a level of trust between the patient and healthcare provider.
+\item (Healthcare Provider to Healthcare Provider) This relationship only exists between providers and represents the providers network of health care professionals.
+\end{itemize}
+\item Under each user's account, the list of their current contacts will be readily available and linked to their respective profile pages
+\item Medical records may be uploaded by a patient or a healthcare provider that is connected to that patient
+\end{itemize}
+
+\section{Patient side}
+\begin{itemize}
+\item Patient accounts are exclusively for the use of patients
+\item A patient account may only be allowed to connect with a healthcare provider acccount
+\item No patient information will be available to other patient accounts
+\item Patient information is only available to healthcare providers to which the patient is connected with
+\item May organize their medical records
+\item May manage their privacy settings
+\item May connect, message, and interact with their healthcare providers
+\end{itemize}
+
+\section{Healthcare Provider Side}
+\begin{itemize}
+\item Healthcare provider accounts are exclusively for the use of healthcare providers
+\item A healthcare provider account may connect with either patient accounts or other healthcare provider accounts (specialists or colleagues)
+\item May view a listing of all their patient contacts
+\item May view the available medical records of an individual patient
+\item May schedule appointments
+\item May message, interact and connect with patients and other healthcare providers
+\end{itemize}
+
 \chapter{System Requirements}
-<<<<<<< HEAD
-=======
 The system requirements are as follows:
 \begin{itemize}
 \item The system will be web-based
@@ -41,9 +105,8 @@ The system requirements are as follows:
 \item The user interface must be able to upload files to the server
 \end{itemize}
 
->>>>>>> 59b0df45acaf7d0e07b88eeccc6fe6df38f0f743
 \chapter{Current Status and Future Work}
-
+\paragraph{Messaging} Currently it is implemented by using users' existing email addresses, and emailing via the website. We have already implemented the messages table in the database in case for future interests to have our own messaging system.
 
 \part{Design}
 
@@ -109,14 +172,13 @@ It's really hard to set a limit between content and presentation in an environme
 \section{Server Design}
 
 
-\section{Server Design}
 
 \chapter{Implementation View}
-[ doxygen here.. ]
+This chapter will show in more details how we implemented all the requirements using the design that we discussed in the previous chapter. We will show the full database, MVC, interface and server implementation, along with a list of all the assumptions that we made during the development phase. We will also present a list of the tests that we made.
 
 \section{Database implementation}
 \subsection{Tables}
-We will list all the tables... bla bla bla... for each table we will describe all the attributes... bla bla bla...
+Our database is composed of ten tables: Messages, Accounts, Patient\_Account, HCP\_Account, Appointments, Medical\_Record, Payment, Permission, P\_D\_Connection, and D\_D\_Connection.  For each table, we will present a descryption of the table and the attributes in it, as well as its relationship with the other tables its connected with.
 
 \subsubsection{Messages}
 Holds all of the information regarding messages sent from patient to hcp or vice versa. It has two total 1:N relationships with the Accounts entity.
@@ -267,11 +329,62 @@ We made these remarkable assumption during the implementation of the MVC.
 In the design description we gave a high-level view of the interface, without going into details. We have seen that the UI is composed by tree 'fixed' components and two 'dynamic' components. Now we will show how those components all fit together into an actual code and how server and client are aware of the interface and can interact with it.
 
 \subsection{Layouts}
-Client-side and server-side... how the interface design is handled in the server and how XHTML and CSS are used to provide the interface. Talk about class "Layout" server-side.
-\subsection{JQuery}
-Give fancy effects... handle Ajax... 
+A layout, as we believe, is just a way to reorganize spatially the content of a web page. Since all the XHTML content is provided to the client without any presentational description, a page without a layout would be a simple flow of objects (text, lists, tables and images) in cascade.
+
+We used CSS to create a layout out of an XHTML document. We also used some Javascript when we wanted to add some other features to that layout. For example, you can see that every page is showed gradually and smoothly when loaded.
+
+\paragraph{Layout folder}
+All layouts styles are contained into the folder /layouts. This contains a specific folder for each specific layout. At this moment of implementation we have one layout called ''faux-8-2-col''\footnote{We used a free css layout from http://www.code-sucks.com/css\%20layouts/}. Inside its folder you can see all the .css and .js files necessary to describe \emph{position}, \emph{color}, \emph{size} and so forth, of every object in the XHTML page. It's also the layout that decides whether using Ajax or not, because we believe that the XHR functionality is a layout matter.
+
+\paragraph{Template XHML files}
+For each of these folders there is a specific XHTML template file that organize the five components of the interface into an XML tree. These files are contained into the folder
+\begin{verbatim}
+/system/application/views/layouts
+\end{verbatim}
+Every template file contains the five interface components: 'header', 'navbar', 'mainpane', 'sidepane' and 'footer'. We decided to use the template parser provided by CodeIgniter, so that the XHTML contains only references to these components.
+
+
+\paragraph{Server Layout management}
+On the server side, all the logic for the layout has been implemented in the class \begin{verbatim}/system/application/libraries/layout.php
+\end{verbatim}
+This class contains all the possible layouts. There is a method to set the current layout and a method get all the XHTML for the current layout. This method only needs an array with two elements: a string to put inside the 'mainpane' and another one to put inside the 'sidepane' of the interface, as we already discussed. Then, it will simply call the CodeIgniter template parser to insert all the content into the template.
+
+\paragraph{JQuery}
+We use JQuery for at least three reasons: provide 'fancy' effects to the page, implement some client checks on forms and make Ajax requests. JQuery is a framework for Javascript that makes all of these features easy to implement.
+
 \subsection{Ajax interaction between client and server}
-Talk about class="ajaxlink" and JQuery triggers. Talk about class "Ajax" server-side.
+It is clear that if the client does an XMLHTTPRequest the server should be aware of this, and answer correctly. This is what this class does
+\begin{verbatim}/system/application/libraries/ajax.php
+\end{verbatim}
+It checks whether the request has been received via XHR (Ajax) or not. If the request was made using XHR, the method view() will then send to the client only the dynamic content, i.e. the 'mainpane' and the 'sidepane'. Otherwise, it will call the layout class to get the whole interface and send it to the client. It takes an array with two strings: the content for the mainpane and the content for the sidepane.
+
+In case of an Ajax response, it will be encapsulated into a JSon array. This class also handles redirections. In case of a redirection via Ajax, a specific element with name 'redirect' will be inserted into the JSon array, containing the URL to redirect to.
+
+\subsection{Interaction between Controllers and Layout/Ajax}
+All the controllers will create their views into two strings, one for the 'mainpane', the other for the 'sidepane'. At the end of their computation they will call the class 'Ajax', passing those two strings, in order to send a response back to the client.
+
+
+\section{Authorization}
+We already mentioned how the login phase works. In this section we will show in details how we use http cookies to memorize the authorized state of clients.
+\subsection{Session cookie}
+After a client successfully logs in (after its e-mail and password match a row in the database), a session cookie is created. This cookie will contain this information:
+\begin{itemize}
+\item The account\_id of the user
+\item The type of the user (either 'patient' or 'hcp')
+\item The email of the user
+\item His/her first name
+\item His/her last name\footnote{First name and last name may not be useful if we decide to change the definition of HCPs to 'group of people' instead of individuals. But this would require a little change only in the database and its model. The session cookie may have these two fields empty, or add extra fields.}
+\end{itemize}
+We also used a functionality in CodeIgniter, to save the session\_id into a special table in the database. Those tuples will be handled automatically by CodeIgniter every time a user creates or sends a session cookie.
+
+\paragraph{Auth class}
+After the cookie will be created, the client will send it to the user in each https request. In this way the server can remember the status of every connected clients. To automatically read the session cookie at each client request, we implemented a class called Auth in
+\begin{verbatim}
+/system/application/libraries/auth.php
+\end{verbatim}
+An instance of this class is created automatically at the instantiation of each controller class. Its constructor will read the session cookie and store its content for future, rapid access by the controller.
+
+
 
 \section{Tests}
 
@@ -301,53 +414,12 @@ The each controller's functions were tested in several ways to anticipate possib
 \end{itemize}
 \end{itemize}
 
+
 \subsection{Database Tests}
+The database was initially tested with simple SELECT * queries to see if the database tables were created and loaded correctly using the automated scripts\footnote{The bash script start\_everything.sh was used to automate the database creation process.  It used create\_tables.sql and load\_data.sql to create and populate the database.}. The database was populated with test data from ten different files (approximately one for every table)\footnote{These test files are: accounts.txt, appointments.txt, d\_d\_connection.txt, hcp\_account.txt, medical\_records.txt, messages.txt, patient\_account.txt, payment.txt, p\_d\_connection.txt, and permissions.txt.}.  Then as the functions in each model were being implemented, the sql queries for each function would first be tested in the database to make sure that the correct result was returned.  Only after the sql query was tested and returned the correct information to the function in the model, would we determine that the function was fully implemented.  Additionaly, error checking is done in each function to determine if an sql query sent to the database was successfully executed.
 
-In order to test the database schema and the Model View Controller design implementation we had to load the database with test data.  The test data is formated exactly so that it fits each database table schema.  There are ten different files with test data(approximately one for every table):\\
+All of the test data files that are used to populate the database not only provide testing capabilities for the models, but also for the views and the controllers since they are interrelated.  For a list of all of the tests that the controllers test, read section 7.4.1 Controller Tests.
 
-\textbf{accounts.txt:}
-\begin{itemize}
-\item Test login
-\item Test creation of an account (patient or healthcare provider)
-\item Test if account is active or not
-\item Test account updates
-\item Test creation of a medical record
-\item Test permissions to a medical record
-\end{itemize}
-
-\textbf{appointments.txt}
-\begin{itemize}
-\item Test creation of an appointment
-\item Test acception of an appointment
-\item Test cancelation of an appointment
-\item Test rescheduling of an appointment
-\item Test if an appointment belongs to a patient
-\item Test if an appointment belongs to a healthcare provider
-\item Test if we can view all, upcoming, and past appointments for a patien
-\item Test if we can view all, upcoming, and past appointments for a heathcare provier
-\end{itemize}
-
-\textbf{d\_d\_connection.txt}
-\begin{itemize}
-\item Test if we can see all of the colleagues of a doctor
-\item Test the incoming requests a heathcare provider gets from other healthcare providers
-\item Test the outgoing requests a healthcare provider has to other healthcare providers
-\item Test if a healthcare provider can add, accept, and delete another healthcare provider
-\item Test if a healthcare provider can delete pending requests
-\item Test if a healthcare provider is connected to another healthcare provider
-\end{itemize}
-
-\textbf{payment.txt}
-\begin{itemize}
-\item Test if a bill belongs to a patient
-\item Test if a bill was issued by a healthcare provider
-\item Test if we can view all, upcoming, and past bills for a patient
-\item Test if we can view all, upcoming, and past bills issued by a healthcare provider
-\item Test if we can view bills that have been paid as well as not paid
-\item Test if a healthcare provider can issue a bill to a patient
-\item Test if a patient can pay for a bill
-\item Test if only a healthcare provider can delete a bill
-\end{itemize}
 
 
 \part{Operating Manual}
