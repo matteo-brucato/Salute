@@ -368,7 +368,7 @@ class Appointments_model extends Model {
 		//this->db-update('Appointments', $data, array('appointment_id' => $inputs));
 		
 		$sql = "UPDATE appointments
-				SET date_time = ?
+				SET date_time = ?, approved = FALSE
 				WHERE appointment_id = ?";
 		$query = $this->db->query($sql, array($inputs['date_time'], $inputs['appointment_id']));
 		
