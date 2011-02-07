@@ -173,11 +173,11 @@ class Appointments extends Controller {
 				$mainview = 'Query error';
 				$sideview = '';
 		}
-		elseif ( $relust === -5){
+		elseif ( $result === -5){
 				$mainview = 'Appointment ID does not exist!';
-				$sideview = ''
+				$sideview = '';
 		}
-		elseif ( $result ==== TRUE){
+		elseif ( $result === TRUE){
 				/* @to do: pop up-- are you sure you want to cancel appointment?*/
 				$results = $this->appointments_model->cancel(array($apt_id));
 			
@@ -225,7 +225,7 @@ class Appointments extends Controller {
 		
 		// Get appointment tuple from the model
 		$app = $this->appointments_model->get_appointment(array($apt_id));
-		if ($hcp === -1) {
+		if ($app === -1) {
 			$this->ajax->view(array('Query error',''));
 			return;
 		}
@@ -242,8 +242,8 @@ class Appointments extends Controller {
 	}
 	
 	/**
-	 * fn reschedule 
-	 * reschedule an existing appointment (date/time)
+	 * Reschedule an existing appointment (date/time)
+	 * 
 	 * @param apt_id, the appointment id number to modifty in database
 	 * @input -- new appointment date/time
 	 * @return redirect to list of upcoming appointments || error(not their appointment)
@@ -252,7 +252,7 @@ class Appointments extends Controller {
  	 * @MATEO:
 	 * 	I ASSUME THE VIEW NAME WILL BE reschedule	 
 	 * */
-	function reschedule_do($apt_id){
+	function reschedule_do($apt_id) {
 		$this->auth->check_logged_in();
 		
 		if ($this->auth->get_type() === 'hcp'){
@@ -263,7 +263,7 @@ class Appointments extends Controller {
 		if($this->appointments_model->is_myappointment(array($this->auth->get_account_id(),$apt_id))){
 			$result = $this->appointments_model->get_appointment(array($apt_id));
 			
-			$this->ajax->view(array($this->load->view('mainpane/reschedule',$result, TRUE),''));
+			//$this->ajax->view(array($this->load->view('mainpane/reschedule',$result, TRUE),''));
 			$new_time = $this->input->post('appointment_time');
 			$results = $this->appointments_model->reschedule(array('appointment_id' => $apt_id, 'date_time' => $new_time )); 
 			
@@ -341,8 +341,8 @@ class Appointments extends Controller {
 	 * */
 	function request_do($account_id){
 		$this->auth->check_logged_in();
-		$this->load->model('appointments_model');
 		$this->load->model('patient_model');
+		$this->load->model('hcp_model');
 		$this->load->model('connections_model');
 		
 		if ($this->auth->get_type() === 'hcp')
@@ -362,7 +362,7 @@ class Appointments extends Controller {
 		{
 			
 			//test to see if the person loged in is connected with the hcp
-			$is_connected = $this->connections_model->is_connected_with(array($account_id, $this->auth->get_acccount_id()));
+			$is_connected = $this->connections_model->is_connected_with($account_id, $this->auth->get_account_id());
 			
 			if($is_connected === -1)
 			{
@@ -372,25 +372,24 @@ class Appointments extends Controller {
 			elseif ($is_connected === TRUE)
 			{
 				
-				$this->ajax->view(array($this->load->view('mainpane/request', '' , TRUE), ''));
-				$hcp_id = $this->input->post('hcp_id'); // @todo:fix this -- view should pass this to me based on the tuple they click..
 				$desc = $this->input->post('description');
 				$time = $this->input->post('time');
 				
 				//test to see if the time and description are TRUE and not NULL
 				if( $desc !== FALSE && $desc !== '' && $time !== FALSE && $time !== '')
 				{
-					$results = $this->appointments_model->request(array( 'patient_id' => $this->auth->get_account_id(), 
-											'hcp_id' => $account_id, 
-											'desc' => $desc ,
-											'time' => $time ));					 
+					$results = $this->appointments_model->request(array($this->auth->get_account_id(), 
+											$account_id, 
+											$desc ,
+											$time ));					 
 					switch ($results)
 					{
 						case -1:
-						$mainview = 'Query error!';
+							$mainview = 'Query error!';
+							break;
 						default:
-						$mainview = 'Your request has been submitted.';
-						break;
+							$mainview = 'Your request has been submitted.';
+							break;
 					}
 				}
 				else
@@ -412,7 +411,7 @@ class Appointments extends Controller {
 		}
 			
 		// Give results to the client
-		$this->ajax->view(array($mainview,''));					
+		$this->ajax->view(array($mainview,''));
 	}
 	
 	/**
