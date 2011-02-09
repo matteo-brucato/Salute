@@ -228,6 +228,8 @@ class Profile extends Controller {
 	/* *	
 	 * Updates database with user's editted personal information
 	 * @return confirmation statement + email || error
+	 * 
+	 * @todo Add input checking
 	 * */
 	function edit_do() {
 		$this->auth->check_logged_in();
@@ -273,9 +275,14 @@ class Profile extends Controller {
 			return;
 		}
 		
-		$view = 'Your changes have been made. Please <a href="https://'.$_SERVER['SERVER_NAME'].
-				'/home/logout/">logout</a> and log back in for changes to take full effect.';
-				
+		$view = 'Your changes have been made.';
+		
+		// Update session cookie
+		$this->session->set_userdata(array(
+			'first_name' => $this->input->post('firstname'),
+			'last_name' => $this->input->post('lastname')
+		));
+		
 		$this->ajax->view(array($view,''));
 	}
 }

@@ -67,7 +67,7 @@ class Appointments extends Controller {
 		}
 		
 		// Give results to the client
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ajax->view(array($mainview, ''));
 	}
 
 	/**
@@ -109,7 +109,7 @@ class Appointments extends Controller {
 		}
 		
 		// Give results to the client
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ajax->view(array($mainview, ''));
 	}
 
 
@@ -152,7 +152,7 @@ class Appointments extends Controller {
 		}
 		
 		// Give results to the client
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ajax->view(array($mainview, ''));
 	}
 
 	/**
@@ -208,7 +208,7 @@ class Appointments extends Controller {
 		}
 		
 		// Give results to the client
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ajax->view(array($mainview, ''));
 	}
 	
 	/**
@@ -330,7 +330,7 @@ class Appointments extends Controller {
 			return;
 		}
 		// Give results to the client
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ajax->view(array($mainview, ''));
 	}
 
 	
@@ -453,7 +453,7 @@ class Appointments extends Controller {
 		}
 			
 		// Give results to the client
-		$this->ajax->view(array($mainview,''));
+		$this->ajax->view(array($mainview, ''));
 	}
 	
 	/**
@@ -486,7 +486,7 @@ class Appointments extends Controller {
 			}
 			
 		// Give results to the client
-		$this->ajax->view(array($mainview,$sideview));	
+		$this->ajax->view(array($mainview, ''));
 		 
 	 }
 }

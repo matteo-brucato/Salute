@@ -12,7 +12,7 @@ class Settings extends Controller {
 
 	function __construct(){
 		parent::Controller();
-		$this->load->library('ajax');	
+		$this->load->library('ajax');
 		$this->load->library('auth');
 	}
 
@@ -140,6 +140,9 @@ class Settings extends Controller {
 				'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
 
 			$this->email->send();
+			
+			// Update session cookie
+			$this->session->set_userdata(array('email' => $email));
 			
 			$this->ajax->view(array('Your email has been changed. A confirmation has been sent to your email.',''));
 			
