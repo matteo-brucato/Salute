@@ -58,6 +58,8 @@ CREATE TABLE patient_account(
 	tel_number VARCHAR(11),
 	fax_number VARCHAR(11),
 	address TEXT,
+	picture_name TEXT,
+	auto_connection BOOLEAN DEFAULT FALSE,
 	PRIMARY KEY(account_id),
 	FOREIGN KEY (account_id) REFERENCES accounts(account_id)
 );
@@ -79,6 +81,7 @@ CREATE TABLE hcp_account(
 	specialization text,
 	org_name VARCHAR(30),
 	address TEXT,
+	picture_name TEXT,
 	PRIMARY KEY(account_id),
 	FOREIGN KEY (account_id) REFERENCES accounts(account_id)
 );
@@ -105,7 +108,9 @@ CREATE TABLE medical_record(
 	account_id SERIAL NOT NULL, 
 	issue TEXT NOT NULL,
 	suplementary_info TEXT,
-	file_path TEXT NOT NULL,
+	file_name TEXT NOT NULL,
+	description TEXT NOT NULL,
+	date_created TIMESTAMP DEFAULT now(),
 	PRIMARY KEY (medical_rec_id),
 	FOREIGN KEY (patient_id) REFERENCES patient_account(account_id),
 	FOREIGN KEY (account_id) REFERENCES accounts(account_id)	
@@ -143,6 +148,34 @@ CREATE TABLE permission(
 
 );
 
+
+--Refers Table
+CREATE TABLE refers(
+	referal_id SERIAL NOT NULL,
+	refering_id SERIAL NOT NULL,
+	is_refered_id SERIAL NOT NULL,
+	patient_id SERIAL NOT NULL,
+	date_time TIMESTAMP DEFAULT now(),
+	PRIMARY KEY(referal_id),
+	FOREIGN KEY (refering_id) REFERENCES hcp_account(account_id),
+	FOREIGN KEY (is_refered_id) REFERENCES hcp_account(account_id),
+	FOREIGN KEY (patient_id) REFERENCES patient_account(account_id)
+);
+
+
+--Group Table
+CREATE TABLE groups(
+	group_id SERIAL NOT NULL,
+	account_id SERIAL NOT NULL,
+	name TEXT NOT NULL,
+	description TEXT NOT NULL,
+	public_private VARCHAR(1) NOT NULL,
+	group_type VARCHAR(1) NOT NULL,
+	PRIMARY KEY(group_id),
+	FOREIGN KEY (account_id) REFERENCES accounts(account_id)	
+);
+	
+
 --
 --RELATIONSHIP TABLES
 --
@@ -168,6 +201,17 @@ CREATE TABLE d_d_connection(
 	PRIMARY KEY (requester_id, accepter_id),
 	FOREIGN KEY (requester_id) REFERENCES hcp_account(account_id),
 	FOREIGN KEY (accepter_id) REFERENCES hcp_account(account_id)
+);
+
+
+--Is In Table
+CREATE TABLE is_in(
+	account_id SERIAL NOT NULL,
+	group_id SERIAL NOT NULL,
+	permissions VARCHAR(1),
+	PRIMARY KEY (account_id, group_id),
+	FOREIGN KEY (account_id) REFERENCES accounts(account_id),
+	FOREIGN KEY (group_id) REFERENCES groups(group_id)
 );
 
 
