@@ -12,7 +12,7 @@ class Profile extends Controller {
 
 	function __construct(){
 		parent::Controller();
-		$this->load->library('ajax');
+		$this->load->library('ui');
 		$this->load->library('auth');
 	}
 
@@ -28,21 +28,21 @@ class Profile extends Controller {
 		$this->auth->check_logged_in();
 
 		if ($this->auth->get_type() === 'patient') {
-			$this->ajax->view(array(
+			$this->ui->set(array(
 				$this->load->view('mainpane/patient-profile', '', TRUE),
 				$this->load->view('sidepane/patient-profile', '', TRUE)
 			));
 		}
 
 		else if ($this->auth->get_type() === 'hcp') {
-			$this->ajax->view(array(
+			$this->ui->set(array(
 				$this->load->view('mainpane/hcp-profile', '', TRUE),
 				$this->load->view('sidepane/hcp-profile', '', TRUE)
 			));
 		}
 
 		else {
-			show_error('Access to this page not allowed', 500);
+			$this->ui->error('Access to this page not allowed', 500);
 			return;
 		}
 
@@ -63,19 +63,19 @@ class Profile extends Controller {
 		$this->auth->check_logged_in();
 
 		if ($this->auth->get_type() === 'patient') {
-			$this->ajax->view(array(
+			$this->ui->set(array(
 				$this->load->view('mainpane/patient-info', '', TRUE),
 				$this->load->view('sidepane/patient-profile', '', TRUE)
 			));
 		}
 		else if ($this->auth->get_type() === 'hcp') {		
-			$this->ajax->view(array(
+			$this->ui->set(array(
 				$this->load->view('mainpane/hcp-info', '', TRUE),
 				$this->load->view('sidepane/hcp-profile', '', TRUE)
 			));		
 		}	
 		else{
-			show_error('Unknown Error.', 500);
+			$this->ui->error('Unknown Error.', 500);
 			return;
 		}
 	}
@@ -106,13 +106,13 @@ class Profile extends Controller {
 		$this->auth->check_logged_in();
 		// check that id is an intenger
 		if ($id == NULL) {
-			$this->ajax->redirect('/profile');
-			//$this->ajax->show_app_error();
+			$this->ui->redirect('/profile');
+			//$this->ui->show_app_error();
 			return;
 		}
 		
 		if (!is_numeric($id)) {
-			show_error('Invalid id type.',500);
+			$this->ui->error('Invalid id type.',500);
 			return;
 		}
 			
@@ -129,23 +129,23 @@ class Profile extends Controller {
 			$info = $this->patient_model->get_patient(array($id));
 			$id_type = 'patient';
 		} else {
-			show_error('The specified <i>id</i> does not correspond
+			$this->ui->error('The specified <i>id</i> does not correspond
 			neither to an HCP nor a patient');
 			return;
 		}
 		
 		if( $info === -1 ){
-			$this->ajax->view(array('Query error grom get_doctor/get_patient function!',''));
+			$this->ui->set(array('Query error grom get_doctor/get_patient function!',''));
 			return;
 		}
 		
 		// check that logged in user is a hcp. 
 		/*if ($this->auth->get_type() == 'hcp' && $id_type != 'patient') {
-			show_error('Sorry! An HCP can only view profiles of connected patients');
+			$this->ui->error('Sorry! An HCP can only view profiles of connected patients');
 			return;
 		}*/
 		if ($this->auth->get_type() == 'patient' && $id_type == 'patient') {
-			show_error('Sorry! Patients cannot be connected with other patients',500);
+			$this->ui->error('Sorry! Patients cannot be connected with other patients',500);
 			return;
 		}
 	
@@ -153,10 +153,10 @@ class Profile extends Controller {
 		$is_my_friend = $this->connections_model->is_connected_with($this->auth->get_account_id(), $id);
 		
 		if ($is_my_friend === -1){
-			$this->ajax->view(array('Query error from is_connected_with function!',''));
+			$this->ui->set(array('Query error from is_connected_with function!',''));
 			return;		
 		}else if (!$is_my_friend && $id_type === 'patient' ){
-			$this->ajax->view(array('You are not connected. Permission Denied.',''));
+			$this->ui->set(array('You are not connected. Permission Denied.',''));
 			return;		
 		}
 
@@ -166,25 +166,25 @@ class Profile extends Controller {
 		} else if ($this->auth->get_type() == 'patient') {
 			$sideview = $this->load->view('sidepane/patient-profile', '' , TRUE);
 		} else {
-				show_error('Internal Logic Error.',500);
+				$this->ui->error('Internal Logic Error.',500);
 				return;
 		}
 		
 		// Load up the right view
 		if ($id_type == 'hcp') {
-			$this->ajax->view(array(
+			$this->ui->set(array(
 				$this->load->view('mainpane/see_hcp',
 					array('info' => $info[0], 'is_my_friend' => $is_my_friend), TRUE), 
 				$sideview
 			));
 		} else if($id_type == 'patient') { // looking for a patient profile
-			$this->ajax->view(array(
+			$this->ui->set(array(
 				$this->load->view('mainpane/see_patient',
 					array('info' => $info[0], 'is_my_friend' => $is_my_friend), TRUE),
 				$sideview
 			));
 		} else {
-				show_error('Internal Logic Error.',500);
+				$this->ui->error('Internal Logic Error.',500);
 				return;			
 		}
 	}
@@ -206,20 +206,20 @@ class Profile extends Controller {
 			$res = $this->hcp_model->get_hcp(array($this->auth->get_account_id()));
 			$mainview = 'mainpane/edit_hcp_info';
 		} else {
-			show_error('Server error');
+			$this->ui->error('Server error');
 			return;
 		}
 		
 		if ($res === -1) {
-			show_error('Query error');
+			$this->ui->error('Query error');
 			return;
 		}
 		else if (count($res) <= 0) {
-			show_error('Server error');
+			$this->ui->error('Server error');
 			return;
 		}
 		
-		$this->ajax->view(array(
+		$this->ui->set(array(
 			$this->load->view($mainview, array('curr_info' => $res[0]), TRUE),
 			''
 		));
@@ -266,12 +266,12 @@ class Profile extends Controller {
 														)); 
 		}
 		else{
-			show_error('Server Error.', 500);
+			$this->ui->error('Server Error.', 500);
 			return;
 		}
 		
 		if ($res === -1) {
-			$this->ajax->view(array('Query error',''));
+			$this->ui->set(array('Query error',''));
 			return;
 		}
 		
@@ -283,7 +283,7 @@ class Profile extends Controller {
 			'last_name' => $this->input->post('lastname')
 		));
 		
-		$this->ajax->view(array($view,''));
+		$this->ui->set(array($view,''));
 	}
 }
 /** @} */

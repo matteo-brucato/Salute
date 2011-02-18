@@ -5,4 +5,7 @@ if ($this->auth->get_type() === 'patient') {
 else if ($this->auth->get_type() === 'hcp') {
 	require('hcp-profile.php');
 }
+else {
+	require('forms/login.php');
+}
 ?>

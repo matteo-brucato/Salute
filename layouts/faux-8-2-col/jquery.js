@@ -117,22 +117,26 @@ function execute_ajax(href) {
 			//}
 			//alert(data.redirect);
 			
-			if (data.redirect) {
+			if (data.redirect != "no") {
 				// data.redirect contains the string URL to redirect to
 				window.location.href = data.redirect;
 				//$(window.location).attr('href', data.redirect);
 				return;
 			}
 			
-			if (data.sidepane != "") {
+			if (data.sidepane != null) {
 				$("#rightcolumn").slideUp(20).empty().append(data.sidepane);
 				$("#rightcolumn").animate({"height": "toggle", "opacity": "toggle"}, 200);
 			}
-			if (data.mainpane != "") {
+			if (data.mainpane != null) {
 				$("#leftcolumn").empty().append(data.mainpane);
 				$("#leftcolumn").animate({"height": "toggle", "opacity": "toggle"}, 200);
 			} else {
 				$("#leftcolumn").animate({"height": "toggle", "opacity": "toggle"}, 200);
+			}
+			if (data.header != null) {
+				$("#header").slideUp(20).empty().append(data.header);
+				$("#header").animate({"height": "toggle", "opacity": "toggle"}, 200);
 			}
 			//$("#leftcolumn").append(data.mainpane);
 			//$("#leftcolumn").animate({"height": "toggle", "opacity": "toggle"}, 200);

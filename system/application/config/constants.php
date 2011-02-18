@@ -41,11 +41,7 @@ define('IS_AJAX', isset($_SERVER['HTTP_X_REQUESTED_WITH'])
 
 define('SITENAME', "Salute");
 
-/* Model return values */
-define('QUERY_FALSE', 0);
-define('QUERY_TRUE', 1);
-define('QUERY_ERROR', -1);
-define('QUERY_DONE', 2);
+define('DEBUG', FALSE);
 
 /* End of file constants.php */
 /* Location: ./system/application/config/constants.php */

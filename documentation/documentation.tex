@@ -557,6 +557,8 @@ An instance of this class is created automatically at the instantiation of each 
 
 
 
+
+\part{Verification}
 \section{Tests}
 
 \subsection{Controller Tests}
@@ -592,6 +594,8 @@ The each controller's functions were tested in several ways to anticipate possib
 The database was initially tested with simple SELECT * queries to see if the database tables were created and loaded correctly using the automated scripts\footnote{The bash script start\_everything.sh was used to automate the database creation process.  It used create\_tables.sql and load\_data.sql to create and populate the database.}. The database was populated with test data from ten different files (approximately one for every table)\footnote{These test files are: accounts.txt, appointments.txt, d\_d\_connection.txt, hcp\_account.txt, medical\_records.txt, messages.txt, patient\_account.txt, payment.txt, p\_d\_connection.txt, and permissions.txt.}.  Then as the functions in each model were being implemented, the sql queries for each function would first be tested in the database to make sure that the correct result was returned.  Only after the sql query was tested and returned the correct information to the function in the model, would we determine that the function was fully implemented.  Additionally, error checking is done in each function to determine if an sql query sent to the database was successfully executed.
 
 All of the test data files that are used to populate the database not only provide testing capabilities for the models, but also for the views and the controllers since they are interrelated.  For a list of all of the tests that the controllers test, read subsection \ref{subsec:controllertests}.
+
+
 
 
 \part{User Manual}

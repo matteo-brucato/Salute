@@ -12,7 +12,7 @@ class Search extends Controller {
 
 	function __construct() {
 		parent::Controller();
-		$this->load->library('ajax');
+		$this->load->library('ui');
 		$this->load->library('auth');
 	}
 
@@ -21,7 +21,7 @@ class Search extends Controller {
 	 */
 	function index() {
 		$this->auth->check_logged_in();
-		$this->ajax->view(array(
+		$this->ui->set(array(
 			$this->load->view('mainpane/search_form', '' , TRUE),
 			''
 		));
@@ -50,7 +50,7 @@ class Search extends Controller {
 			}
 		}
 		
-		$this->ajax->view(array(
+		$this->ui->set(array(
 			$this->load->view('mainpane/allhcps', array('doc_list' => $hcps) , TRUE),
 			''
 		));

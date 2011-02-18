@@ -23,6 +23,13 @@ class Auth {
 	private $last_name;
 	private $CI;
 	
+	const CurrIsLoggedin	= 0;	// current user: no other params
+	const CurrIsPatient		= 1;	// current user: no other params
+	const CurrIsHcp			= 2;	// current user: no other params
+	const AreConnected		= 3;	// requires two id's
+	const IsPatient			= 4;	// requires one id
+	const IsHcp				= 5;	// requires one id
+	
 	function __construct() {
 		$CI =& get_instance();
 		$this->account_id	= $CI->session->userdata('account_id');
@@ -41,6 +48,42 @@ class Auth {
 			$this->first_name != FALSE &&
 			$this->last_name != FALSE
 		);
+	}
+	
+	/**
+	 * Checks if ALL the restrictions are satisfied. If one of them is not,
+	 * it will return the check number not satisfied. If all of them are
+	 * satisfied it returs TRUE
+	 * @return TRUE if all checks are satisfied. Otherwise it returns
+	 * the restriction not satisfied.
+	 * */
+	function check($perm = array()) {
+		for ($i = 0; $i < count($perm); $i++) {
+			switch ($perm[$i]) {
+				case CurrIsLoggedin:
+					if (!$this->is_logged_in()) return CurrIsLoggedin;
+					break;
+				case CurrIsPatient:
+					if (!$this->is_patient()) return CurrIsPatient;
+					break;
+				case CurrIsHcp:
+					if (!$this->is_hcp()) return CurrIsHcp;
+					break;
+				case IsPatient:
+					/** @todo */
+					$i++;
+					break;
+				case IsHcp:
+					/** @todo */
+					$i++;
+					break;
+				case AreConnected:
+					/** @todo */
+					$i += 2;
+					break;
+			}
+		}
+		return TRUE;
 	}
 	
 	/**

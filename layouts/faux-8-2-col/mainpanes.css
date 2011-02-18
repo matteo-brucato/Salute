@@ -48,3 +48,22 @@ td.tables-1-selected-tds {
 .id_keeper {
 	display: none;
 }
+
+
+.message_hdr, .error_type {
+	margin-bottom: 20px;
+}
+.message_body {
+	display: block;
+	background-color: #D1DBDB;
+	font-style: italic;
+	padding: 10px;
+	border: 1px solid #ABBEBE;
+}
+.error_body {
+	display: block;
+	background-color: #D1DBDB;
+	font-style: italic;
+	padding: 10px;
+	border: 1px solid red;
+}
