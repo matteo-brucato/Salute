@@ -3,7 +3,7 @@ class Example extends Controller {
 	
 	function __construct() {
 		parent::Controller();
-		$this->load->library('ajax');
+		$this->load->library('ui');
 		$this->load->library('auth');
 	}
 	
@@ -13,10 +13,14 @@ class Example extends Controller {
 		$this->load->model('connections_model');
 		$results = $this->hcp_model->get_hcps();
 		// Example of changing both panels (main AND side)
-		$this->ajax->view(array(
+		$this->ui->set(array(
 			$this->load->view('mainpane/allhcps', array('doc_list' => $results) , TRUE),
 			$this->load->view('sidepane/patient-profile', '', TRUE)
 		));
+	}
+	
+	function none() {
+		
 	}
 	
 	function different()

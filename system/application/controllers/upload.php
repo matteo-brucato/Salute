@@ -12,7 +12,7 @@ class Upload extends Controller {
 
 	function __construct(){
 		parent::Controller();
-		$this->load->library('ajax');
+		$this->load->library('ui');
 		$this->load->library('auth');
 		$this->load->helper('download');
 	}
@@ -22,8 +22,8 @@ class Upload extends Controller {
 	 */ 
 	function index()
 	{
-		//$this->ajax->redirect('/medical_records/upload');
-		show_error('Access denied');
+		//$this->ui->redirect('/medical_records/upload');
+		$this->ui->error('Access denied');
 	}
 	
 	/**
@@ -34,7 +34,7 @@ class Upload extends Controller {
 	 * can upload a file
 	 * */
 	function medical_record($patient_id = FALSE) {
-		$this->output->enable_profiler(TRUE);
+		if (DEBUG) $this->output->enable_profiler(TRUE);
 		$this->auth->check_logged_in();
 		$this->load->model('patient_model');
 		$this->load->model('connections_model');
@@ -44,12 +44,12 @@ class Upload extends Controller {
 		$issue = $this->input->post('issue');
 		$info = $this->input->post('info');
 		if ($patient_id == FALSE || $issue == '' || $issue == FALSE) {
-			show_error('Impossible to upload, missing some inputs');
+			$this->ui->error('Impossible to upload, missing some inputs');
 		}
 		
 		// Check if $patient_id actually refers to a patient
 		if (! $this->patient_model->is_patient($patient_id)) {
-			show_error('This id does not refer to a patient');
+			$this->ui->error('This id does not refer to a patient');
 			return;
 		}
 		
@@ -57,7 +57,7 @@ class Upload extends Controller {
 		if ($patient_id !== $this->auth->get_account_id()) {
 			// Check if I'm an HCP connected with this patient
 			if (! $this->connections_model->is_connected_with($patient_id, $this->auth->get_account_id())) {
-				show_error('You don\'t have permissions to upload a medical record for this patient');
+				$this->ui->error('You don\'t have permissions to upload a medical record for this patient');
 				return;
 			}
 		}
@@ -71,7 +71,7 @@ class Upload extends Controller {
 		// Check if the patient's folder already exists
 		if (! is_dir($config['upload_path'])) {
 			if (mkdir($config['upload_path'], 0777) == FALSE) {
-				show_error('Impossible to upload, impossible to create new folder');
+				$this->ui->error('Impossible to upload, impossible to create new folder');
 				return;
 			}
 		}
@@ -83,7 +83,7 @@ class Upload extends Controller {
 		if (! $this->upload->do_upload()) {
 			//$error = array('error' => $this->upload->display_errors());
 			//$mainview = $this->load->view('upload_form', $error);
-			show_error($this->upload->display_errors());
+			$this->ui->error($this->upload->display_errors());
 			return;
 		}
 		
@@ -109,7 +109,7 @@ class Upload extends Controller {
 				break;
 		}
 		
-		$this->ajax->view(array($mainview, ''));
+		$this->ui->set(array($mainview, ''));
 	}
 }
 /**@}*/

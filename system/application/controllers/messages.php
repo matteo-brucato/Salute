@@ -14,7 +14,7 @@ class Messages extends Controller {
 
 	function __construct(){
 		parent::Controller();
-		$this->load->library('ajax');	
+		$this->load->library('ui');	
 		$this->load->library('auth');
 		// $this->type = $this->session->userdata('type');	
 	}
@@ -68,7 +68,7 @@ class Messages extends Controller {
 		$is_hcp = $this->hcp_model->is_hcp(array($account_id));
 		
 		if($is_patient === -1 || $is_hcp === -1){
-			show_error('Query Error!',500);
+			$this->ui->error('Query Error!',500);
 			return;
 		}
 		if($is_patient === TRUE)
@@ -76,16 +76,16 @@ class Messages extends Controller {
 		else if ($is_hcp === TRUE)
 			$res = $this->hcp_model->get_hcp(array($account_id));			
 		else{
-			show_error('Internal Server Error',500);
+			$this->ui->error('Internal Server Error',500);
 			return;
 		}
 		$acc = $this->account_model->get_account_email(array($account_id));
 		
 		if($res === -1 || $acc === -1){
-			show_error('Query Error!',500);
+			$this->ui->error('Query Error!',500);
 			return;
 		}
-		$this->ajax->view(array($this->load->view('mainpane/send_message', array('info'=> $res[0],'acc'=>$acc[0]), TRUE),''));
+		$this->ui->set(array($this->load->view('mainpane/forms/send_message', array('info'=> $res[0],'acc'=>$acc[0]), TRUE),''));
 	}
 	
 	/**
@@ -99,7 +99,7 @@ class Messages extends Controller {
 		
 		$acc = $this->account_model->get_account_email(array($to));
 		if($acc === -1){
-			show_error('Query Error!',500);
+			$this->ui->error('Query Error!',500);
 			return;
 		}
 		$to_email = $acc[0]['email'];
@@ -116,7 +116,7 @@ class Messages extends Controller {
 		$this->email->message($body);
 
 		$this->email->send();
-		$this->ajax->view(array('Your message has been sent.',''));
+		$this->ui->set(array('Your message has been sent.',''));
 	}	
 
 	/**
