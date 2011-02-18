@@ -51,91 +51,44 @@ Last but not least, we decided to use \LaTeX as the language and tool for writin
 
 This is just a brief introduction to the tools and technologies that we used in our project. We will go into more details in the rest of this documentation.
 
+
 \part{Requirements}
 \chapter{User Requirements}
 The user requirements presented by the client can be categorized into general, patient side, and healthcare provider side requirements.
 
 \section{General}
 \begin{itemize}
-\item A patient or healthcare provider should be able to create, delete, and modify their respective account
+\item A patient or healthcare provider should be able to crate, delete, and modify their respective account
 \item Accounts should be protected by a username and password combination
 \item Depending on the type of user account, each user will have a unique user profile within the system
-\item Depending on the type of user account, one of three social networking connection options are available. When requesting a social network connection, proper confirmation is required.  Upon forming a social network connection, the patient and provider will be listed in each other's respective list of contacts.
-\end{itemize} 
-
-\section{Connections}
-A Salute member can make a social network connection with other Salute members. There are three types of connections: Patient to Doctor, Doctor to Doctor, and Patient to Patient. 
-
-\subsection{Patient-Doctor Connections}
-This type of connection can only be requested by a patient and represents the "doctor-patient" relationship.  When this connection is formed, it allows the provider access to the patient's medical records and indicates a level of trust between the patient and healthcare provider.
+\item Depending on the type of user account, one of two social networking connection options are available. When requesting a social network connection, proper confirmation is required.  Upon forming a social network connection, the patient and provider will be listed in each other's respective list of contacts.
 \begin{itemize}
-\item A patient can request a connection with a healthcare provider. 
-\item A healthcare provider cannot request to connect to a patient. 
-\item Upon request, the patient can specify which level of trust he/she would like to establish with the healthcare provider. There are two levels: standard, high. The standard level of trust gives by default permissions to none of the patient's medical records, and referrals to other doctors must be accepted by the patient. The high level of trust gives by default permissions to all of the patient's medical records and by automatically accepts healthcare provider connections by referral. (See Referral's Section). 
+\item (Patient to Healthcare Provider) This type of connection can only be requested by a patient and represents the "doctor-patient" relationship.  When this connection is formed, it allows the provider access to the patient's medical records and indicates a level of trust between the patient and healthcare provider.
+\item (Healthcare Provider to Healthcare Provider) This relationship only exists between providers and represents the providers network of health care professionals.
+\end{itemize}
 \item Under each user's account, the list of their current contacts will be readily available and linked to their respective profile pages
-\item Medical records may be uploaded by the healthcare provider to their patient's account. 
-\item A patient may set permissions to hide or allow all or individual medical records from their connected healthcare provider. 
-\item A healthcare provider can refer their connected patient to another healthcare provider. (See Section on Referrals)
-\end{itemize} 
-
-\subsection{Doctor-Doctor Connections}
-This relationship only exists between healthcare providers and represents the providers network of health care professionals.
-\begin{itemize}
-\item A healthcare provider can request a connection with another healthcare provider. 
-\item A healthcare provider may refer their patients to their connected healthcare provider collegues. 
-\end{itemize} 
-
-\subsection{Patient-Patient Connections}
-\begin{itemize}
-\item A patient can request a connection with another patient. 
-\item Upon request, the patient can specify which level of trust he/she would like to establish with the patient. There are two levels: standard, high. The standard level of trust gives by default permissions to none of the patient's medical records. The high level of trust gives by default permissions to all of the patient's medical records. 
-\item A patient can suggest their healthcare provider's to their connected peers(patients).
-\end{itemize} 
-
-\section{Referrals}
-A referral may be done by a healthcare provider or a patient.
-
-\begin{itemize}
-\item (Referral by Healthcare Provider) Referrals allow healthcare providers to refer their patients to connect with another healthcare provider that he/she is connected with. If the patient has a high level of trust with the healthcare provider, when the healthcare provider refers the patient to his/her connected healthcare provider, the patient will automatically become connected with the referred healthcare provider. If the level of trust is standard between the patient and healthcare provider, the patient must accept the pending referred connection. The permissions of the patient's medical records that the original healthcare provider has, will be transfered over to the referred healthcare provider. 
-\item (Referral by Patient) A patient can also refer their connected healthcare provider to their connected peers(patients). This serves to faciliate patients to suggest their trusted healthcare providers to their friends(connected peers/patients).
-\end{itemize} 
-
-\section{Groups}
-\begin{itemize}
-\item A group may be created, modified, or deleted by patients or healthcare providers.
-\item A group may be a public or private group. 
-\item (Public Group)Only public groups will be visible in the 'Groups Listing' on Salute.From the 'Group Listing', a Salute member can request to join the group.
-\item (Private Groups) The private group will be listed under 'My Groups', for all members of the private group.The only way for a Salute member to join a private group is by invitation. The invitation may only be sent from an administrator of the group.
-\item There are three group categories: patient-patient, healthcare provider-healthcare provider, patient-healthcare provider.
-\item Each group member can have one of 4 different permissions: (1) post to the group only, (2) post to the group and invite other Salute members to the group, (3) post to the group, invite other Salute members to the group, and delete existing group members from the group, (4) post to the group, invite other Salute members, delete existing group members from the group, and modify or delete the group.
-\item By default, the creator of the group gets the 4th type of permission(see above bullet point). 
-\end{itemize} 
-
-\section{Patient Accounts}
-\begin{itemize}
-\item Patient accounts are exclusively for the use of patients
-\item Patient information is only available to healthcare providers to which the patient is connected with, and to patients/peers to which the patient is connected with.
-\item May add, organize, and delete their medical records
-\item May manage their privacy settings for connections and medical records
-\item May connect, message, and interact with their connected Salute members
-\item May pay their bills 
-\item May refer their connnected patients/peers to their connected healthcare provider collegue.
-\item May create, join, modify, or delete a group. (See Group Section)
+\item Medical records may be uploaded by a patient or a healthcare provider that is connected to that patient
 \end{itemize}
 
-\section{Healthcare Accounts}
+\section{Patient side}
+\begin{itemize}
+\item Patient accounts are exclusively for the use of patients
+\item A patient account may only be allowed to connect with a healthcare provider account
+\item No patient information will be available to other patient accounts
+\item Patient information is only available to healthcare providers to which the patient is connected with
+\item May organize their medical records
+\item May manage their privacy settings
+\item May connect, message, and interact with their healthcare providers
+\end{itemize}
+
+\section{Healthcare Provider Side}
 \begin{itemize}
 \item Healthcare provider accounts are exclusively for the use of healthcare providers
 \item A healthcare provider account may connect with either patient accounts or other healthcare provider accounts (specialists or colleagues)
 \item May view a listing of all their patient contacts
 \item May view the available medical records of an individual patient
 \item May schedule appointments
-\item May view a listing of their appointments
 \item May message, interact and connect with patients and other healthcare providers
-\item May issue, modify, or delete bills to their patients
-\item May add medical records to their patient's account. By default they will have viewing priveleges of this file.
-\item May refer their patients to their connected healthcare provider collegue.
-\item May create, join, and manage a group. (See Group Section)
 \end{itemize}
 
 \chapter{System Requirements}
