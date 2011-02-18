@@ -142,6 +142,7 @@ CREATE TABLE permission(
 	medical_rec_id SERIAL NOT NULL,
 	account_id SERIAL NOT NULL,
 	date_created DATE NOT NULL,
+	permission_type VARCHAR(1) DEFAULT '0',
 	PRIMARY KEY (permission_id),
 	FOREIGN KEY (medical_rec_id) REFERENCES medical_record(medical_rec_id)  ON DELETE CASCADE,
 	FOREIGN KEY (account_id) REFERENCES accounts(account_id)  ON DELETE CASCADE
