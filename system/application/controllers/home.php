@@ -12,7 +12,7 @@ class Home extends Controller {
 
 	function __construct() {
 		parent::Controller();
-		$this->load->library('ajax');
+		$this->load->library('ui');
 		$this->load->library('auth');
 	}
 	
@@ -25,14 +25,14 @@ class Home extends Controller {
 	{
 		// Not logged in
 		if (!$this->auth->is_logged_in()) {
-			$this->ajax->view(array(
+			$this->ui->set(array(
 				$this->load->view('mainpane/welcome', '', TRUE),
-				$this->load->view('sidepane/login', '', TRUE)
+				$this->load->view('sidepane/forms/login', '', TRUE)
 			));
 		}
 		// Already logged in
 		else {
-			$this->ajax->redirect('/profile');
+			$this->ui->redirect('/profile');
 		}
 	}
 
@@ -46,14 +46,14 @@ class Home extends Controller {
 	function login()
 	{
 		if ($this->auth->is_logged_in())
-			$this->ajax->redirect('/profile');
+			$this->ui->redirect('/profile');
 		
 		// get email & password
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
 		
 		if ($email == FALSE || $password == FALSE) {
-			show_error('Access to this page not allowed', 500);
+			$this->ui->error('Access to this page not allowed');
 			return;
 		}
 		
@@ -66,33 +66,33 @@ class Home extends Controller {
 				
 		// login fails : error view
 		if ($results === -1) {
-			$this->ajax->view(array('Query error!',''));
+			$this->ui->set(array('Query error!',''));
 		}
 		else if (sizeof($results) == 0) {
-			$this->ajax->view(array('',
-				$this->load->view('sidepane/login_failed', '', TRUE)
+			$this->ui->set(array('',
+				$this->load->view('sidepane/forms/login_failed', '', TRUE)
 			));
 		} else if ($results === -1) {
-			$this->ajax->view(array('Query Error!',''));
+			$this->ui->set(array('Query Error!',''));
 			return;
 		}
 		// login successful : store info for session id, go to user profile
 		else {
 			if ($results[0] != 'patient' && $results[0] != 'hcp') {
-				$this->ajax->view(array(
+				$this->ui->set(array(
 					'',
-					$this->load->view('sidepane/login_failed', '', TRUE)
+					$this->load->view('sidepane/forms/login_failed', '', TRUE)
 				));
 			} 
 			$active_status = $this->account_model->is_active(array($results[1]["account_id"]));
 			if ( $active_status === -1 ){
-				show_error('Query Error',500);
+				$this->ui->error('Query Error',500);
 				return;
 			} else if ( $active_status === -4 ){
-				$this->ajax->view('Sorry! That account does not exist.', '');
+				$this->ui->set('Sorry! That account does not exist.', '');
 				return;
 			} else if ( !$active_status ){
-				$this->ajax->redirect('/settings/activate/'.$results[1]["account_id"]);
+				$this->ui->redirect('/settings/activate/'.$results[1]["account_id"]);
 				return;
 			}	
 			$login_data = array(
@@ -103,7 +103,7 @@ class Home extends Controller {
 				'last_name' => $results[1]["last_name"]
 			);
 			$this->session->set_userdata($login_data);
-			$this->ajax->redirect('/profile');
+			$this->ui->redirect('/profile');
 			
 		}
 	}
@@ -116,7 +116,7 @@ class Home extends Controller {
 	function logout()
 	{
 		$this->session->sess_destroy();
-		$this->ajax->redirect('/');
+		$this->ui->redirect('/');
 	}
 	
 	/**
@@ -125,7 +125,7 @@ class Home extends Controller {
 	 * */
 	function retrieve_password(){
 				
-		$this->ajax->view(array(
+		$this->ui->set(array(
 			$this->load->view('mainpane/forgot_password', '', TRUE),
 			''
 		));
@@ -142,7 +142,7 @@ class Home extends Controller {
 		$email = $this->input->post('email');
 
 		if ( $email == NULL ){
-				show_error('Error: No email passed in.', 500);
+				$this->ui->error('Error: No email passed in.', 500);
 				return;
 		}
 		$this->load->model('account_model');
@@ -151,7 +151,7 @@ class Home extends Controller {
 		$password = $result[0]['password'];
 		
 		if ($password == NULL){
-			show_error('Sorry, this email is not registered.', 500);
+			$this->ui->error('Sorry, this email is not registered.', 500);
 			return;
 		}
 
@@ -166,7 +166,7 @@ class Home extends Controller {
 			'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
 
 		$this->email->send();
-		$this->ajax->view(array('Your password has been emailed to you.',''));
+		$this->ui->set(array('Your password has been emailed to you.',''));
 	}
 
 	/**
@@ -174,7 +174,7 @@ class Home extends Controller {
 	 * */
 	function register()
 	{
-		$this->ajax->view(array(
+		$this->ui->set(array(
 			$this->load->view('mainpane/registration', '', TRUE),
 			$this->load->view('sidepane/default', '', TRUE)
 		));
@@ -201,7 +201,7 @@ class Home extends Controller {
 	function register_do($type = NULL)
 	{
 		if( $type == NULL || ( $type !== 'patient' && $type !== 'hcp' ) ){
-			show_error('Invalid type.',500);
+			$this->ui->error('Invalid type.',500);
 			return;
 		}
 		
@@ -209,7 +209,7 @@ class Home extends Controller {
 		$password = $this->input->post('password');
 	
 		if($email == NULL || $password == NULL)	{
-			show_error('Email and Password are mandatory to register.',500);
+			$this->ui->error('Email and Password are mandatory to register.',500);
 			return;
 		}
 		
@@ -222,7 +222,7 @@ class Home extends Controller {
 		$result = $this->account_model->add_account(array('email' => $email, 'password' => $password)); 
 		
 		if($result === -1){
-				$this->ajax->view(array('Query error (1)!',''));
+				$this->ui->set(array('Query error (1)!',''));
 				return;
 		}
 		
@@ -265,7 +265,7 @@ class Home extends Controller {
 			$res = $this->hcp_model->register($input); 
 		}
 		else
-			show_error('Internal Server Error.', 500);
+			$this->ui->error('Internal Server Error.', 500);
 		if ( $res === -1 )
 				$view = 'Query error!';
 		else{
@@ -288,7 +288,7 @@ class Home extends Controller {
 		$this->db->trans_complete();
 		//$this->db->trans_rollback();
 		
-		$this->ajax->view(array($view,''));
+		$this->ui->set(array($view,''));
 	}
 }
 /** @} */

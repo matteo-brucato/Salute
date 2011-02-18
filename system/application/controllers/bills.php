@@ -12,7 +12,7 @@ class Bills extends Controller {
 
 	function __construct(){
 		parent::Controller();
-		$this->load->library('ajax');	
+		$this->load->library('ui');	
 		$this->load->library('auth');
 	}
 
@@ -47,7 +47,7 @@ class Bills extends Controller {
 			$sidepane = 'sidepane/hcp-profile';
 		} 
 		else{
-			show_error('Server Error', 500);
+			$this->ui->error('Server Error', 500);
 			return;		
 		}
 		switch ($results) {
@@ -60,7 +60,7 @@ class Bills extends Controller {
 				break;
 		}
 		$sideview = $this->load->view($sidepane, '', TRUE);
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ui->set(array($mainview,$sideview));
 	}
 	
 	/**
@@ -84,7 +84,7 @@ class Bills extends Controller {
 			$sidepane = 'sidepane/hcp-profile';
 		} 
 		else{
-			show_error('Server Error', 500);
+			$this->ui->error('Server Error', 500);
 			return;		
 		}
 		switch ($results) {
@@ -96,7 +96,7 @@ class Bills extends Controller {
 				break;
 		}
 		$sideview = $this->load->view($sidepane, '', TRUE);
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ui->set(array($mainview,$sideview));
 	}
 
 	/**
@@ -120,7 +120,7 @@ class Bills extends Controller {
 			$sidepane = 'sidepane/hcp-profile';
 		} 
 		else{
-			show_error('Server Error', 500);
+			$this->ui->error('Server Error', 500);
 			return;		
 		}
 		switch ($results) {
@@ -132,7 +132,7 @@ class Bills extends Controller {
 				break;
 		}
 		$sideview = $this->load->view($sidepane, '', TRUE);
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ui->set(array($mainview,$sideview));
 	}
 
 	/**
@@ -178,11 +178,11 @@ class Bills extends Controller {
 			}						
 		}	
 		else{
-			show_error('Server Error', 500);
+			$this->ui->error('Server Error', 500);
 			return;		
 		}
 		$sideview = $this->load->view($sidepane, '', TRUE);	
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ui->set(array($mainview,$sideview));
 	}
 	
 	/**
@@ -241,11 +241,11 @@ class Bills extends Controller {
 			}
 		}										
 		else{
-			show_error('Server Error', 500);
+			$this->ui->error('Server Error', 500);
 			return;
 		}
 		$sideview = $this->load->view($sidepane, '', TRUE);	
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ui->set(array($mainview,$sideview));
 
 	}
 	
@@ -324,11 +324,11 @@ class Bills extends Controller {
 			}
 		}
 		else{
-			show_error('Server Error', 500);
+			$this->ui->error('Server Error', 500);
 			return;
 		}
 		$sideview = $this->load->view($sidepane, '', TRUE);
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ui->set(array($mainview,$sideview));
 	}
 	
 	/**
@@ -384,11 +384,11 @@ class Bills extends Controller {
 			}
 		}
 		else{
-			show_error('Error: You do not have permission to pay this bill.', 500);
+			$this->ui->error('Error: You do not have permission to pay this bill.', 500);
 			return;
 		}
 		$sideview = $this->load->view($sidepane, '', TRUE);
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ui->set(array($mainview,$sideview));
 	}
 	
 	

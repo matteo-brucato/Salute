@@ -1,4 +1,4 @@
-l<?php
+<?php
 /**
  * @file appointments_model.php
  * @brief Model to give access to appointment table in the database
@@ -169,7 +169,7 @@ class Appointments_model extends Model {
 		if ($query->num_rows() > 0)
 			return $query->result_array();
 			
-		return array();			
+		return array();
 	}
 	
 	

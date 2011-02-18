@@ -1,5 +1,12 @@
 /* Functions needed by the application */
 
+var AJAX_ACTIVE = true;
+
+//function callback(href) {
+//	alert(href);
+//	execute_ajax(href);
+//}
+
 $(document).ready(function() {			// Wait for the document to be able to be manipulated
 	
 	// First thing... hide everything... then show it slowly
@@ -8,7 +15,7 @@ $(document).ready(function() {			// Wait for the document to be able to be manip
 	// Get the current page
 	var curpage = window.location.pathname;
 	
-	$("#rightcolumn > a").click(function(event) {		// Do something on click on a specific tag <a/>
+	/*$("#rightcolumn > a").click(function(event) {		// Do something on click on a specific tag <a/>
 		event.preventDefault(); 						// Don't use <a/> as usual, stay here
 		alert("Good job! Now enjoy the magic");
 		$(this).hide("slow");
@@ -20,25 +27,36 @@ $(document).ready(function() {			// Wait for the document to be able to be manip
 		$(this).parent().hide(2500, function() {	// very slow fade out!
 			$("#rightcolumn > a").show();			// this is a callback example
 		});
-	});
+	});*/
+	
+	// History plugin
+	//$.history.init(execute_ajax);
+	/*$("a[rel|='history']").click(function(event) {
+		event.preventDefault();
+		$.history.load(this.href.replace(/^.*#/, ''));
+		return false;
+	});*/
 	
 	layout_bindings();
 });
 
 function layout_bindings() {
-	/*$("a.ajaxlink").live("click", function(event) {
+	$("a.ajaxlink").live("click", function(event) {
+		if (! AJAX_ACTIVE) return;
 		event.preventDefault();
 		var href = $(this).attr('href');
+		//window.location.hash = href;
 		execute_ajax(href);
 	});
 	
 	$("a.ajaxlink-confirm").live("click", function() {
+		if (! AJAX_ACTIVE) return;
 		event.preventDefault();
 		if (confirm('Do you really want to?')) {
 			var href = $(this).attr('href');
 			execute_ajax(href);
 		}
-	});*/
+	});
 	
 	$("#mypatients-table tr, #mydoctors-table tr").live("hover",
 	function() {
@@ -99,22 +117,26 @@ function execute_ajax(href) {
 			//}
 			//alert(data.redirect);
 			
-			if (data.redirect) {
+			if (data.redirect != "no") {
 				// data.redirect contains the string URL to redirect to
 				window.location.href = data.redirect;
 				//$(window.location).attr('href', data.redirect);
 				return;
 			}
 			
-			if (data.sidepane != "") {
+			if (data.sidepane != null) {
 				$("#rightcolumn").slideUp(20).empty().append(data.sidepane);
 				$("#rightcolumn").animate({"height": "toggle", "opacity": "toggle"}, 200);
 			}
-			if (data.mainpane != "") {
+			if (data.mainpane != null) {
 				$("#leftcolumn").empty().append(data.mainpane);
 				$("#leftcolumn").animate({"height": "toggle", "opacity": "toggle"}, 200);
 			} else {
 				$("#leftcolumn").animate({"height": "toggle", "opacity": "toggle"}, 200);
+			}
+			if (data.header != null) {
+				$("#header").slideUp(20).empty().append(data.header);
+				$("#header").animate({"height": "toggle", "opacity": "toggle"}, 200);
 			}
 			//$("#leftcolumn").append(data.mainpane);
 			//$("#leftcolumn").animate({"height": "toggle", "opacity": "toggle"}, 200);

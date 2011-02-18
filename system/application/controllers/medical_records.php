@@ -12,7 +12,7 @@ class Medical_records extends Controller {
 
 	function __construct(){
 		parent::Controller();
-		$this->load->library('ajax');
+		$this->load->library('ui');
 		$this->load->library('auth');
 		$this->load->helper(array('form', 'url'));
 	}
@@ -24,7 +24,7 @@ class Medical_records extends Controller {
 	function index()
 	{
 		//$this->auth->check_logged_in();
-		//$this->ajax->redirect('/medical_records/list_med_recs');
+		//$this->ui->redirect('/medical_records/list_med_recs');
 		$this->myrecs();
 	}
 
@@ -44,7 +44,7 @@ class Medical_records extends Controller {
 	*/
 	function myrecs()
 	{
-		$this->output->enable_profiler(TRUE);
+		if (DEBUG) $this->output->enable_profiler(TRUE);
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
 
@@ -56,26 +56,23 @@ class Medical_records extends Controller {
 		}
 		// if hcp, redirect to My Patients search List
 		else if ( $this->auth->get_type() === 'hcp') {
-			$this->ajax->redirect('/connections/mypatients');
+			$this->ui->redirect('/connections/mypatients');
 			return;
 		} else {
-			show_error('Server Error.', 500);
+			$this->ui->error('Server Error.', 500);
 			return;
 		}
 		
-		switch ($res) {
-			case -1:
-				$mainview = 'Query error!';
-				$sideview = '';
-				break;
-			default:
-				$mainview = $this->load->view('mainpane/list_medical_records',
-					array('list_name' => 'My Medical Records', 'list' => $res) , TRUE);
-				$sideview = '';
-				break;
+		if ($res === -1) {
+			$this->ui->query_error();
+			return;
 		}
 		
-		$this->ajax->view(array($mainview, $sideview));
+		// All ok
+		$this->ui->set(array(
+			$this->load->view('mainpane/list_medical_records',
+				array('list_name' => 'My Medical Records', 'list' => $res) , TRUE)
+		));
 	}
 	
 	/**
@@ -89,20 +86,20 @@ class Medical_records extends Controller {
 	 * @tested
 	 * */
 	function patient($patient_id = NULL) {
-		$this->output->enable_profiler(TRUE);
+		if (DEBUG) $this->output->enable_profiler(TRUE);
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
 		$this->load->model('hcp_model');
 		$this->load->model('connections_model');
 		
 		if ($patient_id == NULL) {
-			show_error('No patient id specified');
+			$this->ui->error('No patient id specified');
 			return;
 		}
 		
 		// Current user must be an hcp
 		if ($this->auth->get_type() != 'hcp') {
-			show_error('Only HCPs have access to this funtionality.<br />
+			$this->ui->error('Only HCPs have access to this funtionality.<br />
 			To see your medical records go <a href="/medical_records">here</a>');
 			return;
 		}
@@ -135,7 +132,7 @@ class Medical_records extends Controller {
 		}
 		
 		// View the list
-		$this->ajax->view(array($mainview, $sideview));
+		$this->ui->set(array($mainview, $sideview));
 	}
 	
 	/**
@@ -153,13 +150,13 @@ class Medical_records extends Controller {
 		} else {
 			$sideview = $this->load->view('sidepane/hcp-profile', '' , TRUE);
 			if ($pid == NULL || ! is_numeric($pid)) {
-				show_error('No patient specified');
+				$this->ui->error('No patient specified');
 				return;
 			}
 			$patient_id = $pid;
 		}
 		
-		$this->ajax->view(array(
+		$this->ui->set(array(
 			$this->load->view('mainpane/forms/upload_medrec',
 				array('patient_id' => $patient_id) , TRUE),
 			$sideview
@@ -196,16 +193,16 @@ class Medical_records extends Controller {
 																	)); 
 		}
 		else {		
-			show_error('Internal Logic Error.', 500);
+			$this->ui->error('Internal Logic Error.', 500);
 			return;
 		}
 		
 		switch ($results) {
 			case -1:
-				$this->ajax->view(array('Query error!',''));
+				$this->ui->set(array('Query error!',''));
 				break;
 			default:
-				$this->ajax->redirect('/medical_records/list_med_recs');
+				$this->ui->redirect('/medical_records/list_med_recs');
 				break; 
 		}	
 	}*/
@@ -233,7 +230,7 @@ class Medical_records extends Controller {
 			$result = $this->permissions_model->____(array($this->auth->get_account_id(), $med_rec_id)); /*@todo: update fn call*
 		}
 		else {
-				show_error('Internal Logic Error.',500);
+				$this->ui->error('Internal Logic Error.',500);
 				return;
 		}
 		
@@ -253,13 +250,13 @@ class Medical_records extends Controller {
 		}
 		
 		if($error){
-			$this->ajax->view(array($mainview,$sideview));
+			$this->ui->set(array($mainview,$sideview));
 			return;
 		}
 				
 		$res = $this->medical_records_model->get_medicalrecord(array($med_rec_id));
 		
-		$this->ajax->view(array($this->load->view('mainpane/______', $res, TRUE),''));	
+		$this->ui->set(array($this->load->view('mainpane/______', $res, TRUE),''));	
 	}*/
 	
 	/**
@@ -272,7 +269,7 @@ class Medical_records extends Controller {
 	function add_permission($mrec_id) {
 		$this->auth->check_logged_in();
 		
-		$this->ajax->view(array(
+		$this->ui->set(array(
 			$this->load->view('mainpane/forms/add_permission', array('medrec_id' => $mrec_id), TRUE),
 			''
 		));
@@ -286,7 +283,7 @@ class Medical_records extends Controller {
 	function remove_permission($mrec_id) {
 		$this->auth->check_logged_in();
 		
-		$this->ajax->view(array(
+		$this->ui->set(array(
 			$this->load->view('mainpane/forms/remove_permission', array('medrec_id' => $mrec_id), TRUE),
 			''
 		));
@@ -303,28 +300,28 @@ class Medical_records extends Controller {
 		$this->load->model('medical_records_model');
 		
 		if ($mid == NULL) {
-			$this->ajax->view(array('Missing input: medical record id',''));
+			$this->ui->set(array('Missing input: medical record id',''));
 			return;
 		}
 		
 		// Only for patients
 		if ($this->auth->get_type() != 'patient') {
-			$this->ajax->view(array('Only patients can access this functionality',''));
+			$this->ui->set(array('Only patients can access this functionality',''));
 			return;
 		}
 		
 		// Get tuple for this medical record
 		$get = $this->medical_records_model->get_medicalrecord(array($mid));
 		if ($get === -1) {
-			$this->ajax->view(array('Query error',''));
+			$this->ui->set(array('Query error',''));
 			return;
 		}
 		else if (sizeof($get) == 0) {
-			$this->ajax->view(array('Medical record specified does not exist',''));
+			$this->ui->set(array('Medical record specified does not exist',''));
 			return;
 		}
 		else if ($get[0]['patient_id'] != $this->auth->get_account_id()) {
-			$this->ajax->view(array('Only the owner can modify this medical record',''));
+			$this->ui->set(array('Only the owner can modify this medical record',''));
 			return;
 		}
 		
@@ -334,11 +331,11 @@ class Medical_records extends Controller {
 		//$res = $this->hcp_model->get_hcps(array($mid));
 		
 		if ($res === -1) {
-			$this->ajax->view(array('Query error',''));
+			$this->ui->set(array('Query error',''));
 			return;
 		}
 		
-		$this->ajax->view(array(
+		$this->ui->set(array(
 			$this->load->view('mainpane/list_permissions',
 				array('list_name' => 'Permissions for medical record '.$mid, 'list' => $res), TRUE),
 			$this->load->view('sidepane/patient-profile', '', TRUE)
@@ -355,29 +352,29 @@ class Medical_records extends Controller {
 		$this->load->model('medical_records_model');
 		
 		if ($mid == NULL) {
-			$this->ajax->view(array('Missing input: medical record id',''));
+			$this->ui->set(array('Missing input: medical record id',''));
 			return;
 		}
 		
 		// the account that will lose permission
 		$account_id = $this->input->post('account_id');
 		if ($account_id == '' || $account_id == FALSE) {
-			$this->ajax->view(array('No account id specified',''));
+			$this->ui->set(array('No account id specified',''));
 			return;
 		}
 		
 		// Get tuple for this medical record
 		$get = $this->medical_records_model->get_medicalrecord(array($mid));
 		if ($get === -1) {
-			$this->ajax->view(array('Query error',''));
+			$this->ui->set(array('Query error',''));
 			return;
 		}
 		else if (sizeof($get) == 0) {
-			$this->ajax->view(array('Medical record specified does not exist',''));
+			$this->ui->set(array('Medical record specified does not exist',''));
 			return;
 		}
 		else if ($get[0]['patient_id'] != $this->auth->get_account_id()) {
-			$this->ajax->view(array('Only the owner can modify this medical record',''));
+			$this->ui->set(array('Only the owner can modify this medical record',''));
 			return;
 		}
 		
@@ -387,17 +384,17 @@ class Medical_records extends Controller {
 			// Check if its already allowed to be seen by hcp
 			$isalready = $this->medical_records_model->is_account_allowed(array($account_id, $mid));
 			if ($isalready === -1) {
-				$this->ajax->view(array('Query error',''));
+				$this->ui->set(array('Query error',''));
 				return;
 			}
 			if (! $isalready) {
-				$this->ajax->view(array('This record is already forbidden to this hcp.',''));
+				$this->ui->set(array('This record is already forbidden to this hcp.',''));
 				return;
 			}
 			$res = $this->medical_records_model->delete_permission(array($mid, $account_id));
 			
 		} else {
-			$this->ajax->view(array('Only patients can modify permissions',''));
+			$this->ui->set(array('Only patients can modify permissions',''));
 			return;
 		}
 		
@@ -412,7 +409,7 @@ class Medical_records extends Controller {
 				break;
 		}
 		
-		$this->ajax->view(array($mainview, $sideview));
+		$this->ui->set(array($mainview, $sideview));
 	}
 
 	/**
@@ -430,14 +427,14 @@ class Medical_records extends Controller {
 		$this->load->model('connections_model');
 		
 		if ($mid == NULL) {
-			$this->ajax->view(array('Missing input: medical record id',''));
+			$this->ui->set(array('Missing input: medical record id',''));
 			return;
 		}
 		
 		// the account that will have permission
 		$account_id = $this->input->post('account_id');
 		if ($account_id == '' || $account_id == FALSE) {
-			$this->ajax->view(array('No account id specified',''));
+			$this->ui->set(array('No account id specified',''));
 			return;
 		}
 		
@@ -446,11 +443,11 @@ class Medical_records extends Controller {
 			$this->auth->get_account_id(), $account_id
 		);
 		if ($conn === -1) {
-			$this->ajax->view(array('Query error',''));
+			$this->ui->set(array('Query error',''));
 			return;
 		}
 		else if ($conn == FALSE) {
-			$this->ajax->view(array('You must be connected to this account
+			$this->ui->set(array('You must be connected to this account
 			to grant it access to your medical records!',''));
 			return;
 		}
@@ -458,15 +455,15 @@ class Medical_records extends Controller {
 		// Get tuple for this medical record
 		$get = $this->medical_records_model->get_medicalrecord(array($mid));
 		if ($get === -1) {
-			$this->ajax->view(array('Query error',''));
+			$this->ui->set(array('Query error',''));
 			return;
 		}
 		else if (sizeof($get) == 0) {
-			$this->ajax->view(array('Medical record specified does not exist',''));
+			$this->ui->set(array('Medical record specified does not exist',''));
 			return;
 		}
 		else if ($get[0]['patient_id'] != $this->auth->get_account_id()) {
-			$this->ajax->view(array('Only the owner can modify this medical record',''));
+			$this->ui->set(array('Only the owner can modify this medical record',''));
 			return;
 		}
 		
@@ -476,17 +473,17 @@ class Medical_records extends Controller {
 			// Check if its already allowed to be seen by hcp
 			$isalready = $this->medical_records_model->is_account_allowed(array($account_id, $mid));
 			if ($isalready === -1) {
-				$this->ajax->view(array('Query error',''));
+				$this->ui->set(array('Query error',''));
 				return;
 			}
 			if ($isalready) {
-				$this->ajax->view(array('This record is already allowed to this hcp.',''));
+				$this->ui->set(array('This record is already allowed to this hcp.',''));
 				return;
 			}
 			$res = $this->medical_records_model->allow_permission(array($mid, $account_id));
 			
 		} else {
-			$this->ajax->view(array('Only patients can modify permissions',''));
+			$this->ui->set(array('Only patients can modify permissions',''));
 			return;
 		}
 		
@@ -506,7 +503,7 @@ class Medical_records extends Controller {
 				break;
 		}
 		
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ui->set(array($mainview,$sideview));
 	}
 
 	/**
@@ -517,13 +514,13 @@ class Medical_records extends Controller {
 	 * @test Tested
 	 * */
 	function delete($medical_record_id = FALSE) {
-		$this->output->enable_profiler(TRUE);
+		if (DEBUG) $this->output->enable_profiler(TRUE);
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
 		
 		// Check input
 		if ($medical_record_id == FALSE) {
-			show_error('Invalid input');
+			$this->ui->error('Invalid input');
 			return;
 		}
 		
@@ -561,7 +558,7 @@ class Medical_records extends Controller {
 			}
 		}
 		
-		$this->ajax->view(array($mainview, ''));
+		$this->ui->set(array($mainview, ''));
 	}
 }
 /** @} */

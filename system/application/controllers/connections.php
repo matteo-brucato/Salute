@@ -18,7 +18,7 @@ class Connections extends Controller {
 
 	function __construct() {
 		parent::Controller();
-		$this->load->library('ajax');
+		$this->load->library('ui');
 		$this->load->library('auth');
 	}
 
@@ -28,7 +28,7 @@ class Connections extends Controller {
 	 * @return error
 	 * */
 	function index() {
-		show_error('Direct access to this resource is forbidden', 500);
+		$this->ui->error('Direct access to this resource is forbidden', 500);
 		return;
 	}
 
@@ -55,7 +55,7 @@ class Connections extends Controller {
 			$sidepane = 'sidepane/hcp-profile';
 		}
 		else {
-			show_error('Internal server logic error.', 500);
+			$this->ui->error('Internal server logic error.', 500);
 			return;
 		}
 		
@@ -72,7 +72,7 @@ class Connections extends Controller {
 		}
 		
 		// Give results to the client
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ui->set(array($mainview,$sideview));
 	}
 
 	/**
@@ -89,7 +89,7 @@ class Connections extends Controller {
 		$this->auth->check_logged_in();
 		
 		if ($this->auth->get_type() !== 'hcp'){
-			show_error($this->load->view('errors/not_hcp', '', TRUE));
+			$this->ui->error($this->load->view('errors/not_hcp', '', TRUE));
 			return;
 		}
 
@@ -110,7 +110,7 @@ class Connections extends Controller {
 		}
 		
 		// Give results to the client
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ui->set(array($mainview,$sideview));
 	}
 	
 	/**
@@ -132,14 +132,14 @@ class Connections extends Controller {
 			if ($this->auth->get_type() === 'hcp') {
 				$this->_pending_in();
 			} else {
-				show_error($this->load->view('errors/not_hcp', '', TRUE));
+				$this->ui->error($this->load->view('errors/not_hcp', '', TRUE));
 			}
 		}
 		else if ($direction == 'out') {
 			$this->_pending_out();
 		}
 		else {
-			show_error('Input not valid');
+			$this->ui->error('Input not valid');
 		}
 	}
 	
@@ -165,7 +165,7 @@ class Connections extends Controller {
 			$sidepane = 'sidepane/patient-profile';
 		}
 		else {
-			show_error('Internal server logic error.', 500);
+			$this->ui->error('Internal server logic error.', 500);
 			return;
 		}
 
@@ -183,7 +183,7 @@ class Connections extends Controller {
 		}
 		
 		// Give results to the client
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ui->set(array($mainview,$sideview));
 	}
 	
 	/**
@@ -199,7 +199,7 @@ class Connections extends Controller {
 	function _pending_in() 
 	{
 		$this->auth->check_logged_in();
-		$this->output->enable_profiler(TRUE);
+		if (DEBUG) $this->output->enable_profiler(TRUE);
 		$this->load->model('connections_model');
 		
 		if($this->auth->get_type() === 'hcp') {
@@ -211,7 +211,7 @@ class Connections extends Controller {
 		else {
 			/** @todo In the future, create a specific view for this
 			 * kind of errors, anc call this view in all similar cases */
-			show_error('Internal server logic error.');
+			$this->ui->error('Internal server logic error.');
 			return;
 		}
 		
@@ -228,7 +228,7 @@ class Connections extends Controller {
 		$sideview = $this->load->view('sidepane/hcp-profile', '', TRUE);
 		
 		// Give results to the client
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ui->set(array($mainview,$sideview));
 	}
 	
 	/**
@@ -252,19 +252,19 @@ class Connections extends Controller {
 		
 		// Check if an account_id has been specified
 		if ($id == NULL) {
-			show_error('No hcp_id specified.');
+			$this->ui->error('No hcp_id specified.');
 			return;
 		}
 		
 		// Check the input type
 		if (! is_numeric($id)) {
-			show_error('Invalid id type.');
+			$this->ui->error('Invalid id type.');
 			return;
 		}
 		
 		// Check if the account_id specified refers to a hcp
 		if (!$this->hcp_model->is_hcp(array($id))) {
-			show_error('The id specified does not refer to an HCP.');
+			$this->ui->error('The id specified does not refer to an HCP.');
 			return;
 		}
 		
@@ -286,7 +286,7 @@ class Connections extends Controller {
 										));
 		}
 		else {
-			show_error('Internal server logic error.', 500);
+			$this->ui->error('Internal server logic error.', 500);
 			return;
 		}
 		
@@ -322,7 +322,7 @@ class Connections extends Controller {
 		}
 		
 		// Give results to the client
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ui->set(array($mainview,$sideview));
 	}
 
 	/** 
@@ -341,19 +341,19 @@ class Connections extends Controller {
 		
 		// Check if parameters are specified
 		if ($requester_id == NULL) {
-			show_error('ids not specified.', 500);
+			$this->ui->error('ids not specified.', 500);
 			return;
 		}
 		
 		/* Check if the current user is the receiver
 		if ($this->auth->get_account_id() != $my_id) {
-			show_error('You are not the receiver for this request');
+			$this->ui->error('You are not the receiver for this request');
 			return;
 		}*/
 		
 		// Check if you are a hcp (only hcp can call this function)
 		if ($this->auth->get_type() != 'hcp') {
-			show_error('Sorry, only HCP can accept connection requests');
+			$this->ui->error('Sorry, only HCP can accept connection requests');
 			return;
 		}
 		
@@ -364,7 +364,7 @@ class Connections extends Controller {
 			$res = $this->connections_model->accept_hcp_hcp(array($requester_id, $this->auth->get_account_id()));
 		}
 		else {
-			show_error('The requester id does not match any id in the database', 500);
+			$this->ui->error('The requester id does not match any id in the database', 500);
 			return;
 		}
 		
@@ -389,7 +389,7 @@ class Connections extends Controller {
 		}
 		
 		// Give results to the client
-		$this->ajax->view(array($mainview,$sideview));
+		$this->ui->set(array($mainview,$sideview));
 	}
 
 	/**
@@ -408,10 +408,10 @@ class Connections extends Controller {
 	function destroy($id = NULL)
 	{
 		$this->auth->check_logged_in();
-		$this->output->enable_profiler(TRUE);
+		if (DEBUG) $this->output->enable_profiler(TRUE);
 		
 		if ($id == NULL) {
-			show_error('id not specified.', 500);
+			$this->ui->error('id not specified.', 500);
 			return;
 		}
 		
@@ -425,7 +425,7 @@ class Connections extends Controller {
 			$res = $this->connections_model->remove_dd_connection(array($this->auth->get_account_id(), $id)); 
 		}
 		else {
-			show_error('Internal Logic Error.', 500);
+			$this->ui->error('Internal Logic Error.', 500);
 			return;
 		}*/
 		
@@ -443,7 +443,7 @@ class Connections extends Controller {
 		}
 		
 		// Create final view for the user
-		$this->ajax->view(array($view,''));
+		$this->ui->set(array($view,''));
 	}
 	
 	/**
@@ -465,10 +465,10 @@ class Connections extends Controller {
 	function cancel($id = NULL)
 	{
 		$this->auth->check_logged_in();
-		$this->output->enable_profiler(TRUE);
+		if (DEBUG) $this->output->enable_profiler(TRUE);
 		
 		if ($id == NULL) {
-			show_error('id not specified.', 500);
+			$this->ui->error('id not specified.', 500);
 			return;
 		}
 		
@@ -506,7 +506,7 @@ class Connections extends Controller {
 		}
 		
 		// Create final view for the user
-		$this->ajax->view(array($view,''));
+		$this->ui->set(array($view,''));
 	}
 	
 	/**
@@ -529,10 +529,10 @@ class Connections extends Controller {
 	function reject($id = NULL)
 	{
 		$this->auth->check_logged_in();
-		$this->output->enable_profiler(TRUE);
+		if (DEBUG) $this->output->enable_profiler(TRUE);
 		
 		if ($id == NULL) {
-			show_error('id not specified.', 500);
+			$this->ui->error('id not specified.', 500);
 			return;
 		}
 		
@@ -571,7 +571,7 @@ class Connections extends Controller {
 		}
 		
 		// Create final view for the user
-		$this->ajax->view(array($view,''));
+		$this->ui->set(array($view,''));
 	}
 }
 
