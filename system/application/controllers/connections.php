@@ -28,7 +28,7 @@ class Connections extends Controller {
 	 * @return error
 	 * */
 	function index() {
-		$this->ui->error('Direct access to this resource is forbidden', 500);
+		$this->ui->error('Direct access to this resource is forbidden', 'forbidden');
 		return;
 	}
 
@@ -46,33 +46,26 @@ class Connections extends Controller {
 
 		$this->load->model('connections_model');
 		
-		if ($this->auth->get_type() === 'patient') {
+		if ($this->auth->get_type() === 'patient') 
 			$results  = $this->connections_model->list_my_hcps($this->auth->get_account_id()); 
-			$sidepane = 'sidepane/patient-profile';
-		}
-		else if ($this->auth->get_type() === 'hcp'){
+	
+		else if ($this->auth->get_type() === 'hcp')
 			$results  = $this->connections_model->list_my_colleagues($this->auth->get_account_id()); 
-			$sidepane = 'sidepane/hcp-profile';
-		}
 		else {
-			$this->ui->error('Internal server logic error.', 500);
+			$this->ui->set_error('Internal server logic error.', 'server');
 			return;
 		}
 		
-		switch ($results) {
-			case -1:
-				$mainview = 'Query error!';
-				$sideview = '';
-				break;
-			default:
-				$mainview = $this->load->view('mainpane/list_hcps',
-					array('list_name' => 'My Hcps', 'list' => $results, 'status' => 'connected') , TRUE);
-				$sideview = $this->load->view($sidepane, '', TRUE);
-				break;
-		}
+		if ( $results === -1 ){
+			$this->ui->set_query_error();
+			return;
+		}	
+		
+		$mainview = $this->load->view('mainpane/lists/hcps',
+				array('list_name' => 'My Hcps', 'list' => $results, 'status' => 'connected') , TRUE);
 		
 		// Give results to the client
-		$this->ui->set(array($mainview,$sideview));
+		$this->ui->set(array($mainview));
 	}
 
 	/**
@@ -89,7 +82,7 @@ class Connections extends Controller {
 		$this->auth->check_logged_in();
 		
 		if ($this->auth->get_type() !== 'hcp'){
-			$this->ui->error($this->load->view('errors/not_hcp', '', TRUE));
+			$this->ui->set_error($this->load->view('errors/not_hcp', '', TRUE));
 			return;
 		}
 
@@ -97,17 +90,13 @@ class Connections extends Controller {
 		$res = $this->connections_model->list_my_patients($this->auth->get_account_id()); 
 
 		// Switch the response from the model, to select the correct view
-		switch ($res) {
-			case -1:
-				$mainview = 'Query error!';
-				$sideview = '';
-				break;
-			default:
-				$mainview = $this->load->view('mainpane/list_patients',
-					array('list_name' => 'My Patients', 'list' => $res, 'status' => 'connected') , TRUE);
-				$sideview = $this->load->view('sidepane/hcp-profile', '', TRUE);
-				break;
+		if ($res === -1) {
+			$this->ui->set_query_error();
+			return;
 		}
+		
+		$mainview = $this->load->view('mainpane/lists/patients',
+					array('list_name' => 'My Patients', 'list' => $res, 'status' => 'connected') , TRUE);
 		
 		// Give results to the client
 		$this->ui->set(array($mainview,$sideview));
@@ -129,17 +118,18 @@ class Connections extends Controller {
 	function pending($direction = 'out')
 	{
 		if ($direction == 'in') {
-			if ($this->auth->get_type() === 'hcp') {
+			if ($this->auth->get_type() === 'hcp')
 				$this->_pending_in();
-			} else {
-				$this->ui->error($this->load->view('errors/not_hcp', '', TRUE));
+			else {
+				$this->ui->set_error($this->load->view('errors/not_hcp', '', TRUE));
+				return;
 			}
 		}
-		else if ($direction == 'out') {
+		else if ($direction == 'out')
 			$this->_pending_out();
-		}
 		else {
-			$this->ui->error('Input not valid');
+			$this->ui->set_error('Input not valid');
+			return;
 		}
 	}
 	
@@ -156,31 +146,23 @@ class Connections extends Controller {
 		$this->auth->check_logged_in();
 		$this->load->model('connections_model');
 		
-		if ($this->auth->get_type() === 'hcp') {
+		if ($this->auth->get_type() === 'hcp') 
 			$res = $this->connections_model->pending_outgoing_hcps_4_a_hcp(array($this->auth->get_account_id())); 
-			$sidepane = 'sidepane/hcp-profile';
-		}
-		else if ($this->auth->get_type() === 'patient') {
+		else if ($this->auth->get_type() === 'patient')
 			$res = $this->connections_model->pending_outgoing_hcps_4_a_patient(array($this->auth->get_account_id())); 
-			$sidepane = 'sidepane/patient-profile';
-		}
 		else {
-			$this->ui->error('Internal server logic error.', 500);
+			$this->ui->set_error('Internal server logic error.', 'server');
 			return;
 		}
 
 		// Switch the response from the model, to select the correct view
-		switch ($res) {
-			case -1:
-				$mainview = 'Query error!';
-				$sideview = '';
-				break;
-			default:
-				$mainview = $this->load->view('mainpane/list_hcps',
-					array('list_name' => 'Pending Outgoing Requests', 'list' => $res, 'status' => 'pending_out') , TRUE);
-				$sideview = $this->load->view($sidepane, '', TRUE);
-				break;
+		if ($res === -1) {
+			$this->ui->set_query_error();
+			return;
 		}
+		
+		$mainview = $this->load->view('mainpane/lists/hcps',
+					array('list_name' => 'Pending Outgoing Requests', 'list' => $res, 'status' => 'pending_out') , TRUE);
 		
 		// Give results to the client
 		$this->ui->set(array($mainview,$sideview));
@@ -211,24 +193,22 @@ class Connections extends Controller {
 		else {
 			/** @todo In the future, create a specific view for this
 			 * kind of errors, anc call this view in all similar cases */
-			$this->ui->error('Internal server logic error.');
+			$this->ui->set_error('Internal server logic error.','server');
 			return;
 		}
 		
 		if ($hcps == -1 || $pats == -1) {
-			$mainview = 'Query error!';
-			$sideview = '';
+			$this->ui->set_query_error();
 			return;
 		}
 		
-		$mainview  = $this->load->view('mainpane/list_patients',
+		$mainview  = $this->load->view('mainpane/lists/patients',
 			array('list_name' => 'Pending Requests from Patients', 'list' => $pats, 'status' => 'pending_in') , TRUE);
-		$mainview .= $this->load->view('mainpane/list_hcps',
+		$mainview .= $this->load->view('mainpane/lists/hcps',
 			array('list_name' => 'Pending Requests from Hcps', 'list' => $hcps, 'status' => 'pending_in') , TRUE);
-		$sideview = $this->load->view('sidepane/hcp-profile', '', TRUE);
-		
+				
 		// Give results to the client
-		$this->ui->set(array($mainview,$sideview));
+		$this->ui->set(array($mainview));
 	}
 	
 	/**
@@ -252,19 +232,19 @@ class Connections extends Controller {
 		
 		// Check if an account_id has been specified
 		if ($id == NULL) {
-			$this->ui->error('No hcp_id specified.');
+			$this->ui->set_error('No hcp_id specified.');
 			return;
 		}
 		
 		// Check the input type
 		if (! is_numeric($id)) {
-			$this->ui->error('Invalid id type.');
+			$this->ui->set_error('Invalid id type.');
 			return;
 		}
 		
 		// Check if the account_id specified refers to a hcp
 		if (!$this->hcp_model->is_hcp(array($id))) {
-			$this->ui->error('The id specified does not refer to an HCP.');
+			$this->ui->set_error('The id specified does not refer to an HCP.');
 			return;
 		}
 		
@@ -286,20 +266,18 @@ class Connections extends Controller {
 										));
 		}
 		else {
-			$this->ui->error('Internal server logic error.', 500);
+			$this->ui->set_error('Internal server logic error.', 'server');
 			return;
 		}
 		
 		// Switch the response from the model, to select the correct view
 		switch ($res) {
 			case -1:
-				$mainview = 'Query error!';
-				$sideview = '';
-				break;
+				$this->ui->set_query_error();
+				return;
 			case -3:
-				$mainview = 'This connection has been already requested.';
-				$sideview = '';
-				break;
+				$this->ui->set_error('This connection has been already requested.');
+				return;
 			default:
 				$mainview = 'Your request has been submitted.';
 				$sideview = '';

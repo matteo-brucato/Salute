@@ -99,7 +99,7 @@ class Ui {
 	 */
 	function set($panels = array()) {
 		for ($i = 0; $i < count($panels); $i++) {
-			//if ($panels[$i] === '') break;
+	//		if ($panels[$i] === NULL ) break;
 			$this->panels[$i] = $panels[$i];
 		}
 	}
@@ -107,18 +107,18 @@ class Ui {
 	/**
 	 * Show an error message (in the main panel)
 	 * */
-	function error($error_message, $type = 'generic') {
+	function set_error($error_message, $type = 'generic') {
 		$this->panels[0] = "<h2 class=\"error_hdr\">Error</h2><p class=\"error_type\"><i>type: </i>$type</p><p class=\"error_body\">$error_message</p>";
 	}
 	
-	function query_error() {
+	function set_query_error() {
 		$this->error('Query error, please contact the administrator', 'SQL');
 	}
 	
 	/**
 	 * Show a message (in the main panel)
 	 * */
-	function message($message, $type = '') {
+	function set_message($message, $type = '') {
 		$this->panels[0] = "<h2 class=\"message_hdr\">$type</h2><h3 class=\"message_body\">$message</h3>";
 	}
 	
