@@ -32,7 +32,7 @@ class Profile extends Controller {
 
 		if ($this->auth->get_type() === 'patient') {
 			$this->ui->set(array(
-				$this->load->view('mainpane/personal_patient_profile', '', TRUE),
+				$this->load->view('mainpane/personal_patient_profile', '', TRUE)
 			));
 		}
 
@@ -116,7 +116,7 @@ class Profile extends Controller {
 		}
 		
 		if (!is_numeric($id)) {
-			$this->ui->set_error('Invalid id type.',500);
+			$this->ui->set_error('Invalid id type.');
 			return;
 		}
 			
@@ -133,13 +133,13 @@ class Profile extends Controller {
 			$info = $this->patient_model->get_patient(array($id));
 			$id_type = 'patient';
 		} else {
-			$this->ui->error('The specified <i>id</i> does not correspond
+			$this->ui->set_error('The specified <i>id</i> does not correspond
 			neither to an HCP nor a patient');
 			return;
 		}
 		
 		if( $info === -1 ){
-			$this->ui->set(array('Query error grom get_doctor/get_patient function!',''));
+			$this->ui->set_query_error();
 			return;
 		}
 		
@@ -148,8 +148,9 @@ class Profile extends Controller {
 			$this->ui->error('Sorry! An HCP can only view profiles of connected patients');
 			return;
 		}*/
+		//@todo milestone1-- we can have p-p connections
 		if ($this->auth->get_type() == 'patient' && $id_type == 'patient') {
-			$this->ui->error('Sorry! Patients cannot be connected with other patients',500);
+			$this->ui->set_error('Sorry! Patients cannot be connected with other patients','Permission Denied');
 			return;
 		}
 	
@@ -157,38 +158,39 @@ class Profile extends Controller {
 		$is_my_friend = $this->connections_model->is_connected_with($this->auth->get_account_id(), $id);
 		
 		if ($is_my_friend === -1){
-			$this->ui->set(array('Query error from is_connected_with function!',''));
+			$this->ui->set_query_error();
 			return;		
 		}else if (!$is_my_friend && $id_type === 'patient' ){
-			$this->ui->set(array('You are not connected. Permission Denied.',''));
+			$this->ui->set_error('You are not connected.','Permission Denied');
 			return;		
 		}
 
 		// Show the side panel based on logged in type.
+		//@attention: do we still need to load the sidepanel stuff here?....or is it done by default in all controllers
 		if ($this->auth->get_type() == 'hcp') {
-			$sideview = $this->load->view('sidepane/hcp-profile', '' , TRUE);
+			$sideview = $this->load->view('sidepane/personal_hcp_profile', '' , TRUE);
 		} else if ($this->auth->get_type() == 'patient') {
-			$sideview = $this->load->view('sidepane/patient-profile', '' , TRUE);
+			$sideview = $this->load->view('sidepane/personal_patient_profile', '' , TRUE);
 		} else {
-				$this->ui->error('Internal Logic Error.',500);
+				$this->ui->set_error('Internal Logic Error.','server');
 				return;
 		}
 		
 		// Load up the right view
 		if ($id_type == 'hcp') {
 			$this->ui->set(array(
-				$this->load->view('mainpane/see_hcp',
+				$this->load->view('mainpane/other_hcp_profile',
 					array('info' => $info[0], 'is_my_friend' => $is_my_friend), TRUE), 
 				$sideview
 			));
 		} else if($id_type == 'patient') { // looking for a patient profile
 			$this->ui->set(array(
-				$this->load->view('mainpane/see_patient',
+				$this->load->view('mainpane/other_patient_profile',
 					array('info' => $info[0], 'is_my_friend' => $is_my_friend), TRUE),
 				$sideview
 			));
 		} else {
-				$this->ui->error('Internal Logic Error.',500);
+				$this->ui->set_error('Internal Logic Error.','server');
 				return;			
 		}
 	}
@@ -204,28 +206,27 @@ class Profile extends Controller {
 		// Get my current info
 		if ($this->auth->get_type() === 'patient') {
 			$res = $this->patient_model->get_patient(array($this->auth->get_account_id()));
-			$mainview = 'mainpane/edit_patient_info';
+			$mainview = 'mainpane/forms/edit_patient_info';
 		}
 		else if ($this->auth->get_type() === 'hcp') {
 			$res = $this->hcp_model->get_hcp(array($this->auth->get_account_id()));
-			$mainview = 'mainpane/edit_hcp_info';
+			$mainview = 'mainpane/forms/edit_hcp_info';
 		} else {
-			$this->ui->error('Server error');
+			$this->ui->set_error('Server error','server');
 			return;
 		}
 		
 		if ($res === -1) {
-			$this->ui->error('Query error');
+			$this->ui->set_query_error();
 			return;
 		}
 		else if (count($res) <= 0) {
-			$this->ui->error('Server error');
+			$this->ui->set_error('Server error','server');
 			return;
 		}
 		
 		$this->ui->set(array(
-			$this->load->view($mainview, array('curr_info' => $res[0]), TRUE),
-			''
+			$this->load->view($mainview, array('curr_info' => $res[0]), TRUE)
 		));
 	}
 
@@ -270,16 +271,16 @@ class Profile extends Controller {
 														)); 
 		}
 		else{
-			$this->ui->error('Server Error.', 500);
+			$this->ui->set_error('Server Error.', 'server');
 			return;
 		}
 		
 		if ($res === -1) {
-			$this->ui->set(array('Query error',''));
+			$this->ui->set_query_error();
 			return;
 		}
 		
-		$view = 'Your changes have been made.';
+		$msg = 'Your changes have been made.';
 		
 		// Update session cookie
 		$this->session->set_userdata(array(
@@ -287,7 +288,7 @@ class Profile extends Controller {
 			'last_name' => $this->input->post('lastname')
 		));
 		
-		$this->ui->set(array($view,''));
+		$this->ui->set_message($msg,'Confirmation');
 	}
 }
 /** @} */

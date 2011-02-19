@@ -35,29 +35,23 @@ class Appointments extends Controller {
 		$this->auth->check_logged_in();
 
 		if ($this->auth->get_type() === 'patient'){
-			
 			$results = $this->appointments_model->view_all(array('account_id' => $this->auth->get_account_id(),
 																 'type' => $this->auth->get_type()));
-		}
-		else if ($this->auth->get_type() === 'hcp'){
+		} else if ($this->auth->get_type() === 'hcp'){
 			$results = $this->appointments_model->view_all(array('account_id' => $this->auth->get_account_id(),
 																 'type' => $this->auth->get_type()));
-		}
-		else {
-			$this->ui->error('Internal server logic error.', 500);
+		} else {
+			$this->ui->set_error('Internal server logic error.', 'server');
 			return;
 		}
 		
-		switch ($results) {
-			case -1:
-				$mainview = 'Query error!';
-				break;
-			default:
-				$mainview = $this->load->view('mainpane/lists/appointments',
-					array('list_name' => 'My Appointments', 'list' => $results) , TRUE);
-				break;
+		if ($results === -1){
+			$this->ui->set_query_error();
+			return;
 		}
-		
+		$mainview = $this->load->view('mainpane/lists/appointments',
+					array('list_name' => 'My Appointments', 'list' => $results) , TRUE);
+				
 		// Give results to the client
 		$this->ui->set(array($mainview));
 	}
@@ -73,33 +67,26 @@ class Appointments extends Controller {
 		$this->auth->check_logged_in();
 
 		if ($this->auth->get_type() === 'patient'){
+			$results = $this->appointments_model->view_upcoming(array('account_id' => $this->auth->get_account_id(),
+																			 'type' => $this->auth->get_type()
+																));
+		} else if ($this->auth->get_type() === 'hcp'){
+			$results = $this->appointments_model->view_upcoming(array('account_id' => $this->auth->get_account_id(),
+																 'type' => $this->auth->get_type()
+																));
+		} else {
+			$this->ui->set_error('Internal server logic error.', 'server');
+			return;
+		} 
 			
-			$results = $this->appointments_model->view_upcoming(array('account_id' => $this->auth->get_account_id(),
-																 'type' => $this->auth->get_type()));
-			$sidepane = 'sidepane/patient-profile';
-		}
-		else if ($this->auth->get_type() === 'hcp'){
-			$results = $this->appointments_model->view_upcoming(array('account_id' => $this->auth->get_account_id(),
-																 'type' => $this->auth->get_type()));
-			$sidepane = 'sidepane/personal_hcp_profile';
-		}
-		else {
-			$this->ui->error('Internal server logic error.', 500);
+		if ($results === -1) {
+			$this->ui->set_query_error();
 			return;
 		}
-			
-		switch ($results) {
-			case -1:
-				$mainview = 'Query error!';
-				$sideview = '';
-				break;
-			default:
-				$mainview = $this->load->view('mainpane/lists/appointments',
-					array('list_name' => 'My Upcoming Appointments', 'list' => $results) , TRUE);
-				$sideview = $this->load->view($sidepane, '', TRUE);
-				break;
-		}
 		
+		$mainview = $this->load->view('mainpane/lists/appointments',
+					array('list_name' => 'My Upcoming Appointments', 'list' => $results) , TRUE);
+				
 		// Give results to the client
 		$this->ui->set(array($mainview));
 	}
@@ -116,33 +103,24 @@ class Appointments extends Controller {
 		$this->auth->check_logged_in();
 		
 		if ($this->auth->get_type() === 'patient'){
-			
 			$results = $this->appointments_model->view_past(array('account_id' => $this->auth->get_account_id(),
 																 'type' => $this->auth->get_type()));
-			$sidepane = 'sidepane/personal_patient_profile';
-		}
-		else if ($this->auth->get_type() === 'hcp'){
+		} else if ($this->auth->get_type() === 'hcp'){
 			$results = $this->appointments_model->view_past(array('account_id' => $this->auth->get_account_id(),
 																 'type' => $this->auth->get_type()));
-			$sidepane = 'sidepane/personal_hcp_profile';
-		}
-		else {
-			$this->ui->error('Internal server logic error.', 500);
+		} else {
+			$this->ui->set_error('Internal server logic error.', 'server');
 			return;
 		}
 		
-		switch ($results) {
-			case -1:
-				$mainview = 'Query error!';
-				$sideview = '';
-				break;
-			default:
-				$mainview = $this->load->view('mainpane/list/appointments',
-					array('list_name' => 'My Past Appointments', 'list' => $results) , TRUE);
-				$sideview = $this->load->view($sidepane, '', TRUE);
-				break;
+		if($results === -1) {
+			$this->ui->set_query_error();
+			return;
 		}
 		
+		$mainview = $this->load->view('mainpane/lists/appointments',
+					array('list_name' => 'My Past Appointments', 'list' => $results) , TRUE);
+				
 		// Give results to the client
 		$this->ui->set(array($mainview));
 	}
@@ -161,46 +139,31 @@ class Appointments extends Controller {
 		$this->load->model('appointments_model');
 		
 		$result = $this->appointments_model->is_myappointment(array($this->auth->get_account_id(),$apt_id));
-		if ( $result === -1){
-				$mainview = 'Query error';
-				$sideview = '';
-		}
-		elseif ( $result === -5){
-				$mainview = 'Appointment ID does not exist!';
-				$sideview = '';
-		}
-		elseif ( $result === TRUE){
-				/* @to do: pop up-- are you sure you want to cancel appointment?*/
-				$results = $this->appointments_model->cancel(array($apt_id));
-			
-				if ($this->auth->get_type() === 'patient'){
-					$sidepane = 'sidepane/personal_patient_profile';
-				}
-				else {
-				$sidepane = 'sidepane/personal_hcp_profile';
-				}
-				
-				switch ($results) {
+		if ( $result === -1 ){
+			$this->ui->set_query_error();
+			return;
+		} elseif ( $result === -5 ){
+				$this->ui->set_error('Appointment ID does not exist!');
+				return;
+		} elseif ( $result === TRUE ){
+			/* @to do: pop up-- are you sure you want to cancel appointment?*/
+			$results = $this->appointments_model->cancel(array($apt_id));
+								
+			switch ($results) {
 				case -1:
-					$mainview = 'Query error!';
-					$sideview = '';
-					break;
+					$this->ui->set_query_error();
+					return;
 				case -5:
-					$mainview = 'Appointment does not exist!';
-					$sideview = '';
+					$this->ui->set_error('Appointment does not exist!');
+					return;
 				default:
-					$mainview = 'The appointment was successfully canceled.';
-					$sideview = $this->load->view($sidepane, '', TRUE);
-					break;
-				}
-		}
-		else{
-			$this->ui->error('This is not your appointment. Permission Denied.', 500);
+					$this->ui->set_message('The appointment was successfully canceled.','Confirmation');
+					return;
+			}
+		} else{
+			$this->ui->set_error('This is not your appointment.', 'permission denied');
 			return;
 		}
-		
-		// Give results to the client
-		$this->ui->set(array($mainview));
 	}
 	
 	/**
@@ -211,18 +174,18 @@ class Appointments extends Controller {
 		
 		// Only patient can request
 		if ($this->auth->get_type() != 'patient') {
-			$this->ui->error('Doctors are not allowed to request appointments');
+			$this->ui->set_error('Doctors are not allowed to request appointments','Permission Denied');
 			return;
 		}
 		
 		// Get appointment tuple from the model
 		$app = $this->appointments_model->get_appointment(array($apt_id));
 		if ($app === -1) {
-			$this->ui->set(array('Query error',''));
+			$this->ui->set_query_error();
 			return;
 		}
 		else if (count($app) <= 0) {
-			$this->ui->set(array('This appointment does not exist',''));
+			$this->ui->set_error('This appointment does not exist');
 			return;
 		}
 		
@@ -245,82 +208,59 @@ class Appointments extends Controller {
 	function reschedule_do($apt_id) {                          // test it belongs to me
 		$this->auth->check_logged_in();
 		
-		if ($this->auth->get_type() === 'hcp')
-		{
-			$this->ui->error('Doctors are not allowed to reschedule appointments', 500);
+		if ($this->auth->get_type() === 'hcp') {
+			$this->ui->set_error('Doctors are not allowed to reschedule appointments', 'Permission Denied');
 			return;
 		}
 		
 		//test to see if id is numeric
 		if (is_numeric($apt_id))
 		{
-
 			//get the appointment if it exits
 			$is_mine = $this->appointments_model->get_appointment($apt_id);
 			
-			if($is_mine === -1)
-			{
-				$mainview = 'Query Error!';
-				$sideview = '';
-			} 
-			elseif ($is_mine === -5)
-			{
-				$this->ui->error('Appointment ID does not exist.', 500);
+			if($is_mine === -1)	{
+				$this->ui->set_query_error();
 				return;
-			}
-			elseif (sizeof($is_mine) <= 0)
-			{
-				$this->ui->error('Appointment tuple does not exist in the database.', 500);
-				return;
-			}
-			else
-			{
+			} elseif ($is_mine === -5){
+				$error = 'Appointment ID does not exist.';
+			} elseif (sizeof($is_mine) <= 0){
+				$error = 'Appointment tuple does not exist in the database.';
+			} else {
 				//test to see if the appointment is mine
-				if ($this->auth->get_account_id() === $is_mine[0]['patient_id'])
-				{
+				if ($this->auth->get_account_id() === $is_mine[0]['patient_id']){
 					$new_time = $this->input->post('time');
 					
-					if ($new_time !== FALSE && $new_time !== '')
-					{
+					if ($new_time !== FALSE && $new_time !== ''){
 						$results = $this->appointments_model->reschedule(array('appointment_id' => $apt_id, 'date_time' => $new_time )); 
-			
-						switch ($results) 
-						{
+						switch ($results) {
 							case -1:
-								$mainview = 'Query Error!';
-								$sideview = '';
-								break;
+								$this->ui->set_query_error();
+								return;
 							case -5:
-								$mainview = 'Appointment does not exist';
-								$sideview = '';
+								$error = 'Appointment does not exist.';
 								break;
 							default:
-								$mainview = 'Appointment was successfully rescheduled';
-								$sideview = $this->load->view('sidepane/personal_patient_profile', '', TRUE);
-								break;
+								$this->ui->set_message('Appointment was successfully rescheduled');
+								return;
 						}
+					} else {
+						$error = 'Please fill out the Time and Date field';
+						$type = 'Missing Arguments';
 					}
-					else
-					{
-						$this->ui->error('Please fill out the Time and Date field', 500);
-						return;
-					}
+				} else {
+					$error = 'Cannot reschedule an appointment that doesnt belong to me.';
+					$type = 'Permission Denied';
 				}
-				else
-				{
-					$this->ui->error('Cannot reschedule an appointment that doesnt belong to me.', 500);
-					return;
-				}
-
 			}
+		} else {
+			$error = 'Appointment ID is not numeric.';
+			$type = 'Invalid data type';
 		}
-		else
-		{
-			$this->ui->error('Appointment ID is not numeric.', 500);
-			return;
+		if ( $type === NULL ){
+			$type = '';
 		}
-		// Give results to the client
-		$this->ui->set(array($mainview));
+		$this->ui->set_error($error,$type);
 	}
 
 	
@@ -339,18 +279,17 @@ class Appointments extends Controller {
 		
 		// Only patient can request
 		if ($this->auth->get_type() != 'patient') {
-			$this->ui->error('Doctors are not allowed to request appointments');
+			$this->ui->set_error('Doctors are not allowed to request appointments','Permission Denied');
 			return;
 		}
 		
 		// Get doctor tuple from the model
 		$hcp = $this->hcp_model->get_hcp(array($aid));
 		if ($hcp === -1) {
-			$this->ui->set(array('Query error',''));
+			$this->ui->set_query_error();
 			return;
-		}
-		else if (count($hcp) <= 0) {
-			$this->ui->set(array('Sorry, you can request appointments only to HCPs',''));
+		} else if (count($hcp) <= 0) {
+			$this->ui->set_error('Sorry, you can request appointments only to HCPs','Permission Denied');
 			return;
 		}
 		
@@ -375,73 +314,53 @@ class Appointments extends Controller {
 		$this->load->model('hcp_model');
 		$this->load->model('connections_model');
 		
-		if ($this->auth->get_type() === 'hcp')
-		{
-			$this->ui->error('Doctors are not allowed to request appointments', 500);
+		if ($this->auth->get_type() === 'hcp'){
+			$this->ui->set_error('Doctors are not allowed to request appointments', 'Permission Denied');
 			return;
 		}
 		
 		//test to see if the accound_id belongs to a hcp
 		$is_hcp = $this->hcp_model->is_hcp(array($account_id));
-		if ( $is_hcp === -1 )
-		{
-			$mainview = 'Querry Error';
-			$sideview = '';
-		}
-		elseif ($is_hcp === TRUE)
-		{
-			
+		if ( $is_hcp === -1 ) {
+			$this->ui->set_query_error();
+			return;
+		} elseif ($is_hcp === TRUE) {
 			//test to see if the person loged in is connected with the hcp
 			$is_connected = $this->connections_model->is_connected_with($account_id, $this->auth->get_account_id());
 			
-			if($is_connected === -1)
-			{
-				$mainview = 'Querry Error';
-				$sideview = '';
-			}
-			elseif ($is_connected === TRUE)
-			{
+			if($is_connected === -1){
+				$this->ui->set_query_error();
+				return;
+			} elseif ($is_connected === TRUE){
 				
 				$desc = $this->input->post('description');
 				$time = $this->input->post('time');
 				
 				//test to see if the time and description are TRUE and not NULL
-				if( $desc !== FALSE && $desc !== '' && $time !== FALSE && $time !== '')
-				{
+				if( $desc !== FALSE && $desc !== '' && $time !== FALSE && $time !== '') {
 					$results = $this->appointments_model->request(array($this->auth->get_account_id(), 
 											$account_id, 
 											$desc ,
 											$time ));					 
-					switch ($results)
-					{
-						case -1:
-							$mainview = 'Query error!';
-							break;
-						default:
-							$mainview = 'Your request has been submitted.';
-							break;
+					if($results === -1){
+						$this->ui->set_query_error();
+						return;
 					}
-				}
-				else
-				{
-					$this->ui->error('Please fill out the Time and Date and Description', 500);
+					
+					$this->ui->set_message('Your request has been submitted','Confirmation');
+					return;
+				} else{
+					$this->ui->set_error('Please fill out the Time and Date and Description', 'Missing Arguments');
 					return;
 				}
-			}
-			else
-			{
-				$this->ui->error('This account is not connected with the healthcare provider specified to request an appointment', 500);
+			} else {
+				$this->ui->set_error('This account is not connected with the healthcare provider specified to request an appointment', 'Permission Denied');
 				return;
 			}
-		}
-		else
-		{
-			$this->ui->error('The healthcare provider ID does not exist.', 500);
+		} else {
+			$this->ui->set_error('The healthcare provider ID does not exist.');
 			return;
 		}
-			
-		// Give results to the client
-		$this->ui->set(array($mainview));
 	}
 	
 	/**
@@ -454,25 +373,18 @@ class Appointments extends Controller {
 		 $this->auth->check_logged_in();
 		 
 		 if ($this->auth->get_type() === 'patient'){
-			$this->ui->error('Patients are not allowed to accept appointments!', 500);
+			$this->ui->set_error('Patients are not allowed to accept appointments!', 'Permission Denied');
 			return;
 		}
 		
 		//$results = $this->appointments_model->approve( array('appointment_id' => $apt_id));
 		$results = $this->appointments_model->approve( array('appointment_id' => $apt_id));
-		switch ($results) {
-			case -1:
-				$mainview = 'Query error!';
-				$sideview = '';
-			default:
-				$mainview = 'The appointment has been successfully approved.';
-				$sideview = $this->load->view('sidepane/personal_patient_profile', '', TRUE);
-				break;
-			}
-			
-		// Give results to the client
-		$this->ui->set(array($mainview));
+		if($results === -1) {
+			$this->ui->set_query_error();
+			return;
+		}
 		
+		$this->ui->set_message('The appointment has been successfully approved.','Confirmation');
 	}
 }
 /** @} */

@@ -23,7 +23,7 @@ class Upload extends Controller {
 	function index()
 	{
 		//$this->ui->redirect('/medical_records/upload');
-		$this->ui->error('Access denied');
+		$this->ui->set_error('Access denied','Forbidden');
 	}
 	
 	/**
@@ -44,12 +44,12 @@ class Upload extends Controller {
 		$issue = $this->input->post('issue');
 		$info = $this->input->post('info');
 		if ($patient_id == FALSE || $issue == '' || $issue == FALSE) {
-			$this->ui->error('Impossible to upload, missing some inputs');
+			$this->ui->set_error('Unable to upload.','Missing Arguments');
 		}
 		
 		// Check if $patient_id actually refers to a patient
 		if (! $this->patient_model->is_patient($patient_id)) {
-			$this->ui->error('This id does not refer to a patient');
+			$this->ui->set_error('This id does not refer to a patient');
 			return;
 		}
 		
@@ -57,7 +57,7 @@ class Upload extends Controller {
 		if ($patient_id !== $this->auth->get_account_id()) {
 			// Check if I'm an HCP connected with this patient
 			if (! $this->connections_model->is_connected_with($patient_id, $this->auth->get_account_id())) {
-				$this->ui->error('You don\'t have permissions to upload a medical record for this patient');
+				$this->ui->set_error('You don\'t have permissions to upload a medical record for this patient','Permission Denied');
 				return;
 			}
 		}
@@ -71,7 +71,7 @@ class Upload extends Controller {
 		// Check if the patient's folder already exists
 		if (! is_dir($config['upload_path'])) {
 			if (mkdir($config['upload_path'], 0777) == FALSE) {
-				$this->ui->error('Impossible to upload, impossible to create new folder');
+				$this->ui->set_error('Unable to upload. Unable to create new folder');
 				return;
 			}
 		}
@@ -83,7 +83,7 @@ class Upload extends Controller {
 		if (! $this->upload->do_upload()) {
 			//$error = array('error' => $this->upload->display_errors());
 			//$mainview = $this->load->view('upload_form', $error);
-			$this->ui->error($this->upload->display_errors());
+			$this->ui->set_error($this->upload->display_errors());
 			return;
 		}
 		
@@ -98,18 +98,17 @@ class Upload extends Controller {
 		
 		switch ($result) {
 			case -1:
-				$mainview = 'Error recording the uploaded file in the database.';
+				$this->ui->set_error('Error recording the uploaded file in the database.', 'Database Error');
 				/** @bug This can lead to untracket uploaded files in the server */
 				break;
 			case -2:
-				$mainview = 'Error adding permissions to the database.';
+				$this->ui->set_error('Error adding permissions to the database.','Database Error');
 				break;
 			default:
 				$mainview = $this->load->view('mainpane/forms/upload_medrec_success', '', TRUE);
+				$this->ui->set(array($mainview));
 				break;
 		}
-		
-		$this->ui->set(array($mainview, ''));
 	}
 }
 /**@}*/

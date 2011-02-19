@@ -22,7 +22,7 @@ class Download extends Controller {
 	 */ 
 	function index()
 	{
-		$this->ui->error('Access denied');
+		$this->ui->set_error('Access denied','forbidden');
 	}
 	
 	/**
@@ -38,7 +38,7 @@ class Download extends Controller {
 		
 		// Check if there is input
 		if ($patient_id == NULL || $medical_record_id == NULL) {
-			$this->ui->error('It\'s necessary to specify a patient and a medical record id');
+			$this->ui->set_error('It\'s necessary to specify a patient and a medical record id','Missing Arguments');
 			return;
 		}
 		
@@ -46,7 +46,7 @@ class Download extends Controller {
 		if ($patient_id !== $this->auth->get_account_id()) {
 			// Check if I'm an HCP connected with this patient
 			if (! $this->connections_model->is_connected_with($patient_id, $this->auth->get_account_id())) {
-				$this->ui->error('You are not connected with this patient');
+				$this->ui->set_error('You are not connected with this patient','Permission Denied');
 				return;
 			}
 			
@@ -54,11 +54,11 @@ class Download extends Controller {
 			$perm = $this->medical_records_model->is_account_allowed(
 				array($this->auth->get_account_id(), $medical_record_id));
 			if ($perm === -1) {
-				$this->ui->error('Query error!');
+				$this->ui->set_query_error();
 				return;
 			}
 			else if ($perm == FALSE) {
-				$this->ui->error('You don\'t have permissions to download this medical record!');
+				$this->ui->set_error('You don\'t have permissions to download this medical record!','Permission Denied');
 				return;
 			}
 		}
@@ -66,18 +66,18 @@ class Download extends Controller {
 		// Get tuple for this medical record
 		$get = $this->medical_records_model->get_medicalrecord(array($medical_record_id));
 		if ($get === -1) {
-			$this->ui->error('Query error!');
+			$this->ui->set_query_error();
 			return;
 		}
 		else if (sizeof($get) == 0) {
-			$this->ui->error('Medical record specified does not exist');
+			$this->ui->set_error('Specified medical record does not exist');
 		}
 		
-		$filepath = 'resources/medical_records/'.$patient_id.'/'.$get[0]['file_path'];
-		
+		$filepath = 'resources/medical_records/'.$patient_id.'/'.$get[0]['file_name'];
+		echo $filepath;
 		// Check if the file exist
 		if (! is_file($filepath)) {
-			$this->ui->error('File does not exist!');
+			$this->ui->set_error('File does not exist!');
 			return;
 		}
 		

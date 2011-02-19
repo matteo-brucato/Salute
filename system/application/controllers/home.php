@@ -31,9 +31,8 @@ class Home extends Controller {
 			));
 		}
 		// Already logged in
-		else {
+		else 
 			$this->ui->redirect('/profile');
-		}
 	}
 
 	/**
@@ -45,15 +44,16 @@ class Home extends Controller {
 	 * */
 	function login()
 	{
-		if ($this->auth->is_logged_in())
+		if ($this->auth->is_logged_in()){
 			$this->ui->redirect('/profile');
-		
+			return;
+		}
 		// get email & password
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
 		
-		if ($email == FALSE || $password == FALSE) {
-			$this->ui->set_error('Access to this page not allowed', 'forbidden');
+		if ($email == FALSE || $password == FALSE){
+			$this->ui->set_error('Access to this page not allowed', 'Forbidden'); 
 			return;
 		}
 		
@@ -65,38 +65,38 @@ class Home extends Controller {
 		$results = $this->login_model->authorize(array("email" => $email,"password" => $password));
 				
 		// login fails : error view
-		if ($results === -1) {
-			$this->ui->query_error();
+		if ($results === -1){
+			$this->ui->set_query_error(); 
 			return;
 		}
-		else if (sizeof($results) == 0) {
+		else if (sizeof($results) == 0){
 			//$this->ui->set(array('',
 			//	$this->load->view('sidepane/forms/login_failed', '', TRUE)
 			//));
-			$this->ui->set_error('Login error', 'login');
-		} else if ($results === -1) {
-			$this->ui->set(array('Query Error!',''));
+			$this->ui->set_error('Login error', 'login'); 
+			return;
+		}else if ($results === -1) {
+			$this->ui->set_query_error(); 
 			return;
 		}
 		// login successful : store info for session id, go to user profile
 		else {
 			if ($results[0] != 'patient' && $results[0] != 'hcp') {
-				$this->ui->set(array(
-					'',
+				$this->ui->set(array( NULL,
 					$this->load->view('sidepane/forms/login_failed', '', TRUE)
 				));
 			} 
 			$active_status = $this->account_model->is_active(array($results[1]["account_id"]));
 			if ( $active_status === -1 ){
-				$this->ui->error('Query Error',500);
+				$this->ui->set_query_error(); 
 				return;
 			} else if ( $active_status === -4 ){
-				$this->ui->set('Sorry! That account does not exist.', '');
+				$this->ui->set_error('Sorry! That account does not exist.'); 
 				return;
 			} else if ( !$active_status ){
-				$this->ui->redirect('/settings/activate/'.$results[1]["account_id"]);
+				$this->ui->redirect('/settings/activate/'.$results[1]["account_id"]); 
 				return;
-			}	
+			}
 			$login_data = array(
 				'account_id' => $results[1]["account_id"],
 				'email' => $results[1]["email"],
@@ -106,7 +106,6 @@ class Home extends Controller {
 			);
 			$this->session->set_userdata($login_data);
 			$this->ui->redirect('/profile');
-			
 		}
 	}
 
@@ -115,8 +114,7 @@ class Home extends Controller {
 	 * Clears current session info
 	 * @return redirect to default page
 	 * */
-	function logout()
-	{
+	function logout(){
 		$this->session->sess_destroy();
 		$this->ui->redirect('/');
 	}
@@ -126,10 +124,8 @@ class Home extends Controller {
 	 * prompts for email address
 	 * */
 	function retrieve_password(){
-				
 		$this->ui->set(array(
-			$this->load->view('mainpane/forms/forgot_password', '', TRUE),
-			''
+			$this->load->view('mainpane/forms/forgot_password', '', TRUE)
 		));
 	}
 	
@@ -144,8 +140,8 @@ class Home extends Controller {
 		$email = $this->input->post('email');
 
 		if ( $email == NULL ){
-				$this->ui->error('Error: No email passed in.', 500);
-				return;
+			$this->ui->set_error('No email passed in.', 'Missing Arguments'); 
+			return;
 		}
 		$this->load->model('account_model');
 		
@@ -153,7 +149,7 @@ class Home extends Controller {
 		$password = $result[0]['password'];
 		
 		if ($password == NULL){
-			$this->ui->error('Sorry, this email is not registered.', 500);
+			$this->ui->set_error('Sorry, this email is not registered.'); 
 			return;
 		}
 
@@ -168,7 +164,7 @@ class Home extends Controller {
 			'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
 
 		$this->email->send();
-		$this->ui->set(array('Your password has been emailed to you.',''));
+		$this->ui->set_message('Your password has been emailed to you.','Confirmation');
 	}
 
 	/**
@@ -176,10 +172,7 @@ class Home extends Controller {
 	 * */
 	function register()
 	{
-		$this->ui->set(array(
-			$this->load->view('mainpane/registration', '', TRUE),
-			$this->load->view('sidepane/default', '', TRUE)
-		));
+		$this->ui->set(array($this->load->view('mainpane/registration', '', TRUE), ''));
 	}
 
 	/*
@@ -203,7 +196,7 @@ class Home extends Controller {
 	function register_do($type = NULL)
 	{
 		if( $type == NULL || ( $type !== 'patient' && $type !== 'hcp' ) ){
-			$this->ui->error('Invalid type.',500);
+			$this->ui->set_error('Invalid type.'); 
 			return;
 		}
 		
@@ -211,7 +204,7 @@ class Home extends Controller {
 		$password = $this->input->post('password');
 	
 		if($email == NULL || $password == NULL)	{
-			$this->ui->error('Email and Password are mandatory to register.',500);
+			$this->ui->set_error('Email and Password are mandatory to register.','Missing Arguments'); 
 			return;
 		}
 		
@@ -224,8 +217,8 @@ class Home extends Controller {
 		$result = $this->account_model->add_account(array('email' => $email, 'password' => $password)); 
 		
 		if($result === -1){
-				$this->ui->set(array('Query error (1)!',''));
-				return;
+			$this->ui->set_query_error(); 
+			return;
 		}
 		
 		$account_id = $result[0]['account_id'];
@@ -266,10 +259,14 @@ class Home extends Controller {
 			$this->load->model('hcp_model');
 			$res = $this->hcp_model->register($input); 
 		}
-		else
-			$this->ui->error('Internal Server Error.', 500);
-		if ( $res === -1 )
-				$view = 'Query error!';
+		else{
+			$this->ui->set_error('Internal Server Error.', 'server'); 
+			return;
+		} 
+		if ( $res === -1 ){
+			$this->ui->set_query_error();
+			return;
+		}
 		else{
 			$this->load->library('email');
 			$config['mailtype'] = 'html';
@@ -282,15 +279,13 @@ class Home extends Controller {
 				'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
 
 			$this->email->send();
-			$view = 'Congratulations, you are now registered. A confirmation email has been sent to you.'.
-			' Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.';
+			$this->ui->set_message('Congratulations, you are now registered. A confirmation email has been sent to you.'.
+			' Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.', 'Confirmation');
 		}
 		
 		// End transaction
 		$this->db->trans_complete();
 		//$this->db->trans_rollback();
-		
-		$this->ui->set(array($view,''));
 	}
 }
 /** @} */
