@@ -27,8 +27,8 @@ class Connections_model extends Model {
 	 * */
 	function list_my_patients($inputs) {
 		$sql = "SELECT P.*
-			FROM connections C, patient_account P
-			WHERE C.accepted = TRUE AND C.requester_id = P.account_id AND C.accepter_id = ?";
+			FROM p_d_connection D, patient_account P
+			WHERE D.accepted = TRUE AND D.patient_id = P.account_id AND D.hcp_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
@@ -53,7 +53,7 @@ class Connections_model extends Model {
 	 * */
 	function list_my_colleagues($account_id) {
 		$sql = "SELECT H.*
-			FROM connections D, hcp_account H
+			FROM d_d_connection D, hcp_account H
 			WHERE D.accepted = TRUE AND (
 			      (D.requester_id = ? AND D.accepter_id = H.account_id)
 			OR    (D.accepter_id = ? AND D.requester_id = H.account_id))";
@@ -81,8 +81,8 @@ class Connections_model extends Model {
 	 * */
 	function list_my_hcps($inputs) {
 		$sql = "SELECT H.*
-			FROM connections D, hcp_account H
-			WHERE D.accepted = TRUE AND D.requester_id =  ? AND H.account_id = D.accepter_id";
+			FROM p_d_connection D, hcp_account H
+			WHERE D.accepted = TRUE AND D.patient_id =  ? AND H.account_id = D.hcp_id";
 		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
@@ -108,8 +108,8 @@ class Connections_model extends Model {
 	 function pending_outgoing_hcps_4_a_patient($inputs)
 	 {
 		$sql = "SELECT H.*
-	 		FROM connections P, hcp_account H
-			WHERE P.requester_id = ? AND P.accepted = FALSE AND P.accepter_id = H.account_id";
+	 		FROM p_d_connection P, hcp_account H
+			WHERE P.patient_id = ? AND P.accepted = FALSE AND P.hcp_id = H.account_id";
  		$query = $this->db->query($sql, $inputs);
  		
  		if ($this->db->trans_status() === FALSE)
@@ -135,8 +135,8 @@ class Connections_model extends Model {
 	 function pending_incoming_patients_4_a_hcp($inputs)
 	 {
 		$sql = "SELECT A.*
-	 		FROM connections P, patient_account A
-			WHERE P.accepter_id = ? AND P.accepted = FALSE AND A.account_id = P.requester_id";
+	 		FROM p_d_connection P, patient_account A
+			WHERE P.hcp_id = ? AND P.accepted = FALSE AND A.account_id = P.patient_id";
  		$query = $this->db->query($sql, $inputs);
  		$result = $query->result_array();
 	
@@ -163,7 +163,7 @@ class Connections_model extends Model {
 	 function pending_incoming_hcps_4_a_hcp($inputs)
 	 {
 		$sql = "SELECT A.*
-	 		FROM connections D, hcp_account A
+	 		FROM d_d_connection D, hcp_account A
 			WHERE D.accepter_id = ? AND D.accepted = FALSE AND A.account_id = D.requester_id";
  		$query = $this->db->query($sql, $inputs);
  		$result = $query->result_array();
@@ -191,7 +191,7 @@ class Connections_model extends Model {
 	 function pending_outgoing_hcps_4_a_hcp($inputs)
 	 {
 		$sql = "SELECT A.*
-	 		FROM connections D, hcp_account A
+	 		FROM d_d_connection D, hcp_account A
 			WHERE D.requester_id = ? AND D.accepted = FALSE AND A.account_id = D.accepter_id";
  		$query = $this->db->query($sql, $inputs);
 	
@@ -215,11 +215,11 @@ class Connections_model extends Model {
 	 *   NULL if nothing
 	 * */
 	function get_connection($a_id, $b_id) {
-		// Try to get the connection from connections table
+		// Try to get the connection from patient-hcp table
 		$sql = "SELECT *
-				FROM connections C
-				WHERE (C.requester_id = ? AND C.accepter_id = ?)
-				OR    (C.accepter_id = ? AND C.requester_id = ?)";
+				FROM p_d_connection C
+				WHERE (C.patient_id = ? AND C.hcp_id = ?)
+				OR    (C.hcp_id = ? AND C.patient_id = ?)";
 		$query = $this->db->query($sql, array($a_id, $b_id, $a_id, $b_id));
 		if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -231,19 +231,19 @@ class Connections_model extends Model {
 		}
 		
 		// Try to get the connection from hcp-hcp table
-		//$sql = "SELECT *
-		//		FROM connections C
-		//		WHERE (C.requester_id = ? AND C.accepter_id = ?)
-		//		OR    (C.accepter_id = ? AND C.requester_id = ?)";
-		//$query = $this->db->query($sql, array($a_id, $b_id, $a_id, $b_id));
-		//if ($this->db->trans_status() === FALSE)
-		//	return -1;
+		$sql = "SELECT *
+				FROM d_d_connection C
+				WHERE (C.requester_id = ? AND C.accepter_id = ?)
+				OR    (C.accepter_id = ? AND C.requester_id = ?)";
+		$query = $this->db->query($sql, array($a_id, $b_id, $a_id, $b_id));
+		if ($this->db->trans_status() === FALSE)
+			return -1;
 		
 		// If found, return it
-		//if ($query->num_rows() > 0) {
-		//	$array = $query->result_array();
-		//	return $array[0];
-		//}
+		if ($query->num_rows() > 0) {
+			$array = $query->result_array();
+			return $array[0];
+		}
 		
 		// If nothing found
 		return NULL;
@@ -262,19 +262,20 @@ class Connections_model extends Model {
 	 * */
 	function is_connected_with($a_id, $b_id) {
 		$sql = "(SELECT *
-			FROM connections DD
-			WHERE DD.accepted = true AND
-				((DD.requester_id = ? AND DD.accepter_id = ?)
-				OR (DD.accepter_id = ? AND DD.requester_id = ?)))";
-		
-				//UNION
-				//(SELECT *
-				//FROM p_d_connection PD
-				//WHERE PD.accepted = true AND
-					//((PD.hcp_id = ? AND PD.patient_id = ?)
-					//OR (PD.patient_id = ? AND PD.hcp_id = ?)));
-
-		$query = $this->db->query($sql, array($a_id, $b_id, $a_id, $b_id));
+				FROM p_d_connection PD
+				WHERE PD.accepted = true AND
+					((PD.hcp_id = ? AND PD.patient_id = ?)
+					OR (PD.patient_id = ? AND PD.hcp_id = ?)))
+				UNION
+				(SELECT *
+				FROM d_d_connection DD
+				WHERE DD.accepted = true AND
+					((DD.requester_id = ? AND DD.accepter_id = ?)
+					OR (DD.accepter_id = ? AND DD.requester_id = ?)))";
+		$query = $this->db->query($sql, array($a_id, $b_id,
+											  $a_id, $b_id,
+											  $a_id, $b_id,
+											  $a_id, $b_id,));
 											  
 		if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -296,19 +297,20 @@ class Connections_model extends Model {
 	 * */
 	function is_pending_with($a_id, $b_id) {
 		$sql = "(SELECT *
-			FROM connections DD
-			WHERE
-				((DD.requester_id = ? AND DD.accepter_id = ?)
-				OR (DD.accepter_id = ? AND DD.requester_id = ?)))";
-				
-				//UNION
-				//(SELECT *
-				//FROM p_d_connection PD
-				//WHERE
-				//	((PD.hcp_id = ? AND PD.patient_id = ?)
-				//	OR (PD.patient_id = ? AND PD.hcp_id = ?)));
-				
-		$query = $this->db->query($sql, array($a_id, $b_id, $a_id, $b_id));
+				FROM p_d_connection PD
+				WHERE
+					((PD.hcp_id = ? AND PD.patient_id = ?)
+					OR (PD.patient_id = ? AND PD.hcp_id = ?)))
+				UNION
+				(SELECT *
+				FROM d_d_connection DD
+				WHERE
+					((DD.requester_id = ? AND DD.accepter_id = ?)
+					OR (DD.accepter_id = ? AND DD.requester_id = ?)))";
+		$query = $this->db->query($sql, array($a_id, $b_id,
+											  $a_id, $b_id,
+											  $a_id, $b_id,
+											  $a_id, $b_id,));
 											  
 		if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -334,7 +336,7 @@ class Connections_model extends Model {
 	function add_hcp_hcp($inputs) {
 		//testing to see if requestor is sending 2nd request
 		$sql = "SELECT *
-			FROM connections D
+			FROM d_d_connection D
 			WHERE (D.requester_id = ? AND D.accepter_id = ?)";
 		$query = $this->db->query($sql, $inputs);
 		
@@ -348,7 +350,7 @@ class Connections_model extends Model {
 		//testing to see if hcp_loggedin is sending request to hcp who
 		//already sent hcp_logged in a request
 		$sql = "SELECT *
-			FROM connections D
+			FROM d_d_connection D
 			WHERE (D.requester_id = ? AND D.accepter_id = ?)";
 		$query = $this->db->query($sql, array($inputs[1], $inputs[0]));
 		
@@ -363,10 +365,14 @@ class Connections_model extends Model {
 				return -1;
 				
 			return 0;
+			
+			//$data = array( 'accepted'=> TRUE );
+			//$this->db->update('D_D_Connection', $data, array('requester_id' => $inputs[1], 'accepter_id' => $inputs[0]));
+			//return TRUE;
 		}
 
 		//request has never been made in either direction	
-		$this->db->query("INSERT INTO connections (requester_id, accepter_id, date_connected)
+		$this->db->query("INSERT INTO d_d_connection (requester_id, accepter_id, date_connected)
 				  VALUES (?, ?, current_timestamp)", $inputs);
 		
 		if( $this->db->trans_status() === FALSE )
@@ -391,8 +397,8 @@ class Connections_model extends Model {
 	
 		//test to see if connection already exists
 		$sql = "SELECT *
-				FROM connections D
-				WHERE D.requester_id = ? AND D.accepter_id = ?";
+				FROM p_d_connection D
+				WHERE D.patient_id = ? AND D.hcp_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE) {
@@ -403,7 +409,7 @@ class Connections_model extends Model {
 			return -3;
 		}
 			
-		$this->db->query("INSERT INTO connections (requester_id, accepter_id, date_connected)
+		$this->db->query("INSERT INTO p_d_connection (patient_id, hcp_id, date_connected)
 			VALUES (? , ?, current_timestamp)", $inputs);
 		
 		if ($this->db->trans_status() === FALSE) {
@@ -427,7 +433,7 @@ class Connections_model extends Model {
 	 *   0 if everything goes fine
 	 * */
 	function accept_hcp_hcp($inputs) {
-		$query = $this->db->query("SELECT * FROM connections
+		$query = $this->db->query("SELECT * FROM d_d_connection
 			WHERE requester_id = ? AND accepter_id = ?", $inputs);
 		
 		if ($this->db->trans_status() === FALSE) {
@@ -444,7 +450,7 @@ class Connections_model extends Model {
 		}
 		
 		// Accept connection
-		$this->db->query("UPDATE connections SET accepted = TRUE
+		$this->db->query("UPDATE d_d_connection SET accepted = TRUE
 			WHERE requester_id = ? AND accepter_id = ?", $inputs);
 		
 		if ($this->db->trans_status() === FALSE) {
@@ -469,8 +475,8 @@ class Connections_model extends Model {
 	 *   0 if everything goes fine
 	 * */
 	function accept_patient_hcp($inputs) {
-		$query = $this->db->query("SELECT * FROM connections
-			WHERE requester_id = ? AND accepter_id = ?", $inputs);
+		$query = $this->db->query("SELECT * FROM p_d_connection
+			WHERE patient_id = ? AND hcp_id = ?", $inputs);
 		
 		if ($this->db->trans_status() === FALSE) {
 			return -1; /* query error */
@@ -486,8 +492,8 @@ class Connections_model extends Model {
 		}
 		
 		// Accept connection
-		$this->db->query("UPDATE connections SET accepted = TRUE
-			WHERE requester_id = ? AND accepter_id = ?", $inputs);
+		$this->db->query("UPDATE p_d_connection SET accepted = TRUE
+			WHERE patient_id = ? AND hcp_id = ?", $inputs);
 		
 		if ($this->db->trans_status() === FALSE) {
 			return -1; /* query error */
@@ -513,13 +519,12 @@ class Connections_model extends Model {
 		if ($check === FALSE) return -2;
 		
 		// Now, delete the connection
-		$sql = "DELETE FROM connections
+		$sql = "DELETE FROM p_d_connection
+				WHERE (patient_id = ? AND hcp_id = ?) OR (hcp_id = ? AND patient_id = ?)";
+		$query = $this->db->query($sql, array($a_id, $b_id, $a_id, $b_id));
+		$sql = "DELETE FROM d_d_connection
 				WHERE (requester_id = ? AND accepter_id = ?) OR (accepter_id = ? AND requester_id = ?)";
 		$query = $this->db->query($sql, array($a_id, $b_id, $a_id, $b_id));
-				
-		//$sql = "DELETE FROM p_d_connection
-		//		WHERE (patient_id = ? AND hcp_id = ?) OR (hcp_id = ? AND patient_id = ?)";
-		//$query = $this->db->query($sql, array($a_id, $b_id, $a_id, $b_id));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -544,14 +549,13 @@ class Connections_model extends Model {
 		if ($check === FALSE) return -2;
 		
 		// Now, delete the connection
-		$sql = "DELETE FROM connections
+		$sql = "DELETE FROM p_d_connection
+				WHERE (patient_id = ? AND hcp_id = ?) OR (hcp_id = ? AND patient_id = ?)";
+		$query = $this->db->query($sql, array($a_id, $b_id, $a_id, $b_id));
+		$sql = "DELETE FROM d_d_connection
 				WHERE (requester_id = ? AND accepter_id = ?) OR (accepter_id = ? AND requester_id = ?)";
 		$query = $this->db->query($sql, array($a_id, $b_id, $a_id, $b_id));
 		
-		//$sql = "DELETE FROM p_d_connection
-		//		WHERE (patient_id = ? AND hcp_id = ?) OR (hcp_id = ? AND patient_id = ?)";
-		//$query = $this->db->query($sql, array($a_id, $b_id, $a_id, $b_id));
-
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 		

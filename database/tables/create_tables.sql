@@ -175,6 +175,18 @@ CREATE TABLE groups(
 	PRIMARY KEY(group_id),
 	FOREIGN KEY (account_id) REFERENCES accounts(account_id)	
 );
+
+--Connections Table
+CREATE TABLE connections(
+	requester_id serial NOT NULL,
+	accepter_id serial NOT NULL,
+	accepted BOOLEAN NOT NULL DEFAULT FALSE,
+	date_connected DATE NOT NULL,
+	connection_level VARCHAR(1) DEFAULT '0',
+	PRIMARY KEY (requester_id, accepter_id),
+	FOREIGN KEY (requester_id) REFERENCES accounts(account_id),
+	FOREIGN KEY (accepter_id) REFERENCES accounts(account_id)
+);
 	
 
 --
