@@ -118,7 +118,7 @@ class Appointments extends Controller {
 			return;
 		}
 		
-		$mainview = $this->load->view('mainpane/list/appointments',
+		$mainview = $this->load->view('mainpane/lists/appointments',
 					array('list_name' => 'My Past Appointments', 'list' => $results) , TRUE);
 				
 		// Give results to the client

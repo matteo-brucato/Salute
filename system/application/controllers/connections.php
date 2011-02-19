@@ -28,7 +28,7 @@ class Connections extends Controller {
 	 * @return error
 	 * */
 	function index() {
-		$this->ui->error('Direct access to this resource is forbidden', 'forbidden');
+		$this->ui->set_error('Direct access to this resource is forbidden', 'forbidden');
 		return;
 	}
 
@@ -98,7 +98,7 @@ class Connections extends Controller {
 					array('list_name' => 'My Patients', 'list' => $res, 'status' => 'connected') , TRUE);
 		
 		// Give results to the client
-		$this->ui->set(array($mainview,$sideview));
+		$this->ui->set(array($mainview));
 	}
 	
 	/**
@@ -163,7 +163,7 @@ class Connections extends Controller {
 					array('list_name' => 'Pending Outgoing Requests', 'list' => $res, 'status' => 'pending_out') , TRUE);
 		
 		// Give results to the client
-		$this->ui->set(array($mainview,$sideview));
+		$this->ui->set(array($mainview));
 	}
 	
 	/**
