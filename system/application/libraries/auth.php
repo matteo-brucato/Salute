@@ -38,6 +38,7 @@ class Auth {
 		$this->first_name	= $CI->session->userdata('first_name');
 		$this->last_name	= $CI->session->userdata('last_name');
 		$this->CI = $CI;
+		$this->CI->load->library('ui');
 	}
 	
 	function is_logged_in() {
@@ -54,30 +55,34 @@ class Auth {
 	 * Checks if ALL the restrictions are satisfied. If one of them is not,
 	 * it will return the check number not satisfied. If all of them are
 	 * satisfied it returs TRUE
+	 * 
 	 * @return TRUE if all checks are satisfied. Otherwise it returns
-	 * the restriction not satisfied.
+	 * the restriction number not satisfied.
 	 * */
 	function check($perm = array()) {
 		for ($i = 0; $i < count($perm); $i++) {
 			switch ($perm[$i]) {
-				case CurrIsLoggedin:
-					if (!$this->is_logged_in()) return CurrIsLoggedin;
+				case auth::CurrIsLoggedin:
+					if (!$this->is_logged_in()) {
+						$this->CI->ui->set_error($this->CI->load->view('errors/not_logged_in', '', TRUE), 'authorization');
+						return auth::CurrIsLoggedin;
+					}
 					break;
-				case CurrIsPatient:
-					if (!$this->is_patient()) return CurrIsPatient;
+				case auth::CurrIsPatient:
+					if (!$this->is_patient()) return auth::CurrIsPatient;
 					break;
-				case CurrIsHcp:
-					if (!$this->is_hcp()) return CurrIsHcp;
+				case auth::CurrIsHcp:
+					if (!$this->is_hcp()) return auth::CurrIsHcp;
 					break;
-				case IsPatient:
+				case auth::IsPatient:
 					/** @todo */
 					$i++;
 					break;
-				case IsHcp:
+				case auth::IsHcp:
 					/** @todo */
 					$i++;
 					break;
-				case AreConnected:
+				case auth::AreConnected:
 					/** @todo */
 					$i += 2;
 					break;
@@ -89,11 +94,15 @@ class Auth {
 	/**
 	 * Automatically dislplays an error message if not logged in.
 	 * Prevent further actions.
+	 * 
+	 * @deprecated
 	 * */
 	function check_logged_in() {
 		if (!$this->is_logged_in()) {
 			$error_view = $this->CI->load->view('errors/not_logged_in', '', TRUE);
-			show_error($error_view);
+			//show_error($error_view);
+			$this->CI->ui->set_error($error_view, 'authorization');
+			exit;
 		}
 	}
 	

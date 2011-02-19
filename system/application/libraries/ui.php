@@ -32,18 +32,18 @@ class Ui {
 		$this->CI->layout->set('faux-8-2-col');
 		
 		// Set the default panels
-		if (!IS_AJAX) {
-			$this->panels[0] = $this->CI->load->view('mainpane/default', '', TRUE);
-			$this->panels[1] = $this->CI->load->view('sidepane/default', '', TRUE);
-			$this->panels[2] = $this->CI->load->view('others/navbar', '', TRUE);
-			$this->panels[3] = $this->CI->load->view('others/footer', '', TRUE);
-			$this->panels[4] = $this->CI->load->view('others/header', '', TRUE);
-		} else {
+		if (IS_AJAX) {
 			$this->panels[0] = NULL;
 			$this->panels[1] = NULL;
 			$this->panels[2] = NULL;
 			$this->panels[3] = NULL;
 			$this->panels[4] = NULL;
+		} else {
+			$this->panels[0] = $this->CI->load->view('mainpane/default', '', TRUE);
+			$this->panels[1] = $this->CI->load->view('sidepane/default', '', TRUE);
+			$this->panels[2] = $this->CI->load->view('others/navbar', '', TRUE);
+			$this->panels[3] = $this->CI->load->view('others/footer', '', TRUE);
+			$this->panels[4] = $this->CI->load->view('others/header', '', TRUE);
 		}
 	}
 	
@@ -101,7 +101,7 @@ class Ui {
 	 */
 	function set($panels = array()) {
 		for ($i = 0; $i < count($panels); $i++) {
-	//		if ($panels[$i] === NULL ) break;
+			if ($panels[$i] === NULL ) continue;
 			$this->panels[$i] = $panels[$i];
 		}
 	}

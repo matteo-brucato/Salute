@@ -25,7 +25,10 @@ class Profile extends Controller {
  	 * else error
 	 * */
 	function index() {
-		$this->auth->check_logged_in();
+		//$this->auth->check_logged_in();
+		if ($this->auth->check(array(auth::CurrIsLoggedin)) !== TRUE) {
+			return;
+		}
 
 		if ($this->auth->get_type() === 'patient') {
 			$this->ui->set(array(
@@ -49,12 +52,15 @@ class Profile extends Controller {
 
 	/**
 	 * Loads logged-in user's information
+	 * 
 	 * @attention user must be logged in
 	 * loads the user's information in the main panel
 	 * loads the user's menu bar in the side panel  
 	 * if patient, load respective views
 	 * else if hcp, load respective views
  	 * else error
+ 	 * 
+ 	 * @todo There's no link to this function in the GUI...
 	 * */
 	function myinfo()
 	{
@@ -62,15 +68,15 @@ class Profile extends Controller {
 
 		if ($this->auth->get_type() === 'patient') {
 			$this->ui->set(array(
-				$this->load->view('mainpane/patient-info', '', TRUE),
-				$this->load->view('sidepane/patient-profile', '', TRUE)
+				$this->load->view('mainpane/personal_patient_info', '', TRUE),
+				$this->load->view('sidepane/personal_patient_profile', '', TRUE)
 			));
 		}
 		else if ($this->auth->get_type() === 'hcp') {		
 			$this->ui->set(array(
-				$this->load->view('mainpane/hcp-info', '', TRUE),
-				$this->load->view('sidepane/hcp-profile', '', TRUE)
-			));		
+				$this->load->view('mainpane/personal_hcp_info', '', TRUE),
+				$this->load->view('sidepane/personal_hcp_profile', '', TRUE)
+			));
 		}	
 		else{
 			$this->ui->set_error('Unknown Error.', 'server');
