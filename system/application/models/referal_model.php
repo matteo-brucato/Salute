@@ -23,7 +23,7 @@ class Referal_model extends Model {
 	
 	
 	/**
-	 * States wheather a referal belongs to a patient or doctor
+	 * States wheather a referal belongs to a patient or the doctor making the referal
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(account_id, referal_id)
@@ -140,7 +140,7 @@ class Referal_model extends Model {
 	 *  -2 referal_id does not exist
 	 *   0 if everything goes fine approved status is changed to TRUE
 	 * */
-	function delete_referal($inputs){		
+	function delete($inputs){		
 		
 		//test to see if the referal_id exists
 		$sql = "SELECT *

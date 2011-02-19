@@ -383,7 +383,7 @@ class Connections_model extends Model {
 	 *
 	 * @return
 	 *  -1 in case of error in a query
-	 *  -3 if the connection was already accepted
+	 *  -3 if the connection is pending or exists
 	 *   0 if everything goes fine
 	 * 
 	 * */
@@ -557,6 +557,35 @@ class Connections_model extends Model {
 		
 		return 0; // Success
 	}
+	
+	/**
+	 * Gives the connection level between a patient and a hcp
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(patient_id, hcp_id)
+	 * @return
+	 *  -1 in case of error in a query
+	 *  -2 if the connection does not exist
+	 *   array with the connection level
+	 * */
+	 function get_level($inputs){
+		 //check if te connection exists
+		 $check = $this->is_connected_with($inputs[0], $inputs[1]);
+		 if ($check === -1) return -1;
+		 if ($check === FALSE) return -2;
+		 
+		 $sql = "SELECT C.connection_level
+			FROM connections C
+			WHERE C.requester_id = ? AND C.accepter_id = ?";
+		$query = $this->db->query($sql, array($inputs[0], $inputs[1]));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		
+		if ($query->num_rows() > 0)	
+			return $query->result_array();
+	 }
+	
 	
 	/**
 	 * Removes a conection between a patient and a hcp

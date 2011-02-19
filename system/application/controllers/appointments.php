@@ -32,7 +32,7 @@ class Appointments extends Controller {
 	 * Lists all appointments of the logged in user
 	 * */
 	function all() {
-		$this->auth->check_logged_in();
+		$this->auth->check(array($this->auth::CurrLOG));
 
 		if ($this->auth->get_type() === 'patient'){
 			$results = $this->appointments_model->view_all(array('account_id' => $this->auth->get_account_id(),
@@ -64,7 +64,8 @@ class Appointments extends Controller {
 	 * 	I ASSUME THE VIEW NAME WILL BE list_appointments	
 	 * */
 	function upcoming(){
-		$this->auth->check_logged_in();
+		
+		$this->auth->check(array($this->auth::CurrLOG));
 
 		if ($this->auth->get_type() === 'patient'){
 			$results = $this->appointments_model->view_upcoming(array('account_id' => $this->auth->get_account_id(),
@@ -100,7 +101,8 @@ class Appointments extends Controller {
 	 * 	I ASSUME THE VIEW NAME WILL BE list_appointments	
 	 * */
 	function past(){
-		$this->auth->check_logged_in();
+		
+		$this->auth->check(array($this->auth::CurrLOG));
 		
 		if ($this->auth->get_type() === 'patient'){
 			$results = $this->appointments_model->view_past(array('account_id' => $this->auth->get_account_id(),
@@ -134,20 +136,14 @@ class Appointments extends Controller {
 	 * */
 	function cancel($apt_id) {
 		
-		$this->auth->check_logged_in();
-		
-		$this->load->model('appointments_model');
-		
-		$result = $this->appointments_model->is_myappointment(array($this->auth->get_account_id(),$apt_id));
-		if ( $result === -1 ){
-			$this->ui->set_query_error();
+		$check = $this->auth->check(array(
+			$this->auth::CurrLOG,
+			$this->auth::APPT_MINE, $apt_id));
+			
+		if ($check !== TRUE)
 			return;
-		} elseif ( $result === -5 ){
-				$this->ui->set_error('Appointment ID does not exist!');
-				return;
-		} elseif ( $result === TRUE ){
-			/* @to do: pop up-- are you sure you want to cancel appointment?*/
-			$results = $this->appointments_model->cancel(array($apt_id));
+			
+		$results = $this->appointments_model->cancel(array($apt_id));
 								
 			switch ($results) {
 				case -1:
@@ -160,23 +156,20 @@ class Appointments extends Controller {
 					$this->ui->set_message('The appointment was successfully canceled.','Confirmation');
 					return;
 			}
-		} else{
-			$this->ui->set_error('This is not your appointment.', 'permission denied');
-			return;
-		}
 	}
 	
 	/**
 	 * Shows a form to change an appointment date and time
 	 * */
 	function reschedule($apt_id) {
-		$this->auth->check_logged_in();
 		
-		// Only patient can request
-		if ($this->auth->get_type() != 'patient') {
-			$this->ui->set_error('Doctors are not allowed to request appointments','Permission Denied');
+		$check = $this->auth->check(array(
+			$this->auth::CurrLOG,
+			$this->auth::CurrPAT,
+			$this->auth::APPT_MINE, $apt_id));
+			
+		if ($check !== TRUE)
 			return;
-		}
 		
 		// Get appointment tuple from the model
 		$app = $this->appointments_model->get_appointment(array($apt_id));
@@ -205,62 +198,38 @@ class Appointments extends Controller {
  	 * @MATEO:
 	 * 	I ASSUME THE VIEW NAME WILL BE reschedule	 
 	 * */
-	function reschedule_do($apt_id) {                          // test it belongs to me
-		$this->auth->check_logged_in();
-		
-		if ($this->auth->get_type() === 'hcp') {
-			$this->ui->set_error('Doctors are not allowed to reschedule appointments', 'Permission Denied');
-			return;
-		}
-		
-		//test to see if id is numeric
-		if (is_numeric($apt_id))
-		{
-			//get the appointment if it exits
-			$is_mine = $this->appointments_model->get_appointment($apt_id);
+	function reschedule_do($apt_id) {
+	
+		$check = $this->auth->check(array(
+			$this->auth::CurrLOG,
+			$this->auth::CurrPAT,
+			$this->auth::APPT_MINE, $apt_id));
 			
-			if($is_mine === -1)	{
-				$this->ui->set_query_error();
-				return;
-			} elseif ($is_mine === -5){
-				$error = 'Appointment ID does not exist.';
-			} elseif (sizeof($is_mine) <= 0){
-				$error = 'Appointment tuple does not exist in the database.';
-			} else {
-				//test to see if the appointment is mine
-				if ($this->auth->get_account_id() === $is_mine[0]['patient_id']){
-					$new_time = $this->input->post('time');
-					
-					if ($new_time !== FALSE && $new_time !== ''){
-						$results = $this->appointments_model->reschedule(array('appointment_id' => $apt_id, 'date_time' => $new_time )); 
-						switch ($results) {
-							case -1:
-								$this->ui->set_query_error();
-								return;
-							case -5:
-								$error = 'Appointment does not exist.';
-								break;
-							default:
-								$this->ui->set_message('Appointment was successfully rescheduled');
-								return;
-						}
-					} else {
-						$error = 'Please fill out the Time and Date field';
-						$type = 'Missing Arguments';
-					}
-				} else {
-					$error = 'Cannot reschedule an appointment that doesnt belong to me.';
-					$type = 'Permission Denied';
-				}
+		if ($check !== TRUE)
+			return;
+		
+		$new_time = $this->input->post('time');
+		
+		if ($new_time !== FALSE && $new_time !== ''){
+			$results = $this->appointments_model->reschedule(array('appointment_id' => $apt_id, 'date_time' => $new_time )); 
+			switch ($results) {
+				case -1:
+					$this->ui->set_query_error();
+					return;
+				case -5:
+					$error = 'Appointment does not exist.';
+					$this->ui->set_error($error);
+					return;
+				default:
+					$this->ui->set_message('Appointment was successfully rescheduled');
+					return;
 			}
 		} else {
-			$error = 'Appointment ID is not numeric.';
-			$type = 'Invalid data type';
+			$error = 'Please fill out the Time and Date field';
+			$type = 'Missing Arguments';
+			$this->ui->set_error($error, $type);
 		}
-		if ( $type === NULL ){
-			$type = '';
-		}
-		$this->ui->set_error($error,$type);
+
 	}
 
 	
