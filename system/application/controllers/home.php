@@ -128,7 +128,7 @@ class Home extends Controller {
 	function retrieve_password(){
 				
 		$this->ui->set(array(
-			$this->load->view('mainpane/forgot_password', '', TRUE),
+			$this->load->view('mainpane/forms/forgot_password', '', TRUE),
 			''
 		));
 	}

@@ -40,11 +40,11 @@ class Bills extends Controller {
 
 		if($this->auth->get_type() === 'patient'){
 			$results = $this->bills_model->view_all(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$sidepane = 'sidepane/patient-profile';
+			$sidepane = 'sidepane/personal_patient_profile';
 		}		
 		else if($this->auth->get_type() === 'hcp'){
 			$results = $this->bills_model->view_all(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$sidepane = 'sidepane/hcp-profile';
+			$sidepane = 'sidepane/personal_hcp_profile';
 		} 
 		else{
 			$this->ui->error('Server Error', 500);
@@ -55,7 +55,7 @@ class Bills extends Controller {
 				$mainview = 'Query error!';			
 				break;
 			default:
-				$mainview = $this->load->view('mainpane/list_bills',
+				$mainview = $this->load->view('mainpane/lists/bills',
 					array('list_name' => 'My Bills', 'list' => $results) , TRUE);
 				break;
 		}
@@ -77,11 +77,11 @@ class Bills extends Controller {
 		
 		if($this->auth->get_type() === 'patient'){
 			$results = $this->bills_model->view_current(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$sidepane = 'sidepane/patient-profile';
+			$sidepane = 'sidepane/personal_patient_profile';
 		} 
 		else if($this->auth->get_type() === 'hcp'){
 			$results = $this->bills_model->view_current(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$sidepane = 'sidepane/hcp-profile';
+			$sidepane = 'sidepane/personal_hcp_profile';
 		} 
 		else{
 			$this->ui->error('Server Error', 500);
@@ -92,7 +92,7 @@ class Bills extends Controller {
 				$mainview = 'Query error!';
 				break;
 			default:
-				$mainview = $this->load->view('mainpane/list_bills', array('list_name' => 'My Current Bills', 'list' => $results) , TRUE);
+				$mainview = $this->load->view('mainpane/lists/bills', array('list_name' => 'My Current Bills', 'list' => $results) , TRUE);
 				break;
 		}
 		$sideview = $this->load->view($sidepane, '', TRUE);
@@ -113,11 +113,11 @@ class Bills extends Controller {
 		
 		if($this->auth->get_type() === 'patient'){
 			$results = $this->bills_model->view_past(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$sidepane = 'sidepane/patient-profile';
+			$sidepane = 'sidepane/personal_patient_profile';
 		} 
 		else if($this->auth->get_type() === 'hcp'){
 			$results = $this->bills_model->view_past(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$sidepane = 'sidepane/hcp-profile';
+			$sidepane = 'sidepane/personal_hcp_profile';
 		} 
 		else{
 			$this->ui->error('Server Error', 500);
@@ -128,7 +128,7 @@ class Bills extends Controller {
 				$mainview = 'Query error!';
 				break;
 			default:
-				$mainview = $this->load->view('mainpane/list_bills', array('list_name' => 'My Past Bills', 'list' => $results) , TRUE);
+				$mainview = $this->load->view('mainpane/lists/bills', array('list_name' => 'My Past Bills', 'list' => $results) , TRUE);
 				break;
 		}
 		$sideview = $this->load->view($sidepane, '', TRUE);
@@ -154,7 +154,7 @@ class Bills extends Controller {
 		$this->load->model('connections_model');
 		if( $this->auth->get_type() === 'hcp' ){
 			$results = $this->patient_model->get_patient(array($patient_id));	
-			$sidepane = 'sidepane/hcp-profile';
+			$sidepane = 'sidepane/personal_hcp_profile';
 			switch( $results ) {
 				case -1:
 					$mainview = 'Query error. Could not check if patient.!';
@@ -172,7 +172,7 @@ class Bills extends Controller {
 							$mainview = 'You are not connected with this patient';
 						}
 						else{
-							$mainview = $this->load->view('mainpane/issue_bill', array('results' => $results), TRUE);
+							$mainview = $this->load->view('mainpane/forms/issue_bill', array('results' => $results), TRUE);
 						}
 					}				
 			}						
@@ -210,7 +210,7 @@ class Bills extends Controller {
 		$this->load->model('patient_model');
 		if( $this->auth->get_type() === 'hcp' ){
 			$results = $this->patient_model->is_patient(array($this->input->post('patient_id')));	
-			$sidepane = 'sidepane/hcp-profile';
+			$sidepane = 'sidepane/personal_hcp_profile';
 			if( $results === -1 ){
 				$mainview = 'Query error: could not check if patient is valid!';
 			}
@@ -268,7 +268,7 @@ class Bills extends Controller {
 		$this->auth->check_logged_in();
 		$this->load->model('bills_model');
 		if( $this->auth->get_type() === 'hcp' ){
-			$sidepane = 'sidepane/hcp-profile';
+			$sidepane = 'sidepane/personal_hcp_profile';
 			$results = $this->bills_model->get_bill( $bill_id );
 			if( $results === -1 )
 				$mainview = 'Query error: could not get your bill';
@@ -294,7 +294,7 @@ class Bills extends Controller {
 			}
 		}
 		else if( $this->auth->get_type() === 'patient' ){
-			$sidepane = 'sidepane/patient-profile';
+			$sidepane = 'sidepane/hcp_patient_profile';
 			$results = $this->bills_model->get_bill( $bill_id );
 			if( $results === -1 )
 				$mainview = 'Query error: could not get your bill';
@@ -351,7 +351,7 @@ class Bills extends Controller {
 		$this->auth->check_logged_in();
 		$this->load->model('bills_model');
 		if( $this->auth->get_type() === 'patient' ){
-			$sidepane = 'sidepane/patient-profile';
+			$sidepane = 'sidepane/hcp_patient_profile';
 			$results = $this->bills_model->get_bill( $bill_id );
 			switch( $results ){
 			case -1:

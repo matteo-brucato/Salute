@@ -53,7 +53,7 @@ class Appointments extends Controller {
 				$mainview = 'Query error!';
 				break;
 			default:
-				$mainview = $this->load->view('mainpane/list_appointments',
+				$mainview = $this->load->view('mainpane/lists/appointments',
 					array('list_name' => 'My Appointments', 'list' => $results) , TRUE);
 				break;
 		}
@@ -81,7 +81,7 @@ class Appointments extends Controller {
 		else if ($this->auth->get_type() === 'hcp'){
 			$results = $this->appointments_model->view_upcoming(array('account_id' => $this->auth->get_account_id(),
 																 'type' => $this->auth->get_type()));
-			$sidepane = 'sidepane/hcp-profile';
+			$sidepane = 'sidepane/personal_hcp_profile';
 		}
 		else {
 			$this->ui->error('Internal server logic error.', 500);
@@ -94,7 +94,7 @@ class Appointments extends Controller {
 				$sideview = '';
 				break;
 			default:
-				$mainview = $this->load->view('mainpane/list_appointments',
+				$mainview = $this->load->view('mainpane/lists/appointments',
 					array('list_name' => 'My Upcoming Appointments', 'list' => $results) , TRUE);
 				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
@@ -119,12 +119,12 @@ class Appointments extends Controller {
 			
 			$results = $this->appointments_model->view_past(array('account_id' => $this->auth->get_account_id(),
 																 'type' => $this->auth->get_type()));
-			$sidepane = 'sidepane/patient-profile';
+			$sidepane = 'sidepane/personal_patient_profile';
 		}
 		else if ($this->auth->get_type() === 'hcp'){
 			$results = $this->appointments_model->view_past(array('account_id' => $this->auth->get_account_id(),
 																 'type' => $this->auth->get_type()));
-			$sidepane = 'sidepane/hcp-profile';
+			$sidepane = 'sidepane/personal_hcp_profile';
 		}
 		else {
 			$this->ui->error('Internal server logic error.', 500);
@@ -137,7 +137,7 @@ class Appointments extends Controller {
 				$sideview = '';
 				break;
 			default:
-				$mainview = $this->load->view('mainpane/list_appointments',
+				$mainview = $this->load->view('mainpane/list/appointments',
 					array('list_name' => 'My Past Appointments', 'list' => $results) , TRUE);
 				$sideview = $this->load->view($sidepane, '', TRUE);
 				break;
@@ -174,10 +174,10 @@ class Appointments extends Controller {
 				$results = $this->appointments_model->cancel(array($apt_id));
 			
 				if ($this->auth->get_type() === 'patient'){
-					$sidepane = 'sidepane/patient-profile';
+					$sidepane = 'sidepane/personal_patient_profile';
 				}
 				else {
-				$sidepane = 'sidepane/hcp-profile';
+				$sidepane = 'sidepane/personal_hcp_profile';
 				}
 				
 				switch ($results) {
@@ -270,7 +270,7 @@ class Appointments extends Controller {
 			}
 			elseif (sizeof($is_mine) <= 0)
 			{
-				$this->ui->error('Appointment tupple does not exist in the database.', 500);
+				$this->ui->error('Appointment tuple does not exist in the database.', 500);
 				return;
 			}
 			else
@@ -296,7 +296,7 @@ class Appointments extends Controller {
 								break;
 							default:
 								$mainview = 'Appointment was successfully rescheduled';
-								$sideview = $this->load->view('sidepane/patient-profile', '', TRUE);
+								$sideview = $this->load->view('sidepane/personal_patient_profile', '', TRUE);
 								break;
 						}
 					}
@@ -466,7 +466,7 @@ class Appointments extends Controller {
 				$sideview = '';
 			default:
 				$mainview = 'The appointment has been successfully approved.';
-				$sideview = $this->load->view('sidepane/patient-profile', '', TRUE);
+				$sideview = $this->load->view('sidepane/personal_patient_profile', '', TRUE);
 				break;
 			}
 			

@@ -101,7 +101,7 @@ class Ui {
 	 */
 	function set($panels = array()) {
 		for ($i = 0; $i < count($panels); $i++) {
-			//if ($panels[$i] === '') break;
+	//		if ($panels[$i] === NULL ) break;
 			$this->panels[$i] = $panels[$i];
 		}
 	}
