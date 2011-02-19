@@ -69,7 +69,7 @@ class Medical_records extends Controller {
 		
 		// All ok
 		$this->ui->set(array(
-			$this->load->view('mainpane/list_medical_records',
+			$this->load->view('mainpane/lists/medical_records',
 				array('list_name' => 'My Medical Records', 'list' => $res) , TRUE)
 		));
 	}
@@ -326,7 +326,7 @@ class Medical_records extends Controller {
 			return;
 		}
 		$this->ui->set(array(
-			$this->load->view('mainpane/list_permissions',
+			$this->load->view('mainpane/lists/permissions',
 				array('list_name' => 'Permissions for medical record '.$mid, 'list' => $res), TRUE)
 			));
 	}
@@ -491,6 +491,7 @@ class Medical_records extends Controller {
 		if (DEBUG) $this->output->enable_profiler(TRUE);
 		$this->auth->check_logged_in();
 		$this->load->model('medical_records_model');
+		$type = '';
 		
 		// Check input
 		if ($medical_record_id == FALSE) {
@@ -510,7 +511,7 @@ class Medical_records extends Controller {
 			$error = 'You don\'t have permissions to delete this record.';
 			$type = 'Permission Denied';
 		} else {
-			$filename = $get[0]['file_path'];
+			$filename = $get[0]['file_name'];
 			
 			$del = $this->medical_records_model->delete_medical_record(array($medical_record_id));
 			
@@ -533,6 +534,7 @@ class Medical_records extends Controller {
 				}
 			}
 		}
+
 		$this->ui->set_error($error,$type);
 	}
 }

@@ -73,8 +73,8 @@ class Download extends Controller {
 			$this->ui->set_error('Specified medical record does not exist');
 		}
 		
-		$filepath = 'resources/medical_records/'.$patient_id.'/'.$get[0]['file_path'];
-		
+		$filepath = 'resources/medical_records/'.$patient_id.'/'.$get[0]['file_name'];
+		echo $filepath;
 		// Check if the file exist
 		if (! is_file($filepath)) {
 			$this->ui->set_error('File does not exist!');
