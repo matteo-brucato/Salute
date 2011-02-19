@@ -125,7 +125,7 @@ class Medical_records extends Controller {
 				// View the list
 				$this->ui->set(array(
 					$this->load->view('mainpane/list_medical_records',
-					array('list_name' => 'Medical Records', 'list' => $recs) , TRUE);
+					array('list_name' => 'Medical Records', 'list' => $recs) , TRUE)
 				));
 			}
 		}
@@ -297,7 +297,7 @@ class Medical_records extends Controller {
 		
 		// Only for patients
 		if ($this->auth->get_type() != 'patient') {
-			$this->ui->set_error('Only patients can access this functionality','Permission Denied'));
+			$this->ui->set_error('Only patients can access this functionality','Permission Denied');
 			return;
 		}
 		
@@ -308,7 +308,7 @@ class Medical_records extends Controller {
 			return;
 		}
 		else if (sizeof($get) == 0) {
-			$this->ui->set_error('Specified medical record does not exist'));
+			$this->ui->set_error('Specified medical record does not exist');
 			return;
 		}
 		else if ($get[0]['patient_id'] != $this->auth->get_account_id()) {
@@ -341,7 +341,7 @@ class Medical_records extends Controller {
 		$this->load->model('medical_records_model');
 		
 		if ($mid == NULL) {
-			$this->ui->set_error('Missing input medical record id','Missing Arguments'));
+			$this->ui->set_error('Missing input medical record id','Missing Arguments');
 			return;
 		}
 		
@@ -374,7 +374,7 @@ class Medical_records extends Controller {
 				return;
 			}
 			if (! $isalready) {
-				$this->ui->set_message('This record is already forbidden to this hcp.','Notice'));
+				$this->ui->set_message('This record is already forbidden to this hcp.','Notice');
 				return;
 			}
 			$res = $this->medical_records_model->delete_permission(array($mid, $account_id));
@@ -414,7 +414,7 @@ class Medical_records extends Controller {
 		// the account that will have permission
 		$account_id = $this->input->post('account_id');
 		if ($account_id == '' || $account_id == FALSE) {
-			$this->ui->set_error('No account id specified','Missing Arguments'));
+			$this->ui->set_error('No account id specified','Missing Arguments');
 			return;
 		}
 		
@@ -442,7 +442,7 @@ class Medical_records extends Controller {
 			return;
 		}
 		else if ($get[0]['patient_id'] != $this->auth->get_account_id()) {
-			$this->ui->set_error('Only the owner can modify this medical record','Permission Denied'));
+			$this->ui->set_error('Only the owner can modify this medical record','Permission Denied');
 			return;
 		}
 		
@@ -456,7 +456,7 @@ class Medical_records extends Controller {
 				return;
 			}
 			if ($isalready) {
-				$this->ui->set_message('This record is already allowed to this hcp.','Notice'));
+				$this->ui->set_message('This record is already allowed to this hcp.','Notice');
 				return;
 			}
 			$res = $this->medical_records_model->allow_permission(array($mid, $account_id));
@@ -504,15 +504,12 @@ class Medical_records extends Controller {
 		if ($get === -1) {
 			$this->ui->set_query_error(); 
 			return;
-		}
-		else if (sizeof($get) == 0) {
+		} else if (sizeof($get) == 0) {
 			$error = 'Medical record does not exist';
-		}
-		else if ($get[0]['patient_id'] != $this->auth->get_account_id()) {
-			$error = 'You don\'t have permissions to delete this record.'
+		} else if ($get[0]['patient_id'] != $this->auth->get_account_id()) {
+			$error = 'You don\'t have permissions to delete this record.';
 			$type = 'Permission Denied';
-		}
-		else {
+		} else {
 			$filename = $get[0]['file_path'];
 			
 			$del = $this->medical_records_model->delete_medical_record(array($medical_record_id));
@@ -520,8 +517,7 @@ class Medical_records extends Controller {
 			if ($del === -1) {
 				$this->ui->set_query_error(); 
 				return;
-			}
-			else {
+			} else {
 				// Delete file from file system
 				$filepath = 'resources/medical_records/'
 					.$this->auth->get_account_id().'/'.$filename;

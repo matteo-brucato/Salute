@@ -68,11 +68,14 @@ class Appointments extends Controller {
 
 		if ($this->auth->get_type() === 'patient'){
 			$results = $this->appointments_model->view_upcoming(array('account_id' => $this->auth->get_account_id(),
+																			 'type' => $this->auth->get_type()
+																));
 		} else if ($this->auth->get_type() === 'hcp'){
 			$results = $this->appointments_model->view_upcoming(array('account_id' => $this->auth->get_account_id(),
-																 'type' => $this->auth->get_type()));
+																 'type' => $this->auth->get_type()
+																));
 		} else {
-			$this->ui->error('Internal server logic error.', 500);
+			$this->ui->set_error('Internal server logic error.', 'server');
 			return;
 		} 
 			

@@ -205,10 +205,13 @@ class Bills extends Controller {
 					$description = $this->input->post('descryption');
 					$due_date = $this->input->post('due_date');
 					$results = $this->bills_model->issue_bill(array($patient_id,$this->auth->get_account_id(),$amount,$description,$due_date));
-					if( $results === -1 )
-						$this->ui->set_query_error(); return;
-					else
-						$this->ui->set_message('Successfully issued the bill.', 'Confirmation'); return;
+					if( $results === -1 ){
+						$this->ui->set_query_error(); 
+						return;
+					} else {
+						$this->ui->set_message('Successfully issued the bill.', 'Confirmation'); 
+						return;
+					}
 				}
 			}
 		} else
@@ -253,7 +256,7 @@ class Bills extends Controller {
 							return;
 						}
 					} else
-						$error = 'This bill has already been deleted'); 
+						$error = 'This bill has already been deleted'; 
 				}else{
 					$error = 'You do not have permission to delete this bill';
 					$type = 'Permission Denied'; 
@@ -275,16 +278,14 @@ class Bills extends Controller {
 							if( $results === 0 ){
 								$this->ui->set_message('Successfully deleted the bill.', 'Confirmation');
 								return;
-							}
-							else{
+							} else{
 								$this->ui->set_query_error(); 
 								return;
 							}
 						} else 
 							$error = 'This is still an active bill.'; 
 					} else
-						$error = 'This bill has already been deleted'); 
-					}
+						$error = 'This bill has already been deleted'; 
 				} else{
 					$this->ui->set_error('You do not have permission to delete this bill','Permission Denied'); 
 					return;
