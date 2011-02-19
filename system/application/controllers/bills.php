@@ -38,29 +38,20 @@ class Bills extends Controller {
 		$this->auth->check_logged_in();
 		$this->load->model('bills_model');
 
-		if($this->auth->get_type() === 'patient'){
+		if($this->auth->get_type() === 'patient')
+			$results = $this->bills_model->view_all(array($this->auth->get_account_id(),$this->auth->get_type()));		
+		else if($this->auth->get_type() === 'hcp')
 			$results = $this->bills_model->view_all(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$sidepane = 'sidepane/personal_patient_profile';
-		}		
-		else if($this->auth->get_type() === 'hcp'){
-			$results = $this->bills_model->view_all(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$sidepane = 'sidepane/personal_hcp_profile';
-		} 
-		else{
-			$this->ui->error('Server Error', 500);
-			return;		
-		}
-		switch ($results) {
-			case -1:
-				$mainview = 'Query error!';			
-				break;
-			default:
-				$mainview = $this->load->view('mainpane/lists/bills',
+		else
+			$this->ui->set_error('Server Error', 'server');	return;		
+		
+		if($results === -1) 
+			$this->ui->set_query_error(); return;
+			
+		$mainview = $this->load->view('mainpane/lists/bills',
 					array('list_name' => 'My Bills', 'list' => $results) , TRUE);
-				break;
-		}
-		$sideview = $this->load->view($sidepane, '', TRUE);
-		$this->ui->set(array($mainview,$sideview));
+				
+		$this->ui->set(array($mainview));
 	}
 	
 	/**
@@ -75,28 +66,18 @@ class Bills extends Controller {
 		$this->auth->check_logged_in();
 		$this->load->model('bills_model');
 		
-		if($this->auth->get_type() === 'patient'){
+		if($this->auth->get_type() === 'patient')
 			$results = $this->bills_model->view_current(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$sidepane = 'sidepane/personal_patient_profile';
-		} 
-		else if($this->auth->get_type() === 'hcp'){
+		else if($this->auth->get_type() === 'hcp')
 			$results = $this->bills_model->view_current(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$sidepane = 'sidepane/personal_hcp_profile';
-		} 
-		else{
-			$this->ui->error('Server Error', 500);
-			return;		
-		}
-		switch ($results) {
-			case -1:
-				$mainview = 'Query error!';
-				break;
-			default:
-				$mainview = $this->load->view('mainpane/lists/bills', array('list_name' => 'My Current Bills', 'list' => $results) , TRUE);
-				break;
-		}
-		$sideview = $this->load->view($sidepane, '', TRUE);
-		$this->ui->set(array($mainview,$sideview));
+		else
+			$this->ui->set_error('Server Error', 'server');	return;		
+		
+		if($results === -1)
+			$this->ui->set_query_error(); return;
+			
+		$mainview = $this->load->view('mainpane/lists/bills', array('list_name' => 'My Current Bills', 'list' => $results) , TRUE);
+		$this->ui->set(array($mainview));
 	}
 
 	/**
@@ -111,28 +92,18 @@ class Bills extends Controller {
 		$this->auth->check_logged_in();
 		$this->load->model('bills_model');
 		
-		if($this->auth->get_type() === 'patient'){
+		if($this->auth->get_type() === 'patient')
 			$results = $this->bills_model->view_past(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$sidepane = 'sidepane/personal_patient_profile';
-		} 
-		else if($this->auth->get_type() === 'hcp'){
+		else if($this->auth->get_type() === 'hcp')
 			$results = $this->bills_model->view_past(array($this->auth->get_account_id(),$this->auth->get_type()));
-			$sidepane = 'sidepane/personal_hcp_profile';
-		} 
-		else{
-			$this->ui->error('Server Error', 500);
-			return;		
-		}
-		switch ($results) {
-			case -1:
-				$mainview = 'Query error!';
-				break;
-			default:
-				$mainview = $this->load->view('mainpane/lists/bills', array('list_name' => 'My Past Bills', 'list' => $results) , TRUE);
-				break;
-		}
-		$sideview = $this->load->view($sidepane, '', TRUE);
-		$this->ui->set(array($mainview,$sideview));
+		else
+			$this->ui->set_error('Server Error', 'server'); return;		
+		
+		if($results === -1)
+			$this->ui->set_query_error(); return;
+		
+		$mainview = $this->load->view('mainpane/lists/bills', array('list_name' => 'My Past Bills', 'list' => $results) , TRUE);
+		$this->ui->set(array($mainview));
 	}
 
 	/**
@@ -154,35 +125,23 @@ class Bills extends Controller {
 		$this->load->model('connections_model');
 		if( $this->auth->get_type() === 'hcp' ){
 			$results = $this->patient_model->get_patient(array($patient_id));	
-			$sidepane = 'sidepane/personal_hcp_profile';
-			switch( $results ) {
-				case -1:
-					$mainview = 'Query error. Could not check if patient.!';
-					break;
-				default:
-					if( sizeof($results) < 1 ){
-						$mainview = 'Error: this patient does not exist!';
-					}
-					else{
-						$info = $this->connections_model->is_connected_with( $patient_id, $this->auth->get_account_id() );
-						if( $info === -1 ){
-							$mainview = 'Query error: could not check if you are connected with this patient!';
-						}
-						else if( $info === FALSE ){
-							$mainview = 'You are not connected with this patient';
-						}
-						else{
-							$mainview = $this->load->view('mainpane/forms/issue_bill', array('results' => $results), TRUE);
-						}
-					}				
-			}						
-		}	
-		else{
-			$this->ui->error('Server Error', 500);
-			return;		
-		}
-		$sideview = $this->load->view($sidepane, '', TRUE);	
-		$this->ui->set(array($mainview,$sideview));
+			if ($results === -1)
+				$this->ui->set_query_error(); return;
+			elseif( sizeof($results) < 1 )
+				$this->ui->set_error('This patient does not exist!'); return;
+			else{
+				$info = $this->connections_model->is_connected_with( $patient_id, $this->auth->get_account_id() );
+				if( $info === -1 )
+					$this->ui->set_query_error(); return;
+				elseif( $info === FALSE )
+					$this->ui->set_error('You are not connected with this patient', 'Permission Denied.'); return;
+				else
+					$mainview = $this->load->view('mainpane/forms/issue_bill', array('results' => $results), TRUE);
+			}										
+		} else
+			$this->ui->set_error('Server Error', 'server'); return;		
+		
+		$this->ui->set(array($mainview));
 	}
 	
 	/**
@@ -210,42 +169,31 @@ class Bills extends Controller {
 		$this->load->model('patient_model');
 		if( $this->auth->get_type() === 'hcp' ){
 			$results = $this->patient_model->is_patient(array($this->input->post('patient_id')));	
-			$sidepane = 'sidepane/personal_hcp_profile';
-			if( $results === -1 ){
-				$mainview = 'Query error: could not check if patient is valid!';
-			}
-			if( $results === FALSE ){
-				$mainview = 'Error: Patient does not exist!';
-			}		
+			if( $results === -1 )
+				$this->ui->set_query_error(); return;
+			
+			if( $results === FALSE )
+				$this->ui->set_error('Patient does not exist!');
 			else{			
 				$info = $this->connections_model->is_connected_with( $this->input->post('patient_id'), $this->auth->get_account_id() );
-				if( $info === -1 ){
-					$mainview = 'Query error: could not check if you are connected with this patient!';
-				}
-				else if( $info === FALSE ){
-					$mainview = 'Error:You are not connected with this patient';
-				}
+				if( $info === -1 )
+					$this->ui->set_query_error(); return;
+				else if( $info === FALSE )
+					$this->ui->set_error('You are not connected with this patient.', 'Permission Denied'); return;
 				else{
 					$patient_id = $this->input->post('patient_id');
 					$amount = $this->input->post('amount');
 					$description = $this->input->post('descryption');
 					$due_date = $this->input->post('due_date');
 					$results = $this->bills_model->issue_bill(array($patient_id,$this->auth->get_account_id(),$amount,$description,$due_date));
-					if( $results === -1 ){
-						$mainview = 'Query error: could not issue bill to this patient. Make sure values are of correct form.';
-					}
-					else{
-						$mainview = 'Successfully issues the bill.';
-					}
+					if( $results === -1 )
+						$this->ui->set_query_error(); return;
+					else
+						$this->ui->set_message('Successfully issued the bill.', 'Confirmation'); return;
 				}
 			}
-		}										
-		else{
-			$this->ui->error('Server Error', 500);
-			return;
-		}
-		$sideview = $this->load->view($sidepane, '', TRUE);	
-		$this->ui->set(array($mainview,$sideview));
+		} else
+			$this->ui->set_error('Server Error', 'server');
 
 	}
 	
@@ -268,67 +216,48 @@ class Bills extends Controller {
 		$this->auth->check_logged_in();
 		$this->load->model('bills_model');
 		if( $this->auth->get_type() === 'hcp' ){
-			$sidepane = 'sidepane/personal_hcp_profile';
 			$results = $this->bills_model->get_bill( $bill_id );
 			if( $results === -1 )
-				$mainview = 'Query error: could not get your bill';
+				$this->ui->set_query_error(); return;
 			if( count($results) < 1 )
-				$mainview = 'Error: cannot perform delete on this bill. This bill does not exist anymore.';
+				$this->ui->set_error('Cannot perform delete on this bill. This bill does not exist anymore.'); return;
 			else{
 				if( $results[0]['hcp_id'] === $this->auth->get_account_id() ){
 					if( $results[0]['hcp_kept'] === 't' ){
 						$results = $this->bills_model->delete_bill( array($bill_id, 'hcp'));
-						if( $results === 0 ){
-							$mainview = 'Successfully deleted the bill.';
-						}
-						else{
-							$mainview = 'Query Error: could not delete bill.';
-						}
-					}
-					else
-						$mainview = 'Error: This bill has already been deleted';					
-				}
-				else{
-					$mainview = 'Error: You do not have permission to delete this bill';
-				}
+						if( $results === 0 )
+							$this->ui->set_message('Successfully deleted the bill.', 'Confirmation');
+						else
+							$this->ui->set_query_error(); return;
+					} else
+						$this->ui->set_error('This bill has already been deleted'); return;
+				}else
+					$this->ui->set_error('You do not have permission to delete this bill','Permission Denied'); return;
 			}
-		}
-		else if( $this->auth->get_type() === 'patient' ){
-			$sidepane = 'sidepane/hcp_patient_profile';
+		} else if( $this->auth->get_type() === 'patient' ){
 			$results = $this->bills_model->get_bill( $bill_id );
 			if( $results === -1 )
-				$mainview = 'Query error: could not get your bill';
+				$this->ui->set_query_error(); return;
 			if( count($results) < 1 )
-				$mainview = 'Error: cannot perform delete on this bill. This bill does not exist anymore.';
+				$this->ui->set_error('Cannot perform delete on this bill. This bill does not exist anymore.'); return;
 			else{
 				if( $results[0]['patient_id'] === $this->auth->get_account_id() ){
 					if( $results[0]['patient_kept'] === 't' ){
 						if( $results[0]['cleared'] === 't' || $results[0]['hcp_kept'] === 'f' ){
 							$results = $this->bills_model->delete_bill( array($bill_id, 'patient'));
-							if( $results === 0 ){
-								$mainview = 'Successfully deleted the bill.';
-							}
-							else{
-								$mainview = 'Query Error: could not delete bill.';
-							}
-						}
-						else
-							$mainview = 'Error: this is still an active bill.';
-					}
-					else
-						$mainview = 'Error: This bill has already been deleted.';					
-				}
-				else{
-					$mainview = 'Error: You do not have permission to delete this bill';
-				}
+							if( $results === 0 )
+								$this->ui->set_message('Successfully deleted the bill.', 'Confirmation');
+							else
+								$this->ui->set_query_error(); return;
+						} else
+							$this->ui->set_error('This is still an active bill.'); return;
+					} else
+						$this->ui->set_error('This bill has already been deleted'); return;
+				} else
+					$this->ui->set_error('You do not have permission to delete this bill','Permission Denied'); return;
 			}
-		}
-		else{
-			$this->ui->error('Server Error', 500);
-			return;
-		}
-		$sideview = $this->load->view($sidepane, '', TRUE);
-		$this->ui->set(array($mainview,$sideview));
+		} else
+			$this->ui->set_error('Server Error', 'server');	return;
 	}
 	
 	/**
@@ -351,48 +280,31 @@ class Bills extends Controller {
 		$this->auth->check_logged_in();
 		$this->load->model('bills_model');
 		if( $this->auth->get_type() === 'patient' ){
-			$sidepane = 'sidepane/hcp_patient_profile';
-			$results = $this->bills_model->get_bill( $bill_id );
-			switch( $results ){
-			case -1:
-				$mainview = 'Query error: could not check if that is your bill';
-			default:
-				if( count($results) < 1 ){
-					$$mainview = 'Error: cannot pay this bill. This bill does not exist anymore.';
-				}
-				else{
+			$results = $this->bills_model->get_bill($bill_id);
+			if ($results === -1)
+				$this->ui->set_query_error(); return;
+			elseif( count($results) < 1 )
+					$this->ui->set_error('Cannot pay this bill. This bill does not exist anymore.'); return;
+			else{
 					if( $results[0]['patient_id'] === $this->auth->get_account_id() ){
 						if( $results[0]['hcp_kept'] === 't' ){
 							if( $results[0]['cleared'] === 'f' ){				
 								$results = $this->bills_model->pay_bill( $bill_id );
-								if( $results === 0 ){
-									$mainview = 'Successfully paid the bill.';
-								}
-								else{
-									$mainview = 'Query Error: could not pay bill.';
-								}
-							}
-							else
-								$mainview = 'This bill has already been cleared.';
-						}
-						else
-							$mainview = 'This bill was already deleted by the doctor.';
-					}
-					else
-						$mainview = 'Error: You do not have permission to pay this bill';
-				}		
-			}
+								if( $results === 0 )
+									$this->ui->set_message('Successfully paid the bill.', 'Confirmation'); return;
+								else
+									$this->ui->set_query_error(); return;
+							} else
+								$this->ui->set_error('This bill has already been cleared.'); return;
+						} else
+							$this->ui->set_error('This bill was already deleted by the doctor.'); return;
+					} else
+						$this->ui->set_error('You do not have permission to pay this bill.','Permission Denied'); return;
+			}		
+		} else
+			$this->ui->set_error('You do not have permission to pay this bill.', 'Permission Denied'); return;
 		}
-		else{
-			$this->ui->error('Error: You do not have permission to pay this bill.', 500);
-			return;
-		}
-		$sideview = $this->load->view($sidepane, '', TRUE);
-		$this->ui->set(array($mainview,$sideview));
 	}
-	
-	
-
 }
 /** @} */
 ?>
