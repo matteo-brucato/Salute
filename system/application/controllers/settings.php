@@ -26,8 +26,7 @@ class Settings extends Controller {
 		$this->auth->check_logged_in();
 		
 		$this->ui->set(array(
-				$this->load->view('mainpane/settings', '', TRUE),
-				''
+				$this->load->view('mainpane/settings', '', TRUE)
 			));
 	}
 	
@@ -51,16 +50,15 @@ class Settings extends Controller {
 			$this->load->model('account_model');		
 			$password = $this->input->post('password');
 			if ($password == NULL){
-				$this->ui->error('Password Invalid',500);
+				$this->ui->set_error('Password Invalid','Missing Argument');
 				return;
 			}
 			$check = $this->account_model->update_account(array($this->auth->get_account_id(),$this->auth->get_email(),$password));
 			if ($check === -1){
-				$this->ui->set(array('Query Error!',''));
+				$this->ui->set_query_error();
 				return;
-			}
-			else if ($check === -4){
-				$this->ui->set(array('Account does not exist!',''));
+			} else if ($check === -4){
+				$this->ui->set_error('Account does not exist!');
 				return;
 			}
 			
@@ -76,8 +74,8 @@ class Settings extends Controller {
 
 			$this->email->send();
 									
-			$view = 'Your password has been changed. A confirmation email has been sent for your records.';
-			$this->ui->set(array($view,''));	
+			$msg = 'Your password has been changed. A confirmation email has been sent for your records.';
+			$this->ui->set_message($msg,'Confirmation');	
 	}
 
 	/**
@@ -100,26 +98,26 @@ class Settings extends Controller {
 			
 			$email = $this->input->post('email');
 			if ($email == NULL){
-				$this->ui->error('Email Invalid',500);
+				$this->ui->set_error('Email Invalid','Missing Arguments');
 				return;
 			}	
 			
 			$password = $this->account_model->get_account($this->auth->get_email());
 			if ($password == NULL){
-				$this->ui->error('Failed to retrieve password.',500);
+				$this->ui->set_error('Failed to retrieve password.');
 				return;
 			} else if( $password === -1 ){
-				$this->ui->error('Query Error.',500);
+				$this->ui->set_query_error();
 				return;
 			}
 			
 			$check = $this->account_model->update_account(array($this->auth->get_account_id(),$email,$password[0]['password']));
 			
 			if ($check === -1){
-				$this->ui->set(array('Query Error!',''));
+				$this->ui->set_query_error();
 				return;
 			} else if ($check === -4){
-					$this->ui->set(array('Account does not exist!',''));
+					$this->ui->set_error('Account does not exist!');
 					return;
 			}
 			
@@ -138,7 +136,7 @@ class Settings extends Controller {
 			// Update session cookie
 			$this->session->set_userdata(array('email' => $email));
 			
-			$this->ui->set(array('Your email has been changed. A confirmation has been sent to your email.',''));
+			$this->ui->set_message('Your email has been changed. A confirmation has been sent to your email.','Confirmation');
 			
 	}
 	
@@ -153,10 +151,10 @@ class Settings extends Controller {
 		$this->load->model('account_model');
 		$check = $this->account_model->deactivate($this->auth->get_account_id());
 		if ($check === -1){
-			$this->ui->set(array('Query Error!',''));
+			$this->ui->set_query_error();
 			return;
 		} else if ($check === -4){
-			$this->ui->set(array('Account does not exist!',''));
+			$this->ui->set_error('Account does not exist!');
 			return;
 		}
 		
@@ -169,7 +167,7 @@ class Settings extends Controller {
 		$this->email->message('Your Account has been deactivated.');
 		$this->email->send();
 		
-		$this->ui->set(array('Your account has been deactivated.',''));
+		$this->ui->set_message('Your account has been deactivated.','Confirmation');
 		$this->session->sess_destroy();
 	}
 	
@@ -180,10 +178,10 @@ class Settings extends Controller {
 	 * @todo popup: are you sure?
 	 **/ 
 	function activate($account_id){
-		$view = 'Your Account is de-active.'.	
+		$msg = 'Your Account is de-active.'.	
 		'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/settings/activate_do/'.$account_id.
 		'/ ">here</a> to reactivate.';
-		$this->ui->set(array($view,''));
+		$this->ui->set_message($msg);
 	}
 	
 	/** 
@@ -195,11 +193,11 @@ class Settings extends Controller {
 		$this->load->model('account_model');
 		$results = $this->account_model->activate(array($account_id));
 		if ($results === -1){
-			$this->ui->error('Query Error',500);
+			$this->ui->set_query_error();
 			return;
 		}
-		$view = 'Your Account has been reactivated. Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.';
-		$this->ui->set(array($view,''));		
+		$msg = 'Your Account has been reactivated. Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.';
+		$this->ui->set_message($msg,'Confirmation');		
 	}
 }
 /** @} */

@@ -68,7 +68,7 @@ class Messages extends Controller {
 		$is_hcp = $this->hcp_model->is_hcp(array($account_id));
 		
 		if($is_patient === -1 || $is_hcp === -1){
-			$this->ui->error('Query Error!',500);
+			$this->ui->set_query_error();
 			return;
 		}
 		if($is_patient === TRUE)
@@ -76,16 +76,16 @@ class Messages extends Controller {
 		else if ($is_hcp === TRUE)
 			$res = $this->hcp_model->get_hcp(array($account_id));			
 		else{
-			$this->ui->error('Internal Server Error',500);
+			$this->ui->set_error('Internal Server Error','server');
 			return;
 		}
 		$acc = $this->account_model->get_account_email(array($account_id));
 		
 		if($res === -1 || $acc === -1){
-			$this->ui->error('Query Error!',500);
+			$this->ui->set_query_error();
 			return;
 		}
-		$this->ui->set(array($this->load->view('mainpane/forms/send_message', array('info'=> $res[0],'acc'=>$acc[0]), TRUE),''));
+		$this->ui->set(array($this->load->view('mainpane/forms/send_message', array('info'=> $res[0],'acc'=>$acc[0]), TRUE)));
 	}
 	
 	/**
@@ -99,7 +99,7 @@ class Messages extends Controller {
 		
 		$acc = $this->account_model->get_account_email(array($to));
 		if($acc === -1){
-			$this->ui->error('Query Error!',500);
+			$this->ui->set_query_error();
 			return;
 		}
 		$to_email = $acc[0]['email'];
@@ -116,7 +116,7 @@ class Messages extends Controller {
 		$this->email->message($body);
 
 		$this->email->send();
-		$this->ui->set(array('Your message has been sent.',''));
+		$this->ui->set_message('Your message has been sent.','Confirmation');
 	}	
 
 	/**
