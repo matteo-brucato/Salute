@@ -44,15 +44,18 @@ class Home extends Controller {
 	 * */
 	function login()
 	{
-		if ($this->auth->is_logged_in())
+		if ($this->auth->is_logged_in()){
 			$this->ui->redirect('/profile');
-		
+			return;
+		}
 		// get email & password
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
 		
-		if ($email == FALSE || $password == FALSE)
-			$this->ui->set_error('Access to this page not allowed', 'forbidden'); return;
+		if ($email == FALSE || $password == FALSE){
+			$this->ui->set_error('Access to this page not allowed', 'Forbidden'); 
+			return;
+		}
 		
 		$this->load->model('login_model');
 		$this->load->model('account_model');
@@ -62,31 +65,38 @@ class Home extends Controller {
 		$results = $this->login_model->authorize(array("email" => $email,"password" => $password));
 				
 		// login fails : error view
-		if ($results === -1)
-			$this->ui->set_query_error(); return;
-		else if (sizeof($results) == 0)
+		if ($results === -1){
+			$this->ui->set_query_error(); 
+			return;
+		}
+		else if (sizeof($results) == 0){
 			//$this->ui->set(array('',
 			//	$this->load->view('sidepane/forms/login_failed', '', TRUE)
 			//));
-			$this->ui->set_error('Login error', 'login'); return;
-		else if ($results === -1) 
-			$this->ui->set_query_error(); return;
-		
+			$this->ui->set_error('Login error', 'login'); 
+			return;
+		}else if ($results === -1) {
+			$this->ui->set_query_error(); 
+			return;
+		}
 		// login successful : store info for session id, go to user profile
 		else {
 			if ($results[0] != 'patient' && $results[0] != 'hcp') {
-				$this->ui->set(array(
-					'',
+				$this->ui->set(array( NULL,
 					$this->load->view('sidepane/forms/login_failed', '', TRUE)
 				));
 			} 
 			$active_status = $this->account_model->is_active(array($results[1]["account_id"]));
-			if ( $active_status === -1 )
-				$this->ui->set_query_error(); return;
-			else if ( $active_status === -4 )
-				$this->ui->set_error('Sorry! That account does not exist.'); return;
-			else if ( !$active_status )
-				$this->ui->redirect('/settings/activate/'.$results[1]["account_id"]); return;
+			if ( $active_status === -1 ){
+				$this->ui->set_query_error(); 
+				return;
+			} else if ( $active_status === -4 ){
+				$this->ui->set_error('Sorry! That account does not exist.'); 
+				return;
+			} else if ( !$active_status ){
+				$this->ui->redirect('/settings/activate/'.$results[1]["account_id"]); 
+				return;
+			}
 			$login_data = array(
 				'account_id' => $results[1]["account_id"],
 				'email' => $results[1]["email"],
@@ -115,8 +125,7 @@ class Home extends Controller {
 	 * */
 	function retrieve_password(){
 		$this->ui->set(array(
-			$this->load->view('mainpane/forms/forgot_password', '', TRUE),
-			''
+			$this->load->view('mainpane/forms/forgot_password', '', TRUE)
 		));
 	}
 	
@@ -130,16 +139,19 @@ class Home extends Controller {
 	function retrieve_password_do(){
 		$email = $this->input->post('email');
 
-		if ( $email == NULL )
-				$this->ui->set_error('No email passed in.', 'Missing Arguments'); return;
-		
+		if ( $email == NULL ){
+			$this->ui->set_error('No email passed in.', 'Missing Arguments'); 
+			return;
+		}
 		$this->load->model('account_model');
 		
 		$result = $this->account_model->get_account(array($email)); 
 		$password = $result[0]['password'];
 		
-		if ($password == NULL)
-			$this->ui->set_error('Sorry, this email is not registered.'); return;
+		if ($password == NULL){
+			$this->ui->set_error('Sorry, this email is not registered.'); 
+			return;
+		}
 
 		$this->load->library('email');
 		$config['mailtype'] = 'html';
@@ -183,14 +195,18 @@ class Home extends Controller {
 	 * */
 	function register_do($type = NULL)
 	{
-		if( $type == NULL || ( $type !== 'patient' && $type !== 'hcp' ) )
-			$this->ui->set_error('Invalid type.'); return;
+		if( $type == NULL || ( $type !== 'patient' && $type !== 'hcp' ) ){
+			$this->ui->set_error('Invalid type.'); 
+			return;
+		}
 		
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
 	
-		if($email == NULL || $password == NULL)	
-			$this->ui->set_error('Email and Password are mandatory to register.','Missing Arguments'); return;
+		if($email == NULL || $password == NULL)	{
+			$this->ui->set_error('Email and Password are mandatory to register.','Missing Arguments'); 
+			return;
+		}
 		
 		// Start a transaction now
 		$this->db->trans_start();
@@ -200,8 +216,10 @@ class Home extends Controller {
 		$this->load->model('account_model');
 		$result = $this->account_model->add_account(array('email' => $email, 'password' => $password)); 
 		
-		if($result === -1)
-				$this->ui->set_query_error(); return;
+		if($result === -1){
+			$this->ui->set_query_error(); 
+			return;
+		}
 		
 		$account_id = $result[0]['account_id'];
 				
@@ -241,10 +259,14 @@ class Home extends Controller {
 			$this->load->model('hcp_model');
 			$res = $this->hcp_model->register($input); 
 		}
-		else
-			$this->ui->set_error('Internal Server Error.', 'server'); return;
-		if ( $res === -1 )
-				$this->ui->set_query_error();
+		else{
+			$this->ui->set_error('Internal Server Error.', 'server'); 
+			return;
+		} 
+		if ( $res === -1 ){
+			$this->ui->set_query_error();
+			return;
+		}
 		else{
 			$this->load->library('email');
 			$config['mailtype'] = 'html';
