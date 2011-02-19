@@ -26,7 +26,7 @@ if ($this->auth->get_type() == 'patient') {
 		if ($table['tuples'][$i]['connected']) {
 			$table['tuples'][$i]['*actions'] = '
 			<ul>
-				<li><a href="/profile/user/'.$table['tuples'][$i]['account_id'].'" class="ajaxlink">See Profile</a></li>
+				<li><a href="/profile/user/'.$table['tuples'][$i]['account_id'].'" class="ajax">See Profile</a></li>
 				<li><a href="/messages/compose/'.$table['tuples'][$i]['account_id'].'">Send Email</a></li>
 				<li><a href="/connections/destroy/'.$table['tuples'][$i]['account_id'].'">Delete Connection</a></li>
 				<li><a href="/appointment/request/'.$table['tuples'][$i]['account_id'].'">Request Appointment</a></li>
@@ -34,7 +34,7 @@ if ($this->auth->get_type() == 'patient') {
 		} else {
 			$table['tuples'][$i]['*actions'] = '<a href="/connections/request/'.
 			$table['tuples'][$i]['account_id'].
-			'" class="ajaxlink-confirm">Request connection</a>';
+			'" class="confirm ajax">Request connection</a>';
 		}
 	}
 } else {
@@ -48,7 +48,7 @@ if ($this->auth->get_type() == 'patient') {
 		} else {
 			$table['tuples'][$i]['*actions'] = '<a href="/connections/request/'.
 			$table['tuples'][$i]['account_id'].
-			'" class="ajaxlink-confirm">Request connection</a>';
+			'" class="confirm ajax">Request connection</a>';
 		}
 	}
 }

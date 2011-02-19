@@ -2,6 +2,24 @@
 
 var AJAX_ACTIVE = true;
 
+const HISTORY_MAX = 10;
+var history = new Array(HISTORY_MAX);
+var history_i = 0;
+
+// Initialize the history
+for (i=0; i<HISTORY_MAX; i++) history[i] = null;
+
+function show_history() {
+	var hist = '';
+	for (i=0; i<HISTORY_MAX; i++) {
+		if (history_i == i) hist += '->'; else hist += '   ';
+		hist += history[i] + '\n';
+	}
+	hist += '\n';
+	alert(hist);
+}
+
+
 //function callback(href) {
 //	alert(href);
 //	execute_ajax(href);
@@ -41,22 +59,61 @@ $(document).ready(function() {			// Wait for the document to be able to be manip
 });
 
 function layout_bindings() {
-	$("a.ajaxlink").live("click", function(event) {
-		if (! AJAX_ACTIVE) return;
-		event.preventDefault();
-		var href = $(this).attr('href');
-		//window.location.hash = href;
-		execute_ajax(href);
-	});
-	
-	$("a.ajaxlink-confirm").live("click", function() {
-		if (! AJAX_ACTIVE) return;
-		event.preventDefault();
-		if (confirm('Do you really want to?')) {
+	$("a").live("click", function(event) {
+		if ($(this).hasClass('confirm')) {
+			if (! confirm('Please confirm')) {
+				event.preventDefault();
+				return;
+			}
+		}
+		if ($(this).hasClass('ajax')) {
+			if (! AJAX_ACTIVE) return;
+			event.preventDefault();
+			
 			var href = $(this).attr('href');
+			
+			// If it's a history.back() request
+			if ($(this).hasClass('history_back')) {
+				alert('history back');
+				var i = (history_i - 1) % HISTORY_MAX;
+				if (history[i] == null) {
+					alert('No history');
+				} else {
+					href = history[i];
+					history_i = i;
+				}
+				return;
+			}
+			
+			alert('history forward');
+			
+			// Upload history and history index
+			history[history_i] = href;
+			history_i = (history_i + 1) % HISTORY_MAX;
+			
+			show_history();
+			
 			execute_ajax(href);
 		}
 	});
+	
+	/*$("a.ajax").live("click", function(event) {
+		if (! AJAX_ACTIVE) return;
+		event.preventDefault();
+		var href = $(this).attr('href');
+		execute_ajax(href);
+	});
+	
+	$("a.confirm").live("click", function(event) {
+		if (! confirm('Please confirm')) {
+			event.preventDefault();
+			return;
+		}
+		/*if (! AJAX_ACTIVE) return;
+		event.preventDefault();
+		var href = $(this).attr('href');
+		execute_ajax(href);*
+	});*/
 	
 	$("#mypatients-table tr, #mydoctors-table tr").live("hover",
 	function() {

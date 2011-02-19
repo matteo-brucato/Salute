@@ -22,7 +22,7 @@ class Search extends Controller {
 	function index() {
 		$this->auth->check_logged_in();
 		$this->ui->set(array(
-			$this->load->view('mainpane/search_form', '' , TRUE)
+			$this->load->view('mainpane/forms/search', '' , TRUE)
 		));
 	}
 
@@ -50,7 +50,7 @@ class Search extends Controller {
 		}
 		
 		$this->ui->set(array(
-			$this->load->view('mainpane/allhcps', array('doc_list' => $hcps) , TRUE)
+			$this->load->view('mainpane/lists/allhcps', array('doc_list' => $hcps) , TRUE)
 		));
 	}
 

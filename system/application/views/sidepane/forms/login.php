@@ -10,5 +10,5 @@
 	</p>
 	</fieldset>
 </form>
-<div><a href="/home/retrieve_password" class="ajaxlink">Forgot your password?</a></div>
-<div>Don't have an account? <a href="/home/register" class="ajaxlink">Register</a></div>
+<div><a href="/home/retrieve_password" class="ajax">Forgot your password?</a></div>
+<div>Don't have an account? <a href="/home/register" class="ajax">Register</a></div>

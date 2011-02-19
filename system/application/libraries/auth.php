@@ -23,12 +23,15 @@ class Auth {
 	private $last_name;
 	private $CI;
 	
-	const CurrIsLoggedin	= 0;	// current user: no other params
-	const CurrIsPatient		= 1;	// current user: no other params
-	const CurrIsHcp			= 2;	// current user: no other params
-	const AreConnected		= 3;	// requires two id's
-	const IsPatient			= 4;	// requires one id
-	const IsHcp				= 5;	// requires one id
+	const CurrLOG		= 0;	// current user: no other params
+	const CurrPAT		= 1;	// current user: no other params
+	const CurrHCP		= 2;	// current user: no other params
+	const CONN			= 3;	// requires two id's, tests if the two id's are conneted
+	const PAT			= 4;	// requires one id, tests if it's a patient id
+	const HCP			= 5;	// requires one id, tests if it's a hcp id
+	
+	const APPT_EXST		= 6;
+	const APPT_MINE		= 7;	// requires one id, tests if it's your appointment id
 	
 	function __construct() {
 		$CI =& get_instance();
@@ -62,30 +65,58 @@ class Auth {
 	function check($perm = array()) {
 		for ($i = 0; $i < count($perm); $i++) {
 			switch ($perm[$i]) {
-				case auth::CurrIsLoggedin:
-					if (!$this->is_logged_in()) {
-						$this->CI->ui->set_error($this->CI->load->view('errors/not_logged_in', '', TRUE), 'authorization');
-						return auth::CurrIsLoggedin;
-					}
-					break;
-				case auth::CurrIsPatient:
-					if (!$this->is_patient()) return auth::CurrIsPatient;
-					break;
-				case auth::CurrIsHcp:
-					if (!$this->is_hcp()) return auth::CurrIsHcp;
-					break;
-				case auth::IsPatient:
-					/** @todo */
-					$i++;
-					break;
-				case auth::IsHcp:
-					/** @todo */
-					$i++;
-					break;
-				case auth::AreConnected:
-					/** @todo */
-					$i += 2;
-					break;
+			case auth::CurrLOG:
+				if (!$this->is_logged_in()) {
+					$this->CI->ui->set_error($this->CI->load->view('errors/not_logged_in', '', TRUE), 'authorization');
+					return auth::CurrLOG;
+				}
+				break;
+			case auth::CurrPAT:
+				if (!$this->is_patient()) {
+					$this->CI->ui->set_error($this->CI->load->view('errors/not_patient', '', TRUE), 'authorization');
+					return auth::CurrPAT;
+				}
+				break;
+			case auth::CurrHCP:
+				if (!$this->is_hcp()) {
+					$this->CI->ui->set_error($this->CI->load->view('errors/not_hcp', '', TRUE), 'authorization');
+					return auth::CurrHCP;
+				}
+				break;
+			case auth::PAT:
+				/** @todo */
+				$i++;
+				break;
+			case auth::HCP:
+				/** @todo */
+				$i++;
+				break;
+			case auth::AreConnected:
+				/** @todo */
+				$i += 2;
+				break;
+			case APPT_EXST
+				$i++;
+				break;
+			case APPT_MINE
+				if (! is_numeric($perm[$i+1])) {
+					$this->ui->set_error('Not numeric');
+					return  auth::APPT_MINE;
+				}
+				$this->load->model('appointments_model');
+				$result = $this->appointments_model->is_myappointment(array($this->auth->get_account_id(), $perm[$i+1]));
+				if ($result === -1) {
+					$this->ui->set_query_error();
+					return  auth::APPT_MINE;
+				} elseif ($result === -5) {
+					$this->ui->set_error('Appointment ID does not exist!');
+					return  auth::APPT_MINE;
+				} elseif ($result !== TRUE) {
+					$this->ui->set_error('This is not your appointment.', 'permission denied');
+					return  auth::APPT_MINE;
+				}
+				$i++;
+				break;
 			}
 		}
 		return TRUE;

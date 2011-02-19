@@ -1,0 +1,1 @@
+psql -p $(< dbport) -f ../tables/create_tables.sql $(< dbname)

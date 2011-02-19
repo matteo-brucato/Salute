@@ -25,20 +25,20 @@
 			<li><a href="/bills/past">Past</a></li>
 		</ul>
 	
-	<li><a href="/connections/mypatients" class="ajaxlink">My Patients</a>
+	<li><a href="/connections/mypatients" class="ajax">My Patients</a>
 		<ul>
 			<li><a href="/connections/pending/in">Pending incoming</a></li>
 		</ul>
 	</li>
 	
-	<li><a href="/connections/myhcps" class="ajaxlink">My Collegues</a>
+	<li><a href="/connections/myhcps" class="ajax">My Collegues</a>
 		<ul>
 			<li><a href="/connections/pending/out">Pending outgoing</a></li>
 			<li><a href="/connections/pending/in">Pending incoming</a></li>
 		</ul>
 	</li>
 	
-	<li><a href="/settings" class="ajaxlink">Settings</a>
+	<li><a href="/settings" class="ajax">Settings</a>
 	</li>
 	
 	<li><a href="/search">Advanced Search</a>

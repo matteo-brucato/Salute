@@ -1,2 +1,2 @@
 search form
-<a href="search/hcps" class="ajaxlink">List of all doctors</a>
+<a href="search/hcps" class="ajax">List of all doctors</a>

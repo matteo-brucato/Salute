@@ -8,36 +8,36 @@
 		</ul>
 	</li>
 -->	
-	<li><a href="/appointments" class="ajaxlink">Appointments</a>
+	<li><a href="/appointments" class="ajax">Appointments</a>
 		<ul>
-			<li><a href="/appointments/all" class="ajaxlink">All</a></li>
-			<li><a href="/appointments/upcoming" class="ajaxlink">Upcoming</a></li>
-			<li><a href="/appointments/past" class="ajaxlink">Past</a></li>
+			<li><a href="/appointments/all" class="ajax">All</a></li>
+			<li><a href="/appointments/upcoming" class="ajax">Upcoming</a></li>
+			<li><a href="/appointments/past" class="ajax">Past</a></li>
 			<!--li><a href="/appointments/request">Schedule</a></li-->
 		</ul>
 	</li>
 	
-	<li><a href="/bills" class="ajaxlink">Bills</a>
+	<li><a href="/bills" class="ajax">Bills</a>
 		<ul>
-			<li><a href="/bills/all" class="ajaxlink">All</a></li>
-			<li><a href="/bills/current" class="ajaxlink">Current</a></li>
-			<li><a href="/bills/past" class="ajaxlink">Past</a></li>
+			<li><a href="/bills/all" class="ajax">All</a></li>
+			<li><a href="/bills/current" class="ajax">Current</a></li>
+			<li><a href="/bills/past" class="ajax">Past</a></li>
 		</ul>
 	</li>
 	
-	<li><a href="/connections/myhcps" class="ajaxlink">My HCPs</a>
+	<li><a href="/connections/myhcps" class="ajax">My HCPs</a>
 		<ul>
-			<li><a href="/connections/pending/out" class="ajaxlink">Pending outgoing</a></li>
+			<li><a href="/connections/pending/out" class="ajax">Pending outgoing</a></li>
 		</ul>
 	</li>
 	
-	<li><a href="/medical_records" class="ajaxlink">Medical Records</a>
+	<li><a href="/medical_records" class="ajax">Medical Records</a>
 		<ul>
-			<li><a href="/medical_records/upload" class="ajaxlink">Upload</a></li>
+			<li><a href="/medical_records/upload" class="ajax">Upload</a></li>
 		</ul>
-	<li><a href="/settings" class="ajaxlink">Settings</a></li>
-	<li><a href="/search" class="ajaxlink">Advanced Search</a>
-	<li><a href="/home/logout" class="ajaxlink">Logout</a>
+	<li><a href="/settings" class="ajax">Settings</a></li>
+	<li><a href="/search" class="ajax">Advanced Search</a>
+	<li><a href="/home/logout" class="ajax">Logout</a>
 	<form method="post" action="/" id="quick-search-form">
 		<fieldset id="quick-search-fs">
 			<legend>Quick Serach</legend>
