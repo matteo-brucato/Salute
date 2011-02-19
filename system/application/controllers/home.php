@@ -53,7 +53,7 @@ class Home extends Controller {
 		$password = $this->input->post('password');
 		
 		if ($email == FALSE || $password == FALSE) {
-			$this->ui->error('Access to this page not allowed');
+			$this->ui->set_error('Access to this page not allowed', 'forbidden');
 			return;
 		}
 		
@@ -66,12 +66,14 @@ class Home extends Controller {
 				
 		// login fails : error view
 		if ($results === -1) {
-			$this->ui->set(array('Query error!',''));
+			$this->ui->query_error();
+			return;
 		}
 		else if (sizeof($results) == 0) {
-			$this->ui->set(array('',
-				$this->load->view('sidepane/forms/login_failed', '', TRUE)
-			));
+			//$this->ui->set(array('',
+			//	$this->load->view('sidepane/forms/login_failed', '', TRUE)
+			//));
+			$this->ui->set_error('Login error', 'login');
 		} else if ($results === -1) {
 			$this->ui->set(array('Query Error!',''));
 			return;

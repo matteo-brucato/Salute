@@ -117,7 +117,7 @@ function execute_ajax(href) {
 			//}
 			//alert(data.redirect);
 			
-			if (data.redirect != "no") {
+			if (data.redirect != "") {
 				// data.redirect contains the string URL to redirect to
 				window.location.href = data.redirect;
 				//$(window.location).attr('href', data.redirect);

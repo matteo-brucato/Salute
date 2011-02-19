@@ -29,20 +29,18 @@ class Profile extends Controller {
 
 		if ($this->auth->get_type() === 'patient') {
 			$this->ui->set(array(
-				$this->load->view('mainpane/patient-profile', '', TRUE),
-				$this->load->view('sidepane/patient-profile', '', TRUE)
+				$this->load->view('mainpane/personal_patient_profile', '', TRUE)
 			));
 		}
 
 		else if ($this->auth->get_type() === 'hcp') {
 			$this->ui->set(array(
-				$this->load->view('mainpane/hcp-profile', '', TRUE),
-				$this->load->view('sidepane/hcp-profile', '', TRUE)
+				$this->load->view('mainpane/personal_hcp_profile', '', TRUE)
 			));
 		}
 
 		else {
-			$this->ui->error('Access to this page not allowed', 500);
+			$this->ui->set_error('Access to this page not allowed', 'forbidden');
 			return;
 		}
 
@@ -75,7 +73,7 @@ class Profile extends Controller {
 			));		
 		}	
 		else{
-			$this->ui->error('Unknown Error.', 500);
+			$this->ui->set_error('Unknown Error.', 'server');
 			return;
 		}
 	}

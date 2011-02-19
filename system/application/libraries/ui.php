@@ -18,7 +18,7 @@ class Ui {
 	
 	private $CI;
 	private $panels; // array of UI panels
-	private $redirect;
+	private $redirect = '';
 	
 	function __construct() {
 		$this->CI =& get_instance();
@@ -45,8 +45,6 @@ class Ui {
 			$this->panels[3] = NULL;
 			$this->panels[4] = NULL;
 		}
-		
-		$this->redirect = 'no';
 	}
 	
 	/**
@@ -78,7 +76,11 @@ class Ui {
 			// View the previously specified layout
 			// You must know how many views it needs and pass them
 			// in an array
-			echo $this->CI->layout->get($this->panels);
+			if ($this->redirect != '') {
+				redirect($this->redirect, 'location', 303);
+			} else {
+				echo $this->CI->layout->get($this->panels);
+			}
 		}
 	}
 	
@@ -107,18 +109,18 @@ class Ui {
 	/**
 	 * Show an error message (in the main panel)
 	 * */
-	function error($error_message, $type = 'generic') {
+	function set_error($error_message, $type = 'generic') {
 		$this->panels[0] = "<h2 class=\"error_hdr\">Error</h2><p class=\"error_type\"><i>type: </i>$type</p><p class=\"error_body\">$error_message</p>";
 	}
 	
-	function query_error() {
+	function set_query_error() {
 		$this->error('Query error, please contact the administrator', 'SQL');
 	}
 	
 	/**
 	 * Show a message (in the main panel)
 	 * */
-	function message($message, $type = '') {
+	function set_message($message, $type = '') {
 		$this->panels[0] = "<h2 class=\"message_hdr\">$type</h2><h3 class=\"message_body\">$message</h3>";
 	}
 	
@@ -127,11 +129,7 @@ class Ui {
 	 * */
 	function redirect($url) {
 		//redirect($url, 'location', 303);
-		if (IS_AJAX) {
-			$this->redirect = $url;
-		} else {
-			redirect($url, 'location', 303);
-		}
+		$this->redirect = $url;
 	}
 	
 }
