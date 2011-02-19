@@ -48,7 +48,6 @@ class Connections extends Controller {
 		
 		if ($this->auth->get_type() === 'patient') 
 			$results  = $this->connections_model->list_my_hcps($this->auth->get_account_id()); 
-	
 		else if ($this->auth->get_type() === 'hcp')
 			$results  = $this->connections_model->list_my_colleagues($this->auth->get_account_id()); 
 		else {
@@ -124,8 +123,7 @@ class Connections extends Controller {
 				$this->ui->set_error($this->load->view('errors/not_hcp', '', TRUE));
 				return;
 			}
-		}
-		else if ($direction == 'out')
+		} else if ($direction == 'out')
 			$this->_pending_out();
 		else {
 			$this->ui->set_error('Input not valid');
@@ -189,8 +187,7 @@ class Connections extends Controller {
 			$hcps = $this->connections_model->pending_incoming_hcps_4_a_hcp(array($this->auth->get_account_id())); 
 			// And pending incoming from other patients
 			$pats = $this->connections_model->pending_incoming_patients_4_a_hcp(array($this->auth->get_account_id())); 
-		}
-		else {
+		} else {
 			/** @todo In the future, create a specific view for this
 			 * kind of errors, anc call this view in all similar cases */
 			$this->ui->set_error('Internal server logic error.','server');
@@ -280,7 +277,7 @@ class Connections extends Controller {
 				return;
 			default:
 				$mainview = 'Your request has been submitted.';
-				$sideview = '';
+				$type = 'Confirmation';
 				$this->load->library('email');
 				$config['mailtype'] = 'html';
 				$this->email->initialize($config);
@@ -300,7 +297,7 @@ class Connections extends Controller {
 		}
 		
 		// Give results to the client
-		$this->ui->set(array($mainview,$sideview));
+		$this->ui->set_message($mainview,$type);
 	}
 
 	/** 
@@ -319,7 +316,7 @@ class Connections extends Controller {
 		
 		// Check if parameters are specified
 		if ($requester_id == NULL) {
-			$this->ui->error('ids not specified.', 500);
+			$this->ui->set_error('ids not specified.', 'Missing Arguments');
 			return;
 		}
 		
@@ -331,7 +328,7 @@ class Connections extends Controller {
 		
 		// Check if you are a hcp (only hcp can call this function)
 		if ($this->auth->get_type() != 'hcp') {
-			$this->ui->error('Sorry, only HCP can accept connection requests');
+			$this->ui->set_error('Sorry, only HCP can accept connection requests','Permission Denied');
 			return;
 		}
 		
@@ -342,32 +339,29 @@ class Connections extends Controller {
 			$res = $this->connections_model->accept_hcp_hcp(array($requester_id, $this->auth->get_account_id()));
 		}
 		else {
-			$this->ui->error('The requester id does not match any id in the database', 500);
+			$this->ui->set_error('The requester id does not match any id in the database');
 			return;
 		}
 		
 		// Switch the response from the model, to select the correct view
 		switch ($res) {
 			case -1:
-				$mainview = 'Query error!';
-				$sideview = '';
-				break;
+				$this->ui->set_query_error();
+				return;
 			case -2:
-				$mainview = 'Connection does not exist.';
-				$sideview = '';
+				$error = 'Connection does not exist.';
+				$type = 'Permission Denied';
 				break;
 			case -3:
-				$mainview = 'This connection has already been accepted.';
-				$sideview = '';
+				$error = 'This connection has already been accepted.';
+				$type = 'Notice';
 				break;
 			default:
-				$mainview = 'You have accepted the connection.';
-				$sideview = '';
-				break;
+				$this->ui->set_message('You have accepted the connection.','Confirmation');
+				return;
 		}
-		
-		// Give results to the client
-		$this->ui->set(array($mainview,$sideview));
+
+		$this->ui->set_error($error,$type);
 	}
 
 	/**
@@ -410,18 +404,15 @@ class Connections extends Controller {
 		// Switch the response from the model, to select the correct view
 		switch ($res) {
 			case -1:
-				$view = 'Query error!';
+				$this->ui->set_query_error();
 				break;
 			case -2:
-				$view = 'Connection does not exist.';
+				$this->ui->set_error('Connection does not exist.','Notice');
 				break;
 			default:
-				$view = 'You have been disconnected from that health care provider.';
+				$this->ui->set_message('You have been disconnected from that health care provider.','Confirmation');
 				break;
 		}
-		
-		// Create final view for the user
-		$this->ui->set(array($view,''));
 	}
 	
 	/**
@@ -446,7 +437,7 @@ class Connections extends Controller {
 		if (DEBUG) $this->output->enable_profiler(TRUE);
 		
 		if ($id == NULL) {
-			$this->ui->error('id not specified.', 500);
+			$this->ui->set_error('id not specified.', 'Missing Arguments');
 			return;
 		}
 		
@@ -470,21 +461,18 @@ class Connections extends Controller {
 		// Switch the response from the model, to select the correct view
 		switch ($res) {
 			case -1:
-				$view = 'Query error!';
+				$this->ui->set_query_error();
 				break;
 			case -2:
-				$view = 'Connection does not exist.';
+				$this->ui->set_error('Connection does not exist.','Permission Denied');
 				break;
 			case -5:
-				$view = 'This connection request has not been initiated by you.';
+				$this->ui->set_error('This connection request has not been initiated by you.','Notice');
 				break;
 			default:
-				$view = 'Your connection request has been canceled.';
+				$this->ui->set_message('Your connection request has been canceled.','Confirmation');
 				break;
 		}
-		
-		// Create final view for the user
-		$this->ui->set(array($view,''));
 	}
 	
 	/**
@@ -510,7 +498,7 @@ class Connections extends Controller {
 		if (DEBUG) $this->output->enable_profiler(TRUE);
 		
 		if ($id == NULL) {
-			$this->ui->error('id not specified.', 500);
+			$this->ui->set_error('id not specified.', 'Missing Arguments');
 			return;
 		}
 		
@@ -534,22 +522,19 @@ class Connections extends Controller {
 		// Switch the response from the model, to select the correct view
 		switch ($res) {
 			case -1:
-				$view = 'Query error!';
+				$this->ui->set_query_error();
 				break;
 			case -2:
-				$view = 'Connection does not exist.';
+				$this->ui->set_error('Connection does not exist.');
 				break;
 			case -5:
-				$view = 'This connection request has been initiated by you.<br />
-				Click here to <a href="/connections/cancel/'.$id.'">cancel this request</a>.';
+				$this->ui->set_message('This connection request has been initiated by you.<br />
+				Click here to <a href="/connections/cancel/'.$id.'">cancel this request</a>.');
 				break;
 			default:
-				$view = 'This connection has been rejected.';
+				$this->ui->set_message('This connection has been rejected.','Confirmation');
 				break;
 		}
-		
-		// Create final view for the user
-		$this->ui->set(array($view,''));
 	}
 }
 
