@@ -26,7 +26,7 @@ class Profile extends Controller {
 	 * */
 	function index() {
 		//$this->auth->check_logged_in();
-		if ($this->auth->check(array(auth::CurrIsLoggedin)) !== TRUE) {
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
 		}
 

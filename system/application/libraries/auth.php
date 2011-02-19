@@ -72,13 +72,13 @@ class Auth {
 				}
 				break;
 			case auth::CurrPAT:
-				if (!$this->is_patient()) {
+				if ($this->type !== 'patient') {
 					$this->CI->ui->set_error($this->CI->load->view('errors/not_patient', '', TRUE), 'authorization');
 					return auth::CurrPAT;
 				}
 				break;
 			case auth::CurrHCP:
-				if (!$this->is_hcp()) {
+				if ($this->type !== 'hcp') {
 					$this->CI->ui->set_error($this->CI->load->view('errors/not_hcp', '', TRUE), 'authorization');
 					return auth::CurrHCP;
 				}
@@ -91,28 +91,28 @@ class Auth {
 				/** @todo */
 				$i++;
 				break;
-			case auth::AreConnected:
+			case auth::CONN:
 				/** @todo */
 				$i += 2;
 				break;
-			case APPT_EXST
+			case auth::APPT_EXST:
 				$i++;
 				break;
-			case APPT_MINE
+			case auth::APPT_MINE:
 				if (! is_numeric($perm[$i+1])) {
-					$this->ui->set_error('Not numeric');
+					$this->CI->ui->set_error('Not numeric');
 					return  auth::APPT_MINE;
 				}
-				$this->load->model('appointments_model');
-				$result = $this->appointments_model->is_myappointment(array($this->auth->get_account_id(), $perm[$i+1]));
+				$this->CI->load->model('appointments_model');
+				$result = $this->CI->appointments_model->is_myappointment(array($this->account_id, $perm[$i+1]));
 				if ($result === -1) {
-					$this->ui->set_query_error();
+					$this->CI->ui->set_query_error();
 					return  auth::APPT_MINE;
 				} elseif ($result === -5) {
-					$this->ui->set_error('Appointment ID does not exist!');
+					$this->CI->ui->set_error('Appointment ID does not exist!');
 					return  auth::APPT_MINE;
 				} elseif ($result !== TRUE) {
-					$this->ui->set_error('This is not your appointment.', 'permission denied');
+					$this->CI->ui->set_error('This is not your appointment.', 'permission denied');
 					return  auth::APPT_MINE;
 				}
 				$i++;

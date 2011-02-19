@@ -59,7 +59,7 @@ $(document).ready(function() {			// Wait for the document to be able to be manip
 });
 
 function layout_bindings() {
-	$("a").live("click", function(event) {
+	/*$("a").live("click", function(event) {
 		if ($(this).hasClass('confirm')) {
 			if (! confirm('Please confirm')) {
 				event.preventDefault();
@@ -95,7 +95,7 @@ function layout_bindings() {
 			
 			execute_ajax(href);
 		}
-	});
+	});*/
 	
 	/*$("a.ajax").live("click", function(event) {
 		if (! AJAX_ACTIVE) return;

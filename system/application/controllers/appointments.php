@@ -32,7 +32,9 @@ class Appointments extends Controller {
 	 * Lists all appointments of the logged in user
 	 * */
 	function all() {
-		$this->auth->check(array($this->auth::CurrLOG));
+		$check = $this->auth->check(array(auth::CurrLOG));
+		
+		if ($check !== TRUE) return;
 
 		if ($this->auth->get_type() === 'patient'){
 			$results = $this->appointments_model->view_all(array('account_id' => $this->auth->get_account_id(),
@@ -65,7 +67,7 @@ class Appointments extends Controller {
 	 * */
 	function upcoming(){
 		
-		$this->auth->check(array($this->auth::CurrLOG));
+		$this->auth->check(array(auth::CurrLOG));
 
 		if ($this->auth->get_type() === 'patient'){
 			$results = $this->appointments_model->view_upcoming(array('account_id' => $this->auth->get_account_id(),
@@ -102,7 +104,7 @@ class Appointments extends Controller {
 	 * */
 	function past(){
 		
-		$this->auth->check(array($this->auth::CurrLOG));
+		$this->auth->check(array(auth::CurrLOG));
 		
 		if ($this->auth->get_type() === 'patient'){
 			$results = $this->appointments_model->view_past(array('account_id' => $this->auth->get_account_id(),
@@ -137,8 +139,8 @@ class Appointments extends Controller {
 	function cancel($apt_id) {
 		
 		$check = $this->auth->check(array(
-			$this->auth::CurrLOG,
-			$this->auth::APPT_MINE, $apt_id));
+			auth::CurrLOG,
+			auth::APPT_MINE, $apt_id));
 			
 		if ($check !== TRUE)
 			return;
@@ -164,9 +166,9 @@ class Appointments extends Controller {
 	function reschedule($apt_id) {
 		
 		$check = $this->auth->check(array(
-			$this->auth::CurrLOG,
-			$this->auth::CurrPAT,
-			$this->auth::APPT_MINE, $apt_id));
+			auth::CurrLOG,
+			auth::CurrPAT,
+			auth::APPT_MINE, $apt_id));
 			
 		if ($check !== TRUE)
 			return;
@@ -201,9 +203,9 @@ class Appointments extends Controller {
 	function reschedule_do($apt_id) {
 	
 		$check = $this->auth->check(array(
-			$this->auth::CurrLOG,
-			$this->auth::CurrPAT,
-			$this->auth::APPT_MINE, $apt_id));
+			auth::CurrLOG,
+			auth::CurrPAT,
+			auth::APPT_MINE, $apt_id));
 			
 		if ($check !== TRUE)
 			return;
