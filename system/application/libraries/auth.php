@@ -27,11 +27,12 @@ class Auth {
 	const CurrPAT		= 1;	// current user: no other params
 	const CurrHCP		= 2;	// current user: no other params
 	const CurrCONN		= 3;	// requires one id, tests if the current is connected with the id provided
-	const PAT			= 4;	// requires one id, tests if it's a patient id
-	const HCP			= 5;	// requires one id, tests if it's a hcp id
+	const ACCOUNT		= 4;
+	const PAT			= 5;	// requires one id, tests if it's a patient id
+	const HCP			= 6;	// requires one id, tests if it's a hcp id
 	
-	const APPT_EXST		= 6;
-	const APPT_MINE		= 7;	// requires one id, tests if it's your appointment id
+	const APPT_EXST		= 7;
+	const APPT_MINE		= 8;	// requires one id, tests if it's your appointment id
 	
 	function __construct() {
 		$CI =& get_instance();
@@ -85,6 +86,28 @@ class Auth {
 					$this->CI->ui->set_error($this->CI->load->view('errors/not_hcp', '', TRUE), 'Permission Denied');
 					return auth::CurrHCP;
 				}
+				break;
+
+			case auth::ACCOUNT:				
+				if ($a[$i+1] === NULL) {
+					$this->CI->ui->set_error('No input provided');
+					return  auth::ACCOUNT;
+				}
+				if (! is_numeric($a[$i+1])) {
+					$this->CI->ui->set_error('Not numeric');
+					return  auth::ACCOUNT;
+				}
+				$this->CI->load->model('account_model');
+				$acc = $this->CI->account_model->is_account(array($a[$i+1]));
+				if ($acc === -1) {
+					$this->CI->ui->set_query_error();
+					return auth::ACCOUNT;
+				}
+				else if($acc === FALSE){
+					$this->CI->ui->set_error('This is not an account.');
+					return auth::ACCOUNT;
+				}
+				$i++;
 				break;
 				
 			case auth::PAT:
