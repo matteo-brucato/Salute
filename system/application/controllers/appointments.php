@@ -14,7 +14,10 @@ class Appointments extends Controller {
 		parent::Controller();
 		$this->load->library('ui');
 		$this->load->library('auth');
+		$this->load->model('patient_model');
+			$this->load->model('hcp_model');
 		$this->load->model('appointments_model');
+		$this->load->model('connections_model');
 	}
 
 	/**
@@ -243,24 +246,21 @@ class Appointments extends Controller {
 	 * 
 	 * @attention Right now only patient can ask appointments
 	 * */
-	function request($aid)
+	function request($aid = NULL)
 	{
-		$this->auth->check_logged_in();
-		$this->load->model('hcp_model');
+		$check = $this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrPAT,
+			auth::CurrCONN, $aid,
+			auth::HCP, $aid));
 		
-		// Only patient can request
-		if ($this->auth->get_type() != 'patient') {
-			$this->ui->set_error('Doctors are not allowed to request appointments','Permission Denied');
+		if ($check !== TRUE)
 			return;
-		}
 		
 		// Get doctor tuple from the model
 		$hcp = $this->hcp_model->get_hcp(array($aid));
 		if ($hcp === -1) {
 			$this->ui->set_query_error();
-			return;
-		} else if (count($hcp) <= 0) {
-			$this->ui->set_error('Sorry, you can request appointments only to HCPs','Permission Denied');
 			return;
 		}
 		
@@ -279,59 +279,36 @@ class Appointments extends Controller {
  	 * @MATEO:
 	 * 	I ASSUME THE VIEW NAME WILL BE request
 	 * */
-	function request_do($account_id){
-		$this->auth->check_logged_in();
-		$this->load->model('patient_model');
-		$this->load->model('hcp_model');
-		$this->load->model('connections_model');
+	function request_do($account_id = NULL){
+		$check = $this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrPAT,
+			auth::CurrCONN, $aid,
+			auth::HCP, $aid));
 		
-		if ($this->auth->get_type() === 'hcp'){
-			$this->ui->set_error('Doctors are not allowed to request appointments', 'Permission Denied');
+		if ($check !== TRUE)
 			return;
-		}
+	
+		$desc = $this->input->post('description');
+		$time = $this->input->post('time');
 		
-		//test to see if the accound_id belongs to a hcp
-		$is_hcp = $this->hcp_model->is_hcp(array($account_id));
-		if ( $is_hcp === -1 ) {
-			$this->ui->set_query_error();
-			return;
-		} elseif ($is_hcp === TRUE) {
-			//test to see if the person loged in is connected with the hcp
-			$is_connected = $this->connections_model->is_connected_with($account_id, $this->auth->get_account_id());
-			
-			if($is_connected === -1){
+		//test to see if the time and description are TRUE and not NULL
+		if( $desc !== FALSE && $desc !== '' && $time !== FALSE && $time !== '') {
+			$results = $this->appointments_model->request(array($this->auth->get_account_id(), 
+									$account_id, 
+									$desc ,
+									$time ));					 
+			if($results === -1){
 				$this->ui->set_query_error();
 				return;
-			} elseif ($is_connected === TRUE){
-				
-				$desc = $this->input->post('description');
-				$time = $this->input->post('time');
-				
-				//test to see if the time and description are TRUE and not NULL
-				if( $desc !== FALSE && $desc !== '' && $time !== FALSE && $time !== '') {
-					$results = $this->appointments_model->request(array($this->auth->get_account_id(), 
-											$account_id, 
-											$desc ,
-											$time ));					 
-					if($results === -1){
-						$this->ui->set_query_error();
-						return;
-					}
-					
-					$this->ui->set_message('Your request has been submitted','Confirmation');
-					return;
-				} else{
-					$this->ui->set_error('Please fill out the Time and Date and Description', 'Missing Arguments');
-					return;
-				}
-			} else {
-				$this->ui->set_error('This account is not connected with the healthcare provider specified to request an appointment', 'Permission Denied');
-				return;
 			}
-		} else {
-			$this->ui->set_error('The healthcare provider ID does not exist.');
+			
+			$this->ui->set_message('Your request has been submitted','Confirmation');
 			return;
-		}
+		} else{
+			$this->ui->set_error('Please fill out the Time and Date and Description', 'Missing Arguments');
+			return;
+		}  
 	}
 	
 	/**
@@ -340,18 +317,22 @@ class Appointments extends Controller {
 	 * @return confirmation statement
 	 * @todo fix this -- view should pass this to me based on the tuple they click..
 	 * */
-	function accept_appointment($apt_id){
-		 $this->auth->check_logged_in();
+	 function accept_appointment($apt_id = NULL){
 		 
-		 if ($this->auth->get_type() === 'patient'){
-			$this->ui->set_error('Patients are not allowed to accept appointments!', 'Permission Denied');
-			return;
-		}
+		 $check = $this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrHCP));
 		
-		//$results = $this->appointments_model->approve( array('appointment_id' => $apt_id));
+		if ($check !== TRUE)
+			return;
+
 		$results = $this->appointments_model->approve( array('appointment_id' => $apt_id));
 		if($results === -1) {
 			$this->ui->set_query_error();
+			return;
+		}
+		elseif( $results === -5){
+			$this->ui->set_error('Appointment ID does not exist');
 			return;
 		}
 		
