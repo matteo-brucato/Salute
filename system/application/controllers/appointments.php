@@ -163,7 +163,7 @@ class Appointments extends Controller {
 	/**
 	 * Shows a form to change an appointment date and time
 	 * */
-	function reschedule($apt_id) {
+	function reschedule($apt_id = NULL) {
 		
 		$check = $this->auth->check(array(
 			auth::CurrLOG,
@@ -200,7 +200,7 @@ class Appointments extends Controller {
  	 * @MATEO:
 	 * 	I ASSUME THE VIEW NAME WILL BE reschedule	 
 	 * */
-	function reschedule_do($apt_id) {
+	function reschedule_do($apt_id = NULL) {
 	
 		$check = $this->auth->check(array(
 			auth::CurrLOG,
@@ -340,7 +340,7 @@ class Appointments extends Controller {
 	 * @return confirmation statement
 	 * @todo fix this -- view should pass this to me based on the tuple they click..
 	 * */
-	 function accept_appointment($apt_id){
+	function accept_appointment($apt_id){
 		 $this->auth->check_logged_in();
 		 
 		 if ($this->auth->get_type() === 'patient'){
