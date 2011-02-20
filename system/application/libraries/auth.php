@@ -71,18 +71,21 @@ class Auth {
 					return auth::CurrLOG;
 				}
 				break;
+				
 			case auth::CurrPAT:
 				if ($this->type !== 'patient') {
 					$this->CI->ui->set_error($this->CI->load->view('errors/not_patient', '', TRUE), 'Permission Denied');
 					return auth::CurrPAT;
 				}
 				break;
+				
 			case auth::CurrHCP:
 				if ($this->type !== 'hcp') {
 					$this->CI->ui->set_error($this->CI->load->view('errors/not_hcp', '', TRUE), 'Permission Denied');
 					return auth::CurrHCP;
 				}
 				break;
+				
 			case auth::PAT:
 				if ($perm[$i+1] === NULL) {
 					$this->CI->ui->set_error('No input provided');
@@ -103,6 +106,7 @@ class Auth {
 				}
 				$i++;
 				break;
+				
 			case auth::HCP:
 				if ($perm[$i+1] === NULL) {
 					$this->CI->ui->set_error('No input provided');
@@ -123,6 +127,7 @@ class Auth {
 				}
 				$i++;
 				break;
+				
 			case auth::CurrCONN:
 				if ($perm[$i+1] === NULL) {
 					$this->CI->ui->set_error('No input provided');
@@ -144,9 +149,11 @@ class Auth {
 				}
 				$i++;
 				break;
+				
 			case auth::APPT_EXST:
 				$i++;
 				break;
+				
 			case auth::APPT_MINE:
 				if ($perm[$i+1] === NULL) {
 					$this->CI->ui->set_error('No input provided');
