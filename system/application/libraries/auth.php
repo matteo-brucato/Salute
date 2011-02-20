@@ -73,18 +73,34 @@ class Auth {
 				break;
 			case auth::CurrPAT:
 				if ($this->type !== 'patient') {
-					$this->CI->ui->set_error($this->CI->load->view('errors/not_patient', '', TRUE), 'authorization');
+					$this->CI->ui->set_error($this->CI->load->view('errors/not_patient', '', TRUE), 'Permission Denied');
 					return auth::CurrPAT;
 				}
 				break;
 			case auth::CurrHCP:
 				if ($this->type !== 'hcp') {
-					$this->CI->ui->set_error($this->CI->load->view('errors/not_hcp', '', TRUE), 'authorization');
+					$this->CI->ui->set_error($this->CI->load->view('errors/not_hcp', '', TRUE), 'Permission Denied');
 					return auth::CurrHCP;
 				}
 				break;
 			case auth::PAT:
-				/** @todo */
+				if ($perm[$i+1] === NULL) {
+					$this->CI->ui->set_error('No input provided');
+					return  auth::PAT;
+				}
+				if (! is_numeric($perm[$i+1])) {
+					$this->CI->ui->set_error('Not numeric');
+					return  auth::PAT;
+				}
+				$this->CI->load->model('patient_model');
+				$hcp = $this->CI->hcp_model->get_patient(array($perm[$i+1]));
+				if ($hcp === -1) {
+					$this->CI->ui->set_query_error();
+					return auth::PAT;
+				} else if (count($hcp) <= 0) {
+					$this->CI->ui->set_error('The id does not refer to any patient');
+					return auth::PAT;
+				}
 				$i++;
 				break;
 			case auth::HCP:
@@ -102,7 +118,7 @@ class Auth {
 					$this->CI->ui->set_query_error();
 					return auth::HCP;
 				} else if (count($hcp) <= 0) {
-					$this->CI->ui->set_error('Id is not a HCP or does not exist','Permission Denied');
+					$this->CI->ui->set_error('The id does not refer to any HCP');
 					return auth::HCP;
 				}
 				$i++;
@@ -123,7 +139,7 @@ class Auth {
 					return auth::CurrCONN;
 				}
 				else if ($check === FALSE) {
-					$this->CI->ui->set_error('You are not connected with this patient','Permission Denied');
+					$this->CI->ui->set_error('You are not connected with this account','Permission Denied');
 					return auth::CurrCONN;
 				}
 				$i++;
@@ -149,7 +165,7 @@ class Auth {
 					$this->CI->ui->set_error('Appointment ID does not exist!');
 					return  auth::APPT_MINE;
 				} elseif ($result !== TRUE) {
-					$this->CI->ui->set_error('This is not your appointment.', 'permission denied');
+					$this->CI->ui->set_error('This is not your appointment', 'permission denied');
 					return  auth::APPT_MINE;
 				}
 				$i++;
