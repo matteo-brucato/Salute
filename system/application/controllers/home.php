@@ -14,8 +14,6 @@ class Home extends Controller {
 		parent::Controller();
 		$this->load->library('ui');
 		$this->load->library('auth');
-		$this->load->model('login_model');
-		$this->load->model('account_model');
 	}
 	
 	/**
@@ -58,6 +56,9 @@ class Home extends Controller {
 			$this->ui->set_error('Access to this page not allowed', 'Forbidden'); 
 			return;
 		}
+		
+		$this->load->model('login_model');
+		$this->load->model('account_model');
 		
 		// verify login
 		//returns array: of an array that has : 1st element = type, 2nd element= whole user's tuple

@@ -14,13 +14,17 @@ class Search extends Controller {
 		parent::Controller();
 		$this->load->library('ui');
 		$this->load->library('auth');
+		$this->load->model('hcp_model');
+		$this->load->model('connections_model');
 	}
 
 	/**
 	 * Default to the advanced search
 	 */
 	function index() {
-		$this->auth->check_logged_in();
+		$this->auth->check(array(auth::CurrLOG));
+		if ($check !== TRUE) return;
+		
 		$this->ui->set(array(
 			$this->load->view('mainpane/forms/search', '' , TRUE)
 		));
@@ -30,10 +34,8 @@ class Search extends Controller {
 	 * Search for hcps in the database
 	 * */
 	function hcps() {
-		$this->auth->check_logged_in();
-		
-		$this->load->model('hcp_model');
-		$this->load->model('connections_model');
+		$this->auth->check(array(auth::CurrLOG));
+		if ($check !== TRUE) return;
 		
 		/** @todo Change this with the actual search! */
 		$hcps = $this->hcp_model->get_hcps();
