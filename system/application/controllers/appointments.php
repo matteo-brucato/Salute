@@ -15,7 +15,7 @@ class Appointments extends Controller {
 		$this->load->library('ui');
 		$this->load->library('auth');
 		$this->load->model('patient_model');
-			$this->load->model('hcp_model');
+		$this->load->model('hcp_model');
 		$this->load->model('appointments_model');
 		$this->load->model('connections_model');
 	}

@@ -537,6 +537,5 @@ class Connections extends Controller {
 		}
 	}
 }
-
 /** @} */
 ?>
