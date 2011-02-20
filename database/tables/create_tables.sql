@@ -184,7 +184,7 @@ CREATE TABLE connections(
 	accepted BOOLEAN NOT NULL DEFAULT FALSE,
 	date_connected DATE NOT NULL,
 	connection_level VARCHAR(1) DEFAULT '0',
-	PRIMARY KEY (rconnection_id),
+	PRIMARY KEY (connection_id),
 	FOREIGN KEY (requester_id) REFERENCES accounts(account_id),
 	FOREIGN KEY (accepter_id) REFERENCES accounts(account_id)
 );
