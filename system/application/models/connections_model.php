@@ -265,7 +265,7 @@ class Connections_model extends Model {
 			FROM connections DD
 			WHERE DD.accepted = true AND
 				((DD.requester_id = ? AND DD.accepter_id = ?)
-				OR (DD.accepter_id = ? AND DD.requester_id = ?)))";
+			OR   (DD.accepter_id = ? AND DD.requester_id = ?)))";
 		
 				//UNION
 				//(SELECT *

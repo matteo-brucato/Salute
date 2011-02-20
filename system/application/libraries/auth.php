@@ -102,7 +102,7 @@ class Auth {
 					$this->CI->ui->set_query_error();
 					return auth::HCP;
 				} else if (count($hcp) <= 0) {
-					$this->ui->set_error('Id is not a HCP or does not exist','Permission Denied');
+					$this->CI->ui->set_error('Id is not a HCP or does not exist','Permission Denied');
 					return auth::HCP;
 				}
 				$i++;
@@ -118,12 +118,12 @@ class Auth {
 				}
 				$this->CI->load->model('connections_model');
 				$check = $this->CI->connections_model->is_connected_with($this->account_id, $perm[$i+1]);
-				if ($check === -1){ 
-					$this->ui->set_query_error();
+				if ($check === -1) {
+					$this->CI->ui->set_query_error();
 					return auth::CurrCONN;
 				}
 				else if ($check === FALSE) {
-					$this->ui->set_error('You are not connected with this patient','Permission Denied');
+					$this->CI->ui->set_error('You are not connected with this patient','Permission Denied');
 					return auth::CurrCONN;
 				}
 				$i++;

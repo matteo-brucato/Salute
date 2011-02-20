@@ -139,7 +139,7 @@ class Appointments extends Controller {
 	 * @return redirect to list of upcoming appointments || error(not their appointment)
 	 * @todo: pop up-- are you sure you want to cancel appointment?
 	 * */
-	function cancel($apt_id) {
+	function cancel($apt_id = NULL) {
 		
 		$check = $this->auth->check(array(
 			auth::CurrLOG,
@@ -253,9 +253,7 @@ class Appointments extends Controller {
 			auth::CurrPAT,
 			auth::CurrCONN, $aid,
 			auth::HCP, $aid));
-		
-		if ($check !== TRUE)
-			return;
+		if ($check !== TRUE)return;
 		
 		// Get doctor tuple from the model
 		$hcp = $this->hcp_model->get_hcp(array($aid));
@@ -279,12 +277,12 @@ class Appointments extends Controller {
  	 * @MATEO:
 	 * 	I ASSUME THE VIEW NAME WILL BE request
 	 * */
-	function request_do($account_id = NULL){
+	function request_do($account_id = NULL) {
 		$check = $this->auth->check(array(
 			auth::CurrLOG,
 			auth::CurrPAT,
-			auth::CurrCONN, $aid,
-			auth::HCP, $aid));
+			auth::CurrCONN, $account_id,
+			auth::HCP, $account_id));
 		
 		if ($check !== TRUE)
 			return;
@@ -294,10 +292,12 @@ class Appointments extends Controller {
 		
 		//test to see if the time and description are TRUE and not NULL
 		if( $desc !== FALSE && $desc !== '' && $time !== FALSE && $time !== '') {
-			$results = $this->appointments_model->request(array($this->auth->get_account_id(), 
-									$account_id, 
-									$desc ,
-									$time ));					 
+			$results = $this->appointments_model->request(array(
+				$this->auth->get_account_id(), 
+				$account_id, 
+				$desc,
+				$time
+			));
 			if($results === -1){
 				$this->ui->set_query_error();
 				return;
@@ -321,10 +321,9 @@ class Appointments extends Controller {
 		 
 		 $check = $this->auth->check(array(
 			auth::CurrLOG,
-			auth::CurrHCP));
-		
-		if ($check !== TRUE)
-			return;
+			auth::CurrHCP,
+			auth::APPT_MINE, $apt_id));
+		if ($check !== TRUE) return;
 
 		$results = $this->appointments_model->approve( array('appointment_id' => $apt_id));
 		if($results === -1) {
