@@ -15,6 +15,8 @@ class Download extends Controller {
 		$this->load->library('ui');
 		$this->load->library('auth');
 		$this->load->helper('download');
+		$this->load->model('connections_model');
+		$this->load->model('medical_records_model');
 	}
 
 	/**
@@ -32,10 +34,12 @@ class Download extends Controller {
 	 * him/her can download a medical record
 	 * */
 	function medical_record($patient_id = NULL, $medical_record_id = NULL) {
-		$this->auth->check_logged_in();
-		$this->load->model('connections_model');
-		$this->load->model('medical_records_model');
 		
+		$check = $this->auth->check(array(
+			auth::CurrLOG));
+			
+		if ($check !== TRUE) return;
+				
 		// Check if there is input
 		if ($patient_id == NULL || $medical_record_id == NULL) {
 			$this->ui->set_error('It\'s necessary to specify a patient and a medical record id','Missing Arguments');

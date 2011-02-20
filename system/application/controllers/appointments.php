@@ -36,7 +36,6 @@ class Appointments extends Controller {
 	 * */
 	function all() {
 		$check = $this->auth->check(array(auth::CurrLOG));
-		
 		if ($check !== TRUE) return;
 
 		if ($this->auth->get_type() === 'patient'){
@@ -71,6 +70,7 @@ class Appointments extends Controller {
 	function upcoming(){
 		
 		$this->auth->check(array(auth::CurrLOG));
+		if ($check !== TRUE) return;
 
 		if ($this->auth->get_type() === 'patient'){
 			$results = $this->appointments_model->view_upcoming(array('account_id' => $this->auth->get_account_id(),
@@ -108,6 +108,7 @@ class Appointments extends Controller {
 	function past(){
 		
 		$this->auth->check(array(auth::CurrLOG));
+		if ($check !== TRUE) return;
 		
 		if ($this->auth->get_type() === 'patient'){
 			$results = $this->appointments_model->view_past(array('account_id' => $this->auth->get_account_id(),
