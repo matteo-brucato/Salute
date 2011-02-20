@@ -138,7 +138,7 @@ class Settings extends Controller {
 		$this->email->initialize($config);
 		$this->email->from('salute-noreply@salute.com');
 		$this->email->to($email);
-		$this->email->subject('Your password has been changed.');
+		$this->email->subject('Your email has been changed.');
 		$this->email->message(
 			'Your email has been successfully changed. It is now: '.$email.'. '.
 			'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
