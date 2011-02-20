@@ -183,16 +183,16 @@ class Auth {
 				break;
 
 			case auth::BILL_DELC:
-				if ($perm[$i+1] === NULL) {
+				if ($a[$i+1] === NULL) {
 					$this->CI->ui->set_error('No input provided');
 					return auth::BILL_DELC;
 				}
-				if (! is_numeric($perm[$i+1])) {
+				if (! is_numeric($a[$i+1])) {
 					$this->CI->ui->set_error('Not numeric');
 					return auth::BILL_DELC;
 				}
 				$this->CI->load->model('bills_model');
-				$results = $this->CI->bills_model->get_bill($perm[$i+1]);
+				$results = $this->CI->bills_model->get_bill($a[$i+1]);
 				if( $results === -1 ){
 					$this->ui->set_query_error(); 
 					return auth::BILL_DELC;
@@ -231,7 +231,7 @@ class Auth {
 				break;				
 			
 			case auth::BILL_PAYC:
-				if ($perm[$i+1] === NULL) {
+				if ($a[$i+1] === NULL) {
 					$this->CI->ui->set_error('No input provided');
 					return auth::BILL_PAYC;
 				}
@@ -240,7 +240,7 @@ class Auth {
 					return auth::BILL_PAYC;
 				}
 				$this->CI->load->model('bills_model');
-				$results = $this->CI->bills_model->get_bill($perm[$i+1]);
+				$results = $this->CI->bills_model->get_bill($a[$i+1]);
 				if( $results === -1 ){
 					$this->ui->set_query_error(); 
 					return auth::BILL_PAYC;
