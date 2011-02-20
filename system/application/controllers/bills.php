@@ -1,4 +1,4 @@
-<?php
+d<?php
 /**
  * @file bills.php
  * @brief Controller to handle bills
@@ -35,7 +35,9 @@ class Bills extends Controller {
 	**/
 	function all()	{
 		
-		$this->auth->check_logged_in();
+		$check = $this->auth->check(array(auth::CurrLOG));
+		if ($check !== TRUE) return;
+		
 		$this->load->model('bills_model');
 
 		if($this->auth->get_type() === 'patient')
@@ -65,7 +67,9 @@ class Bills extends Controller {
 	 * 		if any database query errors, show error message
 	**/
 	function current(){
-		$this->auth->check_logged_in();
+		$check = $this->auth->check(array(auth::CurrLOG));
+		if ($check !== TRUE) return;
+		
 		$this->load->model('bills_model');
 		
 		if($this->auth->get_type() === 'patient')
@@ -93,7 +97,9 @@ class Bills extends Controller {
 	 * 		if any database query errors, show error message
 	**/
 	function past() {
-		$this->auth->check_logged_in();
+		$check = $this->auth->check(array(auth::CurrLOG));
+		if ($check !== TRUE) return;
+		
 		$this->load->model('bills_model');
 		
 		if($this->auth->get_type() === 'patient')
@@ -126,6 +132,18 @@ class Bills extends Controller {
 	 * 		success: redirect to a form page for HCP to input bill data
 	**/
 	function issue($patient_id){
+		$this->load->model('patient_model');
+		$check = $this->auth->check(array(auth::CurrLOG, auth::CurrHCP, auth::PAT, $patient_id, auth::CurrCONN, $patient_id ));
+		if ($check !== TRUE) return;
+		
+		$results = $this->patient_model->get_patient(array($patient_id));if ($results === -1){
+				$this->ui->set_query_error(); 
+				return;
+		}
+		$this->ui->set(array($this->load->view('mainpane/forms/issue_bill', array('results' => $results), TRUE)));
+		
+		/*
+		
 		$this->auth->check_logged_in();
 		$this->load->model('patient_model');
 		$this->load->model('connections_model');
@@ -157,6 +175,7 @@ class Bills extends Controller {
 			$this->ui->set_error('Server Error', 'server'); 
 			return;		
 		}
+		*/
 	}
 	
 	/**
@@ -178,7 +197,24 @@ class Bills extends Controller {
 	 * 		parsing of input, input validation
 	**/
 	function issue_new_bill() {
-		$this->auth->check_logged_in();
+		$patient_id = $this->input->post('patient_id');
+		$check = $this->auth->check(array(auth::CurrLOG, auth::CurrHCP, auth::PAT, $patient_id, auth::CurrCONN, $patient_id ));
+		if ($check !== TRUE) return;
+		$this->load->model('bills_model');
+		$amount = $this->input->post('amount');
+		$description = $this->input->post('descryption');
+		$due_date = $this->input->post('due_date');
+		$results = $this->bills_model->issue_bill(array($patient_id,$this->auth->get_account_id(),$amount,$description,$due_date));
+		if( $results === -1 ){
+			$this->ui->set_query_error(); 
+			return;
+		} 
+		else {
+			$this->ui->set_message('Successfully issued the bill.', 'Confirmation'); 
+			return;
+		}
+		/*
+		//logged in, currhcp, PAT, currCONN, 
 		$this->load->model('bills_model');
 		$this->load->model('connections_model');
 		$this->load->model('patient_model');
@@ -216,6 +252,7 @@ class Bills extends Controller {
 			}
 		} else
 			$this->ui->set_error('Server Error', 'server');
+		*/
 	}
 	
 	/**
@@ -234,8 +271,34 @@ class Bills extends Controller {
 	 * 		success: redirect to a success page message
 	**/
 	function delete($bill_id) {
-		$this->auth->check_logged_in();
+		$check = $this->auth->check(array(auth::CurrLOG, auth::BILL_DELC, $bill_id ));
+		if ($check !== TRUE) return;
 		$this->load->model('bills_model');
+		if( $this->auth->get_type() === 'hcp' ){	
+			$results = $this->bills_model->delete_bill( array($bill_id, 'hcp'));
+				if( $results === 0 ){
+					$this->ui->set_message('Successfully deleted the bill.', 'Confirmation');
+					return;
+				} 
+				else{
+					$this->ui->set_query_error(); 
+					return;
+				}
+		}
+		else{
+			$results = $this->bills_model->delete_bill( array($bill_id, 'patient'));
+				if( $results === 0 ){
+					$this->ui->set_message('Successfully deleted the bill.', 'Confirmation');
+					return;
+				} 
+				else{
+					$this->ui->set_query_error(); 
+					return;
+				}
+		}
+		/*
+		//HCP: bill exists, bill is mine, bill is not deleted
+		//Patient: bill exists, bill is mine, bill is not deleted, bill is inactive
 		if( $this->auth->get_type() === 'hcp' ){
 			$results = $this->bills_model->get_bill($bill_id);
 			if( $results === -1 ){
@@ -295,6 +358,7 @@ class Bills extends Controller {
 			$this->ui->set_error('Server Error', 'server');	
 			return;
 		}
+		*/
 	}
 	
 	/**
@@ -314,8 +378,20 @@ class Bills extends Controller {
 	 * 		success: changes attribute 'cleared' of type bool from false to true
 	**/
 	function pay($bill_id) {
-		$this->auth->check_logged_in();
+		//logged in, currPAT, bill exists, is my bill, is active 
+		$check = $this->auth->check(array(auth::CurrLOG, auth::CurrPAT, auth::BILL_PAYC, $bill_id ));
+		if ($check !== TRUE) return;
 		$this->load->model('bills_model');
+		$results = $this->bills_model->pay_bill( $bill_id );
+		if( $results === 0 ){
+			$this->ui->set_message('Successfully paid the bill.', 'Confirmation'); 
+			return;
+		}else{
+			$this->ui->set_query_error(); 
+			return;
+		}
+		
+		/*		
 		if( $this->auth->get_type() === 'patient' ){
 			$results = $this->bills_model->get_bill($bill_id);
 			if ($results === -1){
@@ -324,7 +400,7 @@ class Bills extends Controller {
 			} elseif( count($results) < 1 ) {
 				$this->ui->set_error('Cannot pay this bill. This bill does not exist anymore.'); 
 				return;
-			} else{ /* This is ugly. Rework this please.*/
+			} else{ 
 					if( $results[0]['patient_id'] === $this->auth->get_account_id() ){
 						if( $results[0]['hcp_kept'] === 't' ){
 							if( $results[0]['cleared'] === 'f' ){				
@@ -352,7 +428,7 @@ class Bills extends Controller {
 		} else{
 			$this->ui->set_error('You do not have permission to pay this bill.', 'Permission Denied'); 
 			return;
-		}
+		}*/
 	}
 }
 /** @} */

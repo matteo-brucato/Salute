@@ -20,6 +20,8 @@ class Connections extends Controller {
 		parent::Controller();
 		$this->load->library('ui');
 		$this->load->library('auth');
+		$this->load->model('connections_model');
+		$this->load->model('hcp_model');
 	}
 
 	/**
@@ -42,9 +44,8 @@ class Connections extends Controller {
 	 * @test Works fine
 	 * */
 	function myhcps() {
-		$this->auth->check_logged_in();
-
-		$this->load->model('connections_model');
+		$check = $this->auth->check(array(auth::CurrLOG));
+		if ($check !== TRUE) return;
 		
 		if ($this->auth->get_type() === 'patient') 
 			$results  = $this->connections_model->list_my_hcps($this->auth->get_account_id()); 
@@ -55,13 +56,13 @@ class Connections extends Controller {
 			return;
 		}
 		
-		if ( $results === -1 ){
+		if ($results === -1) {
 			$this->ui->set_query_error();
 			return;
-		}	
+		}
 		
 		$mainview = $this->load->view('mainpane/lists/hcps',
-				array('list_name' => 'My Hcps', 'list' => $results, 'status' => 'connected') , TRUE);
+			array('list_name' => 'My Hcps', 'list' => $results, 'status' => 'connected') , TRUE);
 		
 		// Give results to the client
 		$this->ui->set(array($mainview));
@@ -78,24 +79,21 @@ class Connections extends Controller {
 	 * */
 	function mypatients()
 	{
-		$this->auth->check_logged_in();
+		$check = $this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrHCP
+		));
+		if ($check !== TRUE) return;
 		
-		if ($this->auth->get_type() !== 'hcp'){
-			$this->ui->set_error($this->load->view('errors/not_hcp', '', TRUE));
-			return;
-		}
-
-		$this->load->model('connections_model');
 		$res = $this->connections_model->list_my_patients($this->auth->get_account_id()); 
-
-		// Switch the response from the model, to select the correct view
+		
 		if ($res === -1) {
 			$this->ui->set_query_error();
 			return;
 		}
 		
 		$mainview = $this->load->view('mainpane/lists/patients',
-					array('list_name' => 'My Patients', 'list' => $res, 'status' => 'connected') , TRUE);
+			array('list_name' => 'My Patients', 'list' => $res, 'status' => 'connected') , TRUE);
 		
 		// Give results to the client
 		$this->ui->set(array($mainview));
@@ -117,17 +115,13 @@ class Connections extends Controller {
 	function pending($direction = 'out')
 	{
 		if ($direction == 'in') {
-			if ($this->auth->get_type() === 'hcp')
-				$this->_pending_in();
-			else {
-				$this->ui->set_error($this->load->view('errors/not_hcp', '', TRUE));
-				return;
-			}
-		} else if ($direction == 'out')
+			$this->_pending_in();
+		}
+		else if ($direction == 'out') {
 			$this->_pending_out();
+		}
 		else {
 			$this->ui->set_error('Input not valid');
-			return;
 		}
 	}
 	
@@ -141,8 +135,8 @@ class Connections extends Controller {
 	 * */
 	function _pending_out()
 	{
-		$this->auth->check_logged_in();
-		$this->load->model('connections_model');
+		$check = $this->auth->check(array(auth::CurrLOG));
+		if ($check !== TRUE) return;
 		
 		if ($this->auth->get_type() === 'hcp') 
 			$res = $this->connections_model->pending_outgoing_hcps_4_a_hcp(array($this->auth->get_account_id())); 
@@ -178,23 +172,20 @@ class Connections extends Controller {
 	 * */
 	function _pending_in() 
 	{
-		$this->auth->check_logged_in();
+		$check = $this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrHCP
+		));
+		if ($check !== TRUE) return;
+		
 		if (DEBUG) $this->output->enable_profiler(TRUE);
-		$this->load->model('connections_model');
 		
-		if($this->auth->get_type() === 'hcp') {
-			// Take pending incoming from other hcps
-			$hcps = $this->connections_model->pending_incoming_hcps_4_a_hcp(array($this->auth->get_account_id())); 
-			// And pending incoming from other patients
-			$pats = $this->connections_model->pending_incoming_patients_4_a_hcp(array($this->auth->get_account_id())); 
-		} else {
-			/** @todo In the future, create a specific view for this
-			 * kind of errors, anc call this view in all similar cases */
-			$this->ui->set_error('Internal server logic error.','server');
-			return;
-		}
+		// Take pending incoming from other hcps
+		$hcps = $this->connections_model->pending_incoming_hcps_4_a_hcp(array($this->auth->get_account_id())); 
+		// And pending incoming from other patients
+		$pats = $this->connections_model->pending_incoming_patients_4_a_hcp(array($this->auth->get_account_id()));
 		
-		if ($hcps == -1 || $pats == -1) {
+		if ($hcps === -1 || $pats === -1) {
 			$this->ui->set_query_error();
 			return;
 		}
@@ -223,45 +214,32 @@ class Connections extends Controller {
 	 * */
 	function request($id = NULL)
 	{
-		$this->auth->check_logged_in();
-		$this->load->model('hcp_model');
-		$this->load->model('connections_model');
-		
-		// Check if an account_id has been specified
-		if ($id == NULL) {
-			$this->ui->set_error('No hcp_id specified.');
-			return;
-		}
-		
-		// Check the input type
-		if (! is_numeric($id)) {
-			$this->ui->set_error('Invalid id type.');
-			return;
-		}
-		
-		// Check if the account_id specified refers to a hcp
-		if (!$this->hcp_model->is_hcp(array($id))) {
-			$this->ui->set_error('The id specified does not refer to an HCP.');
-			return;
-		}
-		
-		// Get all the hcp's info
-		$results = $this->hcp_model->get_hcp(array($id));
+		$check = $this->auth->check(array(auth::CurrLOG));
+		if ($check !== TRUE) return;
 		
 		// If current user is a hcp
 		if ($this->auth->get_type() === 'hcp') {
+			
+			// An HCP can request connection only to other HCPs
+			$check = $this->auth->check(array(auth::HCP, $id));
+			if ($check !== TRUE) return;
+			
+			// Add the connection in the db
 			$res = $this->connections_model->add_hcp_hcp(array(
-										$this->auth->get_account_id(),
-										$id
-										));
+				$this->auth->get_account_id(),
+				$id
+			));
 		}
+		
 		// If current user is a patient
 		else if ($this->auth->get_type() === 'patient') {
+			// Add the connection in the db
 			$res = $this->connections_model->add_patient_hcp(array(
-										$this->auth->get_account_id(),
-										$id
-										));
+				$this->auth->get_account_id(),
+				$id
+			));
 		}
+		
 		else {
 			$this->ui->set_error('Internal server logic error.', 'server');
 			return;
@@ -273,7 +251,7 @@ class Connections extends Controller {
 				$this->ui->set_query_error();
 				return;
 			case -3:
-				$this->ui->set_error('This connection has been already requested.');
+				$this->ui->set_error('This connection has been already requested');
 				return;
 			default:
 				$mainview = 'Your request has been submitted.';
@@ -297,38 +275,32 @@ class Connections extends Controller {
 		}
 		
 		// Give results to the client
-		$this->ui->set_message($mainview,$type);
+		$this->ui->set_message($mainview, $type);
 	}
 
 	/** 
 	 * Accept an existing connection request
 	 * 
-	 * @attention Only hcps can do this
+	 * @param
+	 * 		$requester_id the id of the account you accept a connection with
 	 * 
-	 * @test Tested
+	 * @attention
+	 * 		If I'm a patient I can accept connections only from patients
+	 * 		If I'm an hcp I can accept connections from hcp's and patients
 	 * */
-	function accept($requester_id = NULL) 
+	function accept($requester_id = NULL)
 	{
-		$this->auth->check_logged_in();
-		$this->load->model('connections_model');
-		$this->load->model('hcp_model');
-		$this->load->model('patient_model');
+		$check = $this->auth->check(array(auth::CurrLOG));
+		if ($check !== TRUE) return;
+		
+		if ($this->auth->get_type() === 'patient') {
+			$check = $this->auth->check(array(auth::PAT, $requester_id));
+			if ($check !== TRUE) return;
+		}
 		
 		// Check if parameters are specified
 		if ($requester_id == NULL) {
 			$this->ui->set_error('ids not specified.', 'Missing Arguments');
-			return;
-		}
-		
-		/* Check if the current user is the receiver
-		if ($this->auth->get_account_id() != $my_id) {
-			$this->ui->error('You are not the receiver for this request');
-			return;
-		}*/
-		
-		// Check if you are a hcp (only hcp can call this function)
-		if ($this->auth->get_type() != 'hcp') {
-			$this->ui->set_error('Sorry, only HCP can accept connection requests','Permission Denied');
 			return;
 		}
 		

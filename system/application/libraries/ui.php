@@ -19,6 +19,7 @@ class Ui {
 	private $CI;
 	private $panels; // array of UI panels
 	private $redirect = '';
+	private $curr_url;
 	
 	function __construct() {
 		$this->CI =& get_instance();
@@ -31,6 +32,14 @@ class Ui {
 		// instance, reading it from a cookie or a global variable
 		$this->CI->layout->set('faux-8-2-col');
 		
+		// Create curr_url string
+		if ($this->CI->uri->segment(1) != '') {
+			$curr_url = '> <a href="/'.$this->CI->uri->segment(1).'" class="ajax">'.$this->CI->uri->segment(1).'</a>';
+			if ($this->CI->uri->segment(2) != '')
+				$curr_url .= ' > '.$this->CI->uri->segment(2);
+		}
+		else $curr_url = '';
+		
 		// Set the default panels
 		if (IS_AJAX) {
 			$this->panels[0] = NULL;
@@ -38,12 +47,14 @@ class Ui {
 			$this->panels[2] = NULL;
 			$this->panels[3] = NULL;
 			$this->panels[4] = NULL;
+			$this->panels[5] = $curr_url;
 		} else {
 			$this->panels[0] = $this->CI->load->view('mainpane/default', '', TRUE);
 			$this->panels[1] = $this->CI->load->view('sidepane/default', '', TRUE);
 			$this->panels[2] = $this->CI->load->view('others/navbar', '', TRUE);
 			$this->panels[3] = $this->CI->load->view('others/footer', '', TRUE);
 			$this->panels[4] = $this->CI->load->view('others/header', '', TRUE);
+			$this->panels[5] = $curr_url;
 		}
 	}
 	
@@ -70,7 +81,8 @@ class Ui {
 				'sidepane'	=> $this->panels[1],
 				'navbar'	=> $this->panels[2],
 				'footer'	=> $this->panels[3],
-				'header'	=> $this->panels[4]
+				'header'	=> $this->panels[4],
+				'curr_url'	=> $this->panels[5]
 			));
 		} else {
 			// View the previously specified layout
