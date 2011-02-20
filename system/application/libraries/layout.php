@@ -55,11 +55,12 @@ class Layout {
 		switch ($this->active_layout) {
 			case 0:								// faux-8-2-col.xhtml
 				$data = array (
-					'mainpane'	=> $panels[0],
-					'sidepane'	=> $panels[1],
-					'navbar' => $panels[2],
-					'footer' => $panels[3],
-					'header' => $panels[4]
+					'mainpane'			=> $panels[0],
+					'sidepane'			=> $panels[1],
+					'navbar' 			=> $panels[2],
+					'footer' 			=> $panels[3],
+					'header' 			=> $panels[4],
+					'curr_location' 	=> $panels[5]
 				);
 				break;
 		}

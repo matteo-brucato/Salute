@@ -62,12 +62,13 @@ class Auth {
 	 * @return TRUE if all checks are satisfied. Otherwise it returns
 	 * the restriction number not satisfied.
 	 * */
-	function check($perm = array()) {
-		for ($i = 0; $i < count($perm); $i++) {
-			switch ($perm[$i]) {
+	function check($a = array()) {
+		for ($i = 0; $i < count($a); $i++) {
+			switch ($a[$i]) {
 			case auth::CurrLOG:
 				if (!$this->is_logged_in()) {
 					$this->CI->ui->set_error($this->CI->load->view('errors/not_logged_in', '', TRUE), 'authorization');
+					$this->CI->ui->set(array(NULL, $this->CI->load->view('sidepane/forms/login', '', TRUE)));
 					return auth::CurrLOG;
 				}
 				break;
@@ -87,16 +88,16 @@ class Auth {
 				break;
 				
 			case auth::PAT:
-				if ($perm[$i+1] === NULL) {
+				if ($a[$i+1] === NULL) {
 					$this->CI->ui->set_error('No input provided');
 					return  auth::PAT;
 				}
-				if (! is_numeric($perm[$i+1])) {
+				if (! is_numeric($a[$i+1])) {
 					$this->CI->ui->set_error('Not numeric');
 					return  auth::PAT;
 				}
 				$this->CI->load->model('patient_model');
-				$hcp = $this->CI->hcp_model->get_patient(array($perm[$i+1]));
+				$hcp = $this->CI->hcp_model->get_patient(array($a[$i+1]));
 				if ($hcp === -1) {
 					$this->CI->ui->set_query_error();
 					return auth::PAT;
@@ -108,16 +109,16 @@ class Auth {
 				break;
 				
 			case auth::HCP:
-				if ($perm[$i+1] === NULL) {
+				if ($a[$i+1] === NULL) {
 					$this->CI->ui->set_error('No input provided');
 					return  auth::HCP;
 				}
-				if (! is_numeric($perm[$i+1])) {
+				if (! is_numeric($a[$i+1])) {
 					$this->CI->ui->set_error('Not numeric');
 					return  auth::HCP;
 				}
 				$this->CI->load->model('hcp_model');
-				$hcp = $this->CI->hcp_model->get_hcp(array($perm[$i+1]));
+				$hcp = $this->CI->hcp_model->get_hcp(array($a[$i+1]));
 				if ($hcp === -1) {
 					$this->CI->ui->set_query_error();
 					return auth::HCP;
@@ -129,16 +130,16 @@ class Auth {
 				break;
 				
 			case auth::CurrCONN:
-				if ($perm[$i+1] === NULL) {
+				if ($a[$i+1] === NULL) {
 					$this->CI->ui->set_error('No input provided');
 					return  auth::CurrCONN;
 				}
-				if (! is_numeric($perm[$i+1])) {
+				if (! is_numeric($a[$i+1])) {
 					$this->CI->ui->set_error('Not numeric');
 					return  auth::CurrCONN;
 				}
 				$this->CI->load->model('connections_model');
-				$check = $this->CI->connections_model->is_connected_with($this->account_id, $perm[$i+1]);
+				$check = $this->CI->connections_model->is_connected_with($this->account_id, $a[$i+1]);
 				if ($check === -1) {
 					$this->CI->ui->set_query_error();
 					return auth::CurrCONN;
@@ -155,16 +156,16 @@ class Auth {
 				break;
 				
 			case auth::APPT_MINE:
-				if ($perm[$i+1] === NULL) {
+				if ($a[$i+1] === NULL) {
 					$this->CI->ui->set_error('No input provided');
 					return auth::APPT_MINE;
 				}
-				if (! is_numeric($perm[$i+1])) {
+				if (! is_numeric($a[$i+1])) {
 					$this->CI->ui->set_error('Not numeric');
 					return auth::APPT_MINE;
 				}
 				$this->CI->load->model('appointments_model');
-				$result = $this->CI->appointments_model->is_myappointment(array($this->account_id, $perm[$i+1]));
+				$result = $this->CI->appointments_model->is_myappointment(array($this->account_id, $a[$i+1]));
 				if ($result === -1) {
 					$this->CI->ui->set_query_error();
 					return  auth::APPT_MINE;

@@ -2,9 +2,9 @@
 
 var AJAX_ACTIVE = true;
 
-const HISTORY_MAX = 10;
+const HISTORY_MAX = 30;
 var history = new Array(HISTORY_MAX);
-var history_i = 0;
+var history_i = HISTORY_MAX - 1;
 
 // Initialize the history
 for (i=0; i<HISTORY_MAX; i++) history[i] = null;
@@ -59,7 +59,7 @@ $(document).ready(function() {			// Wait for the document to be able to be manip
 });
 
 function layout_bindings() {
-	/*$("a").live("click", function(event) {
+	$("a").live("click", function(event) {
 		if ($(this).hasClass('confirm')) {
 			if (! confirm('Please confirm')) {
 				event.preventDefault();
@@ -74,28 +74,39 @@ function layout_bindings() {
 			
 			// If it's a history.back() request
 			if ($(this).hasClass('history_back')) {
-				alert('history back');
-				var i = (history_i - 1) % HISTORY_MAX;
+				//alert('history backward');
+				var i = (history_i + HISTORY_MAX - 1) % HISTORY_MAX;
 				if (history[i] == null) {
-					alert('No history');
+					// No history
+					history.back();
+					return;
 				} else {
 					href = history[i];
 					history_i = i;
 				}
-				return;
+			} else if ($(this).hasClass('history_forth')) {
+				//alert('history forward');
+				var i = (history_i + 1) % HISTORY_MAX;
+				if (history[i] == null) {
+					// No history
+					history.forward();
+					return;
+				} else {
+					href = history[i];
+					history_i = i;
+				}
+			} else {
+				// New page, new history element
+				// Upload history and history index
+				history_i = (history_i + 1) % HISTORY_MAX;
+				history[history_i] = href;
 			}
 			
-			alert('history forward');
-			
-			// Upload history and history index
-			history[history_i] = href;
-			history_i = (history_i + 1) % HISTORY_MAX;
-			
-			show_history();
+			//show_history();
 			
 			execute_ajax(href);
 		}
-	});*/
+	});
 	
 	/*$("a.ajax").live("click", function(event) {
 		if (! AJAX_ACTIVE) return;
@@ -145,7 +156,7 @@ function show_hcp_form() {
 
 function execute_ajax(href) {
 	//if (href == curpage) return;
-	$("#leftcolumn").slideUp(50, function() {
+	$("#leftcolumn_content").slideUp(50, function() {
 		//var beenslow = false;
 		//$("#leftcolumn").empty();
 		//$("#leftcolumn").append("<center>Loading...</center>").delay(600, "beenslow").slideToggle(1000, function() {
@@ -181,22 +192,32 @@ function execute_ajax(href) {
 				return;
 			}
 			
+			if (data.mainpane != null) {
+				$("#leftcolumn_content").empty().append(data.mainpane);
+				$("#leftcolumn_content").animate({"height": "toggle", "opacity": "toggle"}, 200);
+			} else {
+				$("#leftcolumn_content").animate({"height": "toggle", "opacity": "toggle"}, 200);
+			}
+			
 			if (data.sidepane != null) {
 				$("#rightcolumn").slideUp(20).empty().append(data.sidepane);
 				$("#rightcolumn").animate({"height": "toggle", "opacity": "toggle"}, 200);
 			}
-			if (data.mainpane != null) {
-				$("#leftcolumn").empty().append(data.mainpane);
-				$("#leftcolumn").animate({"height": "toggle", "opacity": "toggle"}, 200);
-			} else {
-				$("#leftcolumn").animate({"height": "toggle", "opacity": "toggle"}, 200);
-			}
+			
 			if (data.header != null) {
 				$("#header").slideUp(20).empty().append(data.header);
 				$("#header").animate({"height": "toggle", "opacity": "toggle"}, 200);
 			}
-			//$("#leftcolumn").append(data.mainpane);
-			//$("#leftcolumn").animate({"height": "toggle", "opacity": "toggle"}, 200);
+			
+			if (data.footer != null) {
+				$("#footer").slideUp(20).empty().append(data.header);
+				$("#footer").animate({"height": "toggle", "opacity": "toggle"}, 200);
+			}
+			
+			if (data.curr_url != '') {
+				$("#curr_url").html(data.curr_url);
+			}
+			
 		}, 'json');
 	});
 }

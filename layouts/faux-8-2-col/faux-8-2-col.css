@@ -64,4 +64,8 @@ body {
  margin: 0px 0px 10px 0px;
  padding: 10px;
 }
+#curr_url {
+ margin: 0 0 10px 0;
+ font-style: italic;
+}
 .clear { clear: both; background: red; }
