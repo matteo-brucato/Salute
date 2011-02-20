@@ -67,9 +67,9 @@ class Appointments extends Controller {
 	 * @MATEO:
 	 * 	I ASSUME THE VIEW NAME WILL BE list_appointments	
 	 * */
-	function upcoming(){
+	function upcoming() {
 		
-		$this->auth->check(array(auth::CurrLOG));
+		$check = $this->auth->check(array(auth::CurrLOG));
 		if ($check !== TRUE) return;
 
 		if ($this->auth->get_type() === 'patient'){
@@ -107,7 +107,7 @@ class Appointments extends Controller {
 	 * */
 	function past(){
 		
-		$this->auth->check(array(auth::CurrLOG));
+		$check = $this->auth->check(array(auth::CurrLOG));
 		if ($check !== TRUE) return;
 		
 		if ($this->auth->get_type() === 'patient'){

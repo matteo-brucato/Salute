@@ -65,73 +65,90 @@ class Auth {
 	 * @return TRUE if all checks are satisfied. Otherwise it returns
 	 * the restriction number not satisfied.
 	 * */
-	function check($perm = array()) {
-		for ($i = 0; $i < count($perm); $i++) {
-			switch ($perm[$i]) {
+	function check($a = array()) {
+		for ($i = 0; $i < count($a); $i++) {
+			switch ($a[$i]) {
 			case auth::CurrLOG:
 				if (!$this->is_logged_in()) {
 					$this->CI->ui->set_error($this->CI->load->view('errors/not_logged_in', '', TRUE), 'authorization');
+					$this->CI->ui->set(array(NULL, $this->CI->load->view('sidepane/forms/login', '', TRUE)));
 					return auth::CurrLOG;
 				}
 				break;
 				
 			case auth::CurrPAT:
 				if ($this->type !== 'patient') {
-					$this->CI->ui->set_error($this->CI->load->view('errors/not_patient', '', TRUE), 'authorization');
+					$this->CI->ui->set_error($this->CI->load->view('errors/not_patient', '', TRUE), 'Permission Denied');
 					return auth::CurrPAT;
 				}
 				break;
 				
 			case auth::CurrHCP:
 				if ($this->type !== 'hcp') {
-					$this->CI->ui->set_error($this->CI->load->view('errors/not_hcp', '', TRUE), 'authorization');
+					$this->CI->ui->set_error($this->CI->load->view('errors/not_hcp', '', TRUE), 'Permission Denied');
 					return auth::CurrHCP;
 				}
 				break;
 				
 			case auth::PAT:
-				/** @todo */
+				if ($a[$i+1] === NULL) {
+					$this->CI->ui->set_error('No input provided');
+					return  auth::PAT;
+				}
+				if (! is_numeric($a[$i+1])) {
+					$this->CI->ui->set_error('Not numeric');
+					return  auth::PAT;
+				}
+				$this->CI->load->model('patient_model');
+				$hcp = $this->CI->hcp_model->get_patient(array($a[$i+1]));
+				if ($hcp === -1) {
+					$this->CI->ui->set_query_error();
+					return auth::PAT;
+				} else if (count($hcp) <= 0) {
+					$this->CI->ui->set_error('The id does not refer to any patient');
+					return auth::PAT;
+				}
 				$i++;
 				break;
 				
 			case auth::HCP:
-				if ($perm[$i+1] === NULL) {
+				if ($a[$i+1] === NULL) {
 					$this->CI->ui->set_error('No input provided');
 					return  auth::HCP;
 				}
-				if (! is_numeric($perm[$i+1])) {
+				if (! is_numeric($a[$i+1])) {
 					$this->CI->ui->set_error('Not numeric');
 					return  auth::HCP;
 				}
 				$this->CI->load->model('hcp_model');
-				$hcp = $this->CI->hcp_model->get_hcp(array($perm[$i+1]));
+				$hcp = $this->CI->hcp_model->get_hcp(array($a[$i+1]));
 				if ($hcp === -1) {
 					$this->CI->ui->set_query_error();
 					return auth::HCP;
 				} else if (count($hcp) <= 0) {
-					$this->CI->ui->set_error('Id is not a HCP or does not exist','Permission Denied');
+					$this->CI->ui->set_error('The id does not refer to any HCP');
 					return auth::HCP;
 				}
 				$i++;
 				break;
 				
 			case auth::CurrCONN:
-				if ($perm[$i+1] === NULL) {
+				if ($a[$i+1] === NULL) {
 					$this->CI->ui->set_error('No input provided');
 					return  auth::CurrCONN;
 				}
-				if (! is_numeric($perm[$i+1])) {
+				if (! is_numeric($a[$i+1])) {
 					$this->CI->ui->set_error('Not numeric');
 					return  auth::CurrCONN;
 				}
 				$this->CI->load->model('connections_model');
-				$check = $this->CI->connections_model->is_connected_with($this->account_id, $perm[$i+1]);
+				$check = $this->CI->connections_model->is_connected_with($this->account_id, $a[$i+1]);
 				if ($check === -1) {
 					$this->CI->ui->set_query_error();
 					return auth::CurrCONN;
 				}
 				else if ($check === FALSE) {
-					$this->CI->ui->set_error('You are not connected with this patient','Permission Denied');
+					$this->CI->ui->set_error('You are not connected with this account','Permission Denied');
 					return auth::CurrCONN;
 				}
 				$i++;
@@ -142,16 +159,16 @@ class Auth {
 				break;
 				
 			case auth::APPT_MINE:
-				if ($perm[$i+1] === NULL) {
+				if ($a[$i+1] === NULL) {
 					$this->CI->ui->set_error('No input provided');
 					return auth::APPT_MINE;
 				}
-				if (! is_numeric($perm[$i+1])) {
+				if (! is_numeric($a[$i+1])) {
 					$this->CI->ui->set_error('Not numeric');
 					return auth::APPT_MINE;
 				}
 				$this->CI->load->model('appointments_model');
-				$result = $this->CI->appointments_model->is_myappointment(array($this->account_id, $perm[$i+1]));
+				$result = $this->CI->appointments_model->is_myappointment(array($this->account_id, $a[$i+1]));
 				if ($result === -1) {
 					$this->CI->ui->set_query_error();
 					return  auth::APPT_MINE;
@@ -159,7 +176,7 @@ class Auth {
 					$this->CI->ui->set_error('Appointment ID does not exist!');
 					return  auth::APPT_MINE;
 				} elseif ($result !== TRUE) {
-					$this->CI->ui->set_error('This is not your appointment.', 'permission denied');
+					$this->CI->ui->set_error('This is not your appointment', 'permission denied');
 					return  auth::APPT_MINE;
 				}
 				$i++;
