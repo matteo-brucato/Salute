@@ -1,4 +1,4 @@
-d<?php
+<?php
 /**
  * @file bills.php
  * @brief Controller to handle bills

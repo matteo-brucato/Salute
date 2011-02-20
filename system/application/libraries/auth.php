@@ -34,6 +34,9 @@ class Auth {
 	const APPT_EXST		= 7;
 	const APPT_MINE		= 8;	// requires one id, tests if it's your appointment id
 	
+	const BILL_DELC		= 8;
+	const BILL_PAYC		= 9;		
+	
 	function __construct() {
 		$CI =& get_instance();
 		$this->account_id	= $CI->session->userdata('account_id');
@@ -201,6 +204,89 @@ class Auth {
 				}
 				$i++;
 				break;
+
+			case auth::BILL_DELC:
+				if ($a[$i+1] === NULL) {
+					$this->CI->ui->set_error('No input provided');
+					return auth::BILL_DELC;
+				}
+				if (! is_numeric($a[$i+1])) {
+					$this->CI->ui->set_error('Not numeric');
+					return auth::BILL_DELC;
+				}
+				$this->CI->load->model('bills_model');
+				$results = $this->CI->bills_model->get_bill($a[$i+1]);
+				if( $results === -1 ){
+					$this->ui->set_query_error(); 
+					return auth::BILL_DELC;
+				}
+				
+				if( count($results) < 1 ){
+					$this->CI->ui->set_error('This bill does not exist.');
+					return auth::BILL_DELC;
+				}
+				if( $this->type === 'patient' ){
+					if( $results[0]['patient_id'] !== $this->account_id ){
+						$this->CI->ui->set_error('This is not your bill.', 'permission denied');
+						return auth::BILL_DELC;
+					}
+					if( $results[0]['patient_kept'] === 'f' ){
+						$this->CI->ui->set_error('This bill has already been deleted.');
+						return auth::BILL_DELC;						
+					}
+					if( $results[0]['cleared'] === 'f' && $results[0]['hcp_kept'] === 't' ){
+						$this->CI->ui->set_error('Cannot delete active bills.');
+						return auth::BILL_DELC;	
+					}				
+				}
+				else{
+					if( $results[0]['hcp_id'] !== $this->account_id ){
+						$this->CI->ui->set_error('This is not your bill.', 'permission denied');
+						return auth::BILL_DELC;
+					}
+					if( $results[0]['hcp_kept'] === 'f' ){
+						$this->CI->ui->set_error('This bill has already been deleted.');
+						return auth::BILL_DELC;						
+					}
+					
+				}			
+				$i++;
+				break;				
+			
+			case auth::BILL_PAYC:
+				if ($a[$i+1] === NULL) {
+					$this->CI->ui->set_error('No input provided');
+					return auth::BILL_PAYC;
+				}
+				if (! is_numeric($perm[$i+1])) {
+					$this->CI->ui->set_error('Not numeric');
+					return auth::BILL_PAYC;
+				}
+				$this->CI->load->model('bills_model');
+				$results = $this->CI->bills_model->get_bill($a[$i+1]);
+				if( $results === -1 ){
+					$this->ui->set_query_error(); 
+					return auth::BILL_PAYC;
+				}
+				if( count($results) < 1 ){
+					$this->CI->ui->set_error('This bill does not exist.');
+					return auth::BILL_PAYC;
+				}
+				if( $results[0]['patient_id'] !== $this->account_id ){
+					$this->CI->ui->set_error('This is not your bill.', 'permission denied');
+					return auth::BILL_PAYC;
+				}
+				if( $results[0]['hcp_kept'] === 'f' ){
+					$this->CI->ui->set_error('This bill is inactive because it was cancelled by the Healthcare Provider.');
+					return auth::BILL_PAYC;
+				}			
+				if( $results[0]['cleared'] === 't' ){
+					$this->CI->ui->set_error('This bill his inactive because it has already been paid.');
+					return auth::BILL_PAYC;				
+				}
+				$i++;
+				break;	
+
 			}
 		}
 		return TRUE;
