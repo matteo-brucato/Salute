@@ -114,7 +114,7 @@ class Ui {
 	}
 	
 	function set_query_error() {
-		$this->error('Query error, please contact the administrator', 'SQL');
+		$this->set_error('Query error, please contact the administrator', 'SQL');
 	}
 	
 	/**

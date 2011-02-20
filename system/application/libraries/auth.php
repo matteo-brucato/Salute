@@ -26,7 +26,7 @@ class Auth {
 	const CurrLOG		= 0;	// current user: no other params
 	const CurrPAT		= 1;	// current user: no other params
 	const CurrHCP		= 2;	// current user: no other params
-	const CONN			= 3;	// requires two id's, tests if the two id's are conneted
+	const CurrCONN		= 3;	// requires one id, tests if the current is connected with the id provided
 	const PAT			= 4;	// requires one id, tests if it's a patient id
 	const HCP			= 5;	// requires one id, tests if it's a hcp id
 	
@@ -88,20 +88,57 @@ class Auth {
 				$i++;
 				break;
 			case auth::HCP:
-				/** @todo */
+				if ($perm[$i+1] === NULL) {
+					$this->CI->ui->set_error('No input provided');
+					return  auth::HCP;
+				}
+				if (! is_numeric($perm[$i+1])) {
+					$this->CI->ui->set_error('Not numeric');
+					return  auth::HCP;
+				}
+				$this->CI->load->model('hcp_model');
+				$hcp = $this->CI->hcp_model->get_hcp(array($perm[$i+1]));
+				if ($hcp === -1) {
+					$this->CI->ui->set_query_error();
+					return auth::HCP;
+				} else if (count($hcp) <= 0) {
+					$this->CI->ui->set_error('Id is not a HCP or does not exist','Permission Denied');
+					return auth::HCP;
+				}
 				$i++;
 				break;
-			case auth::CONN:
-				/** @todo */
-				$i += 2;
+			case auth::CurrCONN:
+				if ($perm[$i+1] === NULL) {
+					$this->CI->ui->set_error('No input provided');
+					return  auth::CurrCONN;
+				}
+				if (! is_numeric($perm[$i+1])) {
+					$this->CI->ui->set_error('Not numeric');
+					return  auth::CurrCONN;
+				}
+				$this->CI->load->model('connections_model');
+				$check = $this->CI->connections_model->is_connected_with($this->account_id, $perm[$i+1]);
+				if ($check === -1) {
+					$this->CI->ui->set_query_error();
+					return auth::CurrCONN;
+				}
+				else if ($check === FALSE) {
+					$this->CI->ui->set_error('You are not connected with this patient','Permission Denied');
+					return auth::CurrCONN;
+				}
+				$i++;
 				break;
 			case auth::APPT_EXST:
 				$i++;
 				break;
 			case auth::APPT_MINE:
+				if ($perm[$i+1] === NULL) {
+					$this->CI->ui->set_error('No input provided');
+					return auth::APPT_MINE;
+				}
 				if (! is_numeric($perm[$i+1])) {
 					$this->CI->ui->set_error('Not numeric');
-					return  auth::APPT_MINE;
+					return auth::APPT_MINE;
 				}
 				$this->CI->load->model('appointments_model');
 				$result = $this->CI->appointments_model->is_myappointment(array($this->account_id, $perm[$i+1]));
