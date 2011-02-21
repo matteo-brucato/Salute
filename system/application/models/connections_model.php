@@ -14,22 +14,23 @@ class Connections_model extends Model {
 		$this->load->database();
 	}
 
-
 	/**
-	 *  Lists all of the patients a particular hcp has
+	 *  Lists all of the patients the specified account has
 	 * 
-	 * @param $inputs
+	 * @param $account_id
 	 *   Is of the form: array(account_id)
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all the patients a hcp has
 	 *   empty array() if none
 	 * */
-	function list_my_patients($inputs) {
+	function list_my_patients($account_id) {
 		$sql = "SELECT P.*
-			FROM connections C, patient_account P
-			WHERE C.accepted = TRUE AND C.requester_id = P.account_id AND C.accepter_id = ?";
-		$query = $this->db->query($sql, $inputs);
+			FROM connections D, patient_account P
+			WHERE D.accepted = TRUE AND (
+			      (D.requester_id = ? AND D.accepter_id = P.account_id)
+			OR    (D.accepter_id = ? AND D.requester_id = P.account_id))";
+		$query = $this->db->query($sql, array($account_id, $account_id));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -42,7 +43,7 @@ class Connections_model extends Model {
 
 
 	/**
-	 *  Lists all of the hcp friends a hcp has
+	 *  Lists all of the hcp friends the specified account has
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
@@ -51,7 +52,7 @@ class Connections_model extends Model {
 	 *   Array with all the hcp friends
 	 *   empty array() if none
 	 * */
-	function list_my_colleagues($account_id) {
+	function list_my_hcps($account_id) {
 		$sql = "SELECT H.*
 			FROM connections D, hcp_account H
 			WHERE D.accepted = TRUE AND (
@@ -78,7 +79,7 @@ class Connections_model extends Model {
 	 *  -1 in case of error in a query
 	 *   Array of all the hcp friends
 	 *   empty array() if none
-	 * */
+	 * *
 	function list_my_hcps($inputs) {
 		$sql = "SELECT H.*
 			FROM connections D, hcp_account H
@@ -92,24 +93,24 @@ class Connections_model extends Model {
 			return $query->result_array();
 		
 		return array();
-	}
+	}*/
 	
 	
 	/**
-	 * Lists all pending outgoing requests to hcps of a specific patient
+	 * Lists all pending outgoing connections requests to hcps, made by the specified account
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
 	 * @return	
 	 *  -1 in case of error in a query
-	 *   Array with all pending requests
+	 *   Array with hcps
 	 *   empty array() if none
 	 * */
-	 function pending_outgoing_hcps_4_a_patient($inputs)
+	 function pending_outgoing_hcps($inputs)
 	 {
 		$sql = "SELECT H.*
-	 		FROM connections P, hcp_account H
-			WHERE P.requester_id = ? AND P.accepted = FALSE AND P.accepter_id = H.account_id";
+	 		FROM connections C, hcp_account H
+			WHERE C.accepted = FALSE AND C.requester_id = ? AND C.accepter_id = H.account_id";
  		$query = $this->db->query($sql, $inputs);
  		
  		if ($this->db->trans_status() === FALSE)
@@ -119,11 +120,65 @@ class Connections_model extends Model {
 			return $query->result_array();
 		
 		return array();
-	 }
-	 
-	 
-	 /**
-	 * List all pending incoming requests to a hcp from patients
+	}
+	
+	/**
+	 * Lists all pending outgoing connections requests to patients, made by the specified account
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id)
+	 * @return	
+	 *  -1 in case of error in a query
+	 *   Array with hcps
+	 *   empty array() if none
+	 * */
+	function pending_outgoing_patients($inputs)
+	{
+		$sql = "SELECT P.*
+			FROM connections C, patient_account P
+			WHERE C.accepted = FALSE AND C.requester_id = ? AND C.accepter_id = P.account_id";
+ 		$query = $this->db->query($sql, $inputs);
+ 		
+ 		if ($this->db->trans_status() === FALSE)
+			return -1;
+		
+		if ($query->num_rows() > 0)
+			return $query->result_array();
+		
+		return array();
+	}
+	
+	/**
+	 * List all pending incoming connections requests, coming from hcps,
+	 * for the specified account
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id)
+	 * @return
+	 * 	 -1 in case of error in a query
+	 *    Array with all pending requests OR 
+	 *    empty array() if none
+	 * */
+	function pending_incoming_hcps($inputs)
+	{
+		$sql = "SELECT H.*
+			FROM connections C, hcp_account H
+			WHERE C.accepted = FALSE AND C.accepter_id = ? AND H.account_id = C.requester_id";
+		$query = $this->db->query($sql, $inputs);
+
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+
+		if ($query->num_rows() > 0)
+			return $query->result_array();
+
+		return array();
+	}
+	
+	
+	/**
+	 * List all pending incoming connections requests, coming from patients,
+	 * for the specified account
 	 * 
 	 * @param $inputs
 	 *   Is of the form: array(account_id)
@@ -132,13 +187,12 @@ class Connections_model extends Model {
 	 *   Array with all pending requests
 	 *   empty array() if none
 	 * */
-	 function pending_incoming_patients_4_a_hcp($inputs)
-	 {
-		$sql = "SELECT A.*
-	 		FROM connections P, patient_account A
-			WHERE P.accepter_id = ? AND P.accepted = FALSE AND A.account_id = P.requester_id";
+	function pending_incoming_patients($inputs)
+	{
+		$sql = "SELECT P.*
+	 		FROM connections C, patient_account P
+			WHERE C.accepted = FALSE AND C.accepter_id = ? AND P.account_id = C.requester_id";
  		$query = $this->db->query($sql, $inputs);
- 		$result = $query->result_array();
 	
 		if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -150,32 +204,7 @@ class Connections_model extends Model {
 	 }
 	 
 	 
-	 /**
-	 * List all pending incoming requests to a hcp from hcps
-	 * 
-	 * @param $inputs
-	 *   Is of the form: array(account_id)
-	 * @return
-	 * 	 -1 in case of error in a query
-	 *    Array with all pending requests OR 
-	 *    empty array() if none
-	 * */
-	 function pending_incoming_hcps_4_a_hcp($inputs)
-	 {
-		$sql = "SELECT A.*
-	 		FROM connections D, hcp_account A
-			WHERE D.accepter_id = ? AND D.accepted = FALSE AND A.account_id = D.requester_id";
- 		$query = $this->db->query($sql, $inputs);
- 		$result = $query->result_array();
-		
-		if ($this->db->trans_status() === FALSE)
-			return -1;
-		
-		if ($query->num_rows() > 0)
-			return $query->result_array();
-		
-		return array();
-	 }
+	
 	 
 	 
 	 /**
@@ -187,7 +216,7 @@ class Connections_model extends Model {
 	 *  -1 in case of error in a query
 	 *   Array with all pending requests
 	 *   empty array() if none
-	 * */
+	 * *
 	 function pending_outgoing_hcps_4_a_hcp($inputs)
 	 {
 		$sql = "SELECT A.*
@@ -202,7 +231,7 @@ class Connections_model extends Model {
 			return $query->result_array();
 		
 		return array();
-	 }
+	 }*/
 	
 	/**
 	 * List all a connection between two individuals
@@ -318,60 +347,46 @@ class Connections_model extends Model {
 	
 	
 	/**
-	 * Creates a new request for a connection.
+	 * Creates a new request for a connection. Creates a tuple in
+	 * Connection setting 'accepted' to FALSE.
 	 * 
 	 * @param
-	 *   $inputs of the form array(requestor_id, requestee_id)
+	 *   $inputs of the form array(requester_id, accepter_id)
 	 *
+	 * @note
+	 *   If account A request a connection with B, but B already
+	 *   requested a connection to A, then this function will just
+	 *   accept the connection between A and B
+	 * 
 	 * @return
 	 *  -1 in case of error in a query
 	 *  -3 if the connection already exists
 	 *   0 if everything goes fine
 	 * 
-	 * @test We still need to test the auto-acceptance if both hcps
+	 * @todo We still need to test the auto-acceptance if both hcps
 	 * ask for the same connection.
 	 * */
-	function add_hcp_hcp($inputs) {
+	function add_connection($inputs) {
 		//testing to see if requestor is sending 2nd request
 		$sql = "SELECT *
 			FROM connections D
 			WHERE (D.requester_id = ? AND D.accepter_id = ?)";
 		$query = $this->db->query($sql, $inputs);
 		
+		// If the other part already requested me the connection,
+		// This request will be considered as an acceptance
+		if ($query->num_rows() > 0) {
+			// This is an update to the original request
+			return $this->accept_connection($inputs); /** @todo Needs to be tested */
+		}
+
+		// Request has never been made in either direction
+		$this->db->query("INSERT INTO connections (requester_id, accepter_id, date_connected)
+			VALUES (?, ?, current_timestamp)", $inputs);
+		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 		
-		if ($query->num_rows() > 0) {
-			return -3;
-		}
-		
-		//testing to see if hcp_loggedin is sending request to hcp who
-		//already sent hcp_logged in a request
-		$sql = "SELECT *
-			FROM connections D
-			WHERE (D.requester_id = ? AND D.accepter_id = ?)";
-		$query = $this->db->query($sql, array($inputs[1], $inputs[0]));
-		
-		if( $this->db->trans_status() === FALSE )
-			return -1;	
-		
-		if ($query->num_rows() > 0) {
-			//this is an update to the original request
-			return accept_hcp_hcp(array($inputs[1], $inputs[0])); /** @todo Needs to be tested */
-			
-			if( $this->db->trans_status() === FALSE )
-				return -1;
-				
-			return 0;
-		}
-
-		//request has never been made in either direction	
-		$this->db->query("INSERT INTO connections (requester_id, accepter_id, date_connected)
-				  VALUES (?, ?, current_timestamp)", $inputs);
-		
-		if( $this->db->trans_status() === FALSE )
-			return -1;
-			
 		return 0;
 	}
 	
@@ -386,7 +401,7 @@ class Connections_model extends Model {
 	 *  -3 if the connection is pending or exists
 	 *   0 if everything goes fine
 	 * 
-	 * */
+	 * *
 	function add_patient_hcp($inputs){
 	
 		//test to see if connection already exists
@@ -411,7 +426,7 @@ class Connections_model extends Model {
 		}
 		
 		return 0;
-	}
+	}*/
 
 	/**
 	 * Sets the connection hcp-hcp to TRUE only if it was not
@@ -426,21 +441,21 @@ class Connections_model extends Model {
 	 *  -3 if the connection was already accepted
 	 *   0 if everything goes fine
 	 * */
-	function accept_hcp_hcp($inputs) {
+	function accept_connection($inputs) {
 		$query = $this->db->query("SELECT * FROM connections
 			WHERE requester_id = ? AND accepter_id = ?", $inputs);
 		
 		if ($this->db->trans_status() === FALSE) {
-			return -1; /* query error */
+			return -1; // query error
 		}
 		
 		if ($query->num_rows() < 1) {
-			return -2; /* connection does not exist */
+			return -2; // connection does not exist
 		}
 		
 		$res = $query->result();
 		if ($res[0]->accepted == 't') {
-			return -3; /* connection alreaday accepted */
+			return -3; // connection alreaday accepted
 		}
 		
 		// Accept connection
@@ -448,7 +463,7 @@ class Connections_model extends Model {
 			WHERE requester_id = ? AND accepter_id = ?", $inputs);
 		
 		if ($this->db->trans_status() === FALSE) {
-			return -1; /* query error */
+			return -1; // query error
 		}
 		
 		return 0;
@@ -467,22 +482,22 @@ class Connections_model extends Model {
 	 *  -2 if the connection does not exist
 	 *  -3 if the connection was already accepted
 	 *   0 if everything goes fine
-	 * */
+	 * *
 	function accept_patient_hcp($inputs) {
 		$query = $this->db->query("SELECT * FROM connections
 			WHERE requester_id = ? AND accepter_id = ?", $inputs);
 		
 		if ($this->db->trans_status() === FALSE) {
-			return -1; /* query error */
+			return -1; /* query error *
 		}
 		
 		if ($query->num_rows() < 1) {
-			return -2; /* connection does not exist */
+			return -2; /* connection does not exist *
 		}
 		
 		$res = $query->result();
 		if ($res[0]->accepted == 't') {
-			return -3; /* connection alreaday accepted */
+			return -3; /* connection alreaday accepted *
 		}
 		
 		// Accept connection
@@ -490,11 +505,11 @@ class Connections_model extends Model {
 			WHERE requester_id = ? AND accepter_id = ?", $inputs);
 		
 		if ($this->db->trans_status() === FALSE) {
-			return -1; /* query error */
+			return -1; /* query error *
 		}
 		
 		return 0;
-	}
+	}*/
 	
 	/**
 	 * Removes a connection between any pair of account_ids.

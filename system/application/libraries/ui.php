@@ -35,8 +35,11 @@ class Ui {
 		// Create curr_url string
 		if ($this->CI->uri->segment(1) != '') {
 			$curr_url = '> <a href="/'.$this->CI->uri->segment(1).'" class="ajax">'.$this->CI->uri->segment(1).'</a>';
-			if ($this->CI->uri->segment(2) != '')
-				$curr_url .= ' > '.$this->CI->uri->segment(2);
+			if ($this->CI->uri->segment(2) != '') {
+				$curr_url .= ' > <a href="/'.$this->CI->uri->segment(1).'/'.$this->CI->uri->segment(2).'" class="ajax">'.$this->CI->uri->segment(2).'</a>';
+				if ($this->CI->uri->segment(3) != '')
+					$curr_url .= ' > '.$this->CI->uri->segment(3);
+			}
 		}
 		else $curr_url = '';
 		

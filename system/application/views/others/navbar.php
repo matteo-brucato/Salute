@@ -4,9 +4,9 @@
 	<li>
 		<?php 
 		if ($this->auth->is_logged_in())
-			echo '<a href="/profile" class="ajax">Profile</a>';
+			echo '<a href="/profile">Profile</a>';
 		else
-			echo '<a href="/home" class="ajax">Home</a>';
+			echo '<a href="/home">Home</a>';
 		?>
-	</a></li>
+	</li>
 </ul>

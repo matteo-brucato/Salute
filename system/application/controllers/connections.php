@@ -30,8 +30,9 @@ class Connections extends Controller {
 	 * @return error
 	 * */
 	function index() {
-		$this->ui->set_error('Direct access to this resource is forbidden', 'forbidden');
-		return;
+		//$this->ui->set_error('Direct access to this resource is forbidden', 'forbidden');
+		//return;
+		$this->myhcps();
 	}
 
 	/**
@@ -47,14 +48,7 @@ class Connections extends Controller {
 		$check = $this->auth->check(array(auth::CurrLOG));
 		if ($check !== TRUE) return;
 		
-		if ($this->auth->get_type() === 'patient') 
-			$results  = $this->connections_model->list_my_hcps($this->auth->get_account_id()); 
-		else if ($this->auth->get_type() === 'hcp')
-			$results  = $this->connections_model->list_my_colleagues($this->auth->get_account_id()); 
-		else {
-			$this->ui->set_error('Internal server logic error.', 'server');
-			return;
-		}
+		$results  = $this->connections_model->list_my_hcps($this->auth->get_account_id()); 
 		
 		if ($results === -1) {
 			$this->ui->set_query_error();
@@ -71,21 +65,16 @@ class Connections extends Controller {
 	/**
 	 * List all patients that current hcp is connected with
 	 * 
-	 * @attention Only available for hcps
-	 * 
 	 * @return: List view of patients
 	 *
 	 * @test Works fine
 	 * */
 	function mypatients()
 	{
-		$check = $this->auth->check(array(
-			auth::CurrLOG,
-			auth::CurrHCP
-		));
+		$check = $this->auth->check(array(auth::CurrLOG));
 		if ($check !== TRUE) return;
 		
-		$res = $this->connections_model->list_my_patients($this->auth->get_account_id()); 
+		$res = $this->connections_model->list_my_patients($this->auth->get_account_id());
 		
 		if ($res === -1) {
 			$this->ui->set_query_error();
@@ -121,40 +110,38 @@ class Connections extends Controller {
 			$this->_pending_out();
 		}
 		else {
-			$this->ui->set_error('Input not valid');
+			$this->ui->set_error('Input not valid: <b>'.$direction.'</b>');
 		}
 	}
 	
 	/**
 	 * Private function to list all pending outgoing connection requests
 	 * 
-	 * @note Lists only hcps
 	 * @note This function is available for both patients and hcps
-	 * 
-	 * @test Tested!
 	 * */
 	function _pending_out()
 	{
 		$check = $this->auth->check(array(auth::CurrLOG));
 		if ($check !== TRUE) return;
 		
-		if ($this->auth->get_type() === 'hcp') 
-			$res = $this->connections_model->pending_outgoing_hcps_4_a_hcp(array($this->auth->get_account_id())); 
-		else if ($this->auth->get_type() === 'patient')
-			$res = $this->connections_model->pending_outgoing_hcps_4_a_patient(array($this->auth->get_account_id())); 
-		else {
-			$this->ui->set_error('Internal server logic error.', 'server');
-			return;
-		}
-
-		// Switch the response from the model, to select the correct view
-		if ($res === -1) {
+		// Take pending incoming from other patients
+		$pats = $this->connections_model->pending_outgoing_patients(array($this->auth->get_account_id()));
+		// Take pending incoming from other hcps
+		$hcps = $this->connections_model->pending_outgoing_hcps(array($this->auth->get_account_id()));
+		if ($pats === -1 || $hcps === -1) {
 			$this->ui->set_query_error();
 			return;
 		}
 		
+		// Show the pending requests to doctors
 		$mainview = $this->load->view('mainpane/lists/hcps',
-					array('list_name' => 'Pending Outgoing Requests', 'list' => $res, 'status' => 'pending_out') , TRUE);
+			array('list_name' => 'Pending Outgoing Requests to Hcps', 'list' => $hcps, 'status' => 'pending_out') , TRUE);
+		
+		// Only a patient can send pending requests to patients
+		if ($this->auth->get_type() === 'patient') {
+			$mainview .= $this->load->view('mainpane/lists/patients',
+			array('list_name' => 'Pending Outgoing Requests to Patients', 'list' => $pats, 'status' => 'pending_out') , TRUE);
+		}
 		
 		// Give results to the client
 		$this->ui->set(array($mainview));
@@ -165,36 +152,35 @@ class Connections extends Controller {
 	 * user has received (incoming)
 	 * 
 	 * @note Lists both requests from hcps and patients
-	 * @note Available only for hcps, but the check is already done
-	 * by the function pending()
 	 * 
 	 * @test Tested!
 	 * */
 	function _pending_in() 
 	{
-		$check = $this->auth->check(array(
-			auth::CurrLOG,
-			auth::CurrHCP
-		));
+		$check = $this->auth->check(array(auth::CurrLOG));
 		if ($check !== TRUE) return;
 		
 		if (DEBUG) $this->output->enable_profiler(TRUE);
 		
+		// Take pending incoming from other patients
+		$pats = $this->connections_model->pending_incoming_patients(array($this->auth->get_account_id()));
 		// Take pending incoming from other hcps
-		$hcps = $this->connections_model->pending_incoming_hcps_4_a_hcp(array($this->auth->get_account_id())); 
-		// And pending incoming from other patients
-		$pats = $this->connections_model->pending_incoming_patients_4_a_hcp(array($this->auth->get_account_id()));
-		
-		if ($hcps === -1 || $pats === -1) {
+		$hcps = $this->connections_model->pending_incoming_hcps(array($this->auth->get_account_id()));
+		if ($pats === -1 || $hcps === -1) {
 			$this->ui->set_query_error();
 			return;
 		}
 		
+		// Show the pending requests from patients
 		$mainview  = $this->load->view('mainpane/lists/patients',
-			array('list_name' => 'Pending Requests from Patients', 'list' => $pats, 'status' => 'pending_in') , TRUE);
-		$mainview .= $this->load->view('mainpane/lists/hcps',
-			array('list_name' => 'Pending Requests from Hcps', 'list' => $hcps, 'status' => 'pending_in') , TRUE);
-				
+			array('list_name' => 'Pending Incoming Requests from Patients', 'list' => $pats, 'status' => 'pending_in') , TRUE);
+		
+		// Only a doctor can receive pending requests from doctors
+		if ($this->auth->get_type() === 'hcp') {
+			$mainview .= $this->load->view('mainpane/lists/hcps',
+				array('list_name' => 'Pending Incoming Requests from Hcps', 'list' => $hcps, 'status' => 'pending_in') , TRUE);
+		}
+		
 		// Give results to the client
 		$this->ui->set(array($mainview));
 	}
@@ -207,8 +193,7 @@ class Connections extends Controller {
 	 * 
 	 * @attention
 	 *   Can be called by both patients and hcps, but a 
-	 * hcp can only request for another hcp and a patient can 
-	 * only request for a hcp.
+	 * hcp can only request for another hcp.
 	 * 
 	 * @test Tested different inputs: nothing, string, invalid id
 	 * */
@@ -225,7 +210,7 @@ class Connections extends Controller {
 			if ($check !== TRUE) return;
 			
 			// Add the connection in the db
-			$res = $this->connections_model->add_hcp_hcp(array(
+			$res = $this->connections_model->add_connection(array(
 				$this->auth->get_account_id(),
 				$id
 			));
@@ -234,7 +219,7 @@ class Connections extends Controller {
 		// If current user is a patient
 		else if ($this->auth->get_type() === 'patient') {
 			// Add the connection in the db
-			$res = $this->connections_model->add_patient_hcp(array(
+			$res = $this->connections_model->add_connection(array(
 				$this->auth->get_account_id(),
 				$id
 			));
@@ -355,7 +340,7 @@ class Connections extends Controller {
 		if (DEBUG) $this->output->enable_profiler(TRUE);
 		
 		if ($id == NULL) {
-			$this->ui->error('id not specified.', 500);
+			$this->ui->set_error('id not specified');
 			return;
 		}
 		

@@ -3,17 +3,17 @@
 var AJAX_ACTIVE = true;
 
 const HISTORY_MAX = 30;
-var history = new Array(HISTORY_MAX);
-var history_i = HISTORY_MAX - 1;
+var hist = new Array(HISTORY_MAX);
+var hist_i = HISTORY_MAX - 1;
 
 // Initialize the history
-for (i=0; i<HISTORY_MAX; i++) history[i] = null;
+for (i=0; i<HISTORY_MAX; i++) hist[i] = null;
 
 function show_history() {
 	var hist = '';
 	for (i=0; i<HISTORY_MAX; i++) {
-		if (history_i == i) hist += '->'; else hist += '   ';
-		hist += history[i] + '\n';
+		if (hist_i == i) hist += '->'; else hist += '   ';
+		hist += hist[i] + '\n';
 	}
 	hist += '\n';
 	alert(hist);
@@ -31,7 +31,7 @@ $(document).ready(function() {			// Wait for the document to be able to be manip
 	$("#wrapper").hide().animate({"height": "toggle", "opacity": "toggle"}, 1000);
 	
 	// Get the current page
-	var curpage = window.location.pathname;
+	//var curpage = window.location.pathname;
 	
 	/*$("#rightcolumn > a").click(function(event) {		// Do something on click on a specific tag <a/>
 		event.preventDefault(); 						// Don't use <a/> as usual, stay here
@@ -48,10 +48,10 @@ $(document).ready(function() {			// Wait for the document to be able to be manip
 	});*/
 	
 	// History plugin
-	//$.history.init(execute_ajax);
-	/*$("a[rel|='history']").click(function(event) {
+	//$.hist.init(execute_ajax);
+	/*$("a[rel|='hist']").click(function(event) {
 		event.preventDefault();
-		$.history.load(this.href.replace(/^.*#/, ''));
+		$.hist.load(this.href.replace(/^.*#/, ''));
 		return false;
 	});*/
 	
@@ -60,52 +60,57 @@ $(document).ready(function() {			// Wait for the document to be able to be manip
 
 function layout_bindings() {
 	$("a").live("click", function(event) {
+		
 		if ($(this).hasClass('confirm')) {
 			if (! confirm('Please confirm')) {
 				event.preventDefault();
 				return;
 			}
 		}
-		if ($(this).hasClass('ajax')) {
+		
+		if ($(this).attr('href').charAt(0) == '/') {
 			if (! AJAX_ACTIVE) return;
 			event.preventDefault();
 			
 			var href = $(this).attr('href');
 			
-			// If it's a history.back() request
-			if ($(this).hasClass('history_back')) {
-				//alert('history backward');
-				var i = (history_i + HISTORY_MAX - 1) % HISTORY_MAX;
-				if (history[i] == null) {
-					// No history
-					history.back();
-					return;
-				} else {
-					href = history[i];
-					history_i = i;
-				}
-			} else if ($(this).hasClass('history_forth')) {
-				//alert('history forward');
-				var i = (history_i + 1) % HISTORY_MAX;
-				if (history[i] == null) {
-					// No history
-					history.forward();
-					return;
-				} else {
-					href = history[i];
-					history_i = i;
-				}
-			} else {
+			{
 				// New page, new history element
 				// Upload history and history index
-				history_i = (history_i + 1) % HISTORY_MAX;
-				history[history_i] = href;
+				hist_i = (hist_i + 1) % HISTORY_MAX;
+				hist[hist_i] = href;
 			}
-			
-			//show_history();
-			
-			execute_ajax(href);
 		}
+		
+		// If it's a history.back() request
+		else if ($(this).hasClass('history_back')) {
+			//alert('history backward');
+			var i = (hist_i + HISTORY_MAX - 1) % HISTORY_MAX;
+			if (hist[i] == null) {
+				// No history
+				history.back();
+				return;
+			} else {
+				href = hist[i];
+				hist_i = i;
+			}
+		}
+		
+		else if ($(this).hasClass('history_forth')) {
+			//alert('history forward');
+			var i = (hist_i + 1) % HISTORY_MAX;
+			if (hist[i] == null) {
+				// No history
+				history.forward();
+				return;
+			} else {
+				href = hist[i];
+				hist_i = i;
+			}
+		}
+		
+		//show_history();
+		execute_ajax(href);
 	});
 	
 	/*$("a.ajax").live("click", function(event) {

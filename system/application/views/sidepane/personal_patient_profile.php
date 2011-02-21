@@ -31,6 +31,15 @@
 		</ul>
 	</li>
 	
+	<li><a href="/connections/mypatients" class="ajax">My Patients (???)</a>
+		<ul>
+			<li><a href="/connections/pending/in" class="ajax">Pending incoming</a></li>
+		</ul>
+		<ul>
+			<li><a href="/connections/pending/out" class="ajax">Pending outgoing</a></li>
+		</ul>
+	</li>
+	
 	<li><a href="/medical_records" class="ajax">Medical Records</a>
 		<ul>
 			<li><a href="/medical_records/upload" class="ajax">Upload</a></li>
