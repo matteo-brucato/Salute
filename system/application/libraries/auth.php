@@ -34,8 +34,10 @@ class Auth {
 	const APPT_EXST		= 7;
 	const APPT_MINE		= 8;	// requires one id, tests if it's your appointment id
 	
-	const BILL_DELC		= 8;
-	const BILL_PAYC		= 9;		
+	const BILL_DELC		= 9;
+	const BILL_PAYC		= 10;
+	
+	const MEDREC		= 11;		
 	
 	function __construct() {
 		$CI =& get_instance();
@@ -123,11 +125,11 @@ class Auth {
 					return  auth::PAT;
 				}
 				$this->CI->load->model('patient_model');
-				$hcp = $this->CI->hcp_model->get_patient(array($a[$i+1]));
-				if ($hcp === -1) {
+				$pat = $this->CI->hcp_model->get_patient(array($a[$i+1]));
+				if ($pat === -1) {
 					$this->CI->ui->set_query_error();
 					return auth::PAT;
-				} else if (count($hcp) <= 0) {
+				} else if (count($pat) <= 0) {
 					$this->CI->ui->set_error('The id does not refer to any patient');
 					return auth::PAT;
 				}
@@ -286,6 +288,27 @@ class Auth {
 				}
 				$i++;
 				break;	
+			
+			case auth::MEDREC:
+				if ($a[$i+1] === NULL) {
+					$this->CI->ui->set_error('Missing medical record id','Missing Arguments');
+					return auth::MEDREC;
+				}
+				$get = $this->medical_records_model->get_medicalrecord(array($a[$i+1]));
+				if ($get === -1) {
+					$this->CI->ui->set_query_error(); 
+					return auth::MEDREC;
+				}
+				else if (sizeof($get) == 0) {
+					$this->CI->ui->set_error('Specified medical record does not exist');
+					return auth::MEDREC;
+				}
+				else if ($get[0]['patient_id'] != $this->get_account_id()) {
+					$this->ui->set_error('Only the owner can modify this medical record','Permission Denied');
+					return auth::MEDREC;
+				}
+
+				break;
 
 			}
 		}
