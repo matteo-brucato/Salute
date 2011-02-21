@@ -14,6 +14,9 @@ class Profile extends Controller {
 		parent::Controller();
 		$this->load->library('ui');
 		$this->load->library('auth');
+		$this->load->model('hcp_model');
+		$this->load->model('patient_model');
+		//$this->load->model('connections_model');
 	}
 
 	/**
@@ -61,10 +64,13 @@ class Profile extends Controller {
  	 * else error
  	 * 
  	 * @todo There's no link to this function in the GUI...
-	 * */
+	 * 
 	function myinfo()
 	{
-		$this->auth->check_logged_in();
+		//$this->auth->check_logged_in();
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}
 
 		if ($this->auth->get_type() === 'patient') {
 			$this->ui->set(array(
@@ -83,6 +89,7 @@ class Profile extends Controller {
 			return;
 		}
 	}
+	* */
 	
 	/**
 	 * Prints another user's profile under the condition that they are connected
@@ -107,29 +114,50 @@ class Profile extends Controller {
 	 * @todo Add more checks for values from the model (error checking)
 	 * */
 	function user($id = NULL) {
-		$this->auth->check_logged_in();
-		// check that id is an intenger
-		if ($id == NULL) {
+		//$this->auth->check_logged_in();
+		if ($this->auth->check(array(auth::CurrLOG,auth::ACCOUNT,$id,auth::CurrCONN,$id)) !== TRUE) {
+			return;
+		}
+		/**if ($id == NULL) {
 			$this->ui->redirect('/profile');
 			//$this->ui->show_app_error();
 			return;
 		}
-		
+
+		check that id is an intenger		
 		if (!is_numeric($id)) {
 			$this->ui->set_error('Invalid id type.');
 			return;
 		}
-			
-		$this->load->model('hcp_model');
-		$this->load->model('patient_model');
-		$this->load->model('connections_model');
+		**/
 		
+		//$this->load->model('hcp_model');
+		//$this->load->model('patient_model');
+		//$this->load->model('connections_model');
+
+		$info = $this->patient_model->get_patient(array($id));
+		if ($info === -1 || count($info) <= 0){
+			$info = $this->hcp_model->get_hcp(array($id));
+			if($info === -1){
+				$this->auth->set_query_error();
+				return;
+			}
+			$id_type = 'hcp';
+		}
+		else if (count($info) <= 0){
+			$this->auth->set_error('Internal Logic Server Error.','server');
+			return;
+		}
+		else{
+			$id_type = 'patient';	
+		}
+			
+		/*		
 		// Checks the user_id, if passes, get their info 
 		if ($this->hcp_model->is_hcp(array($id))) {
 			$info = $this->hcp_model->get_hcp(array($id));
 			$id_type = 'hcp';
-		}
-		else if ($this->patient_model->is_patient(array($id))) {
+		} else if ($this->patient_model->is_patient(array($id))) {
 			$info = $this->patient_model->get_patient(array($id));
 			$id_type = 'patient';
 		} else {
@@ -137,22 +165,22 @@ class Profile extends Controller {
 			neither to an HCP nor a patient');
 			return;
 		}
-		
 		if( $info === -1 ){
 			$this->ui->set_query_error();
 			return;
 		}
-		
+	
 		// check that logged in user is a hcp. 
-		/*if ($this->auth->get_type() == 'hcp' && $id_type != 'patient') {
+		if ($this->auth->get_type() == 'hcp' && $id_type != 'patient') {
 			$this->ui->error('Sorry! An HCP can only view profiles of connected patients');
 			return;
-		}*/
-		//@todo milestone1-- we can have p-p connections
+		}
+		
+		* @attention milestone1-- we can have p-p connections
 		if ($this->auth->get_type() == 'patient' && $id_type == 'patient') {
 			$this->ui->set_error('Sorry! Patients cannot be connected with other patients','Permission Denied');
 			return;
-		}
+		} 
 	
 		// check that the id is friends with logged in user
 		$is_my_friend = $this->connections_model->is_connected_with($this->auth->get_account_id(), $id);
@@ -166,7 +194,6 @@ class Profile extends Controller {
 		}
 
 		// Show the side panel based on logged in type.
-		//@attention: do we still need to load the sidepanel stuff here?....or is it done by default in all controllers
 		if ($this->auth->get_type() == 'hcp') {
 			$sideview = $this->load->view('sidepane/personal_hcp_profile', '' , TRUE);
 		} else if ($this->auth->get_type() == 'patient') {
@@ -175,23 +202,34 @@ class Profile extends Controller {
 				$this->ui->set_error('Internal Logic Error.','server');
 				return;
 		}
-		
-		// Load up the right view
+		* */
+
 		if ($id_type == 'hcp') {
 			$this->ui->set(array(
 				$this->load->view('mainpane/other_hcp_profile',
-					array('info' => $info[0], 'is_my_friend' => $is_my_friend), TRUE), 
-				$sideview
+					array('info' => $info[0], 'is_my_friend' => TRUE), TRUE)
 			));
 		} else if($id_type == 'patient') { // looking for a patient profile
 			$this->ui->set(array(
 				$this->load->view('mainpane/other_patient_profile',
-					array('info' => $info[0], 'is_my_friend' => $is_my_friend), TRUE),
-				$sideview
+					array('info' => $info[0], 'is_my_friend' => TRUE), TRUE)
 			));
-		} else {
-				$this->ui->set_error('Internal Logic Error.','server');
-				return;			
+		}
+		
+		/* Load up the right view
+		if ($id_type == 'hcp') {
+			$this->ui->set(array(
+				$this->load->view('mainpane/other_hcp_profile',
+					array('info' => $info[0], 'is_my_friend' => $is_my_friend), TRUE)
+			));
+		} else if($id_type == 'patient') { // looking for a patient profile
+			$this->ui->set(array(
+				$this->load->view('mainpane/other_patient_profile',
+					array('info' => $info[0], 'is_my_friend' => $is_my_friend), TRUE)
+			));
+		}*/ else {
+			$this->ui->set_error('Internal Logic Error.','server');
+			return;			
 		}
 	}
 
@@ -199,9 +237,10 @@ class Profile extends Controller {
 	 * Loads a form that shows their current information, with ability to change and submit.
 	 * */
 	function edit() {
-		$this->auth->check_logged_in();
-		$this->load->model('patient_model');
-		$this->load->model('hcp_model');
+		//$this->auth->check_logged_in();
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}
 		
 		// Get my current info
 		if ($this->auth->get_type() === 'patient') {
@@ -237,10 +276,12 @@ class Profile extends Controller {
 	 * @todo Add input checking
 	 * */
 	function edit_do() {
-		$this->auth->check_logged_in();
+		//$this->auth->check_logged_in();
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}
 		
 		if ( $this->auth->get_type() === 'patient'){
-			$this->load->model('patient_model');
 			$res = $this->patient_model->update_personal_info(array(
 																$this->input->post('firstname'),
 																$this->input->post('middlename'),
@@ -255,7 +296,6 @@ class Profile extends Controller {
 		}
 
 		else if ($this->auth->get_type() === 'hcp'){
-			$this->load->model('hcp_model');
 			$res = $this->hcp_model->update_personal_info(array(
 																$this->input->post('firstname'),
 																$this->input->post('middlename'),

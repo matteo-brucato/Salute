@@ -181,6 +181,31 @@ class Account_model extends Model {
 		return 0;
 	}
 	
+	/**
+	 * Checks if id is an account
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id)
+	 * @return
+	 *  -1 in case of error in a query
+	 *   FALSE in case of no match
+	 *   TRUE otherwise
+	 * */
+	 function is_account($inputs){
+	 
+	 	$sql = "SELECT *
+			FROM accounts A
+			WHERE A.account_id = ?";
+	 	$query = $this->db->query($sql, $inputs);
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;	
+		if( $query->num_rows() < 1)
+			return FALSE;
+
+		return TRUE;
+	 }
+	
 	
 	/**
 	 * Gets the password of the account

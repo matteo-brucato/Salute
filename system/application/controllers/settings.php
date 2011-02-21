@@ -14,6 +14,7 @@ class Settings extends Controller {
 		parent::Controller();
 		$this->load->library('ui');
 		$this->load->library('auth');
+		$this->load->model('account_model');		
 	}
 
 	/**
@@ -23,8 +24,10 @@ class Settings extends Controller {
 	 * 		Deactivate
 	 * */
 	function index(){
-		$this->auth->check_logged_in();
-		
+//		$this->auth->check_logged_in();
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}
 		$this->ui->set(array(
 				$this->load->view('mainpane/settings', '', TRUE)
 			));
@@ -34,8 +37,10 @@ class Settings extends Controller {
 	 * Loads form  to let user change their password
 	 * */
 	function change_password(){
-		$this->auth->check_logged_in();	
-		
+		//$this->auth->check_logged_in();	
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}
 		$this->ui->set(array($this->load->view('mainpane/forms/change_password', '', TRUE)));
 		
 	}
@@ -46,44 +51,49 @@ class Settings extends Controller {
 	 * @return error || email confirmation + success message
 	 * */
 	function change_password_do(){
-			$this->auth->check_logged_in();	
-			$this->load->model('account_model');		
-			$password = $this->input->post('password');
-			if ($password == NULL){
-				$this->ui->set_error('Password Invalid','Missing Argument');
-				return;
-			}
-			$check = $this->account_model->update_account(array($this->auth->get_account_id(),$this->auth->get_email(),$password));
-			if ($check === -1){
-				$this->ui->set_query_error();
-				return;
-			} else if ($check === -4){
-				$this->ui->set_error('Account does not exist!');
-				return;
-			}
-			
-			$this->load->library('email');
-			$config['mailtype'] = 'html';
-			$this->email->initialize($config);
-			$this->email->from('salute-noreply@salute.com');
-			$this->email->to($this->auth->get_email());
-			$this->email->subject('Your password has been changed.');
-			$this->email->message(
-				'Your password has been successfully changed. It is now: '.$password.'. '.
-				'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
-
-			$this->email->send();
-									
-			$msg = 'Your password has been changed. A confirmation email has been sent for your records.';
-			$this->ui->set_message($msg,'Confirmation');	
+		//$this->auth->check_logged_in();	
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}	
+		
+		$password = $this->input->post('password');
+		if ($password == NULL){
+			$this->ui->set_error('Password Invalid','Missing Argument');
+			return;
+		}
+		$check = $this->account_model->update_account(array($this->auth->get_account_id(),$this->auth->get_email(),$password));
+		if ($check === -1){
+			$this->ui->set_query_error();
+			return;
+		} else if ($check === -4){
+			$this->ui->set_error('Account does not exist!');
+			return;
+		}
+		
+		$this->load->library('email');
+		$config['mailtype'] = 'html';
+		$this->email->initialize($config);
+		$this->email->from('salute-noreply@salute.com');
+		$this->email->to($this->auth->get_email());
+		$this->email->subject('Your password has been changed.');
+		$this->email->message(
+			'Your password has been successfully changed. It is now: '.$password.'. '.
+			'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
+		$this->email->send();
+								
+		$msg = 'Your password has been changed. A confirmation email has been sent for your records.';
+		$this->ui->set_message($msg,'Confirmation');	
 	}
 
 	/**
 	 * Loads form for user to change their email
 	 * */
 	function change_email(){
-		$this->auth->check_logged_in();	
-		
+	//	$this->auth->check_logged_in();	
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}	
+	
 		$this->ui->set(array($this->load->view('mainpane/forms/change_email', '', TRUE)));
 	}
 
@@ -93,51 +103,52 @@ class Settings extends Controller {
 	 * @return error || confirmation email + success message
 	 * */
 	function change_email_do(){
-			$this->auth->check_logged_in();	
-			$this->load->model('account_model');		
+	//	$this->auth->check_logged_in();	
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}	
 			
-			$email = $this->input->post('email');
-			if ($email == NULL){
-				$this->ui->set_error('Email Invalid','Missing Arguments');
-				return;
-			}	
+		$email = $this->input->post('email');
+		if ($email == NULL){
+			$this->ui->set_error('Email Invalid','Missing Arguments');
+			return;
+		}	
 			
-			$password = $this->account_model->get_account($this->auth->get_email());
-			if ($password == NULL){
-				$this->ui->set_error('Failed to retrieve password.');
-				return;
-			} else if( $password === -1 ){
-				$this->ui->set_query_error();
-				return;
-			}
+		$password = $this->account_model->get_account($this->auth->get_email());
+		if ($password == NULL){
+			$this->ui->set_error('Failed to retrieve password.');
+			return;
+		} else if( $password === -1 ){
+			$this->ui->set_query_error();
+			return;
+		}
 			
-			$check = $this->account_model->update_account(array($this->auth->get_account_id(),$email,$password[0]['password']));
+		$check = $this->account_model->update_account(array($this->auth->get_account_id(),$email,$password[0]['password']));
 			
-			if ($check === -1){
-				$this->ui->set_query_error();
-				return;
-			} else if ($check === -4){
-					$this->ui->set_error('Account does not exist!');
-					return;
-			}
+		if ($check === -1){
+			$this->ui->set_query_error();
+			return;
+		} else if ($check === -4){
+			$this->ui->set_error('Account does not exist!');
+			return;
+		}
 			
-			$this->load->library('email');
-			$config['mailtype'] = 'html';
-			$this->email->initialize($config);
-			$this->email->from('salute-noreply@salute.com');
-			$this->email->to($email);
-			$this->email->subject('Your password has been changed.');
-			$this->email->message(
-				'Your email has been successfully changed. It is now: '.$email.'. '.
-				'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
-
-			$this->email->send();
-			
-			// Update session cookie
-			$this->session->set_userdata(array('email' => $email));
-			
-			$this->ui->set_message('Your email has been changed. A confirmation has been sent to your email.','Confirmation');
-			
+		$this->load->library('email');
+		$config['mailtype'] = 'html';
+		$this->email->initialize($config);
+		$this->email->from('salute-noreply@salute.com');
+		$this->email->to($email);
+		$this->email->subject('Your email has been changed.');
+		$this->email->message(
+			'Your email has been successfully changed. It is now: '.$email.'. '.
+			'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
+		$this->email->send();
+		
+		// Update session cookie
+		$this->session->set_userdata(array('email' => $email));
+		
+		$this->ui->set_message('Your email has been changed. A confirmation has been sent to your email.','Confirmation');
+		
 	}
 	
 	/** 
@@ -146,9 +157,11 @@ class Settings extends Controller {
 	 * @todo popup: are you sure?
 	 **/ 
 	function deactivate() {
-		$this->auth->check_logged_in();
+//		$this->auth->check_logged_in();
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}	
 				
-		$this->load->model('account_model');
 		$check = $this->account_model->deactivate($this->auth->get_account_id());
 		if ($check === -1){
 			$this->ui->set_query_error();
@@ -178,6 +191,10 @@ class Settings extends Controller {
 	 * @todo popup: are you sure?
 	 **/ 
 	function activate($account_id){
+		if ($this->auth->check(array(auth::ACCOUNT,$account_id)) !== TRUE) {
+			return;
+		}	
+	
 		$msg = 'Your Account is de-active.'.	
 		'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/settings/activate_do/'.$account_id.
 		'/ ">here</a> to reactivate.';
@@ -190,7 +207,9 @@ class Settings extends Controller {
 	 * @return error || Confirmation statement + Link to login. 
 	 **/ 
 	function activate_do($account_id){
-		$this->load->model('account_model');
+		if ($this->auth->check(array(auth::ACCOUNT,$account_id)) !== TRUE) {
+			return;
+		}		
 		$results = $this->account_model->activate(array($account_id));
 		if ($results === -1){
 			$this->ui->set_query_error();
