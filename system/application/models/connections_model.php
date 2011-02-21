@@ -466,6 +466,41 @@ class Connections_model extends Model {
 			return -1; // query error
 		}
 		
+		// If the connection came via referal and level to that hcp was 1 or 3,
+		// copy permissions from 'refering' hcp to the 'is_refered' hcp
+		$sql = "SELECT * 
+			FROM refers R
+			WHERE R.patient_id = ? AND R.is_refered_id = ?"
+		$result = $this->db->query($sql, $inputs);
+		
+		if ($this->db->trans_status() === FALSE) {
+			return -1; /* query error */
+		}
+		if ($result->num_rows() < 1) {
+			return 0; // It was a regular connection request
+		}
+		$result = $result->result_array();
+		
+		//copy if it came via referal
+
+		foreach ($result as $value) {
+			
+			if (level of this connection != 1 or != 3) continue;
+			
+			$sql = "SELECT *
+				FROM permission P, medical_record M, patient_account PA
+				WHERE PA.account_id = ? AND P.account_id = ? AND PA.account_id = M.patient_id AND P.medical_rec_id = M.medical_rec_id"
+			$query = $this->db->query($sql, $value['patient_id'], $value['is_refered_id'])
+			
+			foreach () {
+				$sql = "INSERT INTO permission (medical_rec_id, account_id, date_created)
+					VALUES (?, ?, current_date)";
+				$query = $this->db->query($sql, $inputs);
+				if ($this->db->trans_status() === FALSE)
+					return -1;
+			}
+		}
+		
 		return 0;
 	}
 
@@ -516,10 +551,10 @@ class Connections_model extends Model {
 		$result = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE) {
-			return -1; /* query error */
+			return -1; /* query error *
 		}
 		if ($result->num_rows() < 1) {
-			return -2; /* connection does not exist */
+			return -2; /* connection does not exist *
 		}
 		$result = $result->result_array();
 		
