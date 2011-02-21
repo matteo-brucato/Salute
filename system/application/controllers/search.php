@@ -15,6 +15,10 @@ class Search extends Controller {
 		$this->load->library('ui');
 		$this->load->library('auth');
 		$this->load->model('hcp_model');
+<<<<<<< HEAD:system/application/controllers/search.php
+		$this->load->model('patient_model');
+=======
+>>>>>>> a060fb6815a4c44c50f4e0cd67081e30e97467de:system/application/controllers/search.php
 		$this->load->model('connections_model');
 	}
 
@@ -22,9 +26,7 @@ class Search extends Controller {
 	 * Default to the advanced search
 	 */
 	function index() {
-		$this->auth->check(array(auth::CurrLOG));
-		if ($check !== TRUE) return;
-		
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) return;
 		$this->ui->set(array(
 			$this->load->view('mainpane/forms/search', '' , TRUE)
 		));
@@ -34,8 +36,7 @@ class Search extends Controller {
 	 * Search for hcps in the database
 	 * */
 	function hcps() {
-		$this->auth->check(array(auth::CurrLOG));
-		if ($check !== TRUE) return;
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) return;
 		
 		/** @todo Change this with the actual search! */
 		$hcps = $this->hcp_model->get_hcps();
@@ -52,7 +53,7 @@ class Search extends Controller {
 		}
 		
 		$this->ui->set(array(
-			$this->load->view('mainpane/lists/allhcps', array('doc_list' => $hcps) , TRUE)
+			$this->load->view('mainpane/lists/all_hcps', array('doc_list' => $hcps) , TRUE)
 		));
 	}
 
@@ -62,7 +63,25 @@ class Search extends Controller {
 	 * @todo Not implemented yet
 	 * */
 	function patients(){ 
-		$this->auth->check_logged_in();
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) return;
+		
+		/** @todo Change this with the actual search! */
+		$pats = $this->patient_model->get_patients();
+		
+		for ($i = 0; $i < count($pats); $i++) {
+			if ($this->connections_model->is_connected_with(
+				$this->auth->get_account_id(),
+				$pats[$i]['account_id']
+			)) {
+				$pats[$i]['connected'] = TRUE;
+			} else {
+				$pats[$i]['connected'] = FALSE;
+			}
+		}
+		
+		$this->ui->set(array(
+			$this->load->view('mainpane/lists/all_patients', array('pat_list' => $pats) , TRUE)
+		));
 	}
 
 	/**

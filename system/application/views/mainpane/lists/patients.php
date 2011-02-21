@@ -39,6 +39,9 @@ if ($status === 'connected') {
 else if ($status === 'pending_in') {
 	$actions = array('accept-conn-req', 'reject-conn-req');
 }
+else if ($status === 'pending_out') {
+	$actions = array('profile', 'cancel-conn-req');
+}
 else {
 	$actions = array(); /** @attention SHOULD NEVER HAPPEN! */
 }
@@ -50,49 +53,5 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 	$table['tuples'][$i]['actions'] .= '<ul>';
 }
 
-
-
-
-
-
-
-
-/*// Special columns to dislpay
-for ($i = 0; $i < count($table['tuples']); $i++) {
-	$table['tuples'][$i]['*actions'] = '
-	<ul>
-		<li><a href="/profile/user/'.$table['tuples'][$i]['account_id'].'" class="ajax">See Profile</a></li>
-		<li><a href="">Send Email</a></li>
-		<li><a href="">Delete Connection</a></li>
-		<li><a href="">Upload Medical Record</a></li>
-		<li><a href="">Issue Bill</a></li>
-	</ul>';
-}
-
-require('table_result.php');*/
 view_table($table);
 ?>
-
-<!--table class="tables-1" id="mypatients-table" cellpadding="0" cellspacing="0">
-	<tr>
-		<th class="id_keeper">Account Id</th>
-		<th>First Name</th>
-		<th>Last Name</th>
-		<th>Actions</th>
-	</tr>
-	< ?php foreach ($pat_list as $hcp) : ?>
-	<tr>
-		<td class="id_keeper">< ?php echo $hcp['account_id']; ?></td>
-		<td>< ?php echo $hcp['first_name']; ?></td>
-		<td>< ?php echo $hcp['last_name']; ?></td>
-		<td>
-			<ul>
-				<li><a href="">Send Email</a></li>
-				<li><a href="">Delete Connection</a></li>
-				<li><a href="">Upload Medical Record</a></li>
-				<li><a href="">Issue Bill</a></li>
-			</ul>
-		</td>
-	</tr>
-	< ? endforeach ?>
-</table-->

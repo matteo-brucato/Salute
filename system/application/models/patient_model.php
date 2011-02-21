@@ -16,6 +16,30 @@ class Patient_model extends Model {
 	}
 	
 	
+	/**
+	 * Gets all HCPs from the database, without any filter
+	 * 
+	 * @param $inputs
+	 *   Is of the form: Does not take anything in
+	 * @attention
+	 *   THIS FUNCTION MUST BE REMOVED AND SUBSTITUTED BY A SEARCH
+	 *   FUNCTION, THAT GETS DOCTORS THAT HAVE SPECIFIC VALUES
+	 * @return
+	 *  -1 in case of error in a query
+	 *   Array with all the existing hcps in the database
+	 *   empty array() if there are not any hcps in the database
+	 * */
+	function get_patients() {
+		$sql = "SELECT * FROM patient_account";
+		$query = $this->db->query($sql);
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if ($query->num_rows() > 0)
+			return $query->result_array();
+		
+		return array();	
+	}
 
 	/**
 	 * Checks if patient exists

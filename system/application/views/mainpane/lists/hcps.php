@@ -57,28 +57,5 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 	$table['tuples'][$i]['actions'] .= '<ul>';
 }
 
-/*if ($this->auth->get_type() == 'patient') {
-	for ($i = 0; $i < count($table['tuples']); $i++) {
-		$table['tuples'][$i]['actions'] = '
-		<ul>
-			<li><a href="/profile/user/'.$table['tuples'][$i]['account_id'].'" class="ajax">See Profile</a></li>
-			<li><a href="">Send Email</a></li>
-			<li><a href="">Delete Connection</a></li>
-			<li><a href="">Request Appointment</a></li>
-		</ul>';
-	}
-} else {
-	for ($i = 0; $i < count($table['tuples']); $i++) {
-		$table['tuples'][$i]['actions'] = '
-		<ul>
-			<li><a href="/profile/user/'.$table['tuples'][$i]['account_id'].'" class="ajax">See Profile</a></li>
-			<li><a href="">Send Email</a></li>
-			<li><a href="">Delete Connection</a></li>
-		</ul>';
-	}
-}*/
-
-//require('table_result.php');
-
 view_table($table);
 ?>

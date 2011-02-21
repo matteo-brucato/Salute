@@ -67,10 +67,13 @@ class Hcp_model extends Model {
 	}
 	
 	/**
-	 * Gets all of the hcp information
+	 * Gets all HCPs from the database, without any filter
 	 * 
 	 * @param $inputs
 	 *   Is of the form: Does not take anything in
+	 * @attention
+	 *   THIS FUNCTION MUST BE REMOVED AND SUBSTITUTED BY A SEARCH
+	 *   FUNCTION, THAT GETS DOCTORS THAT HAVE SPECIFIC VALUES
 	 * @return
 	 *  -1 in case of error in a query
 	 *   Array with all the existing hcps in the database
