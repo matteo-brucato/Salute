@@ -64,7 +64,7 @@ class Referal_model extends Model {
 	 * hcp refers refers hcp to patient
 	 * 
 	 * @param $inputs
-	 *   Is of the form: array(account_id of hcp, account_id of refering hcp, account_id of patient)
+	 *   Is of the form: array(account_id of hcp, account_id of hcp being refered, account_id of patient)
 	 * @return
 	 *  -1 in case of error in a query
 	 *   0 if everything goes fine approved status is changed to TRUE

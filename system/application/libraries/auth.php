@@ -37,6 +37,8 @@ class Auth {
 	const BILL_DELC		= 8;
 	const BILL_PAYC		= 9;		
 	
+	const REF_MINE		=100;   // requires one id, tests if it's your referal id
+	
 	function __construct() {
 		$CI =& get_instance();
 		$this->account_id	= $CI->session->userdata('account_id');
@@ -205,6 +207,32 @@ class Auth {
 				$i++;
 				break;
 
+			
+			case auth::REF_MINE:
+				if ($perm[$i+1] === NULL) {
+					$this->CI->ui->set_error('No input provided');
+					return auth::REF_MINE;
+				}
+				if (! is_numeric($perm[$i+1])) {
+					$this->CI->ui->set_error('Not numeric');
+					return auth::REF_MINE;
+				}
+				$this->CI->load->model('referal_model');
+				$result = $this->CI->referal_model->is_myreferal(array($this->account_id, $perm[$i+1]));
+				if ( $result === -1 ){
+					$this->CI->ui->set_query_error();
+					return auth::REF_MINE;
+				} elseif ( $result === -2 ){
+					$this->CI->ui->set_error('Referal ID does not exist!');
+					return auth::REF_MINE;
+				} elseif ($result !== TRUE) {
+					$this->CI->ui->set_error('This is not your referal.', 'permission denied');
+					return  auth::REF_MINE;
+				}
+				$i++;
+				break;
+
+
 			case auth::BILL_DELC:
 				if ($a[$i+1] === NULL) {
 					$this->CI->ui->set_error('No input provided');
@@ -286,6 +314,7 @@ class Auth {
 				}
 				$i++;
 				break;	
+
 
 			}
 		}

@@ -146,8 +146,7 @@ class Appointments extends Controller {
 			auth::CurrLOG,
 			auth::APPT_MINE, $apt_id));
 			
-		if ($check !== TRUE)
-			return;
+		if ($check !== TRUE) return;
 			
 		$results = $this->appointments_model->cancel(array($apt_id));
 								
