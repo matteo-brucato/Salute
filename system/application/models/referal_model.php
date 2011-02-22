@@ -89,14 +89,15 @@ class Referal_model extends Model {
 	 *   Is of the form: array(account_id, type of account(hcp or patient))
 	 * @return
 	 *  -1 in case of error in a query
-	 *   Array with all appointments
+	 *   Array with all referals
 	 *   empty array() if there are no appointments
 	 * */
 	function view_referals($inputs){
 		
 		//list all referals a patient has received
 		if( $inputs['type'] === 'patient'){
-			$sql = "SELECT R.referal_id, H2.first_name, H2.last_name, H3.first_name, H3.last_name, H3.specialization
+			$sql = "SELECT R.referal_id, R.status, R.is_refered_id, H2.first_name AS ref_FN, H2.last_name AS ref_LN,
+					H3.first_name AS is_ref_FN, H3.last_name AS is_ref_LN, H3.specialization, R.date_time
 				FROM refers R, hcp_account H, hcp_account H2, hcp_account H3
 				WHERE R.patient_id = ? AND R.refering_id = H.account_id AND R.refering_id = H2.account_id
 									   AND R.is_refered_id = H.account_id AND R.is_refered_id = H3.account_id"
@@ -113,7 +114,8 @@ class Referal_model extends Model {
 		}
 		
 		//list all referals an hcp has issued
-		$sql = "SELECT R.referal_id, P2.first_name, P2.last_name, H2.first_name, H2.last_name
+		$sql = "SELECT R.referal_id, R.status, P2.first_name AS pat_FN, P2.last_name AS pat_LN, 
+				H2.first_name AS is_ref_FN, H2.last_name AS is_ref_LN, H2.specialization, R.date_time
 			FROM refers R, patient_account P, patient_account P2, hcp_account H, hcp_account H2
 			WHERE R.refering_id = ? AND R.patient_id = P.account_id AND R.patient_id = P2.account_id
 								    AND R.is_refered_id = H.account_id AND R.is_refered_id = H2.account_id"
@@ -155,6 +157,42 @@ class Referal_model extends Model {
 		
 		$sql = "DELETE FROM refers
 				WHERE referal_id = ?";
+		$query = $this->db->query($sql, $inputs);
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		
+		return 0;
+	}
+	
+	/**
+	 * patient approves a referal request (only sets the status to true.
+	 * 	actual connection id done by the function add_connection from the
+	 * 	connections controller
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(referal_id)
+	 * @return
+	 *  -1 in case of error in a query
+	 *  -2 if referal_id does not exist
+	 *   0 if everything goes fine approved status is changed to TRUE
+	 * */
+	function approve($inputs){
+		
+		//test to see if the appointment_id exists
+		$sql = "SELECT *
+			FROM refers R
+			WHERE R.referal_id = ?";
+		$query = $this->db->query($sql, $inputs);
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;		
+		if ($query->num_rows() < 1)
+			return -2;
+		
+		$sql = "UPDATE refers
+			SET status = TRUE
+			WHERE referal_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)

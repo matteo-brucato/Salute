@@ -38,6 +38,9 @@
 		</ul>
 	</li>
 	
+	<!--<li><a href="/referal/?" class="ajax">My Referals</a>
+	</li> -->
+	
 	<li><a href="/settings" class="ajax">Settings</a>
 	</li>
 	
