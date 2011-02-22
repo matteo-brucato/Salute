@@ -27,19 +27,22 @@ class Auth {
 	const CurrPAT		= 1;	// current user: no other params
 	const CurrHCP		= 2;	// current user: no other params
 	const CurrCONN		= 3;	// requires one id, tests if the current is connected with the id provided
-	const ACCOUNT		= 4;
-	const PAT			= 5;	// requires one id, tests if it's a patient id
-	const HCP			= 6;	// requires one id, tests if it's a hcp id
+	const CurrGRPMEM	= 4;	// requires one groupid, tests if the current is a member of the groupid
+	const ACCOUNT		= 5;
+	const PAT			= 6;	// requires one id, tests if it's a patient id
+	const HCP			= 7;	// requires one id, tests if it's a hcp id
 	
-	const APPT_EXST		= 7;
-	const APPT_MINE		= 8;	// requires one id, tests if it's your appointment id
+	const APPT_EXST		= 8;
+	const APPT_MINE		= 9;	// requires one id, tests if it's your appointment id
 	
-	const BILL_DELC		= 9;
-	const BILL_PAYC		= 10;
+	const BILL_DELC		= 10;
+	const BILL_PAYC		= 11;
 	
-	const MEDREC		= 11;		
+	const MEDREC		= 12;		
 	
 	const REF_MINE		=100;   // requires one id, tests if it's your referal id
+	
+	
 	
 	function __construct() {
 		$CI =& get_instance();
@@ -178,6 +181,10 @@ class Auth {
 					$this->CI->ui->set_error('You are not connected with this account','Permission Denied');
 					return auth::CurrCONN;
 				}
+				$i++;
+				break;
+				
+			case auth::CurrGRPMEM:
 				$i++;
 				break;
 				

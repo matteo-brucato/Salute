@@ -90,7 +90,10 @@ class Groups_model extends Model {
 	 *   Is of the form: array($account_id,$group_id)
 	 * @return
 	 * */
-	function join($account_id,$group_id){}
+	function join($account_id,$group_id){
+	
+		
+	}
 	
 	/**
 	 * Leave a Group
@@ -103,10 +106,25 @@ class Groups_model extends Model {
 	
 	/**
 	 * Lists all Groups
-	 * @param
+	 * @param none
 	 * @return
+	 * 		-1 if query error
+	 * 		empty array
+	 * 		array of groups
 	 * */
-	function list_all_groups(){}
+	function list_all_groups(){
+		
+		$sql = "SELECT * FROM groups";
+		$query = $this->db->query($sql);
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		if ($query->num_rows() > 0)
+			return $query->result_array();
+		
+		return array();
+	}
 
 	/**
 	 * Lists all my groups
@@ -120,9 +138,9 @@ class Groups_model extends Model {
 	 * */
 	function list_my_groups($account_id) {
 
-		$sql = "SELECT g.*
-				FROM groups g
-				WHERE g.account_id = ?";
+		$sql = "SELECT *
+				FROM is_in 
+				WHERE account_id = ?";
 
 		$query = $this->db->query($sql, array($account_id));
 		
@@ -147,7 +165,19 @@ class Groups_model extends Model {
 	 * */
 	function list_members($group_id){}
 	
-	function is_member($account_id,$group_id){}
+	function is_member($account_id,$group_id){
+	
+		$sql = "SELECT *
+				FROM is_in 
+				WHERE account_id = ? AND group_id = ?";
+
+		$query = $this->db->query($sql, array($account_id,$group_id));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		return ($query->num_rows() > 0);
+	}
 	
 	function get_member($account_id,$group_id){}
 	

@@ -83,6 +83,20 @@ function get_action_strings($actions, $tuple) {
 			case 'view-all-perm':
 				$str .= '<li><a href="/medical_records/see_permissions/'.$tuple['medical_rec_id'].'">View all permissions</a></li>';
 				break;
+				
+			case 'join-group':
+				$str .= '<li><a href="/groups/join/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Join</a></li>';
+				break;
+				
+			case 'leave-group':
+				$str .= '<li><a href="/groups/leave/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Leave</a></li>';
+				break;
+			
+			case 'delete-group':
+				$str .= '<li><a href="/groups/delete/'.$tuple['group_id'].'">Delete Group</a></li>';
+				break;
+			
+			
 		}
 	}
 	return $str;

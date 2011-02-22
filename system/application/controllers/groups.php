@@ -20,6 +20,7 @@ class Groups extends Controller {
 		parent::Controller();
 		$this->load->library('ui');
 		$this->load->library('auth');
+		$this->load->model('groups_model');
 	}
 	
 	/**
@@ -35,25 +36,88 @@ class Groups extends Controller {
 	}
 	
 	/**
-	 * Create a New Group
+	 * Loads Create New Group Form
 	 * */
 	function create(){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
 		}
-
 		$this->ui->set(array($this->load->view('mainpane/forms/create_group', '', TRUE), ''));
 	}
+
+
+	/**
+	 * Create a New Group
+	 * */
+	function create_do(){
+
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}
+
+		$name = $this->input->post('name');
+		$description = $this->input->post('description');
+		$privacy = $this->input->post('public_private');
+		$group_type = $this->input->post('group_type');
+		
+		// Form Checking will replace this
+		if($name == NULL || $description == NULL || $privacy == NULL || $group_type == NULL )	{
+			$this->ui->set_error('All Fields are Mandatory.','Missing Arguments'); 
+			return;
+		}
+		
+		// Start a transaction now
+		$this->db->trans_start();
+		//$this->db->trans_begin();
+		
+		$result = $this->groups_model->create(array(
+													'account_id' => $this->auth->get_account_id(),
+													'name' => $name, 
+													'description' => $description, 
+													'public_private' => $privacy,
+													'group_type' => $group_type,
+												)); 
+		
+		if($result === -1){
+			$this->ui->set_query_error(); 
+			return;
+		}
+		
+		// End transaction
+		$this->db->trans_complete();
+		//$this->db->trans_rollback();
+	}
+
 	
 	/**
 	 * Delete an Existing Group
 	 * */
-	function delete(){
+	function delete($group_id){
 		
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
 		}
+		
+		// check that group_id is right type and not null
+
+		// Start a transaction now
+		$this->db->trans_start();
+		//$this->db->trans_begin();
+				
+		$result = $this->groups_model->delete(array($group_id));
+		
+		if ($result === -1){
+				$this->auth->set_query_error();
+				return;
+		}
+	
+		//@todo later...make it fancy.
+		$this->ui->set_message('The group has been deleted.','Confirmation');
+		
+		// End transaction
+		$this->db->trans_complete();
+		//$this->db->trans_rollback();
 	}
 	
 	/**
@@ -107,6 +171,34 @@ class Groups extends Controller {
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
 		}
+		
+		// Start a transaction now
+		$this->db->trans_start();
+		//$this->db->trans_begin();
+		
+		$list = $this->groups_model->list_all_groups();
+		
+		if ($list === -1){
+			$this->auth->set_query_error();
+			return;
+		}
+
+		for ($i = 0; $i < count($list); $i++) {
+			if ($this->groups_model->is_member(
+												$this->auth->get_account_id(),
+												$list[$i]['group_id'] 
+									)) 
+			{
+				$member[$i]['is'] = TRUE; //$list[$i]['member'] = TRUE;
+			} else 
+				$member[$i]['is'] = FALSE; //$list[$i]['member'] = FALSE;
+		}
+
+		$this->ui->set(array($this->load->view('mainpane/lists/groups', array('group_list' => $list, 'member' => $member), TRUE)));
+		
+		// End transaction
+		$this->db->trans_complete();
+		//$this->db->trans_rollback();
 	}
 	
 	/**
