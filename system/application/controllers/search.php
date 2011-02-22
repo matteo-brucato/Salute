@@ -15,10 +15,7 @@ class Search extends Controller {
 		$this->load->library('ui');
 		$this->load->library('auth');
 		$this->load->model('hcp_model');
-<<<<<<< HEAD:system/application/controllers/search.php
 		$this->load->model('patient_model');
-=======
->>>>>>> a060fb6815a4c44c50f4e0cd67081e30e97467de:system/application/controllers/search.php
 		$this->load->model('connections_model');
 	}
 

@@ -1,4 +1,5 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+require_once(BASEPATH.'codeigniter/Base5'.EXT);
 /**
  * CodeIgniter
  *
@@ -127,6 +128,7 @@ class CI_Exceptions {
 		include(APPPATH.'errors/'.$template.EXT);
 		$buffer = ob_get_contents();
 		ob_end_clean();
+		
 		return $buffer;
 	}
 

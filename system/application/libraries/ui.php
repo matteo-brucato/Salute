@@ -21,6 +21,20 @@ class Ui {
 	private $redirect = '';
 	private $curr_url;
 	
+	/**
+	 * If this variable is set to TRUE, the UI will not behave as usual.
+	 * It will give the client a simple status code.
+	 * */
+	private $debug = TRUE;
+	
+	/**
+	 * Status code that the UI returns to the client if this class is
+	 * set in debug mode.
+	 * 
+	 * 1 = no_error, 2 = query_error, 3 = other_error, 4 = message, 5 = redirect
+	 * */
+	private $status_code = -1; 
+	
 	function __construct() {
 		$this->CI =& get_instance();
 		$this->CI->load->library('layout');
@@ -73,6 +87,11 @@ class Ui {
 	 *   Possible keys: main, side, [ others in the future ]
 	 * */
 	function __destruct() {
+		if ($this->debug === TRUE) {
+			echo $this->status_code;
+			exit;
+		}
+		
 		if (IS_AJAX) {
 			// Slow down the server
 			//for ($i=0; $i<9999999/4; $i++) {
@@ -119,17 +138,20 @@ class Ui {
 			if ($panels[$i] === NULL ) continue;
 			$this->panels[$i] = $panels[$i];
 		}
+		$this->status_code = 1; // no error
 	}
 	
 	/**
 	 * Show an error message (in the main panel)
 	 * */
-	function set_error($error_message, $type = 'generic') {
+	function set_error($error_message, $type = 'Generic error') {
 		$this->panels[0] = "<h2 class=\"error_hdr\">Error</h2><p class=\"error_type\"><i>type: </i>$type</p><p class=\"error_body\">$error_message</p>";
+		$this->status_code = 3; // error
 	}
 	
 	function set_query_error() {
-		$this->set_error('Query error, please contact the administrator', 'SQL');
+		$this->set_error('Error accessing the database, please contact the administrator', 'Query error');
+		$this->status_code = 2; // query error
 	}
 	
 	/**
@@ -137,6 +159,7 @@ class Ui {
 	 * */
 	function set_message($message, $type = '') {
 		$this->panels[0] = "<h2 class=\"message_hdr\">$type</h2><h3 class=\"message_body\">$message</h3>";
+		$this->status_code = 4; // no error
 	}
 	
 	/**
@@ -144,7 +167,8 @@ class Ui {
 	 * */
 	function redirect($url) {
 		//redirect($url, 'location', 303);
-		$this->redirect = $url;
+		if ($this->debug === FALSE) $this->redirect = $url;
+		$this->status_code = 5; // redirect
 	}
 	
 }

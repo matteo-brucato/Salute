@@ -53,7 +53,7 @@ class Home extends Controller {
 		$password = $this->input->post('password');
 		
 		if ($email == FALSE || $password == FALSE){
-			$this->ui->set_error('Access to this page not allowed', 'Forbidden'); 
+			$this->ui->set_error('Please, fill out the login form', 'Forbidden'); 
 			return;
 		}
 		
@@ -286,6 +286,10 @@ class Home extends Controller {
 		// End transaction
 		$this->db->trans_complete();
 		//$this->db->trans_rollback();
+	}
+	
+	function sitemap() {
+		$this->ui->set(array($this->load->view('mainpane/sitemap','',TRUE)));
 	}
 }
 /** @} */
