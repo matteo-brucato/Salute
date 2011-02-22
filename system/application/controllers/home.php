@@ -172,7 +172,7 @@ class Home extends Controller {
 	 * */
 	function register()
 	{
-		$this->ui->set(array($this->load->view('mainpane/registration', '', TRUE), ''));
+		$this->ui->set(array($this->load->view('mainpane/forms/registration', '', TRUE), ''));
 	}
 
 	/*
