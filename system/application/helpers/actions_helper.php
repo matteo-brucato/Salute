@@ -83,6 +83,13 @@ function get_action_strings($actions, $tuple) {
 			case 'view-all-perm':
 				$str .= '<li><a href="/medical_records/see_permissions/'.$tuple['medical_rec_id'].'">View all permissions</a></li>';
 				break;
+				
+			case 'accept-ref':
+				$str .= '<li><a href="/connections/request/'.$tuple['is_refered_id'].'">Request Connection</a></li>';
+				break;
+			/*case 'delete-ref':
+				$str .= '<li><a href="/referal/?/'.$tuple['referal_id'].'">Delete</a></li>';
+				break;	*/
 		}
 	}
 	return $str;

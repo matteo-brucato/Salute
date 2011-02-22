@@ -157,6 +157,7 @@ CREATE TABLE refers(
 	is_refered_id SERIAL NOT NULL,
 	patient_id SERIAL NOT NULL,
 	date_time TIMESTAMP DEFAULT now(),
+	status BOOLEAN DEFAULT FALSE,
 	PRIMARY KEY(referal_id),
 	FOREIGN KEY (refering_id) REFERENCES hcp_account(account_id),
 	FOREIGN KEY (is_refered_id) REFERENCES hcp_account(account_id),
