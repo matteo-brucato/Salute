@@ -3,6 +3,7 @@
  * @file actions_helper.php
  * @brief Contains functions to help handling action links in the interface
  * 
+ * 
  * @defgroup hlp Helpers
  * @ingroup hlp
  * */
@@ -97,6 +98,13 @@ function get_action_strings($actions, $tuple) {
 				break;
 			
 			
+			case 'accept-ref':
+				$str .= '<li><a href="/connections/request/'.$tuple['is_refered_id'].'">Request Connection</a></li>';
+				break;
+			/*case 'delete-ref':
+				$str .= '<li><a href="/referal/?/'.$tuple['referal_id'].'">Delete</a></li>';
+				break;	*/
+
 		}
 	}
 	return $str;

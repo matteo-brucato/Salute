@@ -4,10 +4,13 @@ var AJAX_ACTIVE = true;
 
 const HISTORY_MAX = 30;
 var hist = new Array(HISTORY_MAX);
-var hist_i = HISTORY_MAX - 1;
+var hist_i;
 
 // Initialize the history
 for (i=0; i<HISTORY_MAX; i++) hist[i] = null;
+hist_i = 0;
+hist[hist_i] = window.location.href;
+
 
 function show_history() {
 	var hist = '';
@@ -84,7 +87,9 @@ function layout_bindings() {
 		
 		// If it's a history.back() request
 		else if ($(this).hasClass('history_back')) {
-			//alert('history backward');
+			if (! AJAX_ACTIVE) return;
+			event.preventDefault();
+			
 			var i = (hist_i + HISTORY_MAX - 1) % HISTORY_MAX;
 			if (hist[i] == null) {
 				// No history
@@ -97,7 +102,9 @@ function layout_bindings() {
 		}
 		
 		else if ($(this).hasClass('history_forth')) {
-			//alert('history forward');
+			if (! AJAX_ACTIVE) return;
+			event.preventDefault();
+			
 			var i = (hist_i + 1) % HISTORY_MAX;
 			if (hist[i] == null) {
 				// No history

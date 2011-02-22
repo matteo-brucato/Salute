@@ -78,8 +78,8 @@ class Auth {
 			switch ($a[$i]) {
 			case auth::CurrLOG:
 				if (!$this->is_logged_in()) {
-					$this->CI->ui->set_error($this->CI->load->view('errors/not_logged_in', '', TRUE), 'authorization');
 					$this->CI->ui->set(array(NULL, $this->CI->load->view('sidepane/forms/login', '', TRUE)));
+					$this->CI->ui->set_error($this->CI->load->view('errors/not_logged_in', '', TRUE), 'authorization');
 					return auth::CurrLOG;
 				}
 				break;
@@ -98,7 +98,7 @@ class Auth {
 				}
 				break;
 
-			case auth::ACCOUNT:				
+			case auth::ACCOUNT:
 				if ($a[$i+1] === NULL) {
 					$this->CI->ui->set_error('No input provided');
 					return  auth::ACCOUNT;

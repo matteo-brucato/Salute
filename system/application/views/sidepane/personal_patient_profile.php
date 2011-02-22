@@ -31,6 +31,9 @@
 		</ul>
 	</li>
 	
+	<!-- <li><a href="/referal/?" class="ajax">My Referals</a>
+	</li> -->
+	
 	<li><a href="/connections/mypatients" class="ajax">My Patients (???)</a>
 		<ul>
 			<li><a href="/connections/pending/in" class="ajax">Pending incoming</a></li>

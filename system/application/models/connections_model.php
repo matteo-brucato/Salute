@@ -520,7 +520,7 @@ class Connections_model extends Model {
 						return -1;
 					}
 			}
-		
+		}
 		return 0;
 	}
 
