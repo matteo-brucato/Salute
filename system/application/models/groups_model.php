@@ -138,11 +138,11 @@ class Groups_model extends Model {
 	 * */
 	function list_my_groups($account_id) {
 
-		$sql = "SELECT *
-				FROM is_in 
-				WHERE account_id = ?";
+		$sql = "SELECT g.* 
+				FROM is_in i, groups g 
+				WHERE g.account_id = ? AND i.account_id = ?";
 
-		$query = $this->db->query($sql, array($account_id));
+		$query = $this->db->query($sql, array($account_id,$account_id));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -170,6 +170,19 @@ class Groups_model extends Model {
 		$sql = "SELECT *
 				FROM is_in 
 				WHERE account_id = ? AND group_id = ?";
+
+		$query = $this->db->query($sql, array($account_id,$group_id));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		return ($query->num_rows() > 0);
+	}
+	
+	function can_delete($account_id,$group_id){
+		$sql = "SELECT *
+				FROM is_in 
+				WHERE permissions = '3' AND account_id = ? AND group_id = ?";
 
 		$query = $this->db->query($sql, array($account_id,$group_id));
 		

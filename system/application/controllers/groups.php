@@ -189,9 +189,9 @@ class Groups extends Controller {
 												$list[$i]['group_id'] 
 									)) 
 			{
-				$member[$i]['is'] = TRUE; //$list[$i]['member'] = TRUE;
+				$member[$i]['is'] = TRUE; 
 			} else 
-				$member[$i]['is'] = FALSE; //$list[$i]['member'] = FALSE;
+				$member[$i]['is'] = FALSE; 
 		}
 
 		$this->ui->set(array($this->load->view('mainpane/lists/groups', array('group_list' => $list, 'member' => $member), TRUE)));
@@ -209,6 +209,31 @@ class Groups extends Controller {
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
 		}
+		
+		// Start a transaction now
+		$this->db->trans_start();
+		//$this->db->trans_begin();
+		
+		$list = $this->groups_model->list_my_groups($this->auth->get_account_id());
+		if ($list === -1){
+			$this->auth->set_query_error();
+			return;
+		}
+		for ($i = 0; $i < count($list); $i++) {
+			if ($this->groups_model->can_delete(
+												$this->auth->get_account_id(),
+												$list[$i]['group_id'] 
+									)) 
+			{
+				$perm[$i]['can_delete'] = TRUE; 
+			} else 
+				$perm[$i]['can_delete'] = FALSE; 
+		}
+		$this->ui->set(array($this->load->view('mainpane/lists/mygroups', array('group_list' => $list, 'perm' => $perm), TRUE)));
+		
+		// End transaction
+		$this->db->trans_complete();
+		//$this->db->trans_rollback();
 	}
 	
 	/**
