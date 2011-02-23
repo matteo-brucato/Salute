@@ -28,7 +28,7 @@ class Medical_records extends Controller {
 	function index()
 	{
 		//$this->auth->check_logged_in();
-		//$this->ui->redirect('/medical_records/list_med_recs');
+		//$this->ui->set_redirect('/medical_records/list_med_recs');
 		$this->myrecs();
 	}
 
@@ -62,7 +62,7 @@ class Medical_records extends Controller {
 		}
 		// if hcp, redirect to My Patients search List
 		else if ( $this->auth->get_type() === 'hcp') {
-			$this->ui->redirect('/connections/mypatients');
+			$this->ui->set_redirect('/connections/mypatients');
 			return;
 		} else {
 			$this->ui->set_error('Server Error.', 'server');
@@ -214,7 +214,7 @@ class Medical_records extends Controller {
 				$this->ui->set(array('Query error!',''));
 				break;
 			default:
-				$this->ui->redirect('/medical_records/list_med_recs');
+				$this->ui->set_redirect('/medical_records/list_med_recs');
 				break; 
 		}	
 	}*/

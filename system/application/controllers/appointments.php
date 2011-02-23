@@ -27,7 +27,7 @@ class Appointments extends Controller {
 	 * */
 	function index(){
 		//$this->auth->check_logged_in();
-		//$this->ui->redirect('/appointments/upcoming');
+		//$this->ui->set_redirect('/appointments/upcoming');
 		$this->upcoming();
 	}
 

@@ -119,7 +119,7 @@ class Profile extends Controller {
 			return;
 		}
 		/**if ($id == NULL) {
-			$this->ui->redirect('/profile');
+			$this->ui->set_redirect('/profile');
 			//$this->ui->show_app_error();
 			return;
 		}

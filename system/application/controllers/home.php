@@ -32,7 +32,7 @@ class Home extends Controller {
 		}
 		// Already logged in
 		else 
-			$this->ui->redirect('/profile');
+			$this->ui->set_redirect('/profile');
 	}
 
 	/**
@@ -45,7 +45,7 @@ class Home extends Controller {
 	function login()
 	{
 		if ($this->auth->is_logged_in()){
-			$this->ui->redirect('/profile');
+			$this->ui->set_redirect('/profile');
 			return;
 		}
 		// get email & password
@@ -94,7 +94,7 @@ class Home extends Controller {
 				$this->ui->set_error('Sorry! That account does not exist.'); 
 				return;
 			} else if ( !$active_status ){
-				$this->ui->redirect('/settings/activate/'.$results[1]["account_id"]); 
+				$this->ui->set_redirect('/settings/activate/'.$results[1]["account_id"]); 
 				return;
 			}
 			$login_data = array(
@@ -105,7 +105,7 @@ class Home extends Controller {
 				'last_name' => $results[1]["last_name"]
 			);
 			$this->session->set_userdata($login_data);
-			$this->ui->redirect('/profile');
+			$this->ui->set_redirect('/profile');
 		}
 	}
 
@@ -116,7 +116,7 @@ class Home extends Controller {
 	 * */
 	function logout(){
 		$this->session->sess_destroy();
-		$this->ui->redirect('/');
+		$this->ui->set_redirect('/');
 	}
 	
 	/**
