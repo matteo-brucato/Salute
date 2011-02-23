@@ -221,6 +221,7 @@ class Groups extends Controller {
 			$this->auth->set_query_error();
 			return;
 		}
+		$perm='';
 		for ($i = 0; $i < count($list); $i++) {
 			if ($this->groups_model->can_delete(
 												$this->auth->get_account_id(),
@@ -228,7 +229,7 @@ class Groups extends Controller {
 									)) 
 			{
 				$perm[$i]['can_delete'] = TRUE; 
-			} else 
+			} else
 				$perm[$i]['can_delete'] = FALSE; 
 		}
 		$this->ui->set(array($this->load->view('mainpane/lists/mygroups', array('group_list' => $list, 'perm' => $perm), TRUE)));

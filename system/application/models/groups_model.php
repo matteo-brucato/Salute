@@ -129,11 +129,12 @@ class Groups_model extends Model {
 	 * */
 	function list_my_groups($account_id) {
 
-		$sql = "SELECT g.* 
+		/*$sql = "SELECT g.* 
 				FROM is_in i, groups g 
 				WHERE g.account_id = ? AND i.account_id = ?";
-
-		$query = $this->db->query($sql, array($account_id,$account_id));
+		*/
+		$sql = "SELECT * FROM groups WHERE group_id IN (SELECT group_id FROM is_in WHERE account_id = ?)";
+		$query = $this->db->query($sql, array($account_id));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
