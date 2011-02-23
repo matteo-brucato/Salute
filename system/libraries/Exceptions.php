@@ -91,6 +91,8 @@ class CI_Exceptions {
 	 */
 	function show_404($page = '')
 	{	
+		if (TESTING_ON) die(CI_404_ERROR);
+		
 		$heading = "404 Page Not Found";
 		$message = "The page you requested was not found.";
 
@@ -116,14 +118,17 @@ class CI_Exceptions {
 	 */
 	function show_error($heading, $message, $template = 'error_general', $status_code = 500)
 	{
+		if (TESTING_ON) die(CI_ERROR);
+		
 		set_status_header($status_code);
 		
 		$message = '<p>'.implode('</p><p>', ( ! is_array($message)) ? array($message) : $message).'</p>';
 
 		if (ob_get_level() > $this->ob_level + 1)
 		{
-			ob_end_flush();	
+			ob_end_flush();
 		}
+		
 		ob_start();
 		include(APPPATH.'errors/'.$template.EXT);
 		$buffer = ob_get_contents();
@@ -146,6 +151,8 @@ class CI_Exceptions {
 	 */
 	function show_php_error($severity, $message, $filepath, $line)
 	{	
+		if (TESTING_ON) die(CI_PHP_ERROR);
+		
 		$severity = ( ! isset($this->levels[$severity])) ? $severity : $this->levels[$severity];
 	
 		$filepath = str_replace("\\", "/", $filepath);

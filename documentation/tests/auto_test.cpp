@@ -45,16 +45,16 @@ int main(int argc, char *argv[]) {
 			string exp = line.substr(semipos+1);
 			
 			// Convert expected result into integer
-			size_t expected;
-			sscanf(exp.c_str(), "%d", &expected);
+			//size_t expected;
+			//sscanf(exp.c_str(), "%d", &expected);
 			
 			// Execute curl
-			cout << i <<". curl " << url << endl << "   expected result = " << expected << endl;
+			cout << i <<". curl " << url << endl << "   expected result = " << exp << endl;
 			string command = "curl -k https://localhost/" + url + " > last_curl_output 2> last_curl_stderr";
 			system(command.c_str());
 			
 			// Read curl output
-			size_t curl_result;
+			string curl_result;
 			ifstream curlfile;
 			curlfile.open("last_curl_output");
 			if (testfile.is_open()) {
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
 			cout << "   curl result = " << curl_result << endl;
 			
 			// Check if expected result match with actual result
-			if (curl_result != expected) {
+			if (curl_result != exp) {
 				cerr << "====================================" << endl
 				     << "   ERROR!                           " << endl
 				     << "====================================" << endl;
