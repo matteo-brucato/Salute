@@ -3,6 +3,7 @@
  * @file actions_helper.php
  * @brief Contains functions to help handling action links in the interface
  * 
+ * 
  * @defgroup hlp Helpers
  * @ingroup hlp
  * */
@@ -84,12 +85,26 @@ function get_action_strings($actions, $tuple) {
 				$str .= '<li><a href="/medical_records/see_permissions/'.$tuple['medical_rec_id'].'">View all permissions</a></li>';
 				break;
 				
-			case 'accept-ref':
-				$str .= '<li><a href="/connections/request/'.$tuple['is_refered_id'].'">Request Connection</a></li>';
+			case 'join-group':
+				$str .= '<li><a href="/groups/join/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Join</a></li>';
 				break;
-			/*case 'delete-ref':
-				$str .= '<li><a href="/referal/?/'.$tuple['referal_id'].'">Delete</a></li>';
-				break;	*/
+				
+			case 'leave-group':
+				$str .= '<li><a href="/groups/leave/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Leave</a></li>';
+				break;
+			
+			case 'delete-group':
+				$str .= '<li><a href="/groups/delete/'.$tuple['group_id'].'">Delete Group</a></li>';
+				break;
+			
+			
+			case 'accept-ref':
+				$str .= '<li><a href="/refers/accept_referal/'.$tuple['patient_id'].'/'.$tuple['is_refered_id']'/'.$tuple['referal_id']'">Request Connection</a></li>';
+				break;
+			case 'delete-ref':
+				$str .= '<li><a href="/refers/delete_referal/'.$tuple['referal_id'].'">Delete</a></li>';
+				break;
+
 		}
 	}
 	return $str;

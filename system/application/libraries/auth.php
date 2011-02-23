@@ -27,17 +27,22 @@ class Auth {
 	const CurrPAT		= 1;	// current user: no other params
 	const CurrHCP		= 2;	// current user: no other params
 	const CurrCONN		= 3;	// requires one id, tests if the current is connected with the id provided
-	const ACCOUNT		= 4;
-	const PAT			= 5;	// requires one id, tests if it's a patient id
-	const HCP			= 6;	// requires one id, tests if it's a hcp id
+	const CurrGRPMEM	= 4;	// requires one groupid, tests if the current is a member of the groupid
+	const ACCOUNT		= 5;
+	const PAT			= 6;	// requires one id, tests if it's a patient id
+	const HCP			= 7;	// requires one id, tests if it's a hcp id
 	
-	const APPT_EXST		= 7;
-	const APPT_MINE		= 8;	// requires one id, tests if it's your appointment id
+	const APPT_EXST		= 8;
+	const APPT_MINE		= 9;	// requires one id, tests if it's your appointment id
 	
-	const BILL_DELC		= 8;
-	const BILL_PAYC		= 9;		
+	const BILL_DELC		= 10;
+	const BILL_PAYC		= 11;
 	
+	const MEDREC		= 12;		
+
 	const REF_MINE		=100;   // requires one id, tests if it's your referal id
+	
+	
 	
 	function __construct() {
 		$CI =& get_instance();
@@ -125,11 +130,11 @@ class Auth {
 					return  auth::PAT;
 				}
 				$this->CI->load->model('patient_model');
-				$hcp = $this->CI->hcp_model->get_patient(array($a[$i+1]));
-				if ($hcp === -1) {
+				$pat = $this->CI->hcp_model->get_patient(array($a[$i+1]));
+				if ($pat === -1) {
 					$this->CI->ui->set_query_error();
 					return auth::PAT;
-				} else if (count($hcp) <= 0) {
+				} else if (count($pat) <= 0) {
 					$this->CI->ui->set_error('The id does not refer to any patient');
 					return auth::PAT;
 				}
@@ -176,6 +181,10 @@ class Auth {
 					$this->CI->ui->set_error('You are not connected with this account','Permission Denied');
 					return auth::CurrCONN;
 				}
+				$i++;
+				break;
+				
+			case auth::CurrGRPMEM:
 				$i++;
 				break;
 				
@@ -245,7 +254,7 @@ class Auth {
 				$this->CI->load->model('bills_model');
 				$results = $this->CI->bills_model->get_bill($a[$i+1]);
 				if( $results === -1 ){
-					$this->ui->set_query_error(); 
+					$this->CI->ui->set_query_error(); 
 					return auth::BILL_DELC;
 				}
 				
@@ -314,6 +323,27 @@ class Auth {
 				}
 				$i++;
 				break;	
+			
+			case auth::MEDREC:
+				if ($a[$i+1] === NULL) {
+					$this->CI->ui->set_error('Missing medical record id','Missing Arguments');
+					return auth::MEDREC;
+				}
+				$get = $this->CI->medical_records_model->get_medicalrecord(array($a[$i+1]));
+				if ($get === -1) {
+					$this->CI->ui->set_query_error(); 
+					return auth::MEDREC;
+				}
+				else if (sizeof($get) == 0) {
+					$this->CI->ui->set_error('Specified medical record does not exist');
+					return auth::MEDREC;
+				}
+				else if ($get[0]['patient_id'] != $this->get_account_id()) {
+					$this->CI->ui->set_error('Only the owner can modify this medical record','Permission Denied');
+					return auth::MEDREC;
+				}
+
+				break;
 
 
 			}

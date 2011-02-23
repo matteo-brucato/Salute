@@ -15,6 +15,10 @@ class Medical_records extends Controller {
 		$this->load->library('ui');
 		$this->load->library('auth');
 		$this->load->helper(array('form', 'url'));
+		$this->load->model('medical_records_model');
+		$this->load->model('hcp_model');
+		$this->load->model('connections_model');
+
 	}
 
 	/*
@@ -45,8 +49,10 @@ class Medical_records extends Controller {
 	function myrecs()
 	{
 		if (DEBUG) $this->output->enable_profiler(TRUE);
-		$this->auth->check_logged_in();
-		$this->load->model('medical_records_model');
+//		$this->auth->check_logged_in();
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}
 
 		// if patient, show all their med recs
 		if ($this->auth->get_type() === 'patient') {
@@ -86,23 +92,26 @@ class Medical_records extends Controller {
 	 * */
 	function patient($patient_id = NULL) {
 		if (DEBUG) $this->output->enable_profiler(TRUE);
-		$this->auth->check_logged_in();
-		$this->load->model('medical_records_model');
-		$this->load->model('hcp_model');
-		$this->load->model('connections_model');
-		
+//		$this->auth->check_logged_in();
+		if ($this->auth->check(array(auth::CurrLOG,auth::CurrCONN,$patient_id)) !== TRUE) {
+			return;
+		}
+
+		/*
 		if ($patient_id == NULL) {
 			$this->ui->set_error('No patient id specified','Missing Arguments');
 			return;
 		}
-		
+		*/
+		/** Patients can now see other patient's medical records, if they are connected with high level of trust
 		// Current user must be an hcp
 		if ($this->auth->get_type() != 'hcp') {
 			$this->ui->set_error('Only HCPs have access to this funtionality.<br />
 			To see your medical records go <a href="/medical_records">here</a>', 'Permission Denied');
 			return;
 		}
-		
+		* */
+		/*		
 		// Current user must be connected with the patient
 		$check = $this->connections_model->is_connected_with(
 			$this->auth->get_account_id(), $patient_id
@@ -114,21 +123,22 @@ class Medical_records extends Controller {
 		else if ($check == FALSE) {
 			$this->ui->set_error('You are not connected with this patient','Permission Denied');
 		} else {
-			// Get the list of medical records from the model
-			$recs = $this->medical_records_model->get_patient_records(
-				array($patient_id, $this->auth->get_account_id())
-			);
-			if ($recs === -1){
-				$this->ui->set_query_error(); 
-				return;
-			} else {
-				// View the list
-				$this->ui->set(array(
-					$this->load->view('mainpane/list_medical_records',
+		*/
+		// Get the list of medical records from the model
+		$recs = $this->medical_records_model->get_patient_records(
+			array($patient_id, $this->auth->get_account_id()
+			));
+		if ($recs === -1){
+			$this->ui->set_query_error(); 
+			return;
+		} else {
+			// View the list
+			$this->ui->set(array(
+				$this->load->view('mainpane/lists/medical_records',
 					array('list_name' => 'Medical Records', 'list' => $recs) , TRUE)
-				));
-			}
+			));
 		}
+		//}
 	}
 	
 	/**
@@ -137,19 +147,28 @@ class Medical_records extends Controller {
 	 * @test Tested
 	 * */
 	function upload($pid = NULL) {
-		$this->auth->check_logged_in();
-		
+//		$this->auth->check_logged_in();
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}
+	
 		// Get the patient_id of the medical record to upload
 		if ($this->auth->get_type() === 'patient') {
 			$patient_id = $this->auth->get_account_id();
-		} else {
+		} 
+		/*else {
 			if ($pid == NULL || ! is_numeric($pid)) {
 				$this->ui->set_error('No patient specified');
 				return;
 			}
 			$patient_id = $pid;
+		}*/
+		else if ($this->auth->get_type() === 'hcp' && $this->auth->check(array(auth::CurrCONN,$pid)) !== TRUE) {
+			return;
 		}
-		
+		else{
+			$patient_id = $pid;
+		}
 		$this->ui->set(array(
 			$this->load->view('mainpane/forms/upload_medrec',
 				array('patient_id' => $patient_id) , TRUE)
@@ -260,7 +279,10 @@ class Medical_records extends Controller {
 	 * @test Tested
 	 * */
 	function add_permission($mrec_id) {
-		$this->auth->check_logged_in();
+		//$this->auth->check_logged_in();
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}
 		
 		$this->ui->set(array(
 			$this->load->view('mainpane/forms/add_permission', array('medrec_id' => $mrec_id), TRUE)
@@ -273,8 +295,10 @@ class Medical_records extends Controller {
 	 * @test Tested
 	 * */
 	function remove_permission($mrec_id) {
-		$this->auth->check_logged_in();
-		
+		//$this->auth->check_logged_in();
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}
 		$this->ui->set(array(
 			$this->load->view('mainpane/forms/remove_permission', array('medrec_id' => $mrec_id), TRUE)
 		));
@@ -282,24 +306,30 @@ class Medical_records extends Controller {
 	
 	/**
 	 * Displays a list of all HCPs that have access to a particular
-	 * medica record
+	 * medical record
 	 * 
 	 * @attention only accessible to patients
+	 * @todo type check $mid
 	 * */
 	function see_permissions($mid) {
-		$this->auth->check_logged_in();
-		$this->load->model('medical_records_model');
+		//$this->auth->check_logged_in();
 		
+		if ($this->auth->check(array(auth::CurrLOG,auth::MEDREC,$mid)) !== TRUE) {
+			return;
+		}
+		/*
 		if ($mid == NULL) {
 			$this->ui->set_error('Missing medical record id','Missing Arguments');
 			return;
-		}
+		}*/
 		
+		/*
+		// @attention: milestone 1 allows patients to have permissions on other patient's medical records
 		// Only for patients
-		if ($this->auth->get_type() != 'patient') {
+		if ($this->auth->get_type() !== 'patient') {
 			$this->ui->set_error('Only patients can access this functionality','Permission Denied');
 			return;
-		}
+		} */
 		
 		// Get tuple for this medical record
 		$get = $this->medical_records_model->get_medicalrecord(array($mid));
@@ -338,7 +368,6 @@ class Medical_records extends Controller {
 	 * */
 	function remove_permission_do($mid) {
 		$this->auth->check_logged_in();
-		$this->load->model('medical_records_model');
 		
 		if ($mid == NULL) {
 			$this->ui->set_error('Missing input medical record id','Missing Arguments');
@@ -403,7 +432,6 @@ class Medical_records extends Controller {
 	 * */
 	function add_permission_do($mid = NULL) {
 		$this->auth->check_logged_in();
-		$this->load->model('medical_records_model');
 		$this->load->model('connections_model');
 		
 		if ($mid == NULL) {
@@ -490,7 +518,6 @@ class Medical_records extends Controller {
 	function delete($medical_record_id = FALSE) {
 		if (DEBUG) $this->output->enable_profiler(TRUE);
 		$this->auth->check_logged_in();
-		$this->load->model('medical_records_model');
 		$type = '';
 		
 		// Check input

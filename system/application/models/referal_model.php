@@ -67,9 +67,12 @@ class Referal_model extends Model {
 	 *   Is of the form: array(account_id of hcp, account_id of hcp being refered, account_id of patient)
 	 * @return
 	 *  -1 in case of error in a query
-	 *   0 if everything goes fine approved status is changed to TRUE
+	 *  -2 referal ID does not exist
+	 *   referal_id if everything goes fine
 	 * */
 	function create_referal($inputs){
+		
+		$this->db->trans_start();
 		
 		$sql = "INSERT INTO refers (refering_id, is_refered_id, patient_id)
 			VALUES (?, ?, ?)";
@@ -78,7 +81,19 @@ class Referal_model extends Model {
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 			
-		return 0;
+		$sql = "select last_value from refers_referal_id_seq";
+			$query = $this->db->query($sql);
+			if ($this->db->trans_status() === FALSE)
+				return -1;
+			
+			if ($query->num_rows() > 0) {
+				$res = $query->result_array();
+				$referal_id = $res[0]['last_value'];
+			} else {
+				return -2;
+			}
+		$this->db->trans_complete();	
+		return $referal_id;
 	}
 	
 	
