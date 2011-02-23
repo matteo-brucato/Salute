@@ -34,7 +34,7 @@ class Ui {
 	 * 1 = no_error, 2 = query_error, 3 = other_error, 4 = message, 5 = redirect
 	 * */
 	private $status_code = -1; 
-	
+		
 	function __construct() {
 		$this->CI =& get_instance();
 		$this->CI->load->library('layout');
@@ -45,7 +45,7 @@ class Ui {
 		// The actual layout to use can be set differently, for
 		// instance, reading it from a cookie or a global variable
 		$this->CI->layout->set('faux-8-2-col');
-		
+
 		// Create curr_url string
 		if ($this->CI->uri->segment(1) != '') {
 			$curr_url = '> <a href="/'.$this->CI->uri->segment(1).'" class="ajax">'.$this->CI->uri->segment(1).'</a>';
@@ -87,6 +87,7 @@ class Ui {
 	 *   Possible keys: main, side, [ others in the future ]
 	 * */
 	function __destruct() {
+
 		if ($this->debug === TRUE) {
 			echo $this->status_code;
 			exit;
@@ -161,7 +162,7 @@ class Ui {
 		$this->panels[0] = "<h2 class=\"message_hdr\">$type</h2><h3 class=\"message_body\">$message</h3>";
 		$this->status_code = 4; // no error
 	}
-	
+
 	/**
 	 * Set a redirection response, ignoring any UI settings
 	 * */
@@ -170,6 +171,6 @@ class Ui {
 		if ($this->debug === FALSE) $this->redirect = $url;
 		$this->status_code = 5; // redirect
 	}
-	
+
 }
 ?>
