@@ -84,6 +84,8 @@ class Groups extends Controller {
 			return;
 		}
 		
+		//$this->auth->set_message("You have successfully created $result[0]['name']",'Confirmation');
+		
 		// End transaction
 		$this->db->trans_complete();
 		//$this->db->trans_rollback();

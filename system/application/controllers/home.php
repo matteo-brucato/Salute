@@ -44,6 +44,7 @@ class Home extends Controller {
 	 * */
 	function login()
 	{
+		
 		if ($this->auth->is_logged_in()){
 			$this->ui->redirect('/profile');
 			return;
