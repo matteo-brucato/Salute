@@ -39,7 +39,7 @@ class Auth {
 	const BILL_PAYC		= 11;
 	
 	const MEDREC		= 12;		
-	
+
 	const REF_MINE		=100;   // requires one id, tests if it's your referal id
 	
 	
@@ -254,7 +254,7 @@ class Auth {
 				$this->CI->load->model('bills_model');
 				$results = $this->CI->bills_model->get_bill($a[$i+1]);
 				if( $results === -1 ){
-					$this->ui->set_query_error(); 
+					$this->CI->ui->set_query_error(); 
 					return auth::BILL_DELC;
 				}
 				
@@ -329,7 +329,7 @@ class Auth {
 					$this->CI->ui->set_error('Missing medical record id','Missing Arguments');
 					return auth::MEDREC;
 				}
-				$get = $this->medical_records_model->get_medicalrecord(array($a[$i+1]));
+				$get = $this->CI->medical_records_model->get_medicalrecord(array($a[$i+1]));
 				if ($get === -1) {
 					$this->CI->ui->set_query_error(); 
 					return auth::MEDREC;
@@ -339,7 +339,7 @@ class Auth {
 					return auth::MEDREC;
 				}
 				else if ($get[0]['patient_id'] != $this->get_account_id()) {
-					$this->ui->set_error('Only the owner can modify this medical record','Permission Denied');
+					$this->CI->ui->set_error('Only the owner can modify this medical record','Permission Denied');
 					return auth::MEDREC;
 				}
 
