@@ -37,7 +37,7 @@ class Ui {
 		// The actual layout to use can be set differently, for
 		// instance, reading it from a cookie or a global variable
 		$this->CI->layout->set('faux-8-2-col');
-		
+
 		// Create curr_url string
 		if ($this->CI->uri->segment(1) != '') {
 			$curr_url = '> <a href="/'.$this->CI->uri->segment(1).'" class="ajax">'.$this->CI->uri->segment(1).'</a>';
@@ -150,7 +150,7 @@ class Ui {
 		$this->panels[0] = "<h2 class=\"message_hdr\">$type</h2><h3 class=\"message_body\">$message</h3>";
 		$this->status_code = OK_MESSAGE; // message, no error
 	}
-	
+
 	/**
 	 * Set a redirection response, ignoring any UI settings
 	 * */

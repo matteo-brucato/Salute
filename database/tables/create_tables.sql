@@ -12,6 +12,7 @@ DROP TABLE p_d_Connection CASCADE;
 DROP TABLE d_d_Connection CASCADE;
 DROP TABLE permission CASCADE;
 DROP TABLE ci_sessions CASCADE;
+DROP TABLE groups CASCADE;
 
 
 --
