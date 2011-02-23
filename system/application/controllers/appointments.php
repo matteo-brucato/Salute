@@ -28,6 +28,9 @@ class Appointments extends Controller {
 	function index(){
 		//$this->auth->check_logged_in();
 		//$this->ui->redirect('/appointments/upcoming');
+		$check = $this->auth->check(array(auth::CurrLOG));
+		if ($check !== TRUE) return;
+		
 		$this->upcoming();
 	}
 

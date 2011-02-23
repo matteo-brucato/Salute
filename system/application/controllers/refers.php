@@ -1,7 +1,7 @@
 <?php
 /**
- * @file appointments.php
- * @brief Controller to handle appointments
+ * @file refers.php
+ * @brief Controller to handle referals
  *
  * @defgroup ctr Controllers
  * @ingroup ctr
@@ -25,6 +25,9 @@
 	 * redirects to my_referals
 	 * */
 	function index(){
+		$check = $this->auth->check(array(auth::CurrLOG));
+		if ($check !== TRUE) return;
+		
 		$this->my_referals();
 	}
 	
@@ -53,7 +56,7 @@
 			return;
 		}
 		$mainview = $this->load->view('mainpane/lists/referals',
-					array('list_name' => 'My Referals', 'list' => $results) , TRUE);
+					array('list_name' => 'My Referals', 'list' => $results), TRUE);
 				
 		// Give results to the client
 		$this->ui->set(array($mainview));
@@ -64,7 +67,7 @@
 	 * Allows a hcp to create a referal
 	 * 
 	 * */
-	 function create($is_refered_id == NULL, $patient_id == NULL){
+	 function create($is_refered_id = NULL, $patient_id = NULL){
 		 
 		 $check = $this->auth->check(array(
 			auth::CurrLOG,
@@ -100,12 +103,13 @@
 				if ($results[0]['connection_level'] === '2' or $results[0]['connection_level'] === '3'){
 					
 					$connect = $this->accept_referal($patient_id, $is_refered_id, $results, TRUE);
-		}
+				}
 		$this->db->trans_complete();
 		$this->ui->set_message('Your referal has been submitted','Confirmation');
 		return;
 		 
-	 }
+		}
+	}
 	 
 	 /**
 	  * Accepts the referal
@@ -113,7 +117,7 @@
 	  * @return 0, successfully accepted and sent the email to the doctor
 	  * 
 	  * */
-	  function accept_referal($patient_id == NULL, $is_refered_id == NULL, $referal_id == NULL, $flag == NULL){
+	  function accept_referal($patient_id = NULL, $is_refered_id = NULL, $referal_id = NULL, $flag = NULL){
 			
 			$check = $this->auth->check(array(
 			auth::CurrLOG,
@@ -123,7 +127,7 @@
 			auth::REF_MINE, $referal_id,
 			auth::CurrCONN, $patient_id,
 			auth::CurrCONN, $is_refered));
-		if ($check !== TRUE) retur
+		if ($check !== TRUE) return;
 		  
 		  //set referal status to true
 		  $res = $this->referal_model->approve(array($referal_id));
@@ -163,7 +167,7 @@
 					//get the name of the patient to put in the email
 					$patient_name = $this->patient_model->get_patient($patient_id);
 					if ($patient_name  === -1){
-						$this->ui->set_query_error() 
+						$this->ui->set_query_error();
 						return -1;
 					}
 					elseif ( count($patient_name) <= 0 ){
@@ -215,6 +219,5 @@
 		}
 	}	 
  }
- 
  /** @} */
 ?>

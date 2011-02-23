@@ -1,7 +1,7 @@
 <?php
 $this->load->helper('actions');
 $this->load->helper('table_result');
-$this->load->library('auth');
+//$this->load->library('auth');
 
 /**
  * @param
@@ -55,8 +55,7 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 		if ($table['tuples'][$i]['status'] === 'Request Sent')
 			$actions = array();
 		else
-			$actions = array('delete-ref');
-			
+			$actions = array('delete-ref');		
 	}
 	
 	$table['tuples'][$i]['actions'] = '<ul>';
