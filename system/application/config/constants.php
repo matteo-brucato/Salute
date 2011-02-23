@@ -42,6 +42,21 @@ define('IS_AJAX', isset($_SERVER['HTTP_X_REQUESTED_WITH'])
 define('SITENAME', "Salute");
 
 define('DEBUG', FALSE);
+define('TESTING_ON', FALSE);
+
+// Result constants for application testing when TESTING_ON = true
+define('CI_ERROR', 'CI_ERROR'); // code igniter error
+define('CI_PHP_ERROR', 'CI_PHP_ERROR'); // php error
+define('CI_404_ERROR', 'CI_404_ERROR'); // 404, page not found
+define('QUERY_ERROR', 'QUERY_ERROR'); // query error
+define('CTR_ERROR', 'CTR_ERROR'); // controller error (any)
+define('REDIRECTED', 'REDIRECTED'); // redirect
+define('OK_MESSAGE', 'OK_MESSAGE'); // message display
+define('ALL_OK', 'ALL_OK'); // all fine
+
+
+
+
 
 /* End of file constants.php */
 /* Location: ./system/application/config/constants.php */

@@ -1,9 +1,9 @@
 # TESTS AS NOT LOGGED IN
 
 # Test Home controller
-/home:1
-/home/sitemap:1
-/home/login:3
-/home/logout:5
-/home/retrieve_password:1
-FUZZ----:0
+/home:ALL_OK
+/home/sitemap:ALL_OK
+/home/login:CTR_ERROR
+/home/logout:REDIRECTED
+/home/retrieve_password:ALL_OK
+FUZZ----:CI_404_ERROR
