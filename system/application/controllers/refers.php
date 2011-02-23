@@ -56,7 +56,7 @@
 			return;
 		}
 		$mainview = $this->load->view('mainpane/lists/referals',
-					array('list_name' => 'My Referals', 'list' => $results), TRUE);
+					array('list_name' => 'My Referrals', 'list' => $results), TRUE);
 				
 		// Give results to the client
 		$this->ui->set(array($mainview));
@@ -102,7 +102,7 @@
 			default:
 				if ($results[0]['connection_level'] === '2' or $results[0]['connection_level'] === '3'){
 					
-					$connect = $this->accept_referal($patient_id, $is_refered_id, $results, TRUE);
+					$connect = $this->accept_referal($patient_id, $is_refered_id, $results/*,TRUE*/);
 				}
 		$this->db->trans_complete();
 		$this->ui->set_message('Your referal has been submitted','Confirmation');
@@ -117,16 +117,16 @@
 	  * @return 0, successfully accepted and sent the email to the doctor
 	  * 
 	  * */
-	  function accept_referal($patient_id = NULL, $is_refered_id = NULL, $referal_id = NULL, $flag = NULL){
+	  function accept_referal($patient_id = NULL, $is_refered_id = NULL, $referal_id = NULL/*, $flag = NULL*/){
 			
 			$check = $this->auth->check(array(
 			auth::CurrLOG,
-			auth::CurrHCP,
+			auth::CurrPAT,
+			auth::REF_MINE, $referal_id,
 			auth::HCP, $is_refered_id,
 			auth::PAT, $patient_id,
-			auth::REF_MINE, $referal_id,
 			auth::CurrCONN, $patient_id,
-			auth::CurrCONN, $is_refered));
+			auth::CurrCONN, $is_refered_id));
 		if ($check !== TRUE) return;
 		  
 		  //set referal status to true
@@ -204,7 +204,7 @@
 			
 		if ($check !== TRUE) return;
 
-		$results = $this->referal_model->delete(array($apt_id));
+		$results = $this->referal_model->delete(array($ref_id));
 							
 		switch ($results) {
 			case -1:

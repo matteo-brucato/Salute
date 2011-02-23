@@ -111,10 +111,10 @@ class Referal_model extends Model {
 		
 		//list all referals a patient has received
 		if( $inputs['type'] === 'patient'){
-			$sql = "SELECT R.referal_id, R.status, R.is_refered_id, H.first_name AS ref_FN, H.last_name AS ref_LN,
-					H2.first_name AS is_ref_FN, H2.last_name AS is_ref_LN, H2.specialization, R.date_time
+			$sql = "SELECT R.referal_id, R.status, R.is_refered_id, H.first_name AS ref_fn, H.last_name AS ref_ln,
+					H2.first_name AS is_ref_fn, H2.last_name AS is_ref_ln, H2.specialization, R.date_time, R.patient_id
 				FROM refers R, hcp_account H, hcp_account H2
-				WHERE R.patient_id = ? AND R.refering_id = H.account_id AND R.is_refered_id = H2.account_id"
+				WHERE R.patient_id = ? AND R.refering_id = H.account_id AND R.is_refered_id = H2.account_id";
 			
 			$query = $this->db->query($sql, array($inputs['account_id']));
 			
@@ -128,10 +128,10 @@ class Referal_model extends Model {
 		}
 		
 		//list all referals an hcp has issued
-		$sql = "SELECT R.referal_id, R.status, P.first_name AS pat_FN, P.last_name AS pat_LN, 
-				H.first_name AS is_ref_FN, H.last_name AS is_ref_LN, H.specialization, R.date_time 
+		$sql = "SELECT R.referal_id, R.status, P.first_name AS pat_fn, P.last_name AS pat_ln, 
+				H.first_name AS is_ref_fn, H.last_name AS is_ref_ln, H.specialization, R.date_time 
 			FROM refers R, patient_account P, hcp_account H 
-			WHERE R.refering_id = ? AND R.patient_id = P.account_id AND R.is_refered_id = H.account_i"
+			WHERE R.refering_id = ? AND R.patient_id = P.account_id AND R.is_refered_id = H.account_id";
 			
 			$query = $this->db->query($sql, array($inputs['account_id']));
 			
