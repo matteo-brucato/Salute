@@ -116,6 +116,8 @@ function layout_bindings() {
 			}
 		}
 		
+		else return;
+		
 		//show_history();
 		execute_ajax(href);
 	});
