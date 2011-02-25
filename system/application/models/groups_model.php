@@ -129,6 +129,26 @@ class Groups_model extends Model {
 	
 		return 0; // Success
 	}
+
+	function get_group($group_id){
+		
+		$sql = "SELECT *
+				FROM groups
+				WHERE group_id = ? ";
+		
+		$query = $this->db->query($sql, array($group_id));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		
+		// If found, return it
+		if ($query->num_rows() > 0) {
+			$array = $query->result_array();
+			return $array[0];	
+		}
+		return NULL;
+	}
+
 	
 	/**
 	 * Lists all Groups
