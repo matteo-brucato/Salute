@@ -84,7 +84,7 @@ class Groups extends Controller {
 			return;
 		}
 		
-		//$this->auth->set_message("You have successfully created $result[0]['name']",'Confirmation');
+		$this->ui->set_message("You have successfully created the group: $name",'Confirmation');
 		
 		// End transaction
 		$this->db->trans_complete();
@@ -102,7 +102,8 @@ class Groups extends Controller {
 		}
 		
 		// check that group_id is right type and not null
-
+		// check that they have permission
+		
 		// Start a transaction now
 		$this->db->trans_start();
 		//$this->db->trans_begin();
@@ -135,22 +136,36 @@ class Groups extends Controller {
 	/**
 	 * Group Member Leave from the Existing Group
 	 * */
-	function leave(){
+	function leave($group_id){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
 		}
-	}
-	
-	/**
-	 * Requests to Join an Existing Group
-	 * @attention only can request if the group is public
-	 * */
-	function request(){
 		
-		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+		// Start a transaction now
+		$this->db->trans_start();
+		//$this->db->trans_begin();
+		
+		$mem = $this->groups_model->is_member($this->auth->get_account_id(),$group_id);
+		if($mem === -1){
+			$this->ui->set_query_error();
+			return;
+		} else if ($mem){
+			$check = $this->groups_model->leave($this->auth->get_account_id(),$group_id);
+			if ($check === -1){
+				$this->ui->set_query_error();
+				return;	
+			}
+		} else {
+			$this->ui->set_error('Internal Server Error','server');
 			return;
 		}
+		
+		$this->ui->set_message('You have successfully left the group.','Confirmation');
+		$this->list_my_groups();
+		// Start a transaction now
+		$this->db->trans_start();
+		//$this->db->trans_begin();
 	}
 	
 	/**
@@ -186,11 +201,12 @@ class Groups extends Controller {
 		}
 
 		for ($i = 0; $i < count($list); $i++) {
-			if ($this->groups_model->is_member(
-												$this->auth->get_account_id(),
-												$list[$i]['group_id'] 
-									)) 
-			{
+			
+			$mem = $this->groups_model->is_member($this->auth->get_account_id(),$list[$i]['group_id']); 
+			if ($mem === -1){
+				$this->auth->set_query_error();
+				return;	
+			} else if ($mem) {
 				$member[$i]['is'] = TRUE; 
 			} else 
 				$member[$i]['is'] = FALSE; 
