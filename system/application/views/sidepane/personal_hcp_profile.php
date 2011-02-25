@@ -41,6 +41,9 @@
 	<li><a href="/groups/list_my_groups" class="ajax">My Groups</a></li>
 	
 	<li><a href="/refers" class="ajax">My Referals</a>
+		<ul>
+			<li><a href="/refers/create_referral">Create referral</a></li>
+		</ul>
 	</li>
 	
 	<li><a href="/settings" class="ajax">Settings</a>

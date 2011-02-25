@@ -63,6 +63,81 @@
 	}
 	
 	
+	function create_referral() {
+		
+		$check = $this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrHCP));
+		if ($check !== TRUE) return;
+		
+		$results = $this->connections_model->list_my_hcps($this->auth->get_account_id()); 
+		
+		if ($results === -1) {
+			$this->ui->set_query_error();
+			return;
+		}
+		
+		$this->ui->set(array(
+			$this->load->view('mainpane/forms/referral_pick_hcp',
+			array('list_name' => 'My Colleagues', 'list' => $results, 'status' => 'connected') , TRUE)
+		));
+		
+		/*
+		$hcp_id = get_hcp_id();
+		
+		$this->ui->set(array(
+			$this->load->view('mainpane/forms/referral_pick_patient',
+			array('list_name' => 'My Patients', 'list' => $results, 'status' => 'connected') , TRUE)
+		))
+		
+		$patient_id = get_patient_id();
+		* */
+	}
+	
+	function get_hcp_id() {
+		$check = $this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrHCP));
+		if ($check !== TRUE) return;
+		
+		$hcp_id = $this->input->post('hcp_id');
+		
+		if ($hcp_id == NULL) {
+			$this->ui->set_error('Select an hcp.','Missing Arguments'); 
+			return;
+		}
+			
+		$check = $this->auth->check(array(
+			auth::HCP, $hcp_id,
+			auth::CurrCONN, $hcp_id));
+		if ($check !== TRUE) return;
+		
+		return $hcp_id;
+	}
+	
+	
+	function get_patient_id() {
+		$check = $this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrHCP));
+		if ($check !== TRUE) return;
+		
+		$patient_id = $this->input->post('patient_id');
+		
+		if ($hcp_id == NULL) {
+			$this->ui->set_error('Select a patient.','Missing Arguments'); 
+			return;
+		}
+			
+		$check = $this->auth->check(array(
+			auth::PAT, $patient_id,
+			auth::CurrCONN, $patient_id));
+		if ($check !== TRUE) return;
+		
+		return $patient_id;
+	}
+	
+	
 	/**
 	 * Allows a hcp to create a referal
 	 * 

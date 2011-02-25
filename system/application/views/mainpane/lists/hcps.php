@@ -52,10 +52,13 @@ else { // not connected
 
 // Everybody has the same action, in this implementation
 for ($i = 0; $i < count($table['tuples']); $i++) {
+	
 	$table['tuples'][$i]['actions'] = '<ul>';
 	$table['tuples'][$i]['actions'] .= get_action_strings($actions, $list[$i]);
 	$table['tuples'][$i]['actions'] .= '<ul>';
+	
 }
 
 view_table($table);
+		
 ?>
