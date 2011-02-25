@@ -43,18 +43,17 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 	}
 
 	if ($this->auth->get_type() === 'patient') {
-			$actions = array('reschedule-app', 'cancel-app');
+		$actions = array('reschedule-app', 'cancel-app');
 	} 
 	else {
 		if ($table['tuples'][$i]['approved'] === 'approved')
 			$actions = array('cancel-app');
 		else
 			$actions = array('accept-app', 'cancel-app');
-			
 	}
 	
 	$apt_date_time = strtotime($table['tuples'][$i]['date_time']);
-	if( $apt_date_time < time())
+	if ($apt_date_time < time())
 		$actions = array();
 	
 	$table['tuples'][$i]['actions'] = '<ul>';

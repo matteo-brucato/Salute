@@ -13,6 +13,8 @@
 #include <string>
 #include <sstream>
 #include <fcntl.h>
+#include <algorithm>
+#include <boost/algorithm/string.hpp>
 using namespace std;
 
 
@@ -37,20 +39,29 @@ int main(int argc, char *argv[]) {
 			if (line[0] == '#') continue;
 			
 			// Find : into current parsed line
-			size_t semipos = line.find(":");
-			if (semipos == string::npos) continue; // : not found
+			size_t a, b, colpos = (a=line.find(' ')) < (b=line.find('\t')) ? a : b;
+			if (colpos == string::npos) continue; // space or tab not found
 			
 			// Get url and expected result
-			string url = line.substr(0, semipos);
-			string exp = line.substr(semipos+1);
+			string url = line.substr(0, colpos);
+			string exp = line.substr(colpos+1);
 			
-			// Convert expected result into integer
-			//size_t expected;
-			//sscanf(exp.c_str(), "%d", &expected);
+			// Get possible extra options for curl
+			size_t pipepos = exp.find('|');
+			string opts = "";
+			if (pipepos != string::npos) {
+				opts = exp.substr(pipepos+1);
+				exp = exp.substr(0, pipepos);
+			}
+			
+			// Trim
+			boost::trim(url);
+			boost::trim(exp);
+			boost::trim(opts);
 			
 			// Execute curl
-			cout << i <<". curl " << url << endl << "   expected result = " << exp << endl;
-			string command = "curl -k https://localhost/" + url + " > last_curl_output 2> last_curl_stderr";
+			cout << i <<". " << url << " " << opts << endl << "   expected = " << exp << endl;
+			string command = "curl -k " + opts + " https://localhost/" + url + " > last_curl_output 2> last_curl_stderr";
 			system(command.c_str());
 			
 			// Read curl output
@@ -63,14 +74,14 @@ int main(int argc, char *argv[]) {
 				cerr << "Cannot open last_curl_output" << endl;
 				exit(1);
 			}
-			cout << "   curl result = " << curl_result << endl;
+			cout << "   obtained = " << curl_result << endl;
 			
 			// Check if expected result match with actual result
 			if (curl_result != exp) {
 				cerr << "====================================" << endl
 				     << "   ERROR!                           " << endl
 				     << "====================================" << endl;
-				cerr << "Expected result does not match in test number " << i << endl;
+				cerr << "Expected result does not match obtained result, in test number " << i << endl;
 				exit(2);
 			}
 			

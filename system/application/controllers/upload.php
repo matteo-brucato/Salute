@@ -22,7 +22,7 @@ class Upload extends Controller {
 	 */ 
 	function index()
 	{
-		//$this->ui->redirect('/medical_records/upload');
+		//$this->ui->set_redirect('/medical_records/upload');
 		$this->ui->set_error('Access denied','Forbidden');
 	}
 	

@@ -22,14 +22,13 @@ class Appointments extends Controller {
 
 	/**
 	 * fn index -- default
-	 * checks if user is logged in. 
 	 * redirects to page to list upcoming appointments
 	 * */
 	function index(){
 		//$this->auth->check_logged_in();
-		//$this->ui->redirect('/appointments/upcoming');
-		$check = $this->auth->check(array(auth::CurrLOG));
-		if ($check !== TRUE) return;
+		//$this->ui->set_redirect('/appointments/upcoming');
+		//$check = $this->auth->check(array(auth::CurrLOG));
+		//if ($check !== TRUE) return;
 		
 		$this->upcoming();
 	}
