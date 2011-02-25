@@ -217,16 +217,16 @@ class Auth {
 					break;
 
 				case auth::REF_MINE:
-					if ($perm[$i+1] === NULL) {
+					if ($a[$i+1] === NULL) {
 						$this->CI->ui->set_error('No input provided');
 						return auth::REF_MINE;
 					}
-					if (! is_numeric($perm[$i+1])) {
+					if (! is_numeric($a[$i+1])) {
 						$this->CI->ui->set_error('Not numeric');
 						return auth::REF_MINE;
 					}
 					$this->CI->load->model('referal_model');
-					$result = $this->CI->referal_model->is_myreferal(array($this->account_id, $perm[$i+1]));
+					$result = $this->CI->referal_model->is_myreferal(array($this->account_id, $a[$i+1]));
 					if ( $result === -1 ){
 						$this->CI->ui->set_query_error();
 						return auth::REF_MINE;

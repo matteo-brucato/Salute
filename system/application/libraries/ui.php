@@ -154,11 +154,10 @@ class Ui {
 	/**
 	 * Set a redirection response, ignoring any UI settings
 	 * */
-	function redirect($url) {
+	function set_redirect($url) {
 		//redirect($url, 'location', 303);
 		if (! TESTING_ON) $this->redirect = $url;
 		$this->status_code = REDIRECTED; // redirect, no error
 	}
-
 }
 ?>

@@ -1,7 +1,6 @@
 <?php
 $this->load->helper('actions');
 $this->load->helper('table_result');
-$this->load->library('auth');
 
 /**
  * @param
@@ -21,24 +20,28 @@ echo '<h2>'.$list_name.'</h2>';
 $table['table-name'] = 'myreferals-table';
 
 // Names of the headers in the table
-$table['th'] = array( 'First Name', 'Last Name', 'First Name', 'Last Name', 'Specialization', 'Date & Time', 'Status', 'Actions');
+if ($this->auth->get_type() === 'patient')
+	$table['th'] = array( 'Doc First Name', 'Doc Last Name', 'Doc First Name', 'Doc Last Name', 'Specialization', 'Date & Time', 'Status', 'Actions');
+else
+	$table['th'] = array( 'Pat First Name', 'Pat Last Name', 'Doc First Name', 'Doc Last Name', 'Specialization', 'Date & Time', 'Status', 'Actions');
 
+	
 // Classes for columns (order matters)
-$table['th_class'] = array( '', '', '', '', '', '', '', '', '');
-$table['td_class'] = array( '', '', '', '', '', '', '', '', '');
+$table['th_class'] = array('', '', '', '', '', '', '', '');
+$table['td_class'] = array('', '', '', '', '', '', '', '');
 
 // All the results from the database
 $table['tuples'] = $list;
 
 // Attributes to display
 if ($this->auth->get_type() === 'patient')
-	$table['attr'] = array( 'ref_FN', 'ref_LN','is_ref_FN', 'is_ref_LN', 'specialization', 'date_time', 'status', 'actions');
+	$table['attr'] = array( 'ref_fn', 'ref_ln','is_ref_fn', 'is_ref_ln', 'specialization', 'date_time', 'status', 'actions');
 else
-	$table['attr'] = array( 'pat_FN', 'pat_LN','is_ref_FN', 'is_ref_LN', 'specialization', 'date_time', 'status', 'actions');
+	$table['attr'] = array( 'pat_fn', 'pat_ln','is_ref_fn', 'is_ref_ln', 'specialization', 'date_time', 'status', 'actions');
 
 for ($i = 0; $i < count($table['tuples']); $i++) {
 	
-	if( $table['tuples'][$i]['status'] === FALSE ){
+	if( $table['tuples'][$i]['status'] === 'f' ){
 		$table['tuples'][$i]['status'] = 'pending';
 	}
 	else{
@@ -55,8 +58,7 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 		if ($table['tuples'][$i]['status'] === 'Request Sent')
 			$actions = array();
 		else
-			$actions = array('delete-ref');
-			
+			$actions = array('delete-ref');		
 	}
 	
 	$table['tuples'][$i]['actions'] = '<ul>';
