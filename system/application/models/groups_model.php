@@ -191,7 +191,19 @@ class Groups_model extends Model {
 	 *   Array of all members in group
 	 *   empty array() if none
 	 * */
-	function list_members($group_id){}
+	function list_members($group_id){
+		
+		$sql = "SELECT *
+				FROM is_in 
+				WHERE group_id = ?";
+
+		$query = $this->db->query($sql, array($group_id));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		return ($query->num_rows() > 0);
+	}
 	
 	function is_member($account_id,$group_id){
 	
@@ -220,9 +232,36 @@ class Groups_model extends Model {
 		return ($query->num_rows() > 0);
 	}
 	
-	function get_member($account_id,$group_id){}
+	function get_member($account_id,$group_id){
+		
+		$sql = "SELECT *
+				FROM is_in
+				WHERE account_id = ? AND group_id = ?";
+		
+		$query = $this->db->query($sql, array($account_id,$group_id));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		
+		// If found, return it
+		if ($query->num_rows() > 0) {
+			$array = $query->result_array();
+			return $array[0];	
+		}
+		return NULL;
+	}
 	
-	function update_member($account_id,$group_id,$permission_number){}
+	function edit_member($account_id,$group_id,$permission_number){
+	
+		$sql = "UPDATE is_in SET permissions = ?
+			WHERE account_id = ? AND group_id = ?";
+		
+		$this->db->query($sql,array($permission_number,$account_id,$group_id));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1; // query error
+		return 0;
+	}
 	
 }
 /**@}*/
