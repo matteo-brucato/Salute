@@ -35,15 +35,16 @@ $table['attr'] = array('account_id', 'first_name', 'last_name', 'actions');
 // The only actions available it to select a patient using a radio button
 for ($i = 0; $i < count($table['tuples']); $i++) {
 	
-	$table['tuples'][$i]['actions'] = '<center><input type="radio" name="patient_id" value=" '.$table['tuples'][$i]['account_id'].'</center>">';
+	$table['tuples'][$i]['actions'] = '<input type="radio" name="patient_id" value="'.$table['tuples'][$i]['account_id'].'" />';
 }
 
 //action="/groups/create_do"
-echo '<form method="post" action="refers/get_patient_id" id="pick_patient">';
+echo '<form method="post" action="/refers/create_referral_do2" id="pick_patient">';
 view_table($table);
 
 echo 	'<br />';
 echo 	'<p>';
+echo		'<input type="hidden" name="hcp_id" value="'.$hcp_id.'" />';
 echo		'<input type="submit" name="submit" value="Submit" class="submit-button" />';
 echo		'<input type="reset" />';
 echo 	'</p>';
