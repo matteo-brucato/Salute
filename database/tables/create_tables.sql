@@ -10,6 +10,7 @@ DROP TABLE medical_record CASCADE;
 DROP TABLE payment CASCADE;
 DROP TABLE p_d_Connection CASCADE;
 DROP TABLE d_d_Connection CASCADE;
+DROP TABLE connections CASCADE;
 DROP TABLE permission CASCADE;
 DROP TABLE ci_sessions CASCADE;
 DROP TABLE groups CASCADE;
@@ -181,14 +182,16 @@ CREATE TABLE groups(
 --Connections Table
 CREATE TABLE connections(
 	connection_id SERIAL NOT NULL,
-	requester_id SERIAL NOT NULL,
-	accepter_id SERIAL NOT NULL,
+	--requester_id SERIAL NOT NULL,
+	--accepter_id SERIAL NOT NULL,
+	sender_id SERIAL NOT NULL,
+	receiver_id SERIAL NOT NULL,
 	accepted BOOLEAN NOT NULL DEFAULT FALSE,
 	date_connected DATE NOT NULL,
 	connection_level VARCHAR(1) DEFAULT '0',
 	PRIMARY KEY (connection_id),
-	FOREIGN KEY (requester_id) REFERENCES accounts(account_id),
-	FOREIGN KEY (accepter_id) REFERENCES accounts(account_id)
+	FOREIGN KEY (sender_id) REFERENCES accounts(account_id),
+	FOREIGN KEY (receiver_id) REFERENCES accounts(account_id)
 );
 	
 

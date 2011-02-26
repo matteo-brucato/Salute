@@ -59,7 +59,34 @@ class Referal_model extends Model {
 
 	 	return FALSE;
 	 }
-	
+	 
+	 
+	 /**
+	 * Gets all of the information regarding a referal
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(referal_id)
+	 * @return
+	 *  -1 in case of error in a query
+	 *  -2 referal_id does not exist
+	 *	 array with all of the referal_information
+	 * */
+	 function get_referal($inputs){
+		 
+		$sql = "SELECT *
+			FROM refers R
+			WHERE R.referal_id = ?";
+		$query = $this->db->query($sql, $inputs);
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;			
+		if ($query->num_rows() < 1)
+			return -2;
+		
+		return $query->result_array();
+	 }
+	 
+	 
 	/**
 	 * hcp refers refers hcp to patient
 	 * 
@@ -68,19 +95,30 @@ class Referal_model extends Model {
 	 * @return
 	 *  -1 in case of error in a query
 	 *  -2 referal ID does not exist
+	 *  -3 the doctor has already created the same referral
 	 *   referal_id if everything goes fine
 	 * */
 	function create_referal($inputs){
 		
-		$this->db->trans_start();
+		//check if the doctor has already created the referal
+		$sql = "SELECT *
+			FROM refers R
+			WHERE R.refering_id = ? AND R.patient_id = ?";
+		$query = $this->db->query($sql, array($inputs[0], $inputs[2]));
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if ($query->num_rows() > 0)
+			return -3;
 		
+		//create the referral
 		$sql = "INSERT INTO refers (refering_id, is_refered_id, patient_id)
 			VALUES (?, ?, ?)";
 		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
-			
+		
+		//get the referral id of the referral just created
 		$sql = "select last_value from refers_referal_id_seq";
 			$query = $this->db->query($sql);
 			if ($this->db->trans_status() === FALSE)
@@ -92,7 +130,7 @@ class Referal_model extends Model {
 			} else {
 				return -2;
 			}
-		$this->db->trans_complete();	
+				
 		return $referal_id;
 	}
 	

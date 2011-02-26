@@ -34,11 +34,10 @@ $table['attr'] = array('account_id', 'first_name', 'last_name', 'specialization'
 // The only actions available it to select an hcp using a radio button
 for ($i = 0; $i < count($table['tuples']); $i++) {
 	
-	$table['tuples'][$i]['actions'] = '<center><input type="radio" name="hcp_id" value=" '.$table['tuples'][$i]['account_id'].'</center>">';
+	$table['tuples'][$i]['actions'] = '<input type="radio" name="hcp_id" value="'.$table['tuples'][$i]['account_id'].'" />';
 }
 
-//action="/groups/create_do"
-echo '<form method="post" action="refers/get_hcp_id" id="pick_hcp">';
+echo '<form method="post" action="/refers/create_referral_do1" id="pick_hcp">';
 view_table($table);
 
 echo 	'<br />';

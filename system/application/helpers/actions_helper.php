@@ -111,7 +111,7 @@ function get_action_strings($actions, $tuple) {
 						
 						
 			case 'accept-ref':
-				$str .= '<li><a href="/refers/accept_referal/'.$tuple['patient_id'].'/'.$tuple['is_refered_id'].'/'.$tuple['referal_id'].'">Request Connection</a></li>';
+				$str .= '<li><a href="/refers/accept_referal/'.$tuple['referal_id'].'">Request Connection</a></li>';
 				break;
 			case 'delete-ref':
 				$str .= '<li><a href="/refers/delete_referal/'.$tuple['referal_id'].'">Delete</a></li>';
