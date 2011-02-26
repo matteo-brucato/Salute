@@ -28,10 +28,6 @@ class Groups extends Controller {
 	 * 		List all groups
 	 * */
 	function index(){
-
-		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
-			return;
-		}
 		$this->list_groups();
 	}
 	
@@ -84,7 +80,7 @@ class Groups extends Controller {
 			return;
 		}
 		
-		//$this->auth->set_message("You have successfully created $result[0]['name']",'Confirmation');
+		$this->ui->set_message("You have successfully created the group: $name",'Confirmation');
 		
 		// End transaction
 		$this->db->trans_complete();
@@ -95,14 +91,15 @@ class Groups extends Controller {
 	/**
 	 * Delete an Existing Group
 	 * */
-	function delete($group_id){
+	function delete($group_id = NULL){
 		
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
 		}
 		
 		// check that group_id is right type and not null
-
+		// check that they have permission
+		
 		// Start a transaction now
 		$this->db->trans_start();
 		//$this->db->trans_begin();
@@ -135,22 +132,36 @@ class Groups extends Controller {
 	/**
 	 * Group Member Leave from the Existing Group
 	 * */
-	function leave(){
+	function leave($group_id){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
 		}
-	}
-	
-	/**
-	 * Requests to Join an Existing Group
-	 * @attention only can request if the group is public
-	 * */
-	function request(){
 		
-		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+		// Start a transaction now
+		$this->db->trans_start();
+		//$this->db->trans_begin();
+		
+		$mem = $this->groups_model->is_member($this->auth->get_account_id(),$group_id);
+		if($mem === -1){
+			$this->ui->set_query_error();
+			return;
+		} else if ($mem){
+			$check = $this->groups_model->leave($this->auth->get_account_id(),$group_id);
+			if ($check === -1){
+				$this->ui->set_query_error();
+				return;	
+			}
+		} else {
+			$this->ui->set_error('Internal Server Error','server');
 			return;
 		}
+		
+		$this->ui->set_message('You have successfully left the group.','Confirmation');
+		$this->list_my_groups();
+		// Start a transaction now
+		$this->db->trans_start();
+		//$this->db->trans_begin();
 	}
 	
 	/**
@@ -186,11 +197,12 @@ class Groups extends Controller {
 		}
 
 		for ($i = 0; $i < count($list); $i++) {
-			if ($this->groups_model->is_member(
-												$this->auth->get_account_id(),
-												$list[$i]['group_id'] 
-									)) 
-			{
+			
+			$mem = $this->groups_model->is_member($this->auth->get_account_id(),$list[$i]['group_id']); 
+			if ($mem === -1){
+				$this->auth->set_query_error();
+				return;	
+			} else if ($mem) {
 				$member[$i]['is'] = TRUE; 
 			} else 
 				$member[$i]['is'] = FALSE; 
@@ -221,6 +233,7 @@ class Groups extends Controller {
 			$this->auth->set_query_error();
 			return;
 		}
+		$perm='';
 		for ($i = 0; $i < count($list); $i++) {
 			if ($this->groups_model->can_delete(
 												$this->auth->get_account_id(),
@@ -228,7 +241,7 @@ class Groups extends Controller {
 									)) 
 			{
 				$perm[$i]['can_delete'] = TRUE; 
-			} else 
+			} else
 				$perm[$i]['can_delete'] = FALSE; 
 		}
 		$this->ui->set(array($this->load->view('mainpane/lists/mygroups', array('group_list' => $list, 'perm' => $perm), TRUE)));
@@ -241,31 +254,136 @@ class Groups extends Controller {
 	/**
 	 * Edit an Existing Group
 	 * */
-	function edit(){
+	function edit($group_id){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
 		}
+		// check if group exists
+		// if they're a member with permission 3 (make is_admin fn?)
+		// load form : edit group name/description/type		
+		
+		// Start a transaction now
+		$this->db->trans_start();
+		//$this->db->trans_begin();
+		
+		$curr_info = $this->groups_model->get_group($group_id);
+		if ($curr_info === -1){
+			$this->ui->set_query_error();
+			return;
+		} else if (count($curr_info) <= 0 || $curr_info === NULL){
+			$this->ui->set_error('Internal Server Error','server');
+			return;
+		}
+		$this->ui->set(array($this->load->view('mainpane/forms/edit_group', array('curr_info' => $curr_info), TRUE)));
+		
+		// End transaction
+		$this->db->trans_complete();
+		//$this->db->trans_rollback();
+	}
+	
+	function edit_do($group_id){
+
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}
+		
+		// Check Form values
+		// call edit fn
+		// confirmation message
+		
+		$name = $this->input->post('name');
+		$description = $this->input->post('description');
+		$privacy = $this->input->post('public_private');
+		$group_type = $this->input->post('group_type');
+		
+		// Form Checking will replace this
+		if($name == NULL || $description == NULL || $privacy == NULL || $group_type == NULL )	{
+			$this->ui->set_error('All Fields are Mandatory.','Missing Arguments'); 
+			return;
+		}
+		
+		// Start a transaction now
+		$this->db->trans_start();
+		//$this->db->trans_begin();
+		
+		$result = $this->groups_model->edit_group(array(
+													'name' => $name, 
+													'description' => $description, 
+													'public_private' => $privacy,
+													'group_type' => $group_type,
+													'group_id' => $group_id
+												)); 
+		
+		if($result === -1){
+			$this->ui->set_query_error(); 
+			return;
+		}
+		
+		$this->ui->set_message("You have successfully edited the group: $name",'Confirmation');
+		
+		// End transaction
+ 		$this->db->trans_complete();
+		//$this->db->trans_rollback();
 	}
 	
 	/**
 	 * List members of a group
 	 * */
-	function list_members(){
+	function list_members($group_id){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
 		}
+
+		// Start a transaction now
+		$this->db->trans_start();
+		//$this->db->trans_begin();
+		
+		$list = $this->groups_model->list_members($group_id);
+		if ($list === -1){
+			$this->ui->set_query_error();
+			return;
+		}
+		
+		for ($i = 0; $i < count($list); $i++) {
+			$perm = $this->groups_model->get_member($this->auth->get_account_id(),$list[$i]['group_id']);
+
+			if($perm === -1){
+				$this->ui->set_query_error();
+				return;
+			}
+		}
+		
+		$this->ui->set(array($this->load->view('mainpane/lists/group_members', array('mem_list' => $list, 'perm' => $perm), TRUE)));
+		
+		// End transaction
+		$this->db->trans_complete();
+		//$this->db->trans_rollback();
 	}
 	
-	function change_member_permissions(){
+	function change_member_permissions($account_id,$group_id){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
 		}
+		
+		// if member and if member is perm 2-3
+		// load form
 	
 	}
 	
+	function change_member_permissions_do(){
+
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}
+		
+		// form check
+		// submit changes
+		// Success Msg, link back to member list
+	}
+	function delete_member($group_id,$account_id){}
 	
 }
 /** @} */

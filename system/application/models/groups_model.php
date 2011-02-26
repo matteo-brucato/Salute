@@ -44,7 +44,7 @@ class Groups_model extends Model {
 	 * 		-1 in case of error in a update
 	 * 		1 otherwise
 	 * */
-	function edit($inputs){
+	function edit_group($inputs){
 		$sql = "UPDATE groups
 				SET name = ?,  description = ?, public_private = ?, group_type = ?
 				WHERE group_id = ?";
@@ -80,10 +80,26 @@ class Groups_model extends Model {
 	 * @param $account_id, $group_id
 	 *   Is of the form: array($account_id,$group_id)
 	 * @return
+	 * 		-1 already error
+	 * 		-2 user is already a member
+	 * 		0 if all is well
 	 * */
 	function join($account_id,$group_id){
 	
-		
+		// Check if the member exists
+		$check = $this->is_member($account_id,$group_id);
+		if ($check === -1) return -1;
+		if ($check === TRUE) return -2;
+	
+		// Now, add the member
+		$sql = "INSERT INTO is_in(account_id,group_id)
+				VALUES(?,?)";
+	
+		$query = $this->db->query($sql, array($account_id,$group_id));
+	
+		if ($this->db->trans_status() === FALSE) return -1;
+	
+		return 0; // Success
 	}
 	
 	/**
@@ -92,8 +108,47 @@ class Groups_model extends Model {
 	 * @param $account_id, $group_id
 	 *   Is of the form: array($account_id,$group_id)
 	 * @return
+	 * 		-1 if query error
+	 * 		-2 if membership doesn't exist
+	 * 		0 if all is well
 	 * */	
-	function leave($account_id,$group_id){}
+	function leave($account_id,$group_id){
+		
+		// Check if the member exists
+		$check = $this->is_member($account_id,$group_id);
+		if ($check === -1) return -1;
+		if ($check === FALSE) return -2;
+	
+		// Now, delete the member
+		$sql = "DELETE FROM is_in
+				WHERE account_id = ? AND group_id = ?";
+	
+		$query = $this->db->query($sql, array($account_id,$group_id));
+	
+		if ($this->db->trans_status() === FALSE) return -1;
+	
+		return 0; // Success
+	}
+
+	function get_group($group_id){
+		
+		$sql = "SELECT *
+				FROM groups
+				WHERE group_id = ? ";
+		
+		$query = $this->db->query($sql, array($group_id));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		
+		// If found, return it
+		if ($query->num_rows() > 0) {
+			$array = $query->result_array();
+			return $array[0];	
+		}
+		return NULL;
+	}
+
 	
 	/**
 	 * Lists all Groups
@@ -106,9 +161,10 @@ class Groups_model extends Model {
 	function list_all_groups(){
 		
 		$sql = "SELECT * FROM groups";
+
 		$query = $this->db->query($sql);
 		
-		if ($this->db->trans_status() === FALSE)
+		if ($this->db->trans_status() === FALSE) 
 			return -1;
 			
 		if ($query->num_rows() > 0)
@@ -129,11 +185,12 @@ class Groups_model extends Model {
 	 * */
 	function list_my_groups($account_id) {
 
-		$sql = "SELECT g.* 
+		/*$sql = "SELECT g.* 
 				FROM is_in i, groups g 
 				WHERE g.account_id = ? AND i.account_id = ?";
-
-		$query = $this->db->query($sql, array($account_id,$account_id));
+		*/
+		$sql = "SELECT * FROM groups WHERE group_id IN (SELECT group_id FROM is_in WHERE account_id = ?)";
+		$query = $this->db->query($sql, array($account_id));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -151,10 +208,26 @@ class Groups_model extends Model {
 	 *   Is of the form: array($group_id)
 	 * @return
 	 *  -1 in case of error in a query
+	 * 	-2 in case of invalid type
 	 *   Array of all members in group
 	 *   empty array() if none
 	 * */
-	function list_members($group_id){}
+	function list_members($group_id){
+		
+		$sql = "SELECT *
+				FROM is_in 
+				WHERE group_id = ? ";
+								
+		$query = $this->db->query($sql, array($group_id));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		if ($query->num_rows() > 0)
+			return $query->result_array();
+		
+		return array();
+	}
 	
 	function is_member($account_id,$group_id){
 	
@@ -183,9 +256,36 @@ class Groups_model extends Model {
 		return ($query->num_rows() > 0);
 	}
 	
-	function get_member($account_id,$group_id){}
+	function get_member($account_id,$group_id){
+		
+		$sql = "SELECT *
+				FROM is_in
+				WHERE account_id = ? AND group_id = ?";
+		
+		$query = $this->db->query($sql, array($account_id,$group_id));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		
+		// If found, return it
+		if ($query->num_rows() > 0) {
+			$array = $query->result_array();
+			return $array[0];	
+		}
+		return NULL;
+	}
 	
-	function update_member($account_id,$group_id,$permission_number){}
+	function edit_member($account_id,$group_id,$permission_number){
+	
+		$sql = "UPDATE is_in SET permissions = ?
+			WHERE account_id = ? AND group_id = ?";
+		
+		$this->db->query($sql,array($permission_number,$account_id,$group_id));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1; // query error
+		return 0;
+	}
 	
 }
 /**@}*/

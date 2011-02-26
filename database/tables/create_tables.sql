@@ -230,7 +230,7 @@ CREATE TABLE is_in(
 	permissions VARCHAR(1),
 	PRIMARY KEY (account_id, group_id),
 	FOREIGN KEY (account_id) REFERENCES accounts(account_id),
-	FOREIGN KEY (group_id) REFERENCES groups(group_id)
+	FOREIGN KEY (group_id) REFERENCES groups(group_id) ON DELETE CASCADE
 );
 
 

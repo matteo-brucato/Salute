@@ -6,7 +6,7 @@ $this->load->helper('table_result');
  * @param
  *		$list_name		The name of the list
  *		$list			The result array from the database
- * 		$member 		Boolean
+ * 		$perm	 		Boolean
  * */
 
 //echo '<h2>'.$list_name.'</h2>';

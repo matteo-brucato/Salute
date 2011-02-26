@@ -96,8 +96,20 @@ function get_action_strings($actions, $tuple) {
 			case 'delete-group':
 				$str .= '<li><a href="/groups/delete/'.$tuple['group_id'].'">Delete Group</a></li>';
 				break;
+					
+			case 'delete-member':
+				$str .= '<li><a href="/groups/delete_member/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Delete Member</a></li>';
+				break;
+				
+			case 'change-mem-perm':
+				$str .= '<li><a href="/groups/change_member_permissions/'.$tuple['account_id'].'/'.$tuple['group_id'].'">Change Permissions</a></li>';
+				break;
 			
-			
+			case 'edit-group':
+				$str .= '<li><a href="/groups/edit/'.$tuple['group_id'].'">Edit Group</a></li>';
+				break;
+						
+						
 			case 'accept-ref':
 				$str .= '<li><a href="/refers/accept_referal/'.$tuple['referal_id'].'">Request Connection</a></li>';
 				break;
