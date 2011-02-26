@@ -33,7 +33,9 @@
 	
 	/**
 	 * Lists all of the referals a patient has received or that a doctor has issued
-	 * 
+	 * @param
+	 * @return
+	 * 	view to load all referrals
 	 * */
 	function my_referals(){
 		
@@ -63,6 +65,12 @@
 	}
 	
 	
+	/**
+	 * This is the main function that starts the creation of a referral
+	 * @param
+	 * @return
+	 * 	load view to chosse a hcp
+	 * */
 	function create_referral() {
 		
 		$check = $this->auth->check(array(
@@ -77,12 +85,20 @@
 			return;
 		}
 		
+		//load a view to display and choose a colleague
 		$this->ui->set(array(
 			$this->load->view('mainpane/forms/referral_pick_hcp',
 			array('list_name' => 'My Colleagues', 'list' => $results, 'status' => 'connected') , TRUE)
 		));
 	}
 	
+	
+	/**
+	 * Allows hcp to choose a patient for the referral
+	 * @param
+	 * @return
+	 * 	load view to chosse a patient
+	 * */
 	function create_referral_do1() {
 		$check = $this->auth->check(array(
 			auth::CurrLOG,
@@ -109,6 +125,7 @@
 			return;
 		}
 		
+		//loads the view to display and choose a patient
 		$this->ui->set(array(
 			$this->load->view('mainpane/forms/referral_pick_patient',
 			array('list_name' => 'My Patients', 'list' => $results, 'status' => 'connected', 'hcp_id' => $hcp_id) , TRUE)
@@ -116,12 +133,21 @@
 	}
 	
 	
+	/**
+	 * This is the final function of the referral process
+	 * Takes the patient id and the hcp being referred id and creates the referral
+	 * 
+	 * @param
+	 * @return
+	 * 	successfully create the referral and give success message
+	 * */
 	function create_referral_do2() {
 		$check = $this->auth->check(array(
 			auth::CurrLOG,
 			auth::CurrHCP));
 		if ($check !== TRUE) return;
 		
+		//get input from the form
 		$patient_id = $this->input->post('patient_id');
 		$hcp_id = $this->input->post('hcp_id');
 		
@@ -140,7 +166,7 @@
 		$this->db->trans_start();
 		$referal_id = $this->referal_model->create_referal(array($this->auth->get_account_id(), $hcp_id, $patient_id));
 		$this->db->trans_complete();
-				
+		
 		if ($referal_id === -1) {
 			$this->ui->set_query_error();
 			return;
@@ -150,11 +176,10 @@
 			return;
 		}
 		elseif ($referal_id == -3){
-			$this->ui->set_error('You have already created this referral');
+			$this->ui->set_error('You have already created this referral', 'Notice');
 			return;
 		}
 			
-		
 		//check level. if its 2 or 3 patient accepts connection automatically
 		$level = $this->connections_model->get_level(array($patient_id, $this->auth->get_account_id()));
 		switch ($level) {
@@ -162,13 +187,13 @@
 				$this->ui->set_query_error();
 				return;
 			case -2:
-				$this->ui->set_error('Connection does not exist!');
+				$this->ui->set_error('Connection does not exist!', 'Permission Denied');
 				return;
 			default:
 				if ($level[0]['connection_level'] === '2' or $level[0]['connection_level'] === '3'){
 					
-					$aprove = $this->referal_model->approve(array($referal_id));
-					switch ($res) {
+					$approve = $this->referal_model->approve(array($referal_id));
+					switch ($approve) {
 						case -1:
 							$this->ui->set_query_error();
 							return;
@@ -176,7 +201,19 @@
 							$this->ui->set_error('Referal ID does not exist');
 							return;
 						default:
-							break;
+							//create connection
+							$res = $this->connections_model->add_connection(array($patient_id, $hcp_id));
+							switch ($res) {
+								case -1:
+									$this->ui->set_query_error();
+									return;
+								case -3:
+									$this->ui->set_error('This connection has been already requested');
+									return;
+								default:
+									//send email
+									break;
+							}
 					}
 				}
 		}
@@ -188,8 +225,9 @@
 	 /**
 	  * Accepts the referal
 	  * @param
-	  * @return 0, successfully accepted and sent the email to the doctor
-	  * 
+	  * 	referal_id
+	  * @return
+	  * 	successfully accepted and sent the email to the doctor
 	  * */
 	  function accept_referal($referal_id = NULL){
 			

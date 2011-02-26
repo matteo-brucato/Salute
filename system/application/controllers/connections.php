@@ -422,7 +422,7 @@ class Connections extends Controller {
 				$this->ui->set_query_error();
 				break;
 			case -2:
-				$this->ui->set_error('Connection does not exist.');
+				$this->ui->set_error('Connection does not exist.', 'Permission Denied');
 				break;
 			default:
 				$this->ui->set_message('This connection has been rejected.','Confirmation');
