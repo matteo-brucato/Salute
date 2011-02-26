@@ -442,7 +442,7 @@ class Connections_model extends Model {
 	 * */
 	function accept_connection($inputs) {
 		
-		echo 'here1';
+		//echo 'here1';
 		
 		$query = $this->db->query("SELECT * FROM connections
 			WHERE sender_id = ? AND receiver_id = ?", $inputs);
@@ -488,7 +488,7 @@ class Connections_model extends Model {
 		//copy if it came via referal
 		foreach ($result as $value) {
 			
-			echo 'here2';
+			//echo 'here2';
 			
 			//for each referal, get the level of the connection between the refering hcp and the patient
 			$sql = "SELECT *
@@ -500,13 +500,13 @@ class Connections_model extends Model {
 			}
 			
 			$level_res = $level->result_array();
-			echo ' ';
-			echo $level_res[0]['connection_level'];
-			echo ' ';
+			//echo ' ';
+			//echo $level_res[0]['connection_level'];
+			//echo ' ';
 			
 			if( $level_res[0]['connection_level'] === '1' OR $level_res[0]['connection_level'] === '3') {
 				
-				echo 'here3';
+				//echo 'here3';
 				
 				//get the medical records that the refering hcp has permission to view for the corresponding patient
 				$sql = "SELECT *
@@ -523,7 +523,7 @@ class Connections_model extends Model {
 				//for each medical record, allow is_refered hcp permission to view it
 				foreach ($medical as $medical_rec) {
 					
-					echo 'here4';
+					//echo 'here4';
 					
 					$sql = "INSERT INTO permission (medical_rec_id, account_id, date_created)
 						VALUES (?, ?, current_date)";
