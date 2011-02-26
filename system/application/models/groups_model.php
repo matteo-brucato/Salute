@@ -44,7 +44,7 @@ class Groups_model extends Model {
 	 * 		-1 in case of error in a update
 	 * 		1 otherwise
 	 * */
-	function edit($inputs){
+	function edit_group($inputs){
 		$sql = "UPDATE groups
 				SET name = ?,  description = ?, public_private = ?, group_type = ?
 				WHERE group_id = ?";
@@ -208,6 +208,7 @@ class Groups_model extends Model {
 	 *   Is of the form: array($group_id)
 	 * @return
 	 *  -1 in case of error in a query
+	 * 	-2 in case of invalid type
 	 *   Array of all members in group
 	 *   empty array() if none
 	 * */
@@ -215,14 +216,17 @@ class Groups_model extends Model {
 		
 		$sql = "SELECT *
 				FROM is_in 
-				WHERE group_id = ?";
-
+				WHERE group_id = ? ";
+								
 		$query = $this->db->query($sql, array($group_id));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 			
-		return ($query->num_rows() > 0);
+		if ($query->num_rows() > 0)
+			return $query->result_array();
+		
+		return array();
 	}
 	
 	function is_member($account_id,$group_id){
