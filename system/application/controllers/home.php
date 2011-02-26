@@ -16,6 +16,15 @@ class Home extends Controller {
 		$this->load->library('auth');
 	}
 	
+	function __destruct() {
+		/**
+		 * @todo If we start transactions in the constructor, and 
+		 * end them in the destructor, would it be possible to do this?
+		 * */
+		//if ($this->db->trans_status() === FALSE)
+		//	$this->ui->set_query_error();
+	}
+	
 	/**
 	 * Default home 
 	 * If not logged in load default welcome page and login side panel

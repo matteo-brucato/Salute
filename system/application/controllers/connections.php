@@ -189,116 +189,136 @@ class Connections extends Controller {
 	 * Request a new connection to a hcp.
 	 * 
 	 * @param
-	 *   $id is the id of a hcp you want to connect to
+	 *   $id is the id of the account you want to connect to
 	 * 
 	 * @attention
 	 *   Can be called by both patients and hcps, but a 
 	 * hcp can only request for another hcp.
 	 * 
-	 * @test Tested different inputs: nothing, string, invalid id
+	 * @bug You can still request connection to yourself
 	 * */
-	function request($id = NULL)
+	function request($receiver_id = NULL)
 	{
-		$check = $this->auth->check(array(auth::CurrLOG));
+		$check = $this->auth->check(array(
+			auth::CurrLOG,
+			auth::ACCOUNT, $receiver_id // the receiver must be an existing account id
+		));
 		if ($check !== TRUE) return;
 		
 		// If current user is a hcp
 		if ($this->auth->get_type() === 'hcp') {
-			
 			// An HCP can request connection only to other HCPs
-			$check = $this->auth->check(array(auth::HCP, $id));
+			$check = $this->auth->check(array(auth::HCP, $receiver_id));
 			if ($check !== TRUE) return;
-			
-			// Add the connection in the db
-			$res = $this->connections_model->add_connection(array(
-				$this->auth->get_account_id(),
-				$id
-			));
 		}
 		
-		// If current user is a patient
-		else if ($this->auth->get_type() === 'patient') {
-			// Add the connection in the db
-			$res = $this->connections_model->add_connection(array(
-				$this->auth->get_account_id(),
-				$id
-			));
-		}
+		// Add the connection in the db
+		$this->db->trans_start();
+		$res = $this->connections_model->add_connection(array($this->auth->get_account_id(), $receiver_id));
+		$this->db->trans_complete();
 		
-		else {
-			$this->ui->set_error('Internal server logic error.', 'server');
+		// Check errors from model
+		if ($res === -1) {
+			$this->ui->set_query_error();
 			return;
 		}
+		else if ($res === -3) {
+			$this->ui->set_error('This connection has already been requested');
+			return;
+		}
+		
+		// Everything's fine
+		$this->load->library('email');
+		$config['mailtype'] = 'html';
+		$this->email->initialize($config);
+		//$this->email->from($this->auth->get_email());
+		$this->email->from('salute-noreply@salute.com');
+		//$this->email->to($results['email']);
+		$this->email->to('mattfeel@gmail.com');
+		$this->email->subject('New Connection Request');
+		
+		$this->email->message(
+			'You have a new connection request from '.
+			$this->auth->get_first_name().' '.$this->auth->get_last_name().
+			'. Click <a href="https://'.$_SERVER['SERVER_NAME'].'/connections/accept/'.$this->auth->get_account_id().'/'.$receiver_id.'">here</a> to accept.');
+		
+		$this->email->send();
+		
+		// Give results to the client
+		$this->ui->set_message('Your request has been submitted.', 'Confirmation');
+	}
+	
+	/**
+	 * deletes connection (un-friend someone)
+	 * @param
+	 * 		id is the account_id of the hcp or patient the user would like to disconnect from
+	 * @return 
+	 * 		error 
+	 * 			id not specified (the one to disconnect from)
+	 * 			query fails
+	 * 			connection doesnt exist
+	 * 		success: deleted the connection
+	 * 
+	 * @attention Anybody can delete a connection
+	 */
+	function destroy($id = NULL)
+	{
+		$check = $this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrCONN, $id		// current must be connected with id
+		));
+		if ($check !== TRUE) return;
+		
+		if (DEBUG) $this->output->enable_profiler(TRUE);
+		
+		// Destroy the connection
+		$this->db->trans_start();
+		$res = $this->connections_model->remove_connection($this->auth->get_account_id(), $id);
+		$this->db->trans_complete();
 		
 		// Switch the response from the model, to select the correct view
 		switch ($res) {
 			case -1:
 				$this->ui->set_query_error();
-				return;
-			case -3:
-				$this->ui->set_error('This connection has been already requested');
-				return;
+				break;
+			case -2:
+				$this->ui->set_error('Connection does not exist.', 'Notice');
+				break;
 			default:
-				$mainview = 'Your request has been submitted.';
-				$type = 'Confirmation';
-				$this->load->library('email');
-				$config['mailtype'] = 'html';
-				$this->email->initialize($config);
-				//$this->email->from($this->auth->get_email());
-				$this->email->from('salute-noreply@salute.com');
-				//$this->email->to($results['email']);
-				$this->email->to('mattfeel@gmail.com');
-				$this->email->subject('New Connection Request');
-				
-				$this->email->message(
-					'You have a new connection request from '.
-					$this->auth->get_first_name().' '.$this->auth->get_last_name().
-					'. Click <a href="https://'.$_SERVER['SERVER_NAME'].'/connections/accept/'.$this->auth->get_account_id().'/'.$id.'">here</a> to accept.');
-				
-				$this->email->send();
+				$this->ui->set_message('You have been disconnected from that health care provider.', 'Confirmation');
 				break;
 		}
-		
-		// Give results to the client
-		$this->ui->set_message($mainview, $type);
 	}
 
 	/** 
 	 * Accept an existing connection request
 	 * 
 	 * @param
-	 * 		$requester_id the id of the account you accept a connection with
+	 * 		$sender_id the id of the account you accept a connection with
 	 * 
 	 * @attention
 	 * 		If I'm a patient I can accept connections only from patients
 	 * 		If I'm an hcp I can accept connections from hcp's and patients
+	 * 		I can accept only connection where I'm the accepter!
 	 * */
-	function accept($requester_id = NULL)
+	function accept($sender_id = NULL)
 	{
-		$check = $this->auth->check(array(auth::CurrLOG));
-		if ($check !== TRUE) return;
+		if ($this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrCONN_RECV, $sender_id	// to accept you must be the receiver of the request
+		)) !== TRUE) return;
 		
+		// Apply logic restrictions
 		if ($this->auth->get_type() === 'patient') {
-			$check = $this->auth->check(array(auth::PAT, $requester_id));
+			// If you are a patient, you can accept requests coming from patients
+			$check = $this->auth->check(array(auth::PAT, $sender_id));
 			if ($check !== TRUE) return;
 		}
 		
-		// Check if parameters are specified
-		if ($requester_id == NULL) {
-			$this->ui->set_error('ids not specified.', 'Missing Arguments');
-			return;
-		}
-		
-		if ($this->patient_model->is_patient(array($requester_id))) {
-			$res = $this->connections_model->accept_patient_hcp(array($requester_id, $this->auth->get_account_id()));
-		}
-		else if ($this->hcp_model->is_hcp(array($requester_id))) {
-			$res = $this->connections_model->accept_hcp_hcp(array($requester_id, $this->auth->get_account_id()));
-		}
-		else {
-			$this->ui->set_error('The requester id does not match any id in the database');
-			return;
-		}
+		// Accept the connection
+		$this->db->trans_start();
+		$res = $this->connections_model->accept_connection(array($sender_id, $this->auth->get_account_id()));
+		$this->db->trans_complete();
 		
 		// Switch the response from the model, to select the correct view
 		switch ($res) {
@@ -318,58 +338,7 @@ class Connections extends Controller {
 				return;
 		}
 
-		$this->ui->set_error($error,$type);
-	}
-
-	/**
-	 * deletes connection (un-friend someone)
-	 * @param
-	 * 		id is the account_id of the hcp or patient the user would like to disconnect from
-	 * @return 
-	 * 		error 
-	 * 			id not specified (the one to disconnect from)
-	 * 			query fails
-	 * 			connection doesnt exist
-	 * 		success: deleted the connection
-	 * 
-	 * @test Tested
-	 */
-	function destroy($id = NULL)
-	{
-		$this->auth->check_logged_in();
-		if (DEBUG) $this->output->enable_profiler(TRUE);
-		
-		if ($id == NULL) {
-			$this->ui->set_error('id not specified');
-			return;
-		}
-		
-		$this->load->model('connections_model');
-		$res = $this->connections_model->remove_connection($this->auth->get_account_id(), $id);
-		
-		/*if ($this->patient_model->is_patient(array($id))) {
-			$res = $this->connections_model->remove_pd_connection(array($this->auth->get_account_id(), $id)); 
-		}
-		else if ($this->hcp_model->is_hcp(array($id))) {
-			$res = $this->connections_model->remove_dd_connection(array($this->auth->get_account_id(), $id)); 
-		}
-		else {
-			$this->ui->error('Internal Logic Error.', 500);
-			return;
-		}*/
-		
-		// Switch the response from the model, to select the correct view
-		switch ($res) {
-			case -1:
-				$this->ui->set_query_error();
-				break;
-			case -2:
-				$this->ui->set_error('Connection does not exist.','Notice');
-				break;
-			default:
-				$this->ui->set_message('You have been disconnected from that health care provider.','Confirmation');
-				break;
-		}
+		$this->ui->set_error($error, $type);
 	}
 	
 	/**
@@ -388,32 +357,19 @@ class Connections extends Controller {
 	 * personally made!
 	 * @test Tested
 	 */
-	function cancel($id = NULL)
+	function cancel($receiver_id = NULL)
 	{
-		$this->auth->check_logged_in();
+		$check = $this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrCONN_SND, $receiver_id	// to cancel you must be the sender of the request
+		));
+		if ($check !== TRUE) return;
+		
 		if (DEBUG) $this->output->enable_profiler(TRUE);
 		
-		if ($id == NULL) {
-			$this->ui->set_error('id not specified.', 'Missing Arguments');
-			return;
-		}
-		
-		$this->load->model('connections_model');
-		
-		$conn = $this->connections_model->get_connection($this->auth->get_account_id(), $id);
-		
-		if ($conn === -1) {
-			$res = -1;
-		}
-		else if ($conn === NULL) {
-			$res = -2;
-		}
-		else if ($conn['requester_id'] = $this->auth->get_account_id()) {
-			// If I requested this connection, I can cancel it
-			$res = $this->connections_model->remove_pending($this->auth->get_account_id(), $id);
-		} else {
-			$res = -5;
-		}
+		$this->db->trans_start();
+		$res = $this->connections_model->remove_pending($this->auth->get_account_id(), $receiver_id);
+		$this->db->trans_complete();
 		
 		// Switch the response from the model, to select the correct view
 		switch ($res) {
@@ -421,13 +377,10 @@ class Connections extends Controller {
 				$this->ui->set_query_error();
 				break;
 			case -2:
-				$this->ui->set_error('Connection does not exist.','Permission Denied');
-				break;
-			case -5:
-				$this->ui->set_error('This connection request has not been initiated by you.','Notice');
+				$this->ui->set_error('Connection does not exist', 'Permission Denied');
 				break;
 			default:
-				$this->ui->set_message('Your connection request has been canceled.','Confirmation');
+				$this->ui->set_message('Your connection request has been canceled', 'Confirmation');
 				break;
 		}
 	}
@@ -449,32 +402,19 @@ class Connections extends Controller {
 	 * 
 	 * @test Tested
 	 */
-	function reject($id = NULL)
+	function reject($sender_id = NULL)
 	{
-		$this->auth->check_logged_in();
+		if ($this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrCONN_RECV, $sender_id	// to reject you must be the receiver of the request
+		)) !== TRUE) return;
+		
 		if (DEBUG) $this->output->enable_profiler(TRUE);
 		
-		if ($id == NULL) {
-			$this->ui->set_error('id not specified.', 'Missing Arguments');
-			return;
-		}
-		
-		$this->load->model('connections_model');
-		
-		$conn = $this->connections_model->get_connection($this->auth->get_account_id(), $id);
-		
-		if ($conn === -1) {
-			$res = -1;
-		}
-		else if ($conn === NULL) {
-			$res = -2;
-		}
-		else if ($conn['accepter_id'] = $this->auth->get_account_id()) {
-			// If I requested this connection, I can cancel it
-			$res = $this->connections_model->remove_pending($this->auth->get_account_id(), $id);
-		} else {
-			$res = -5;
-		}
+		// Reject the request
+		$this->db->trans_start();
+		$res = $this->connections_model->remove_pending($this->auth->get_account_id(), $sender_id);
+		$this->db->trans_complete();
 		
 		// Switch the response from the model, to select the correct view
 		switch ($res) {
@@ -483,10 +423,6 @@ class Connections extends Controller {
 				break;
 			case -2:
 				$this->ui->set_error('Connection does not exist.');
-				break;
-			case -5:
-				$this->ui->set_message('This connection request has been initiated by you.<br />
-				Click here to <a href="/connections/cancel/'.$id.'">cancel this request</a>.');
 				break;
 			default:
 				$this->ui->set_message('This connection has been rejected.','Confirmation');
