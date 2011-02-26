@@ -246,10 +246,9 @@ class Medical_records_model extends Model {
 	function get_medrec_allowed_accounts($mid) {
 		$sql = "
 			SELECT H.*, M.medical_rec_id
-			FROM   medical_record M, hcp_account H, permission P, p_d_connection C
+			FROM   medical_record M, hcp_account H, permission P, accounts A
 			WHERE  M.medical_rec_id = ? AND M.medical_rec_id = P.medical_rec_id
-				   AND P.account_id = H.account_id
-				   AND C.hcp_id = P.account_id AND C.patient_id = M.patient_id";
+				   AND P.account_id = A.account_id AND A.account_id = H.account_id";
 		$query = $this->db->query($sql, $mid);
 		if ($this->db->trans_status() === FALSE)
 			return -1;
