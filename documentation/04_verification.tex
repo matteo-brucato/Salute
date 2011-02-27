@@ -1,0 +1,148 @@
+\chapter{Tests}
+
+\section{Controller Tests}
+\label{subsec:controllertests}
+
+Verification of controllers is the most important part, since all the logics and security chekcs are implemented at this level. We decided to take special care of controller testing and defined an easy and complete way to test all the controller systematically.
+
+Our tests take into account the way we implemented all the controller tasks, so they can be considered \emph{white-box testing}. 
+
+\subsection{CodeIgniter}
+As we already said previously, we used a well-known MVC framework named \emph{Code Igniter}. It provides a set of functionalities that we did not need to test. For example, the URL mapping into controller functions, or the PHP database interactions, or even more sophisticated tools to parse template files, to perform form input checks and so forth. This framework has been tested by its developers, so we simply rely on it. All we need to test is our code, that is, all the controllers, models and views.
+
+\paragraph{URL mapping}
+In Code Igniter every URL is mapped to a single function, inside a single controller class. This creates a 1-1 correspondence between URL's and controller functions. As Code Igniter has been implemented, a URL that does not correspond to any function, will generate an error.
+
+For this reason, we can talk about URL's instead of controller functions, since they are (almost) the same thing. Our test sets exploit this characteristic.
+
+\paragraph{Views and Models}
+All the views are simple HTML code and we believe that it is not really crucial. All the models rely on Code Igniter's SQL wrappers, so they don't really need to be tested. All the logics are inside the controllers, therefore we only focused on them. Despite that, we describe our template implementation of models, since we believe that it is part of testing.
+
+\paragraph{Model result handling}
+Every controller and every model function has been implemented using the same pattern. All model functions return a specific value to tell the controller what exactly happened during their execution (query error? other error? data inserted/deleted/updated correctly?, etc.). Hence, a generic controller/model execution will be:
+\begin{enumerate}
+\item ULR gets mapped by Code Igniter and a specific controller function gets executed
+\item Some operations (checks, etc.)
+\item Call to a model function. Store the result
+\item Check the result and change the UI based on that
+\item Go again to 2) or exit
+\end{enumerate}
+
+\subsection{Our Test Framework}
+All our test exploit the previous schema and a special function that we designed. The class ``Auth'', in fact, implements a method called \emph{check} that takes an array of checks to be performed, performs them and if even one of them fails, it stops its execution and returns. Otherwise, if all the checks are passed, it returns TRUE. So, the previous schema can be described in more details:
+\begin{enumerate}
+\item ULR gets mapped by Code Igniter and a specific controller function gets executed
+\item Call to function \emph{check}, passing an array of conditions to be checked
+\item If any of them fails, stop execution providing useful messages via the UI
+\item Calls to models, UI or else, as before.
+\end{enumerate}
+
+\paragraph{Tests based on the check function}
+An example of a call to \emph{check} is the following:
+\begin{verbatim}
+$check = $this->auth->check(array(
+    auth::CurrLOG,
+    auth::CurrPAT,
+    auth::HCP, $hdp_id
+));
+if ($check !=== TRUE) return;
+\end{verbatim}
+
+In this example, we are forcing the current user to be logged in, to be a patient and we are checking whether the variable \$hcp\_id refers to an healthcare provider. If any of them fails, we stop the current execution. Note that the function \emph{check} will automatically set the UI to display an appropriate error message.
+
+This gives us a very simple way of implementing our test sets. For the previous case we simply need to execute:
+\begin{enumerate}
+\item A test being a not-logged-in user
+\item A test not being a patient
+\item A test passing an id that does not refer to an healthcare provider
+\item A test in which all of the checks would be successfully passed
+\end{enumerate}
+We would expect a success message only for the last test. Whereas, we expect an error in all the other cases. Now we address the problem of making automated tests.
+
+\paragraph{Automated tests}
+We wanted to create a framework to make automated tests possible. We based our design on the Unix function \emph{curl}, that can be used to make an http request to a server and get the response back from it. It is a very complete tool, in the sense that it also provides the use of POST variables, cookies, SSL connections and so forth.
+
+To make everything possible, we needed to define a special ``test mode'' for the UI. Activating the test mode, the UI does not behave as usual. Instead, it always answers with a special ``result string''. These are all the possible results:
+\begin{description}
+\item CI\_ERROR In case Code Igniter produces an error
+\item CI\_PHP\_ERROR In case a PHP error occurred
+\item CI\_404\_ERROR In case the URL does not correspond to any controller function
+\item QUERY\_ERROR In case a query error occurred
+\item CTR\_ERROR In case the controller set an error message to the UI
+\item REDIRECTED In case the controller set the UI to redirect the current page
+\item OK\_MESSAGE In case the controller set the UI to display a message (not error)
+\item ALL\_OK In case the controller terminates without any error and any special message
+\end{description}
+
+Based on these result messages and on the \emph{check} function calls, we defined a set of test cases for each controller function. We wrote and used a C++ program to execute them via \emph{curl}, one at a time. This program reads a file of test cases and executes them in order. If one of them fails, i.e. if a result does not match the expected value, it returns, showing the test case that caused the error.
+
+This is an example of a file with test cases that this program can read\footnote{This file can be found in /documentation/tests/TEST\_SET\_1}:
+\begin{verbatim}
+# Test Home controller (for these you don't need to be logged in)
+/home						ALL_OK
+/home/sitemap				ALL_OK
+/home/retrieve_password		ALL_OK
+/home/logout				REDIRECTED
+
+# These are errors, since you need to be logged in
+/profile					CTR_ERROR
+/home/login					CTR_ERROR
+
+# Now, try to login in and save the cookie in a local file
+/home/login					REDIRECTED		| -F "email=patient1@yahoo.com" -F "password=cameraman" -c cookie
+
+# Then, use this cookie to access restricted areas of the website
+/profile					ALL_OK			| -b cookie -c cookie
+
+# Invalid login
+/home/login					CTR_ERROR		| -F "email=patient1@yahoo.com" -F "password=camera" -c cookie
+
+# Other fuzz tests
+sjgjfsgbfgb					CI_404_ERROR
+/home/nothing				CI_404_ERROR
+/hello						CI_404_ERROR
+\end{verbatim}
+As you can see, it is also possible to use cookies and POST variables. We believe that this tool is very powerful and combined with the way we implemented all the controllers, it provides a good verification of our entire project, via testing.
+
+
+
+
+
+
+
+\section{...}
+
+Each controller's functions were tested in several ways to anticipate possible user's actions. In general, they were tested for:
+\begin{itemize}
+\item \textbf{Value Types}
+\begin{itemize}
+\item Correctly typed values. This is to ensure that the functions do their basic purpose.
+\item Incorrectly typed values. This is to prevent database errors or the SQL injection security threat.
+\end{itemize}
+\item \textbf{Authorization} In order to access a majority of the functionality, a user must be logged in. So, authorization was tested in the following ways: 
+\begin{itemize}
+\item  Valid login. By providing a valid login, we checked to see if the website capabilities were allowed. 
+\item Invalid login. By providing an invalid login, we checked to see if the website capabilities were denied when the user tried to type the paths in the URL.
+\item Not logged in. By providing not logging in, we checked to see if the website capabilities were denied when the user tried to type the paths in the URL.
+\end{itemize}
+\item\textbf{Accessibility} Per specifications, a health care provider and a patient have different permissions and functionality on the website. 
+\begin{itemize}
+\item Health Care Provider Accessibility. We tested that health care providers were only allowed to do permitted actions, per the specifications. For example, doctor's should not be able to request a patient connection. The action is never displayed as a link on the Salute website, so it would be difficult for a user to do this. However, we tested it by typing the path in the URL to assure that even if a user managed to find a way, the controller would not allow for such an action to be carried out. 
+\item Patient Accessibility. We tested that patients were only allowed to do permitted actions, per the specifications. For example, a patient should not be able to request a connection with another patient. The action is never displayed as a link on the Salute website, so it would be difficult for a user to do this. However, we tested it by typing the path in the URL to assure that even if a user managed to find a way, the controller would not allow for such an action to be carried out. 
+\end{itemize}
+\item \textbf{Errors}
+\begin{itemize} 
+\item Query errors. If the controller calls a model function, and the model function experienced an error from the query, an error code is passed back to the controller function. The controller function then respectively prints an error code. 
+\item Internal server errors. We included error catch code segments within the controller to handle the cases that weren't captured by the other tests. These cases would be where there was an internal server error. This helped for debugging our logic.  
+\end{itemize}
+\end{itemize}
+
+
+\section{Database Tests}
+The database was initially tested with simple SELECT * queries to see if the database tables were created and loaded correctly using the automated scripts\footnote{The bash script start\_everything.sh was used to automate the database creation process.  It used create\_tables.sql and load\_data.sql to create and populate the database.}. The database was populated with test data from twelve different files (approximately one for every table)\footnote{These test files are: accounts.txt, appointments.txt, connections.txt, groups.txt, hcp\_account.txt, is\_in.txt, medical\_records.txt, messages.txt, patient\_account.txt, payment.txt, permissions.txt, and refers.txt.}.  Then as the functions in each model were being implemented, the sql queries for each function would first be tested in the database to make sure that the correct result was returned.  Only after the sql query was tested and returned the correct information to the function in the model, would we determine that the function was fully implemented.  Additionally, error checking is done in each function to determine if an sql query sent to the database was successfully executed.
+
+All of the test data files that are used to populate the database not only provide testing capabilities for the models, but also for the views and the controllers since they are interrelated.  For a list of all of the tests that the controllers test, read subsection \ref{subsec:controllertests}.
+
+
+
+\chapter{Analysis}

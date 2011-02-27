@@ -87,7 +87,7 @@
 		
 		//load a view to display and choose a colleague
 		$this->ui->set(array(
-			$this->load->view('mainpane/forms/referral_pick_hcp',
+			$this->load->view('mainpane/forms/pick_hcp',
 			array('list_name' => 'My Colleagues', 'list' => $results, 'status' => 'connected') , TRUE)
 		));
 	}
@@ -127,7 +127,7 @@
 		
 		//loads the view to display and choose a patient
 		$this->ui->set(array(
-			$this->load->view('mainpane/forms/referral_pick_patient',
+			$this->load->view('mainpane/forms/pick_patient',
 			array('list_name' => 'My Patients', 'list' => $results, 'status' => 'connected', 'hcp_id' => $hcp_id) , TRUE)
 		));
 	}

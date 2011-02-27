@@ -27,22 +27,22 @@ class Auth {
 	const CurrPAT		= 1;	// no params: tests if the current user is a patient
 	const CurrHCP		= 2;	// no params: tests if the current user is an hcp
 	const CurrCONN		= 3;	// requires one account id: tests if the current is connected with the id provided
-	const CurrCONN_SND	= 200;	// requires one account id: tests if the current is the sender of a connection to the account id
-	const CurrCONN_RECV	= 201;	// requires one account id: tests if the current is the receiver of a connection to the account id
-	const CurrGRPMEM	= 4;	// requires one groupid: tests if the current is a member of the groupid
-	const CurrREFOWN	= 5;	// requires one referral id: tests if referral id is owned by the current user
+	const CurrCONN_SND	= 4;	// requires one account id: tests if the current is the sender of a connection to the account id
+	const CurrCONN_RECV	= 5;	// requires one account id: tests if the current is the receiver of a connection to the account id
+	const CurrGRPMEM	= 6;	// requires one groupid: tests if the current is a member of the groupid
+	const CurrREFOWN	= 7;	// requires one referral id: tests if referral id is owned by the current user
 	
-	const ACCOUNT		= 6;	// requires one id: tests if it's an account id
-	const PAT			= 7;	// requires one id: tests if it's a patient id
-	const HCP			= 8;	// requires one id: tests if it's a hcp id
+	const ACCOUNT		= 8;	// requires one id: tests if it's an account id
+	const PAT			= 9;	// requires one id: tests if it's a patient id
+	const HCP			= 10;	// requires one id: tests if it's a hcp id
 	
-	const APPT_EXST		= 9;	// requires one id: tests if the appointment id exists
-	const APPT_MINE		= 10;	// requires one id: tests if it's your appointment id
+	const APPT_EXST		= 11;	// requires one id: tests if the appointment id exists
+	const APPT_MINE		= 12;	// requires one id: tests if it's your appointment id
 	
-	const BILL_DELC		= 11;	// requires one id: tests if bill id is deletable
-	const BILL_PAYC		= 12;	// requires one id: tests if bill id is inactive=payable
+	const BILL_DELC		= 13;	// requires one id: tests if bill id is deletable
+	const BILL_PAYC		= 14;	// requires one id: tests if bill id is inactive=payable
 	
-	const MEDREC		= 13;	// requires one id: tests if the id is a medical record id
+	const MEDREC		= 15;	// requires one id: tests if the id is a medical record id
 	
 	
 	

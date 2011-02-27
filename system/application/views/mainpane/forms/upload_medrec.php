@@ -1,7 +1,6 @@
-<h2>Upload a medical record</h2>
-
 <?php echo form_open_multipart('upload/medical_record/'.$patient_id);?>
-
+<fieldset id="upload-medrec-fd">
+<legend>Upload a medical record</legend>
 <table>
 	<tr>
 		<td>Issue: <input type="text" name="issue" /><br /></td>
@@ -16,4 +15,5 @@
 
 <input type="submit" value="Upload" />
 
+</fieldset>
 </form>
