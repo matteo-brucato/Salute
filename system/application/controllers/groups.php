@@ -9,10 +9,7 @@
  */
 
 /**
- * Class Controller Connections
- * 
- * @test The whole class has been succesfully tested.
- * @bug No known bugs reported
+ * Class Controller Groups
  * */
 class Groups extends Controller {
 
@@ -204,10 +201,16 @@ class Groups extends Controller {
 	 * @attention invite must be sent to a Salute Member
 	 * @attention invite may only be sent by: permission #s 1,2,3 (all except 0)
 	 * */
-	function _members_invite(){
-
+	function invite($aid = NULL) {
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
+		}
+		
+		if ($aid === NULL) {
+			$this->ui->set(array(
+				$this->load->view('mainpane/forms/pick_patient',
+					array('list_name' => 'a', 'list' => array(), 'hcp_id' => 12), TRUE)
+			));
 		}
 	}
 	

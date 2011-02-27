@@ -441,6 +441,9 @@ class Connections_model extends Model {
 	 *   0 if everything goes fine
 	 * */
 	function accept_connection($inputs) {
+		
+		//echo 'here1';
+		
 		$query = $this->db->query("SELECT * FROM connections
 			WHERE sender_id = ? AND receiver_id = ?", $inputs);
 		
@@ -485,18 +488,25 @@ class Connections_model extends Model {
 		//copy if it came via referal
 		foreach ($result as $value) {
 			
-			//for each referal, get the level of the connection between the is_refered hcp and the refering hcp
+			//echo 'here2';
+			
+			//for each referal, get the level of the connection between the refering hcp and the patient
 			$sql = "SELECT *
 				FROM connections C
 				WHERE (C.sender_id = ? OR C.receiver_id = ?) AND (C.sender_id = ? OR C.receiver_id = ?)";
-			$level = $this->db->query($sql, array($inputs[1], $inputs[1], $value['refering_id'], $value['refering_id']));
+			$level = $this->db->query($sql, array($inputs[0], $inputs[0], $value['refering_id'], $value['refering_id']));
 			if ($this->db->trans_status() === FALSE) {
 				return -1; /* query error */
 			}
 			
 			$level_res = $level->result_array();
+			//echo ' ';
+			//echo $level_res[0]['connection_level'];
+			//echo ' ';
 			
-			if( $level_res['connection_level'] === '1' OR $level_res['connection_level'] === '3') {
+			if( $level_res[0]['connection_level'] === '1' OR $level_res[0]['connection_level'] === '3') {
+				
+				//echo 'here3';
 				
 				//get the medical records that the refering hcp has permission to view for the corresponding patient
 				$sql = "SELECT *
@@ -512,12 +522,15 @@ class Connections_model extends Model {
 				
 				//for each medical record, allow is_refered hcp permission to view it
 				foreach ($medical as $medical_rec) {
+					
+					//echo 'here4';
+					
 					$sql = "INSERT INTO permission (medical_rec_id, account_id, date_created)
 						VALUES (?, ?, current_date)";
 					$query = $this->db->query($sql, array($medical_rec['medical_rec_id'], $inputs[1]));
 					if ($this->db->trans_status() === FALSE)
 						return -1;
-					}
+				}
 			}
 		}
 		return 0;

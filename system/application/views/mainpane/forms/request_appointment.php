@@ -1,8 +1,6 @@
-<h2>Request appointment to <?php echo $hcp['first_name'].' '.$hcp['last_name'];?></h2>
-
 <form action="/appointments/request_do/<?php echo $hcp['account_id'];?>" method="post">
 <fieldset>
-	<legend>Request appointment</legend>
+	<legend>Request appointment to <?php echo $hcp['first_name'].' '.$hcp['last_name'];?></legend>
 	
 	<label for="description">Description</label><br />
 	<input type="text" name="description" class="input-field" /><br />

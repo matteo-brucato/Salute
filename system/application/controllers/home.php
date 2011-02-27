@@ -220,7 +220,6 @@ class Home extends Controller {
 		
 		// Start a transaction now
 		$this->db->trans_start();
-		//$this->db->trans_begin();
 		
 		// load respective forms.
 		$this->load->model('account_model');
@@ -295,7 +294,6 @@ class Home extends Controller {
 		
 		// End transaction
 		$this->db->trans_complete();
-		//$this->db->trans_rollback();
 	}
 	
 	function sitemap() {

@@ -17,7 +17,7 @@
 /home/retrieve_password		ALL_OK
 /home/logout				REDIRECTED
 
-# These are error, since you need to be logged in
+# These are errors, since you need to be logged in
 /profile					CTR_ERROR
 /home/login					CTR_ERROR
 
@@ -30,7 +30,7 @@
 # Invalid login
 /home/login					CTR_ERROR		| -F "email=patient1@yahoo.com" -F "password=camera" -c cookie
 
-# Fuzz tests
+# Other fuzz tests
 sjgjfsgbfgb					CI_404_ERROR
 /home/nothing				CI_404_ERROR
 /hello						CI_404_ERROR

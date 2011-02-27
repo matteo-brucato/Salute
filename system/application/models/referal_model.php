@@ -96,6 +96,7 @@ class Referal_model extends Model {
 	 *  -1 in case of error in a query
 	 *  -2 referal ID does not exist
 	 *  -3 the doctor has already created the same referral
+	 *  -4 the doctor being refered is already friends with the patient //may not be neccessary
 	 *   referal_id if everything goes fine
 	 * */
 	function create_referal($inputs){
@@ -109,6 +110,17 @@ class Referal_model extends Model {
 			return -1;
 		if ($query->num_rows() > 0)
 			return -3;
+		
+		/*	
+		//check if the patient and the is refered hcp are already connected
+		$sql = "SELECT *
+			FROM connections C
+			WHERE (C.sender_id = ? OR C.receiver_id = ?) AND (C.sender_id = ? OR C.receiver_id = ?)";
+		$query = $this->db->query($sql, array($inputs[1], $inputs[2], $inputs[1], $inputs[2]));
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if ($query->num_rows() > 0)
+			return -4; */
 		
 		//create the referral
 		$sql = "INSERT INTO refers (refering_id, is_refered_id, patient_id)
