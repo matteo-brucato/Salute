@@ -61,7 +61,6 @@ CREATE TABLE patient_account(
 	fax_number VARCHAR(11),
 	address TEXT,
 	picture_name TEXT,
-	auto_connection BOOLEAN DEFAULT FALSE,
 	PRIMARY KEY(account_id),
 	FOREIGN KEY (account_id) REFERENCES accounts(account_id)
 );

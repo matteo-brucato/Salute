@@ -46,7 +46,7 @@ scheduling/authorizing appointments, managing patient care, and billing function
 
 
 \chapter{Tools and Technology}
-We immediately realized that the best way to implement a complex Web application like \emph{Salute} was using all the possible technologies that we were aware of. Firstly, we decided to use a well-known system design such as \emph{MVC} (Model-View-Controller). We also decided to use a framework named \emph{CodeIgniter}\footnote{www.codeigniter.com} that is written in Php\footnote{www.php.net}. We fixed \emph{LAPP} as our system environment stack. LAPP stands for \emph{Linux}, \emph{Apache}, \emph{PostgreSQL}, \emph{Php}. Then we decided to use \emph{XHTML} as a mark-up language to describe web pages because it is standardized and is an XML, and use a JavaScript framework called \emph{JQuery}\footnote{www.jquery.com} to have a powerful set of tools that are easy to use and browser-independent. In order to separate the concern of "what to display" and "how to display it", we decided to use \emph{CSS} to manage layouts and presentational matters in the interface. We also decided to foresee the change and implemented Ajax natively.
+We immediately realized that the best way to implement a complex Web application like \emph{Salute} was using all the possible technologies that we were aware of. Firstly, we decided to use a well-known system design such as \emph{MVC} (Model-View-Controller). We also decided to use a framework named \emph{CodeIgniter}\footnote{www.codeigniter.com} that is written in Php\footnote{www.php.net}. We fixed \emph{LAPP} as our system environment stack. LAPP stands for \emph{Linux}, \emph{Apache}, \emph{PostgreSQL}, \emph{Php}. Then we decided to use \emph{XHTML} as a mark-up language to describe web pages because it is standardized and is an XML, and use a JavaScript framework called \emph{JQuery}\footnote{www.jquery.com} to have a powerful set of tools that are easy to use and browser-independent. In order to separate the concern of ``what to display'' and ``how to display it'', we decided to use \emph{CSS} to manage layouts and presentational matters in the interface. We also decided to foresee the change and implemented Ajax natively.
 
 We chose \emph{Doxygen}\footnote{www.doxygen.com} as a parsable-formalized way to write comments in the code. Doing so, we were able to create a detailed documentation for the implementation, automatically. The results are a \emph{pdf} document and a \emph{html} easy-to-navigate website, both containing the same content.
 
@@ -70,12 +70,12 @@ The user requirements presented by the client can be categorized into general, p
 A Salute member can make a social network connection with other Salute members. There are three types of connections: Patient to Doctor, Doctor to Doctor, and Patient to Patient. 
 
 \subsection{Patient-Doctor Connections}
-This type of connection can only be requested by a patient and represents the "doctor-patient" relationship.  When this connection is formed, it allows the provider access to the patient's medical records and indicates a level of trust between the patient and healthcare provider.
+This type of connection can only be requested by a patient and represents the ``patient-doctor'' relationship.  When this connection is formed, it allows the provider access to the patient's medical records and indicates a level of trust between the patient and healthcare provider.
 \begin{itemize}
 \item A patient can request a connection with a healthcare provider. 
 \item A healthcare provider cannot request to connect to a patient. 
-\item Upon request, the patient can specify which level of trust he/she would like to establish with the healthcare provider. There are two levels: standard, high. The standard level of trust gives by default permissions to none of the patient's medical records, and referrals to other doctors must be accepted by the patient. The high level of trust gives by default permissions to all of the patient's medical records and by automatically accepts healthcare provider connections by referral. (See Referral's Section). 
-\item Under each user's account, the list of their current contacts will be readily available and linked to their respective profile pages
+\item Upon request, the patient can specify which level of trust he/she would like to establish with the healthcare provider. There are two levels: standard, high. The standard level of trust gives by default permissions to none of the patient's medical records, and referrals to other doctors must be accepted by the patient. The high level of trust gives by default permissions to all of the patient's medical records and automatically accepts healthcare provider connections by referral. (See Referral's Section). 
+\item Under each user's account, the list of their current contacts will be readily available and linked to their respective profile pages.
 \item Medical records may be uploaded by the healthcare provider to their patient's account. 
 \item A patient may set permissions to hide or allow all or individual medical records from their connected healthcare provider. 
 \item A healthcare provider can refer their connected patient to another healthcare provider. (See Section on Referrals)
@@ -99,7 +99,7 @@ This relationship only exists between healthcare providers and represents the pr
 A referral may be done by a healthcare provider or a patient.
 
 \begin{itemize}
-\item (Referral by Healthcare Provider) Referrals allow healthcare providers to refer their patients to connect with another healthcare provider that he/she is connected with. If the patient has a high level of trust with the healthcare provider, when the healthcare provider refers the patient to his/her connected healthcare provider, the patient will automatically become connected with the referred healthcare provider. If the level of trust is standard between the patient and healthcare provider, the patient must accept the pending referred connection. The permissions of the patient's medical records that the original healthcare provider has, will be transfered over to the referred healthcare provider. 
+\item (Referral by Healthcare Provider) Referrals allow healthcare providers to refer their patients to connect with another healthcare provider that he/she is connected with. If the patient has a high level of trust with the healthcare provider, when the healthcare provider refers the patient to his/her connected healthcare provider, the patient will automatically send a connection request to the refered healthcare provider. If the level of trust is standard between the patient and healthcare provider, the patient must accept the pending referred connection. The permissions of the patient's medical records that the original healthcare provider has, will be transfered over to the referred healthcare provider. 
 \item (Referral by Patient) A patient can also refer their connected healthcare provider to their connected peers(patients). This serves to faciliate patients to suggest their trusted healthcare providers to their friends(connected peers/patients).
 \end{itemize} 
 
@@ -107,7 +107,7 @@ A referral may be done by a healthcare provider or a patient.
 \begin{itemize}
 \item A group may be created, modified, or deleted by patients or healthcare providers.
 \item A group may be a public or private group. 
-\item (Public Group)Only public groups will be visible in the 'Groups Listing' on Salute.From the 'Group Listing', a Salute member can request to join the group.
+\item (Public Group)Only public groups will be visible in the 'Groups Listing' on Salute. From the 'Group Listing', a Salute member can request to join the group.
 \item (Private Groups) The private group will be listed under 'My Groups', for all members of the private group.The only way for a Salute member to join a private group is by invitation. The invitation may only be sent from an administrator of the group.
 \item There are three group categories: patient-patient, healthcare provider-healthcare provider, patient-healthcare provider.
 \item Each group member can have one of 4 different permissions: (1) post to the group only, (2) post to the group and invite other Salute members to the group, (3) post to the group, invite other Salute members to the group, and delete existing group members from the group, (4) post to the group, invite other Salute members, delete existing group members from the group, and modify or delete the group.
@@ -225,7 +225,7 @@ Future:
 \item Add transactions
 \item Jquery input form checks
 \item Add 'About Us' , 'FAQ', 'Contact Us' pages 
-\item Start using Ajax. Try to solve the "history" problem
+\item Start using Ajax. Try to solve the ``history'' problem
 \end{itemize}
 
 \subsubsection{Security}
@@ -284,7 +284,7 @@ Future:
 Future:
 \begin{itemize}
 \item Create a set of more strict and systematic tests in order to verify all the software qualities and requirements
-\item Use automated tools to make tests, like "curl" embedded into Bash scripts, and things like that
+\item Use automated tools to make tests, like ``curl'' embedded into Bash scripts, and things like that
 \end{itemize}
 
 \subsubsection{Documentation}
@@ -361,7 +361,7 @@ In this sequence there is something that can be changed. Using XMLHTTPResponse w
 
 \section{Database Design}
 The database was implemented using PostgreSQL 8.4 as the database management software.  The primary reason why PostgreSQL was used is because of the fact that it is free, easy to obtain, and easy to use. Also everybody in the project group was already familiar with it.
-The overall database was designed while keeping the patient in mind.  Salute is very patient oriented, giving them power overall  power over their medical records, instead of their healthcare provider.
+The overall database was designed while keeping the patient in mind.  Salute is very patient oriented, giving them overall  power over their medical records, instead of their healthcare provider.
 
 \subsection{Entity Relationship Diagram (ERD)}
 We provide a high-level description of the database using the famous ER diagram, for those who are familiar with it\footnote{Entities are represented in the ER diagram as rectangles.  Each entity represents a table in the database that holds all of the information or attributes that represents that entity.  In the ER diagram, each attribute is represented with a oval.}. Then we will describe the database structure in more detail in the implementation chapter. You can see the diagram in Appendix \ref{app:diagrams}, figure \ref{fig:erdiagram}.
@@ -435,7 +435,7 @@ This chapter will show in more details how we implemented all the requirements u
 
 \section{Database implementation}
 \subsection{Tables}
-Our database is composed of ten tables: Messages, Accounts, Patient\_Account, HCP\_Account, Appointments, Medical\_Record, Payment, Permission, P\_D\_Connection, and D\_D\_Connection.  For each table, we will present a description of the table and the attributes in it, as well as its relationship with the other tables its connected with.
+Our database is composed of twelve tables: Messages, Accounts, Patient\_Account, HCP\_Account, Appointments, Medical\_Record, Payment, Permission, Connections, Refers, Groups, and Is\_In.  For each table, we will present a description of the table and the attributes in it, as well as its relationship with the other tables its connected with.
 
 \subsubsection{Messages}
 Holds all of the information regarding messages sent from patient to hcp or vice versa. It has two total 1:N relationships with the Accounts entity.
@@ -444,7 +444,8 @@ Holds all of the information regarding messages sent from patient to hcp or vice
 \item serial \textit{message\_id}- ID to uniquely identify the message from other messages. serial datatype automatically creates the message\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
 \item text \textit{subject}- Subject of the message being sent. text datatype allows unlimited number of characters.  Cannot be null.
 \item text \textit{content}- Where the sender can write what they would like to send to the receiver.  text datatype allows unlimited number of characters.  Cannot be null.
-\item serial \textit{message\_id}- ID to uniquely identify the message from other messages. serial datatype automatically creates the message\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item serial \textit{sender\_id}- ID to uniquely identify the sender of the messages.  Cannot be null.
+\item serial \textit{receiver\_id}- ID to uniquely identify the receiver of the messages.  Cannot be null.
 \item timestamp \textit{date\_time}- Date and time of when the message is sent.  timestamp datatype format YY:MM:DD HH:MM:SS.  Cannot be null.
 \item boolean \textit{sender\_kept}- To determine if the sender would like to delete the message from their outbox.  boolean value is either true or false.  Cannot be null.  By default it is true.  Changing the status to false means it gets deleted.
 \item boolean \textit{receiver\_kept}- To determine if the receiver would like to delete the message from their inbox.  boolean value is either true or false.  Cannot be null.  By default it is true.  Changing the status to false means it gets deleted.
@@ -461,7 +462,7 @@ Holds all of the primary information every patient and hcp account needs to log 
 \end{description}
 
 \subsubsection{Patient\_Account}
-Holds all of the personal information for every patient.  It inherits from the Accounts entity with an IS A relationship.  It has a partial N:1 relationship with the Medical\_Records entity and a partial N:M relationship with the p\_d\_connection relationship.
+Holds all of the personal information for every patient.  It inherits from the Accounts entity with an IS A relationship.  It has a partial N:1 relationship with the Medical\_Records, Payment, Appointments, and Refers entities.
 
 \begin{description}
 \item serial \textit{account\_id}- ID to uniquely identify the account from other accounts. serial datatype automatically creates the account\_id when a new tuple is inserted into the table.  This ID is inherited from the Accounts entity. Primary key of the table.  Cannot be null.
@@ -470,14 +471,15 @@ Holds all of the personal information for every patient.  It inherits from the A
 \item varchar(30) \textit{middle\_name}- Middle name of the patient. varchar(30) datatype allows for a maximum of 30 characters.
 \item numeric(9,0) \textit{ssn}- Social Security Number of the patient. numeric(9,0) datatype allows exactly 9 numeric characters.  Cannot be null.
 \item date \textit{dob}- Date of Birth of the patient.  date datatype is of the format YY:MM:DD.  Cannot be null.
-\item char(6) \textit{sex}- Sex of the patient. char(6) datatype allows for a maximum of 6 characters.  It has to be either "male" or "female".  Cannot be null.
+\item char(1) sex- Sex of the hcp. char(1) datatype allows for a maximum of 1 characters.  It has to be either the char ``m'' or ``f''.  Cannot be null.
 \item varchar(11) \textit{tel\_number}- Primary telephone number of the patient.  varchar(11) datatype allows a maximum of 11 characters.
 \item varchar(11) \textit{fax\_number}- Fax number of the patient.  varchar(11) datatype allows a maximum of 11 characters.
 \item text \textit{address}- Primary address of the patient.  text datatype allows unlimited number of characters.
+\item text \textit{picture\_name}- Path of the picture that the patient would like to upload to their profile.  text datatype allows unlimited number of characters.
 \end{description}
 
 \subsubsection{HCP\_Account}
-Holds all of the personal information for every hcp.  It inherits from the Accounts entity with an IS A relationship.  It has a partial N:1 relationship with the Appointments and Payment entities, as well as a partial N:M relationship with the p\_d\_connection and d\_d\_connection relationship.
+Holds all of the personal information for every hcp.  It inherits from the Accounts entity with an IS A relationship.  It has a partial N:1 relationship with the Appointments and Payment entities.  It has two partial N:1 relationships with the Refers entity.  One of them is for the hcp doing the refering and the other one is for the hcp being referred.
 
 \begin{description}
 \item serial \textit{account\_id}- ID to uniquely identify the account from other accounts. serial datatype automatically creates the account\_id when a new tuple is inserted into the table.  This ID is inherited from the Accounts entity. Primary key of the table.  Cannot be null.
@@ -486,12 +488,13 @@ Holds all of the personal information for every hcp.  It inherits from the Accou
 \item varchar(30) \textit{middle\_name}- Middle name of the hcp. varchar(30) datatype allows for a maximum of 30 characters.
 \item numeric(9,0) \textit{ssn}- Social Security Number of the hcp. numeric(9,0) datatype allows exactly 9 numeric characters.  Cannot be null.
 \item date \textit{dob}- Date of Birth of the hcp.  date datatype is of the format YY:MM:DD.  Cannot be null.
-\item char(6) sex- Sex of the hcp. char(6) datatype allows for a maximum of 6 characters.  It has to be either "male" or "female".  Cannot be null.
+\item char(1) sex- Sex of the hcp. char(1) datatype allows for a maximum of 1 characters.  It has to be either the char ``m'' or ``f''.  Cannot be null.
 \item varchar(11) \textit{tel\_number}- Primary office telephone number of the hcp.  varchar(11) datatype allows a maximum of 11 characters.
 \item varchar(11) \textit{fax\_number}- Primary fax number of the hcp.  varchar(11) datatype allows a maximum of 11 characters.
 \item text \textit{specialization}- What the hcp specializes in.  text datatype allows unlimited number of characters.
 \item varchar(30) \textit{org\_name}- Name of the organization for which the hcp works for.  varchar(30) datatype allows a maximum of 30 characters.
 \item text \textit{address}- Primary address of the hcp place of business.  text datatype allows unlimited number of characters.
+\item text \textit{picture\_name}- Path of the picture that the hcp would like to upload to their profile.  text datatype allows unlimited number of characters.
 \end{description}
 
 \subsubsection{Appointments}
@@ -516,6 +519,8 @@ Holds all of the information for every medical record a patient has on Salute.  
 \item text \textit{issue}-  What the medical record deals with.  text datatype allows unlimited number of characters.  Cannot be null.
 \item text \textit{supplementary\_info}- Any supplementary information that anybody (patient/hcp) would want to add to the medical record.  text datatype allows unlimited number of characters.
 \item text \textit{file\_path}- Path where the file can be found and downloaded from the server.  text datatype allows unlimited number of characters.  Cannot be null.
+\item text \textit{decription}- Description of what occured at the appointment, as well as a description of what the medical record contains.  text datatype allows unlimited number of characters.  Cannot be null.
+\item timestamp \textit{date\_created}- Date the medical record is created.  timestamp datatype of the form YY:MM:DD HH:MM:SS.  Default is the current day and time.  Cannot be null.
 \end{description}
 
 \subsubsection{Payment}
@@ -529,6 +534,9 @@ Holds all of the information for every bill that a patient receives and a hcp is
 \item text \textit{descryption}- Description of what the bill is being issued for.  text datatype allows unlimited number of characters. Cannot be null.
 \item timestamp \textit{due\_date}- Date by which the bill must be paid by.  timestamp datatype of the form YY:MM:DD HH:MM:SS.  Cannot be null.
 \item boolean \textit{cleared}- States whether the bill was paid or not.  boolean datatype value is either true or false.  By default it is false.  If patient pays the bill, its status is changed to true.
+\item boolean \textit{hcp\_kept}- States whether the hcp has keept the bill or not.  boolean datatype value is either true or false.  By default it is true.  If the hcp deletes it, its status is changed to false.
+\item boolean \textit{patient\_kept}- States whether the patient has keept the bill or not.  boolean datatype value is either true or false.  By default it is true.  If the patient deletes it, its status is changed to false.
+\item timestamp \textit{creation\_date}- Date the bill is created.  timestamp datatype of the form YY:MM:DD HH:MM:SS.  Default is the current day and time.  Cannot be null.
 \end{description}
 
 \subsubsection{Permission}
@@ -536,29 +544,57 @@ Holds information regarding which medical records a hcp that is connected with a
 
 \begin{description}
 \item serial \textit{permission\_id}-  ID to uniquely identify the permission from other permissions. serial datatype automatically creates the permission\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
-\item \textit{medical\_rec\_id}- Unique ID of the medical record that a hcp can view.  This is the foreign key to the Medical\_Records entity.  Cannot be null.
+\item serial \textit{medical\_rec\_id}- Unique ID of the medical record that a hcp can view.  This is the foreign key to the Medical\_Records entity.  Cannot be null.
 \item serial \textit{account\_id}- Unique ID of the hcp that can view the medical record.  This is a foreign key to the Accounts entity.  Cannot be null.
 \item date \textit{date\_created}-  Date in which the patient allowed the hcp to view the medical record.  date datatype is of the form YY:MM:DD.  Cannot be null.
+\item varchar(1) \textit{permission\_type}- The type of permission that another account has to a specific medical record.  varchar(1) datatype allows a maximum of 1 characters.  It can either be ``0'' for read or ``1'' for write.  By default it is ``0''.
 \end{description}
 
-\subsubsection{p\_d\_connection}
-Holds all of the information for every connection between a patient and a hcp.  This relationship has a partial N:M relationship with the HCP\_Account and the Patient\_Account entities.
+
+\subsubsection{Connections}
+Holds all of the information for every connection.  This entity has two total 1:N relationships with the Accounts entity.  One is for the person requesting the connection and the other one is for the person accepting the connection.
 
 \begin{description}
-\item serial \textit{patient\_id}- Unique account ID of the patient that establishes a connection with a hcp.  The combination of patient\_id and hcp\_id is the primary key for this table.  This is also the foreign key to the Patient\_Account entity.  Cannot be null.
-\item serial \textit{hcp\_id}- Unique account ID of the hcp that accepts the connection request sent from the patient.  The combination of hcp\_id and patient\_id is the primary key for this table.  This is also the foreign key to the HCP\_Account entity.  Cannot be null.
-\item boolean \textit{accepted}- States whether the request was accepted by the hcp.  boolean datatype value is either true or false.  By default it is false.  If hcp accepts the request, its status is changed to true.
-\item date \textit{date\_connected}- Date in which the request was sent by the patient to the hcp.  date datatype is of the form YY:MM:DD.  Cannot be null.
+\item serial \textit{connection\_id}-  ID to uniquely identify the connection from other connections. serial datatype automatically creates the connection\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item serial \textit{sender\_id}- Unique account ID of the requester that establishes a connection with another account.  This is a foreign key to the Accounts entity.  Cannot be null.  
+\item serial \textit{receiver\_id}- Unique account ID of the receiver that accepts the connection request sent from the sender account.  This is a foreign key to the Accounts entity.  Cannot be null.
+\item boolean \textit{accepted}- States whether the request was accepted by the receiver account.  boolean datatype value is either true or false.  By default it is false.  If receiver account accepts the request, its status is changed to true.
+\item date \textit{date\_connected}- Date in which the request was sent by the requesting account to the accepter account.  date datatype is of the form YY:MM:DD.  Cannot be null.
+\item varchar(1) \textit{connection\_level}- The connection level that is extablished between two accounts in reference to accepting referrals and giving permission to medical records.  varchar(1) datatype allows a maximum of 1 characters.  It can be ``0'' for accepting referrals manually and giving permission to medical records manually.  It can be ``1'' for accepting referrals manually and automatically giving permission to medical records that the refering hcp had permission too.  It can be ``2'' for accepting referrals automatically and giving permission to medical records manually.  It can be ``3'' for automatically accepting referrals and automatically giving permission to medical records that the refering hcp had permission too.  By default it is ``0''.
 \end{description}
 
-\subsubsection{d\_d\_connection}
-Holds all of the information for every connection between a hcp and another hcp.  This relationship has two partial N:M relationships with the HCP\_Account entity.
+\subsubsection{Refers}
+Holds all of the information for the referrals a patient receives from a hcp.  This entity has two total 1:N relationships with the HCP\_Account entity.  It has another total 1:N relationship with the Patient\_Account entity.
 
 \begin{description}
-\item serial \textit{requester\_id}- Unique account ID of the hcp that establishes a connection with another hcp.  The combination of requester\_id and accepter\_id is the primary key for this table.  This is also a foreign key to the HCP\_Account entity.  Cannot be null.  
-\item serial \textit{accepter\_id}- Unique account ID of the hcp that accepts the connection request sent from hcp.  The combination of accepter\_id and requester\_id is the primary key for this table.  This is also a foreign key to the HCP\_Account entity.  Cannot be null.
-\item boolean \textit{accepted}- States whether the request was accepted by the hcp.  boolean datatype value is either true or false.  By default it is false.  If hcp accepts the request, its status is changed to true.
-\item date \textit{date\_connected}- Date in which the request was sent by the hcp to the other hcp.  date datatype is of the form YY:MM:DD.  Cannot be null.
+\item serial \textit{referal\_id}-  ID to uniquely identify the referral from other referrals. serial datatype automatically creates the referral\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item serial \textit{refering\_id}- ID of the hcp creating the referral.  This is a foreign key to the HCP\_Account entity.  Cannot be null.
+\item serial \textit{is\_refered\_id}- ID of the hcp that is being referred.  This is a foreign key to the HCP\_Account entity.  Cannot be null.
+\item serial \textit{patient\_id}- ID of the patient that is going to be receiving the referral.  This is a foreign key to the Patient\_Account entity.  Cannot be null.
+\item timestamp \textit{date\_time}-  Date the referral is created.  timestamp datatype of the form YY:MM:DD HH:MM:SS.  Default is the current day and time.  Cannot be null.
+\item boolean \textit{status}- States whether the referral was accepter or not by the patient.  boolean datatype value is either true or false.  By default it is false.  If patient accepts the referral, its status is changed to true.
+\end{description}
+
+\subsubsection{Groups}
+Holds all of the information for the social network groups.  This entity has a partial N:M and a total 1:N relationship with the Accounts entity.
+
+\begin{description}
+\item serial \textit{group\_id}-  ID to uniquely identify the group from other groups. serial datatype automatically creates the group\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item serial \textit{account\_id}- ID of the person that created the group.  This is the foreign key to the Accounts entity.  Cannot be null.
+\item text \textit{name}- Name of the group.  text datatype allows unlimited number of characters.  Cannot be null.
+\item text \textit{description}- Description of the purpose of the group.  text datatype allows unlimited number of characters.  Cannot be null.
+\item varchar(1) \textit{public\_private}-  States whether the group is private or public.  varchar(1) datatype allows a maximum of 1 characters. It can be ``0'' for public or it can be ``1'' for private.  Cannot be null.
+
+\item varchar(1) \textit{group\_type}- States who the members of the group can be.   varchar(1) datatype allows a maximum of 1 characters.  It can be ``0'' for a group that is only for patients.  It can be ``1'' for a group that is for patients and hcps.  It can be ``2'' for a group that is only for hcps.
+\end{description}
+
+\subsubsection{Is\_In}
+Holds all of the information to be able to determine which account is in which group.  This relationship has a partial N:M relationship with the Accounts entity and the Groups entity.
+
+\begin{description}
+\item serial \textit{account\_id}-  ID of the account that belongs to a particular group.  Combination of the account\_id and the group\_id compose the primary key of the table.  This is also a foreign key to the Accounts entity.  Cannot be null.
+\item serial \textit{group\_id}- ID of the group that an account belongs too.  Combination of the group\_id and the account\_id compose the primary key of the table.  This is also a foreign key to the Groups entity.  Cannot be null.
+\item varchar(1) \textit{permissions}- The permission level that an account has in a particular group.  varchar(1) datatype allows a maximum of 1 characters.  It can be ``0'' if the account can only post to the group.  It can be ``1'' if the account can post and invite other accounts to join the group.  It can be ``2'' if the account can post to the group, invite other accounts to join the group, and they can delete members from the group.  It can be ``3'' if the account can can post to the group, invite other accounts to join the group, delete members from the group as well as delete the whole group.  By default the creater of the group has permission level ``3''.  Cannot be null.
 \end{description}
 
 \subsubsection{Scripts to start the server and load the data}
@@ -652,7 +688,7 @@ An instance of this class is created automatically at the instantiation of each 
 \subsection{Controller Tests}
 \label{subsec:controllertests}
 
-The each controller's functions were tested in several ways to anticipate possible user's actions. In general, they were tested for:
+Each controller's functions were tested in several ways to anticipate possible user's actions. In general, they were tested for:E
 \begin{itemize}
 \item \textbf{Value Types}
 \begin{itemize}
@@ -679,7 +715,7 @@ The each controller's functions were tested in several ways to anticipate possib
 
 
 \subsection{Database Tests}
-The database was initially tested with simple SELECT * queries to see if the database tables were created and loaded correctly using the automated scripts\footnote{The bash script start\_everything.sh was used to automate the database creation process.  It used create\_tables.sql and load\_data.sql to create and populate the database.}. The database was populated with test data from ten different files (approximately one for every table)\footnote{These test files are: accounts.txt, appointments.txt, d\_d\_connection.txt, hcp\_account.txt, medical\_records.txt, messages.txt, patient\_account.txt, payment.txt, p\_d\_connection.txt, and permissions.txt.}.  Then as the functions in each model were being implemented, the sql queries for each function would first be tested in the database to make sure that the correct result was returned.  Only after the sql query was tested and returned the correct information to the function in the model, would we determine that the function was fully implemented.  Additionally, error checking is done in each function to determine if an sql query sent to the database was successfully executed.
+The database was initially tested with simple SELECT * queries to see if the database tables were created and loaded correctly using the automated scripts\footnote{The bash script start\_everything.sh was used to automate the database creation process.  It used create\_tables.sql and load\_data.sql to create and populate the database.}. The database was populated with test data from twelve different files (approximately one for every table)\footnote{These test files are: accounts.txt, appointments.txt, connections.txt, groups.txt, hcp\_account.txt, is\_in.txt, medical\_records.txt, messages.txt, patient\_account.txt, payment.txt, permissions.txt, and refers.txt.}.  Then as the functions in each model were being implemented, the sql queries for each function would first be tested in the database to make sure that the correct result was returned.  Only after the sql query was tested and returned the correct information to the function in the model, would we determine that the function was fully implemented.  Additionally, error checking is done in each function to determine if an sql query sent to the database was successfully executed.
 
 All of the test data files that are used to populate the database not only provide testing capabilities for the models, but also for the views and the controllers since they are interrelated.  For a list of all of the tests that the controllers test, read subsection \ref{subsec:controllertests}.
 
@@ -748,7 +784,7 @@ Here are the features in your side panel:
 \textbf{Check my appointment requests}
 \begin{enumerate}
 \item In the side panel, click \textit{ Appointments}.
-\item Look at the approved column. A requested appointment will have "Pending" here.
+\item Look at the approved column. A requested appointment will have ``Pending'' here.
 \item Click \textit{Accept} to accept the appointment or \textit{Cancel} to reject the appointment.
 \end{enumerate}
 \textbf{Cancel an appointment}
@@ -898,7 +934,7 @@ Here are the features in your side panel:
 \textbf{Check, cancel or reschedule appointment requests}
 \begin{enumerate}
 \item In the side panel, click \textit{ Appointments}.
-\item Look at the approved column. A requested appointment will have "Pending" here.
+\item Look at the approved column. A requested appointment will have ``Pending'' here.
 \item Click \textit{Reschedule} to reschedule the appointment or \textit{Cancel} to cancel the appointment request.
 \end{enumerate}
 \textbf{Check, cancel or reschedule a scheduled appointment}
