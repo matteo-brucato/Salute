@@ -28,13 +28,46 @@ class Groups extends Controller {
 	 * 		List all groups
 	 * */
 	function index(){
-		$this->list_groups();
+		$this->groups('all');
 	}
+	
+	function groups($direction = 'all'){
+		if ( $direction = 'all' )
+			$this->_groups_all();
+		else if ( $direction = 'mine' )
+			$this->_groups_mine();
+		else if ( $direction = 'create' )
+			$this->_groups_create();
+		else if ( $direction = 'delete' )
+			$this->_groups_delete();
+		else if ( $direction = 'edit' )		
+			$this->_groups_edit();
+		else
+			$this->ui->set_error('Input not valid: <b>'.$param.'</b>');
+	}
+	
+	function member($direction = 'all'){
+		if ( $direction = 'all' )
+			$this->_members_all();
+		else if ( $direction = 'edit' )
+			$this->_members_edit();
+		else if ( $direction = 'join' )
+			$this->_members_join();
+		else if ( $direction = 'leave' )
+			$this->_members_leave();
+		else if ( $direction = 'delete' )		
+			$this->_members_delete();
+		else if ( $direction = 'invite' )		
+			$this->_members_invite();
+		else
+			$this->ui->set_error('Input not valid: <b>'.$param.'</b>');	
+	}
+	
 	
 	/**
 	 * Loads Create New Group Form
 	 * */
-	function create(){
+	function _groups_create(){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
@@ -46,7 +79,7 @@ class Groups extends Controller {
 	/**
 	 * Create a New Group
 	 * */
-	function create_do(){
+	function _groups_create_do(){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
@@ -91,7 +124,7 @@ class Groups extends Controller {
 	/**
 	 * Delete an Existing Group
 	 * */
-	function delete($group_id = NULL){
+	function _groups_delete($group_id = NULL){
 		
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
@@ -122,7 +155,7 @@ class Groups extends Controller {
 	/**
 	 * Join an Existing Group
 	 * */
-	function join(){
+	function _members_join(){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
@@ -132,7 +165,7 @@ class Groups extends Controller {
 	/**
 	 * Group Member Leave from the Existing Group
 	 * */
-	function leave($group_id){
+	function _members_leave($group_id){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
@@ -169,7 +202,7 @@ class Groups extends Controller {
 	 * @attention invite must be sent to a Salute Member
 	 * @attention invite may only be sent by: permission #s 1,2,3 (all except 0)
 	 * */
-	function invite(){
+	function _members_invite(){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
@@ -179,7 +212,7 @@ class Groups extends Controller {
 	/**
 	 * List Existing Groups
 	 * */
-	function list_groups(){
+	function _groups_all(){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
@@ -218,7 +251,7 @@ class Groups extends Controller {
 	/**
 	 * List My Groups
 	 * */
-	function list_my_groups(){
+	function _groups_mine(){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
@@ -254,7 +287,7 @@ class Groups extends Controller {
 	/**
 	 * Edit an Existing Group
 	 * */
-	function edit($group_id){
+	function _groups_edit($group_id){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
@@ -282,7 +315,7 @@ class Groups extends Controller {
 		//$this->db->trans_rollback();
 	}
 	
-	function edit_do($group_id){
+	function _groups_edit_do($group_id){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
@@ -330,7 +363,7 @@ class Groups extends Controller {
 	/**
 	 * List members of a group
 	 * */
-	function list_members($group_id){
+	function _members_all($group_id){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
@@ -362,7 +395,7 @@ class Groups extends Controller {
 		//$this->db->trans_rollback();
 	}
 	
-	function change_member_permissions($account_id,$group_id){
+	function _members_edit($account_id,$group_id){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
@@ -373,7 +406,7 @@ class Groups extends Controller {
 	
 	}
 	
-	function change_member_permissions_do(){
+	function _members_edit_do(){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
@@ -383,7 +416,7 @@ class Groups extends Controller {
 		// submit changes
 		// Success Msg, link back to member list
 	}
-	function delete_member($group_id,$account_id){}
+	function _members_delete($group_id,$account_id){}
 	
 }
 /** @} */
