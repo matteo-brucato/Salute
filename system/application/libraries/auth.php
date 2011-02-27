@@ -35,14 +35,15 @@ class Auth {
 	const ACCOUNT		= 8;	// requires one id: tests if it's an account id
 	const PAT			= 9;	// requires one id: tests if it's a patient id
 	const HCP			= 10;	// requires one id: tests if it's a hcp id
+	const GRP			= 11;	// requires one id: tests if it's a group_id
 	
-	const APPT_EXST		= 11;	// requires one id: tests if the appointment id exists
-	const APPT_MINE		= 12;	// requires one id: tests if it's your appointment id
+	const APPT_EXST		= 12;	// requires one id: tests if the appointment id exists
+	const APPT_MINE		= 13;	// requires one id: tests if it's your appointment id
 	
-	const BILL_DELC		= 13;	// requires one id: tests if bill id is deletable
-	const BILL_PAYC		= 14;	// requires one id: tests if bill id is inactive=payable
+	const BILL_DELC		= 14;	// requires one id: tests if bill id is deletable
+	const BILL_PAYC		= 15;	// requires one id: tests if bill id is inactive=payable
 	
-	const MEDREC		= 15;	// requires one id: tests if the id is a medical record id
+	const MEDREC		= 16;	// requires one id: tests if the id is a medical record id
 	
 	
 	
@@ -242,6 +243,11 @@ class Auth {
 					$i++;
 					break;
 				
+				case auth::GRP:
+					return auth::GRP;
+					$i++;
+					break;
+
 				case auth::CurrGRPMEM:
 					return auth::CurrGRPMEM;
 					$i++;

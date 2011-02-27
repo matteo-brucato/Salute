@@ -111,8 +111,8 @@ class Groups_model extends Model {
 	 * 		-1 if query error
 	 * 		-2 if membership doesn't exist
 	 * 		0 if all is well
-	 * */	
-	function leave($account_id,$group_id){
+	 * */
+	function remove($account_id,$group_id){
 		
 		// Check if the member exists
 		$check = $this->is_member($account_id,$group_id);
@@ -275,12 +275,12 @@ class Groups_model extends Model {
 		return NULL;
 	}
 	
-	function edit_member($account_id,$group_id,$permission_number){
+	function edit_member($account_id,$group_id,$permissions){
 	
 		$sql = "UPDATE is_in SET permissions = ?
 			WHERE account_id = ? AND group_id = ?";
 		
-		$this->db->query($sql,array($permission_number,$account_id,$group_id));
+		$this->db->query($sql,array($permissions,$account_id,$group_id));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1; // query error
