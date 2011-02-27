@@ -31,7 +31,7 @@ class Groups extends Controller {
 		$this->groups('all');
 	}
 	
-	function groups($direction = 'all'){
+	function groups($direction = 'all' , $subdir = 'all', $group_id = NULL, $account_id = NULL){
 		if ( $direction = 'all' )
 			$this->_groups_all();
 		else if ( $direction = 'mine' )
@@ -39,28 +39,30 @@ class Groups extends Controller {
 		else if ( $direction = 'create' )
 			$this->_groups_create();
 		else if ( $direction = 'delete' )
-			$this->_groups_delete();
+			$this->_groups_delete($group_id);
 		else if ( $direction = 'edit' )		
-			$this->_groups_edit();
+			$this->_groups_edit($group_id);
+		else if ( $direction = 'members' )
+			$this->_groups_members($subdir,$group_id, $account_id);
 		else
 			$this->ui->set_error('Input not valid: <b>'.$param.'</b>');
 	}
 	
-	function member($direction = 'all'){
-		if ( $direction = 'all' )
-			$this->_members_all();
-		else if ( $direction = 'edit' )
-			$this->_members_edit();
-		else if ( $direction = 'join' )
-			$this->_members_join();
-		else if ( $direction = 'leave' )
-			$this->_members_leave();
-		else if ( $direction = 'delete' )		
-			$this->_members_delete();
-		else if ( $direction = 'invite' )		
-			$this->_members_invite();
+	function _groups_members($subdir = 'all', $group_id = NULL, $account_id = NULL){
+		if ( $subdir = 'all' )
+			$this->_members_all($group_id);
+		else if ( $subdir = 'edit' )
+			$this->_members_edit($group_id,$account_id);
+		else if ( $subdir = 'join' )
+			$this->_members_join($group_id);
+		else if ( $subdir = 'leave' )
+			$this->_members_leave($group_id);
+		else if ( $subdir = 'delete' )		
+			$this->_members_delete($group_id,$account_id);
+		else if ( $subdir = 'invite' )		
+			$this->_members_invite($group_id,$account_id);
 		else
-			$this->ui->set_error('Input not valid: <b>'.$param.'</b>');	
+			$this->ui->set_error('Input not valid: <b>'.$subdir.'</b>');	
 	}
 	
 	
@@ -252,7 +254,6 @@ class Groups extends Controller {
 	 * List My Groups
 	 * */
 	function _groups_mine(){
-
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
 		}
