@@ -17,12 +17,12 @@ class Groups_model extends Model {
 	/**
 	 * Create a Group
 	 * @param $inputs
-	 *   Is of the form: array(creator's account_id,name,type,description,privacy)
+	 *	Is of the form: array(creator's account_id,name,type,description,privacy)
+	 *	public_private = 0: public , 1: private 
 	 * @return
 	 * 		-1 if query error
-	 * 		0 if insert was successful
-	 * @todo
-	 * 		make it return the group tuple to print to screen?
+	 * 		-2 if group_id dne
+	 * 		group_id if all ok.
 	 * */
 	function create($inputs){
 	
@@ -31,8 +31,19 @@ class Groups_model extends Model {
 		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)
 			return -1;
-		//return $query->result_array();
-		return 0;
+	
+		$sql = "select last_value from groups_group_id_seq";
+		$query = $this->db->query($sql);
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		if ($query->num_rows() > 0) {
+			$res = $query->result_array();
+			$group_id = $res[0]['last_value'];
+		} else 
+			return -2;
+			
+		return $group_id;
 	}
 
 
@@ -160,7 +171,7 @@ class Groups_model extends Model {
 	 * */
 	function list_all_groups(){
 		
-		$sql = "SELECT * FROM groups";
+		$sql = "SELECT * FROM groups WHERE public_private = '0' ";
 
 		$query = $this->db->query($sql);
 		

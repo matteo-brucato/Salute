@@ -10,13 +10,10 @@
 
 /**
  * Class Controller Groups
- * @todo: 	if you create a group, you should automatically be added to it with permission 3
+ * @todo: 	
  * 			edit member permission form
  * 			fix list members
- * 			invite members
- * 			implement auth checks
  * 			form checking
- * 			when you join a group, your permission should be automatically set to 0
  * */
 class Groups extends Controller {
 
@@ -101,7 +98,7 @@ class Groups extends Controller {
 		
 		$this->db->trans_start();
 		
-		$result = $this->groups_model->create(array(
+		$group_id = $this->groups_model->create(array(
 													'account_id' => $this->auth->get_account_id(),
 													'name' => $name, 
 													'description' => $description, 
@@ -109,7 +106,22 @@ class Groups extends Controller {
 													'group_type' => $group_type,
 												)); 
 		
-		if($result === -1){
+		if($group_id === -1){
+			$this->ui->set_query_error(); 
+			return;
+		} else if ( $group_id === -2 ){
+			$this->ui->set_error('Group does not exist'); 
+			return;
+		} 
+				
+		$admin = $this->groups_model->join($this->auth->get_account_id(),$group_id);
+		if($admin === -1){
+			$this->ui->set_query_error(); 
+			return;
+		}
+		$permissions = '3';
+		$admin = $this->groups_model->edit_member($this->auth->get_account_id(),$group_id,$permissions);
+		if($admin === -1){
 			$this->ui->set_query_error(); 
 			return;
 		}
@@ -126,7 +138,7 @@ class Groups extends Controller {
 	 * */
 	function delete($group_id = NULL){
 		
-		if ($this->auth->check(array(auth::CurrLOG, /*auth::GRP, $group_id*/)) !== TRUE) {
+		if ($this->auth->check(array(auth::CurrLOG, auth::GRP, $group_id)) !== TRUE) {
 			return;
 		}
 		
@@ -153,7 +165,7 @@ class Groups extends Controller {
 	 * @bug does not check if you have permission to join ( e.g. pats only, docs only )
 	 * */
 	function _members_join($group_id = NULL){
-		if ($this->auth->check(array(auth::CurrLOG/*,auth::GRP,$group_id*/)) !== TRUE) return;
+		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id )) !== TRUE) return;
 		
 		$this->db->trans_start();
 		
@@ -177,13 +189,13 @@ class Groups extends Controller {
 		$this->db->trans_complete();
 		
 		// check again that they're in 'is_in'
-		//if ($this->auth->check(array(auth::CurrGRPMEM,$group_id)) === TRUE){
+		if ($this->auth->check(array(auth::CurrGRPMEM,$group_id)) === TRUE){
 			$this->ui->set_message('You have successfully joined the group.','Confirmation');
 			//link to view my groups.
-		/*} else {
+		} else {
 			$this->ui->set_error('Internal Server Error','server');
 			return;
-		}*/
+		}
 	}
 	
 	/**
@@ -194,7 +206,7 @@ class Groups extends Controller {
 
 		if ($this->auth->check(array(
 										auth::CurrLOG, 
-									/*	auth::CurrGRPMEM, $this->auth->get_account_id()*/
+										auth::CurrGRPMEM, $this->auth->get_account_id()
 									)) !== TRUE) {
 			return;
 		}
@@ -246,13 +258,13 @@ class Groups extends Controller {
 		}
 		$this->db->trans_complete();		
 		
-		//if ($this->auth->check(array(auth::CurrGRPMEM,$group_id)) !== TRUE){
+		if ($this->auth->check(array(auth::CurrGRPMEM,$group_id)) !== TRUE){
 			$this->ui->set_message('You have successfully left the group.','Confirmation');
 			// link to my groups
-		/*} else {
+		} else {
 			$this->ui->set_error('Internal Server Error','server');
 			return;
-		}*/
+		}
 	}
 	
 	/**
@@ -434,11 +446,11 @@ class Groups extends Controller {
 	 * */
 	function edit($group_id = NULL){
 		
-		if ($this->auth->check(array(auth::CurrLOG/*,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id*/)) !== TRUE) {
+		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id)) !== TRUE) {
 			return;
 		}
 
-		//$this->db->trans_start();
+		$this->db->trans_start();
 
 		$mem = $this->groups_model->get_member($this->auth->get_account_id(),$group_id);
 		if ($mem === -1){
@@ -462,7 +474,7 @@ class Groups extends Controller {
 		}
 		$this->ui->set(array($this->load->view('mainpane/forms/edit_group', array('curr_info' => $curr_info), TRUE)));
 		
-		//$this->db->trans_complete();
+		$this->db->trans_complete();
 	}
 	
 	
@@ -505,7 +517,7 @@ class Groups extends Controller {
 	 * */
 	function _members_list($group_id = NULL){
 
-		if ($this->auth->check(array(auth::CurrLOG/*,auth::CurrGRPMEM,$group_id*/)) !== TRUE) {
+		if ($this->auth->check(array(auth::CurrLOG,auth::CurrGRPMEM,$group_id)) !== TRUE) {
 			return;
 		}
 
@@ -518,12 +530,14 @@ class Groups extends Controller {
 		}
 		
 		for ($i = 0; $i < count($list); $i++) {
-			$perm = $this->groups_model->get_member($this->auth->get_account_id(),$list[$i]['group_id']);
+			if 
+			$mem = $this->groups_model->get_member($this->auth->get_account_id(),$list[$i]['group_id']);
 
-			if($perm === -1){
+			if($mem === -1){
 				$this->ui->set_query_error();
 				return;
 			}
+			
 		}
 		
 		$this->ui->set(array($this->load->view('mainpane/lists/group_members', array('mem_list' => $list, 'perm' => $perm), TRUE)));
@@ -533,7 +547,7 @@ class Groups extends Controller {
 	
 	function _members_edit($group_id = NULL, $account_id = NULL){
 
-		if ($this->auth->check(array(auth::CurrLOG/*,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id*/)) !== TRUE) {
+		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id)) !== TRUE) {
 			return;
 		}
 		$this->db->trans_start();

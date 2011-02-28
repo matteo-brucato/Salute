@@ -197,7 +197,7 @@
 				$this->ui->set_error('Connection does not exist!', 'Permission Denied');
 				return;
 			default:
-				if ($level[0]['connection_level'] === '2' or $level[0]['connection_level'] === '3'){
+				if ($level[0]['sender_level'] === '2' or $level[0]['sender_level'] === '3'){
 					
 					$approve = $this->referal_model->approve(array($referal_id));
 					switch ($approve) {

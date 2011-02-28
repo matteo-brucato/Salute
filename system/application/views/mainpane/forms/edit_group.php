@@ -22,9 +22,12 @@
 			<tr>
 				<td><label for="grouptype-input">Group Type</label></td>
 				<td>
-					<input type="radio" name="group_type" value="0">Patients Only<br>
-					<input type="radio" name="group_type" value="1">Healthcare Providers Only<br>
-					<input type="radio" name="group_type" value="2">Patients and Healthcare Providers<br>
+					<input type="radio" name="group_type" value="0" 
+						<?php if($curr_info['group_type'] == '0') echo 'checked="checked"';?> />Patients Only<br>
+					<input type="radio" name="group_type" value="1" 
+						<?php if($curr_info['group_type'] == '1') echo 'checked="checked"';?> />Healthcare Providers Only<br>
+					<input type="radio" name="group_type" value="2" 
+						<?php if($curr_info['group_type'] == '2') echo 'checked="checked"';?> />Patients and Healthcare Providers<br>
 				</td>
 			</tr>
 		</table>

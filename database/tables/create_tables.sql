@@ -63,7 +63,7 @@ CREATE TABLE patient_account(
 	tel_number VARCHAR(11),
 	fax_number VARCHAR(11),
 	address TEXT,
-	picture_name TEXT
+	picture_name TEXT,
 	PRIMARY KEY(account_id),
 	FOREIGN KEY (account_id) REFERENCES accounts(account_id)
 );
@@ -148,6 +148,7 @@ CREATE TABLE permission(
 	date_created DATE NOT NULL,
 	permission_type VARCHAR(1) DEFAULT '0',
 	PRIMARY KEY (permission_id),
+	UNIQUE (medical_rec_id,account_id),
 	FOREIGN KEY (medical_rec_id) REFERENCES medical_record(medical_rec_id)  ON DELETE CASCADE,
 	FOREIGN KEY (account_id) REFERENCES accounts(account_id)  ON DELETE CASCADE
 
@@ -190,8 +191,10 @@ CREATE TABLE connections(
 	receiver_id SERIAL NOT NULL,
 	accepted BOOLEAN NOT NULL DEFAULT FALSE,
 	date_connected DATE NOT NULL,
-	connection_level VARCHAR(1) DEFAULT '0',
+	sender_level VARCHAR(1) DEFAULT '0',
+	receiver_level VARCHAR(1) DEFAULT '0',
 	PRIMARY KEY (connection_id),
+	UNIQUE(sender_id,receiver_id),
 	FOREIGN KEY (sender_id) REFERENCES accounts(account_id),
 	FOREIGN KEY (receiver_id) REFERENCES accounts(account_id)
 );
@@ -229,7 +232,7 @@ CREATE TABLE d_d_connection(
 CREATE TABLE is_in(
 	account_id SERIAL NOT NULL,
 	group_id SERIAL NOT NULL,
-	permissions VARCHAR(1),
+	permissions VARCHAR(1) DEFAULT 0 NOT NULL,
 	PRIMARY KEY (account_id, group_id),
 	FOREIGN KEY (account_id) REFERENCES accounts(account_id),
 	FOREIGN KEY (group_id) REFERENCES groups(group_id) ON DELETE CASCADE
