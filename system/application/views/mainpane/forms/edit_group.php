@@ -15,8 +15,10 @@
 			<tr>
 				<td><label for="privacy-input">Privacy</label></td>
 				<td>
-					<input type="radio" name="public_private" value="0">Public<br>
-					<input type="radio" name="public_private" value="1">Private<br>
+					<input type="radio" name="public_private" value="0"
+						<?php if($curr_info['public_private'] == '0') echo 'checked="checked"';?> />Public<br>
+					<input type="radio" name="public_private" value="1" 
+						<?php if($curr_info['public_private'] == '1') echo 'checked="checked"';?> />Private<br>
 				</td>
 			</tr>
 			<tr>
@@ -37,3 +39,4 @@
 		</p>
 	</fieldset>
 </form>
+

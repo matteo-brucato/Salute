@@ -12,7 +12,7 @@
  * Class Controller Groups
  * @todo: 	
  * 			edit member permission form
- * 			fix list members
+ * 			add more action links to Group's List / My Groups list
  * 			form checking
  * */
 class Groups extends Controller {
@@ -24,6 +24,8 @@ class Groups extends Controller {
 		$this->load->model('groups_model');
 		$this->load->model('connections_model');
 		$this->load->model('account_model');
+		$this->load->model('patient_model');
+		$this->load->model('hcp_model');
 	}
 	
 	/**
@@ -517,7 +519,7 @@ class Groups extends Controller {
 	 * */
 	function _members_list($group_id = NULL){
 
-		if ($this->auth->check(array(auth::CurrLOG,auth::CurrGRPMEM,$group_id)) !== TRUE) {
+		if ($this->auth->check(array(auth::CurrLOG, auth::GRP,$group_id,auth::CurrGRPMEM,$group_id)) !== TRUE) {
 			return;
 		}
 
@@ -530,18 +532,42 @@ class Groups extends Controller {
 		}
 		
 		for ($i = 0; $i < count($list); $i++) {
-			if 
-			$mem = $this->groups_model->get_member($this->auth->get_account_id(),$list[$i]['group_id']);
-
+			$mem = $this->groups_model->get_member($list[$i]['account_id'],$list[$i]['group_id']);
+			
 			if($mem === -1){
 				$this->ui->set_query_error();
+				return;
+			} else if($this->patient_model->is_patient($mem['account_id'])){
+				$pat = $this->patient_model->get_patient($mem['account_id']);
+				if ($pat === -1){
+					$this->ui->set_query_error();
+					return;	
+				}
+				$info[$i]['first_name'] = $pat[0]['first_name'];
+				$info[$i]['last_name'] = $pat[0]['last_name'];
+			} else if ($this->hcp_model->is_hcp($mem['account_id'])){
+				$hcp = $this->hcp_model->get_hcp($mem['account_id']);
+				if ($hcp === -1){
+					$this->ui->set_query_error();
+					return;	
+				}
+				$info[$i]['first_name'] = $hcp[0]['first_name'];
+				$info[$i]['last_name'] = $hcp[0]['last_name'];	
+			} else{
+				$this->ui->set_error('Internal server error','server');
 				return;
 			}
 			
 		}
-		
-		$this->ui->set(array($this->load->view('mainpane/lists/group_members', array('mem_list' => $list, 'perm' => $perm), TRUE)));
-		
+		$perm = $this->groups_model->get_member($this->auth->get_account_id(),$group_id);
+		if ($perm === -1){
+			$this->ui->set_query_error();
+			return;	
+		}
+		$perm = $perm['permissions'];
+		$this->ui->set(array($this->load->view('mainpane/lists/group_members', 
+										array('mem_list' => $list, 'perm' => $perm, 'info' => $info),
+										TRUE)));
 		$this->db->trans_complete();
 	}
 	
@@ -565,7 +591,7 @@ class Groups extends Controller {
 		}
 
 		/* @todo learn how to load curr info into a radio button's value */
-		$this->ui->set(array($this->load->view('mainpane/forms/edit_member','', TRUE)));
+		//$this->ui->set(array($this->load->view('mainpane/forms/edit_member',array('curr_info' => $curr_info), TRUE)));
 
 		$this->db->trans_complete();
 	}
