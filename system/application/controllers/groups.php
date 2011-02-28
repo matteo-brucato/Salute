@@ -147,6 +147,8 @@ class Groups extends Controller {
 	
 	/**
 	 * Join an Existing Group
+	 * functionality tested.
+	 * @bug does not check if you have permission to join ( e.g. pats only, docs only )
 	 * */
 	function _members_join($group_id = NULL){
 		if ($this->auth->check(array(auth::CurrLOG/*,auth::GRP,$group_id*/)) !== TRUE) return;
@@ -271,6 +273,7 @@ class Groups extends Controller {
 	
 	/**
 	 * List Existing Groups
+	 * tested.
 	 * */
 	function _lists_all(){
 
@@ -306,6 +309,7 @@ class Groups extends Controller {
 	
 	/**
 	 * List My Groups
+	 * tested.
 	 * */
 	function _lists_mine(){
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
@@ -371,6 +375,8 @@ class Groups extends Controller {
 		//$this->db->trans_complete();
 	}
 	
+	
+	// @bug does not change database
 	function edit_do($group_id = NULL){
 
 		$name = $this->input->post('name');
