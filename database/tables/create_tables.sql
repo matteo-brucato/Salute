@@ -232,7 +232,7 @@ CREATE TABLE d_d_connection(
 CREATE TABLE is_in(
 	account_id SERIAL NOT NULL,
 	group_id SERIAL NOT NULL,
-	permissions VARCHAR(1) DEFAULT 0 NOT NULL,
+	permissions VARCHAR(1) DEFAULT '0' NOT NULL,
 	PRIMARY KEY (account_id, group_id),
 	FOREIGN KEY (account_id) REFERENCES accounts(account_id),
 	FOREIGN KEY (group_id) REFERENCES groups(group_id) ON DELETE CASCADE
