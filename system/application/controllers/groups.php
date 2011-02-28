@@ -54,7 +54,7 @@ class Groups extends Controller {
 		else if ( $direction == 'edit' )
 			$this->_members_edit($group_id,$account_id);
 		else if ( $direction == 'edit_do' )
-			$this->_members_edit($group_id,$account_id);
+			$this->_members_edit_do($group_id,$account_id);
 		else if ( $direction == 'join' )
 			$this->_members_join($group_id);
 		else if ( $direction == 'leave' )
@@ -455,7 +455,7 @@ class Groups extends Controller {
 		} else if ($mem === NULL) {
 			$this->ui->set_error('You are no longer a member of this group.');
 			return;
-		} else if ($mem[0]['permissions'] !== '2' || $mem[0]['permissions'] !== '3' ){
+		} else if ($mem['permissions'] != '2' && $mem['permissions'] != '3' ){
 			$this->ui->set_error('You do not have permission to edit this member.');
 			return;
 		}
@@ -467,7 +467,6 @@ class Groups extends Controller {
 	}
 	
 	function _members_edit_do($group_id = NULL,$account_id = NULL){
-
 		$perm = $this->input->post('permissions');
 		
 		// Form Checking will replace this
