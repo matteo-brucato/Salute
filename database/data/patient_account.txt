@@ -1,10 +1,10 @@
-794786543;Teresa;Ramirez;;567834576;1970-7-12;f;19098842354;;1023 River Drive, Riverside, CA 92521;patient1.jpeg;true
-873947364;Ben;Yong;Le;846384792;1965-2-23;m;19517938734;19517638879; 9834 West Adam St., Colton, CA 92324;patient2.jpeg;false
-737493474;Alber;Man;;530717265;2000-4-15;m;17027681264;;8345 Linden St, Reno, NV 89501;patient3.jpeg;false
-982532435;James;Foster;;173872648;2005-9-9;m;14807892364;;1292 Main St, Sprigfield, AR 85640;patient4.jpeg;false
-782893498;Ariana;Mejilla;Jena;452048120;1999-12-19;f;19515671290;;342 Washington, Colton, CA 92324;patient5.jpeg;false
-854459854;Ben;Wheatherspon;;820011293;1990-3-23;m;19512392845;;9343 Blaine St, Colton, CA 92324;patient6.jpeg;false
-987875489;Rony;Doodle;;912582348;1985-11-8;m;17028901234;;2342 Lendis St, Reno, NV 89501;patient7.jpeg;false
-769887548;Mike;James;;923011209;1992-1-13;m;14808901202;;92834 Idontknow st, Springfield, AR 85640;patient8.jpeg;false
-893489439;Larry;Martinez;;203038287;1970-7-22;m;17022038454;;2389 Soto Ave, Reno, NV 89501;patient9.jpeg;false
+794786543;Teresa;Ramirez;;567834576;1970-7-12;f;19098842354;;1023 River Drive, Riverside, CA 92521;patient1.jpeg
+873947364;Ben;Yong;Le;846384792;1965-2-23;m;19517938734;19517638879; 9834 West Adam St., Colton, CA 92324;patient2.jpeg
+737493474;Alber;Man;;530717265;2000-4-15;m;17027681264;;8345 Linden St, Reno, NV 89501;patient3.jpeg
+982532435;James;Foster;;173872648;2005-9-9;m;14807892364;;1292 Main St, Sprigfield, AR 85640;patient4.jpeg
+782893498;Ariana;Mejilla;Jena;452048120;1999-12-19;f;19515671290;;342 Washington, Colton, CA 92324;patient5.jpeg
+854459854;Ben;Wheatherspon;;820011293;1990-3-23;m;19512392845;;9343 Blaine St, Colton, CA 92324;patient6.jpeg
+987875489;Rony;Doodle;;912582348;1985-11-8;m;17028901234;;2342 Lendis St, Reno, NV 89501;patient7.jpeg
+769887548;Mike;James;;923011209;1992-1-13;m;14808901202;;92834 Idontknow st, Springfield, AR 85640;patient8.jpeg
+893489439;Larry;Martinez;;203038287;1970-7-22;m;17022038454;;2389 Soto Ave, Reno, NV 89501;patient9.jpeg
 \.
