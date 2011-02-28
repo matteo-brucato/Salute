@@ -1,8 +1,6 @@
-<h2>Delete access to this medical record to an HCP</h2>
-
 <form method="post" action="/medical_records/remove_permission_do/<?php echo $medrec_id;?>" id="remove-permission">
 	<fieldset id="remove-permission-fieldset">
-		<legend>Add permission</legend>
+		<legend>Remove access to this medical record to an HCP</legend>
 		<table>
 			<tr>
 				<td><label for="account_id">HCP id</label></td>

@@ -89,20 +89,32 @@ function get_action_strings($actions, $tuple) {
 				break;
 				
 			case 'join-group':
-				$str .= '<li><a href="/groups/join/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Join</a></li>';
+				$str .= '<li><a href="/groups/members/join/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Join</a></li>';
 				break;
 				
 			case 'leave-group':
-				$str .= '<li><a href="/groups/leave/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Leave</a></li>';
+				$str .= '<li><a href="/groups/members/leave/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Leave</a></li>';
 				break;
 			
 			case 'delete-group':
 				$str .= '<li><a href="/groups/delete/'.$tuple['group_id'].'">Delete Group</a></li>';
 				break;
+					
+			case 'delete-member':
+				$str .= '<li><a href="/groups/members/delete/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Delete Member</a></li>';
+				break;
+				
+			case 'change-mem-perm':
+				$str .= '<li><a href="/groups/members/edit/'.$tuple['account_id'].'/'.$tuple['group_id'].'">Change Permissions</a></li>';
+				break;
 			
-			
+			case 'edit-group':
+				$str .= '<li><a href="/groups/edit/'.$tuple['group_id'].'">Edit Group</a></li>';
+				break;
+						
+						
 			case 'accept-ref':
-				$str .= '<li><a href="/refers/accept_referal/'.$tuple['patient_id'].'/'.$tuple['is_refered_id'].'/'.$tuple['referal_id'].'">Request Connection</a></li>';
+				$str .= '<li><a href="/refers/accept_referal/'.$tuple['referal_id'].'">Request Connection</a></li>';
 				break;
 			case 'delete-ref':
 				$str .= '<li><a href="/refers/delete_referal/'.$tuple['referal_id'].'">Delete</a></li>';

@@ -105,7 +105,7 @@ class Upload extends Controller {
 				$this->ui->set_error('Error adding permissions to the database.','Database Error');
 				break;
 			default:
-				$mainview = $this->load->view('mainpane/forms/upload_medrec_success', '', TRUE);
+				$mainview = 'Your medical record was successfully uploaded!';
 				$this->ui->set(array($mainview));
 				break;
 		}

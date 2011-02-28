@@ -23,24 +23,31 @@ class Auth {
 	private $last_name;
 	private $CI;
 	
-	const CurrLOG		= 0;	// current user: no other params
-	const CurrPAT		= 1;	// current user: no other params
-	const CurrHCP		= 2;	// current user: no other params
-	const CurrCONN		= 3;	// requires one id, tests if the current is connected with the id provided
-	const CurrGRPMEM	= 4;	// requires one groupid, tests if the current is a member of the groupid
-	const ACCOUNT		= 5;
-	const PAT			= 6;	// requires one id, tests if it's a patient id
-	const HCP			= 7;	// requires one id, tests if it's a hcp id
+	const CurrLOG		= 0;	// no params: tests if the current user is logged in
+	const CurrPAT		= 1;	// no params: tests if the current user is a patient
+	const CurrHCP		= 2;	// no params: tests if the current user is an hcp
+	const CurrCONN		= 3;	// requires one account id: tests if the current is connected with the id provided
+	const CurrCONN_SND	= 4;	// requires one account id: tests if the current is the sender of a connection to the account id
+	const CurrCONN_RECV	= 5;	// requires one account id: tests if the current is the receiver of a connection to the account id
+	const CurrGRPMEM	= 6;	// requires one groupid: tests if the current is a member of the groupid
+	const CurrREFOWN	= 7;	// requires one referral id: tests if referral id is owned by the current user
 	
-	const APPT_EXST		= 8;
-	const APPT_MINE		= 9;	// requires one id, tests if it's your appointment id
+	const ACCOUNT		= 8;	// requires one id: tests if it's an account id
+	const PAT			= 9;	// requires one id: tests if it's a patient id
+	const HCP			= 10;	// requires one id: tests if it's a hcp id
+	const GRP			= 11;	// requires one id: tests if it's a group_id
 	
-	const BILL_DELC		= 10;
-	const BILL_PAYC		= 11;
+	const APPT_EXST		= 12;	// requires one id: tests if the appointment id exists
+	const APPT_MINE		= 13;	// requires one id: tests if it's your appointment id
 	
-	const MEDREC		= 12;		
-
-	const REF_MINE		=100;   // requires one id, tests if it's your referal id
+	const BILL_DELC		= 14;	// requires one id: tests if bill id is deletable
+	const BILL_PAYC		= 15;	// requires one id: tests if bill id is inactive=payable
+	
+	const MEDREC		= 16;	// requires one id: tests if the id is a medical record id
+	
+	
+	
+	//const REF_MINE		= 13;   // requires one id: tests if it's your referral id
 	
 	function __construct() {
 		$CI =& get_instance();
@@ -95,6 +102,60 @@ class Auth {
 						return auth::CurrHCP;
 					}
 					break;
+				
+				// current user must be the requester of the connection to the other account
+				case auth::CurrCONN_SND:
+					if ($a[$i+1] === NULL) {
+						$this->CI->ui->set_error('No input provided');
+						return auth::CurrCONN_SND;
+					}
+					if (! is_numeric($a[$i+1])) {
+						$this->CI->ui->set_error('Not numeric');
+						return auth::CurrCONN_SND;
+					}
+					$this->CI->load->model('connections_model');
+					$conn = $this->CI->connections_model->get_connection($this->CI->auth->get_account_id(), $a[$i+1]);
+					if ($conn === -1) {
+						$this->CI->ui->set_query_error();
+						return auth::CurrCONN_SND;
+					}
+					if ($conn === NULL) {
+						$this->CI->ui->set_error('No connection exists between this two accounts', 'Notice');
+						return auth::CurrCONN_SND;
+					}
+					if ($conn['sender_id'] != $this->CI->auth->get_account_id()) {
+						$this->CI->ui->set_error('This connection request has not been initiated by you.', 'Notice');
+						return auth::CurrCONN_SND;
+					}
+					$i++;
+					break;
+
+				// current user must be the accepter of the connection to the other account
+				case auth::CurrCONN_RECV:
+					if ($a[$i+1] === NULL) {
+						$this->CI->ui->set_error('No input provided');
+						return auth::CurrCONN_RECV;
+					}
+					if (! is_numeric($a[$i+1])) {
+						$this->CI->ui->set_error('Not numeric');
+						return auth::CurrCONN_RECV;
+					}
+					$this->CI->load->model('connections_model');
+					$conn = $this->CI->connections_model->get_connection($this->CI->auth->get_account_id(), $a[$i+1]);
+					if ($conn === -1) {
+						$this->CI->ui->set_query_error();
+						return auth::CurrCONN_RECV;
+					}
+					if ($conn === NULL) {
+						$this->CI->ui->set_error('No connection exists between this two accounts', 'Notice');
+						return auth::CurrCONN_RECV;
+					}
+					if ($conn['receiver_id'] != $this->CI->auth->get_account_id()) {
+						$this->CI->ui->set_error('You are not the receiver of this connection', 'Notice');
+						return auth::CurrCONN_RECV;
+					}
+					$i++;
+					break;
 
 				case auth::ACCOUNT:
 					if ($a[$i+1] === NULL) {
@@ -128,7 +189,7 @@ class Auth {
 						return auth::PAT;
 					}
 					$this->CI->load->model('patient_model');
-					$pat = $this->CI->hcp_model->get_patient(array($a[$i+1]));
+					$pat = $this->CI->patient_model->get_patient(array($a[$i+1]));
 					if ($pat === -1) {
 						$this->CI->ui->set_query_error();
 						return auth::PAT;
@@ -182,6 +243,11 @@ class Auth {
 					$i++;
 					break;
 				
+				case auth::GRP:
+					return auth::GRP;
+					$i++;
+					break;
+
 				case auth::CurrGRPMEM:
 					return auth::CurrGRPMEM;
 					$i++;
@@ -216,26 +282,26 @@ class Auth {
 					$i++;
 					break;
 
-				case auth::REF_MINE:
+				case auth::CurrREFOWN:
 					if ($a[$i+1] === NULL) {
 						$this->CI->ui->set_error('No input provided');
-						return auth::REF_MINE;
+						return auth::CurrREFOWN;
 					}
 					if (! is_numeric($a[$i+1])) {
 						$this->CI->ui->set_error('Not numeric');
-						return auth::REF_MINE;
+						return auth::CurrREFOWN;
 					}
 					$this->CI->load->model('referal_model');
 					$result = $this->CI->referal_model->is_myreferal(array($this->account_id, $a[$i+1]));
 					if ( $result === -1 ){
 						$this->CI->ui->set_query_error();
-						return auth::REF_MINE;
+						return auth::CurrREFOWN;
 					} elseif ( $result === -2 ){
 						$this->CI->ui->set_error('Referal ID does not exist!');
-						return auth::REF_MINE;
+						return auth::CurrREFOWN;
 					} elseif ($result !== TRUE) {
 						$this->CI->ui->set_error('This is not your referal.', 'permission denied');
-						return auth::REF_MINE;
+						return auth::CurrREFOWN;
 					}
 					$i++;
 					break;

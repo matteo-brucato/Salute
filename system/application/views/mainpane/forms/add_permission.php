@@ -1,8 +1,6 @@
-<h2>Grant access to this medical record to an HCP</h2>
-
 <form method="post" action="/medical_records/add_permission_do/<?php echo $medrec_id;?>" id="add-permission">
 	<fieldset id="add-permission-fieldset">
-		<legend>Add permission</legend>
+		<legend>Grant access to this medical record to an HCP</legend>
 		<table>
 			<tr>
 				<td><label for="account_id">HCP id</label></td>

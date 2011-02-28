@@ -42,6 +42,8 @@
 			<li><a href="/connections/pending/out" class="ajax">Pending outgoing</a></li>
 		</ul>
 	</li>
+
+	<li><a href="/groups/lists/mine" class="ajax">My Groups</a></li>
 	
 	<li><a href="/medical_records" class="ajax">Medical Records</a>
 		<ul>

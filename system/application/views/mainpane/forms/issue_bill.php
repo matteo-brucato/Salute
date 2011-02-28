@@ -1,6 +1,3 @@
-<h2>Issue Bill</h2>
-
-
 <form method="post" action="/bills/issue_new_bill" id="issue-bill">
 	<fieldset id="issue-bill-fieldset">
 		<legend> Issue bill to <?php echo $results[0]['first_name'].' '.$results[0]['last_name'];?> </legend>

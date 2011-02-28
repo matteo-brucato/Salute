@@ -1,0 +1,377 @@
+\chapter{High Level View}
+This chapter provides a high level view of how \emph{Salute} was implemented.  We will be describing the design approach taken to wards implementing the overall: System, Database, MVC, Interface, Server.
+
+\section{System Design}
+A Web application can be simplified as a collection of resources placed on a server which are accessible to a great number of users (clients). The access to these resources must be governed by policies and permissions. From a very general point of view, our application has two kinds of resources: \emph{public} and \emph{private} resources. For instance, the login page must be a public resource, whereas the setting page should be private. We will discuss resources in more detail when we will describe the server design and the controller design.
+
+
+In this chapter we will describe our design from a high-level viewpoint, leaving the implementation for the next chapter. Our system is modularized as follows
+\begin{description}
+\item Server The actual machine that runs the server software. It listens to some TCP ports and accepts connections. We also refer to server as the entire set of functionality that it provides, with its collection of executable files that resides in its file system.
+[... continue....]
+\end{description}
+
+
+
+\section{Server Design}
+Salute is currently available locally only. A virtual image of the system is ready to be implemented on a web server(configuration will be necessary).
+
+\subsection{Server Details}
+Salute uses LAPP(Linux, Apache, PostgreSQL, PHP ) solution stack.
+\begin{itemize}
+\item Linux Operating system- Ubuntu(Maverick Meerkat 4.1.0). 
+\item HTTP server- Apache(version 2.2.16 for Ubuntu)
+\item Database- PostgreSQL(version 8.4)
+\item Server side language- PHP(version 5)
+\end{itemize}
+
+\subsection{Apache Modules}
+Module rewrite is used to provide:
+\begin{itemize}
+\item protection so that clients may not access files/folders of the file system
+\item rerouteing of all http requests to https requests
+\item redirection of all requests to index.php (with the exception of /scripts and /layouts)
+\end{itemize}
+Module SSL is used to specify:
+\begin{itemize}
+\item the public certificate clients must accept to use Salute
+\item the private key to authenticate users
+\end{itemize}
+
+\subsection{Client-Server interaction}
+As a web application, \emph{Salute} is based on the client-server communication protocol over https. All the services (resources) are placed in the server and are accessible by the client using URL's. We did not put efforts in making the application \emph{Rest}full, but we borrowed its vision of \emph{resources}.
+
+This is how a client and a server interact.
+\begin{enumerate}
+\item The client wants to get a resource from the server (we don't really make distinctions between ``getting'', ``putting'', ``deleting'' or ``posting'' resources)
+\item The client, therefore, sends the server an https request (in most cases it will be a GET request). This request is in the form of an URL
+\item The Code Igniter framework automatically translate the URL into a controller function to execute (discarding URL's that do not correspond to any function) and executes it
+\item The selected controller function executes the requested functionality, checking authorization and inputs, possibly changing the database state, and eventually providing a new interface response for the client
+\item The new interface gets sent to the client and displayed by the browser
+\end{enumerate}
+
+In this sequence there is something that can be changed. Using XMLHTTPResponse we can send only a portion of the graphical user interface to the client, instead of the whole interface. This is what is usually called \emph{Ajax}. We implemented the user interface to handle Ajax, but maintaining the option to disable it and use the classic http response instead.
+
+
+\section{Database Design}
+The database was implemented using PostgreSQL 8.4 as the database management software.  The primary reason why PostgreSQL was used is because of the fact that it is free, easy to obtain, and easy to use. Also everybody in the project group was already familiar with it.
+The overall database was designed while keeping the patient in mind.  Salute is very patient oriented, giving them overall  power over their medical records, instead of their healthcare provider.
+
+\subsection{Entity Relationship Diagram (ERD)}
+We provide a high-level description of the database using the famous ER diagram, for those who are familiar with it\footnote{Entities are represented in the ER diagram as rectangles.  Each entity represents a table in the database that holds all of the information or attributes that represents that entity.  In the ER diagram, each attribute is represented with a oval.}. Then we will describe the database structure in more detail in the implementation chapter. You can see the diagram in Appendix \ref{app:diagrams}, figure \ref{fig:erdiagram}.
+
+
+\section{MVC Design}
+
+\subsection{Resources and URL's}
+You can think of a resource as either some data inside a database, a functionality or service that you ask to your application or even the result of some kind of operation. All these resources are accessed via URL's, so that there is a 1-1 correspondence between URL's and all the resources that the server provides.
+
+\subsection{Code Igniter as MVC}
+Based on this view, we decided to use a well-known design approach called MVC (Model-View-Controller) that works very well with this kind of settings. We decided to use a framework called \emph{Code Igniter}, that gives us the right way to map URL's to server functions.
+
+In this framework a url of the form
+\begin{verbatim}
+/part1/part2
+\end{verbatim}
+is automatically mapped to a unique function in a unique controller class. The class will be the one named ``part1'', and the function will be the one named ``part2()''.
+
+It is possible to have longer URL's. In this case a url of this form
+\begin{verbatim}
+/part1/part2/part3/.../partN
+\end{verbatim}
+will be mapped to a function $part2(part3, ..., partN)$ in the class $part1$.
+
+According to the MVC design, a controller is some executing code that performs exactly the action that the user asked to the server via an URL. In this way, a URL becomes the medium to ask for functionalities and a controller will be a merely executor. A model will be the medium to access data into a database and a view will be a result for the user, in a interface-depending fashion.
+
+MVC stands for Model View Controller, and is a software architecture and an architectural pattern in software engineering. The purpose is to separate a system into parts, assigns responsibilities to each, and ensures that they can work together. This design method strives for high cohesion and low coupling which is essential in anticipating for future changes. There are several frameworks that follow this paradigm, such as Ruby on Rails, ASP.net, and CodeIgniter. We used CodeIgniter to aid the design of Salute, our product.  In Appendix B we present a diagram for this architecture.
+
+
+\subsection{Controllers}
+
+The controller is the middle man. It's in charge of loading the view(webpage) for the user, and calling the corresponding models to execute the functionality that the user has selected via the view. 
+It is good practice to separate control into several controllers for separation of concerns. In our product Salute,the controllers were separated in this way. Notice that many of these controllers depend on the fact that the user is logged in as a member of Salute. While many controllers depend on this Home Controller functionality for handling login and logout, this relation is minimal (low coupling) since we used a CodeIgniter's session class. This separated the concern of user authorization out from other controllers. 
+Also note that all the functions within a controller access, view, or modify the same elements of information(high cohesion). This division between controllers allows for general flexibility and ease to adding, removing, or modifying more functions in the future. If a whole new feature, e.g. diet log, is later decided to be added to Salute, a new controller can be created, and little to no changes would need to be made to the existing controllers. 
+\subsection{Models}
+The model is the tool used to access and modify the database. Every time a user needs information, the models are queried to retrieve the information. If a user wants to add or modify, this too must be added into the database. The results are then returned to the controller for further action.
+Models too are separated based on functionality. This separation correlates closely to how the database is implemented, and what the controller needs from the database\footnote{See MVC implementation \ref{sec:mvcimplement}}. This separation also accommodates for change. If a new feature is added to appointments, e.g. send email reminder 3 days before appointment, a new model function within the Appointments model can be written to retrieve such appointments for the controller to carry out this new feature. 
+
+\subsection{Views}
+The view is the the user interface, what the user sees and interacts with. In our case, its a medical management website. So, it is important to make sure that the website is user-friendly. If the layout and design of the view is difficult to navigate and/or inconsistent, the user will not desire to use the product. The views are called by the controller, and take user input and send it back to the controller to manage what action needs to be done. 
+Our product, Salute, divided the views into two main subcategories: main panel, and side panel. The main panel views are all the views that are called to be in the main panel of the screen. The side panel views are all the views that are called to be in the side panel. There are multiple views in each of these subcategories since each functionality needs a different display, and often functionalities differ based on the type of user(a non-member,a patient, or a healthcare provider). 
+
+\section{Interface Design}
+Since this is a Web application, the interface is basically a set of HTML pages that a client gets from the server as it requests them. As for every Web page, the interface is a mixture between different technologies, like HTML, CSS, JavaScript and so forth. It is also dependant in some degree by some server features. To keep everything simple, the interface design only defines a very high view of the user system. To allow for a better separation of concerns, we also divided the ''content'' of the Web page from the ''presentation'' of it.
+\subsection{UI design}
+The GUI is composed by:
+\begin{itemize}
+\item a header
+\item a navigation bar
+\item a footer
+\item a side panel to display additional information about the main content
+\item a main panel to display the main content of the page
+\end{itemize}
+The header simply contains the branding. The navigation bar allows a user to navigate between all the \emph{public} resources of the entire application and the footer has an extra set of public resources, not directly related to the use of the Web site.
+
+The main panel contains the actual information for the user, i.e. the response to the a specific request. The side panel is used to show additional information regarding the current resource displayed.
+
+All these panels are \emph{dynamic}, in the sense that their content depends on the current resource the user is accessing on a particular moment. They change during the application use, request after request.
+
+\subsection{Ajax}
+Our system is capable to do every request using the famous technology Ajax. To be more precise, using requests to server called XMLHTTPRequest. Our interface is configurable, in the sense that it can use Ajax or the classic http request. Both the client and the server are aware of this and whenever the server receives an XHR request, its answer will contain only the new views for some of the dynamic panels. Whereas, if the request is a normal HTTP request, it will provide the whole interface to the client. We will discuss later how we implemented it.
+
+\subsection{Layout}
+It's really hard to set a limit between content and presentation in an environment governed by HTML, but something can be done. We created all our views regardless of presentation aspects, focusing only on the most simple aspects of HTML. Our purpose is to separate this two concerns and leave to CSS the task to add colours, change positions of the elements and so forth. Doing so we also provided the possibility to change the layout in the future, or even dynamically.
+
+
+
+\chapter{Implementation View}
+This chapter will show in more details how we implemented all the requirements using the design that we discussed in the previous chapter. We will show the full database, MVC, interface and server implementation, along with a list of all the assumptions that we made during the development phase.
+
+\section{Database implementation}
+\subsection{Tables}
+Our database is composed of twelve tables: Messages, Accounts, Patient\_Account, HCP\_Account, Appointments, Medical\_Record, Payment, Permission, Connections, Refers, Groups, and Is\_In.  For each table, we will present a description of the table and the attributes in it, as well as its relationship with the other tables its connected with.
+
+\subsubsection{Messages}
+Holds all of the information regarding messages sent from patient to hcp or vice versa. It has two total 1:N relationships with the Accounts entity.
+
+\begin{description}
+\item serial \textit{message\_id}- ID to uniquely identify the message from other messages. serial datatype automatically creates the message\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item text \textit{subject}- Subject of the message being sent. text datatype allows unlimited number of characters.  Cannot be null.
+\item text \textit{content}- Where the sender can write what they would like to send to the receiver.  text datatype allows unlimited number of characters.  Cannot be null.
+\item serial \textit{sender\_id}- ID to uniquely identify the sender of the messages.  Cannot be null.
+\item serial \textit{receiver\_id}- ID to uniquely identify the receiver of the messages.  Cannot be null.
+\item timestamp \textit{date\_time}- Date and time of when the message is sent.  timestamp datatype format YY:MM:DD HH:MM:SS.  Cannot be null.
+\item boolean \textit{sender\_kept}- To determine if the sender would like to delete the message from their outbox.  boolean value is either true or false.  Cannot be null.  By default it is true.  Changing the status to false means it gets deleted.
+\item boolean \textit{receiver\_kept}- To determine if the receiver would like to delete the message from their inbox.  boolean value is either true or false.  Cannot be null.  By default it is true.  Changing the status to false means it gets deleted.
+\end{description}
+
+\subsubsection{Accounts}
+Holds all of the primary information every patient and hcp account needs to log into Salute.  The entities Patient\_Account and HCP\_Account both inherit from Accounts using an IS A relationship.  It has a partial N:1 relationship with the Permission and Medical\_Records entities.
+
+\begin{description}
+\item serial \textit{account\_id}- ID to uniquely identify the account from other accounts. serial datatype automatically creates the account\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item varchar(40) \textit{email}- Email of the account holder. It is used to log into Salute along with the user password.  varchar(40) datatype allows for a maximum of 40 characters.  Cannot be null.
+\item varchar(15) \textit{password}-  Password of the account holder.  It is used to log into Salute along with the user email address.  varchar(15) datatype allows for a maximum of 15 characters.  Cannot be null.
+\item boolean \textit{active}- To determine whether the account is active or not.  boolean datatype value is either true or false.  By default it is true.  Changing the status to false means the account gets deactivated.
+\end{description}
+
+\subsubsection{Patient\_Account}
+Holds all of the personal information for every patient.  It inherits from the Accounts entity with an IS A relationship.  It has a partial N:1 relationship with the Medical\_Records, Payment, Appointments, and Refers entities.
+
+\begin{description}
+\item serial \textit{account\_id}- ID to uniquely identify the account from other accounts. serial datatype automatically creates the account\_id when a new tuple is inserted into the table.  This ID is inherited from the Accounts entity. Primary key of the table.  Cannot be null.
+\item varchar(30) \textit{first\_name}-  First name of the patient.  varchar(30) datatype allows for a maximum of 30 characters.  Cannot be null.
+\item varchar(30) \textit{last\_name}- Last name of the patient.  varchar(30) datatype allows for a maximum of 30 characters.  Cannot be null.
+\item varchar(30) \textit{middle\_name}- Middle name of the patient. varchar(30) datatype allows for a maximum of 30 characters.
+\item numeric(9,0) \textit{ssn}- Social Security Number of the patient. numeric(9,0) datatype allows exactly 9 numeric characters.  Cannot be null.
+\item date \textit{dob}- Date of Birth of the patient.  date datatype is of the format YY:MM:DD.  Cannot be null.
+\item char(1) sex- Sex of the hcp. char(1) datatype allows for a maximum of 1 characters.  It has to be either the char ``m'' or ``f''.  Cannot be null.
+\item varchar(11) \textit{tel\_number}- Primary telephone number of the patient.  varchar(11) datatype allows a maximum of 11 characters.
+\item varchar(11) \textit{fax\_number}- Fax number of the patient.  varchar(11) datatype allows a maximum of 11 characters.
+\item text \textit{address}- Primary address of the patient.  text datatype allows unlimited number of characters.
+\item text \textit{picture\_name}- Path of the picture that the patient would like to upload to their profile.  text datatype allows unlimited number of characters.
+\end{description}
+
+\subsubsection{HCP\_Account}
+Holds all of the personal information for every hcp.  It inherits from the Accounts entity with an IS A relationship.  It has a partial N:1 relationship with the Appointments and Payment entities.  It has two partial N:1 relationships with the Refers entity.  One of them is for the hcp doing the refering and the other one is for the hcp being referred.
+
+\begin{description}
+\item serial \textit{account\_id}- ID to uniquely identify the account from other accounts. serial datatype automatically creates the account\_id when a new tuple is inserted into the table.  This ID is inherited from the Accounts entity. Primary key of the table.  Cannot be null.
+\item varchar(30) \textit{first\_name}-  First name of the hcp.  varchar(30) datatype allows for a maximum of 30 characters.  Cannot be null.
+\item varchar(30) \textit{last\_name}- Last name of the hcp.  varchar(30) datatype allows for a maximum of 30 characters.  Cannot be null.
+\item varchar(30) \textit{middle\_name}- Middle name of the hcp. varchar(30) datatype allows for a maximum of 30 characters.
+\item numeric(9,0) \textit{ssn}- Social Security Number of the hcp. numeric(9,0) datatype allows exactly 9 numeric characters.  Cannot be null.
+\item date \textit{dob}- Date of Birth of the hcp.  date datatype is of the format YY:MM:DD.  Cannot be null.
+\item char(1) sex- Sex of the hcp. char(1) datatype allows for a maximum of 1 characters.  It has to be either the char ``m'' or ``f''.  Cannot be null.
+\item varchar(11) \textit{tel\_number}- Primary office telephone number of the hcp.  varchar(11) datatype allows a maximum of 11 characters.
+\item varchar(11) \textit{fax\_number}- Primary fax number of the hcp.  varchar(11) datatype allows a maximum of 11 characters.
+\item text \textit{specialization}- What the hcp specializes in.  text datatype allows unlimited number of characters.
+\item varchar(30) \textit{org\_name}- Name of the organization for which the hcp works for.  varchar(30) datatype allows a maximum of 30 characters.
+\item text \textit{address}- Primary address of the hcp place of business.  text datatype allows unlimited number of characters.
+\item text \textit{picture\_name}- Path of the picture that the hcp would like to upload to their profile.  text datatype allows unlimited number of characters.
+\end{description}
+
+\subsubsection{Appointments}
+Holds all of the information for every appointment a patient makes with a hcp.  It has a total 1:N relationship with the HCP\_Account and Patient\_Account entities.
+
+\begin{description}
+\item serial \textit{appointment\_id}- ID to uniquely identify the appointment from other appointments. serial datatype automatically creates the appointment\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item serial \textit{patient\_id}-  Unique account ID of the patient that requests the appointment.  This is the foreign key to the Patient\_Account entity.  Cannot be null.
+\item serial \textit{hcp\_id}- Unique account ID of the hcp that receives the appointment request.  This is the foreign key to the HCP\_Account entity.  Cannot be null.
+\item text \textit{descryption}- Description of the appointment that the patient requests to the hcp.  text datatype allows unlimited number of characters.  Cannot be null.
+\item timestamp \textit{date\_time}- Time and day of the appointment the patient requests to the hcp.  timestamp datatype of the form YY:MM:DD HH:MM:SS.  Cannot be null.
+\item boolean \textit{approved}- Status of the appointment that the patient requests to the hcp.  boolean datatype value is either true or false.  By default it is false.  HCP can accept the appointment and change the status to true.
+\end{description}
+
+\subsubsection{Medical\_Record}
+Holds all of the information for every medical record a patient has on Salute.  It has a partial N:1 relationship with the Permission entity and a total 1:N relationship with the Accounts and Patient\_Account entities.
+
+\begin{description}
+\item serial \textit{medical\_rec\_id}- ID to uniquely identify the medical record from other medical records. serial datatype automatically creates the medical\_rec\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item serial \textit{patient\_id}- Unique account ID of the patient that owns the medical record.  This is the foreign key to the Patient\_Account entity.  Cannot be null.
+\item serial \textit{account\_id}- Unique account ID of the user(patient/hcp) that uploads the medical record.  This is the foreign key to the Accounts entity.  Cannot be null.
+\item text \textit{issue}-  What the medical record deals with.  text datatype allows unlimited number of characters.  Cannot be null.
+\item text \textit{supplementary\_info}- Any supplementary information that anybody (patient/hcp) would want to add to the medical record.  text datatype allows unlimited number of characters.
+\item text \textit{file\_path}- Path where the file can be found and downloaded from the server.  text datatype allows unlimited number of characters.  Cannot be null.
+\item text \textit{decription}- Description of what occured at the appointment, as well as a description of what the medical record contains.  text datatype allows unlimited number of characters.  Cannot be null.
+\item timestamp \textit{date\_created}- Date the medical record is created.  timestamp datatype of the form YY:MM:DD HH:MM:SS.  Default is the current day and time.  Cannot be null.
+\end{description}
+
+\subsubsection{Payment}
+Holds all of the information for every bill that a patient receives and a hcp issues.  It has a total 1:N relationship with the Patient\_Account and HCP\_Account entities.
+
+\begin{description}
+\item serial \textit{bill\_id}-  ID to uniquely identify the bill from other bills. serial datatype automatically creates the bill\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item serial \textit{patient\_id}- Unique account ID of the patient that received the bill.  This is the foreign key to the Patient\_Account entity.  Cannot be null.
+\item serial \textit{hcp\_id}- Unique account ID of the hcp that issued the bill.  This is the foreign key to the HCP\_Account entity.  Cannot be null.
+\item decimal(9,2) \textit{amount}- The amount due to the hcp.  decimal datatype allows charge to be up to 9 digits long, with 2 digits of precision.  Cannot be null.
+\item text \textit{descryption}- Description of what the bill is being issued for.  text datatype allows unlimited number of characters. Cannot be null.
+\item timestamp \textit{due\_date}- Date by which the bill must be paid by.  timestamp datatype of the form YY:MM:DD HH:MM:SS.  Cannot be null.
+\item boolean \textit{cleared}- States whether the bill was paid or not.  boolean datatype value is either true or false.  By default it is false.  If patient pays the bill, its status is changed to true.
+\item boolean \textit{hcp\_kept}- States whether the hcp has keept the bill or not.  boolean datatype value is either true or false.  By default it is true.  If the hcp deletes it, its status is changed to false.
+\item boolean \textit{patient\_kept}- States whether the patient has keept the bill or not.  boolean datatype value is either true or false.  By default it is true.  If the patient deletes it, its status is changed to false.
+\item timestamp \textit{creation\_date}- Date the bill is created.  timestamp datatype of the form YY:MM:DD HH:MM:SS.  Default is the current day and time.  Cannot be null.
+\end{description}
+
+\subsubsection{Permission}
+Holds information regarding which medical records a hcp that is connected with a patient can view.  It has a total 1:N relationship with the Accounts and Medical\_Records entities.
+
+\begin{description}
+\item serial \textit{permission\_id}-  ID to uniquely identify the permission from other permissions. serial datatype automatically creates the permission\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item serial \textit{medical\_rec\_id}- Unique ID of the medical record that a hcp can view.  This is the foreign key to the Medical\_Records entity.  Cannot be null.
+\item serial \textit{account\_id}- Unique ID of the hcp that can view the medical record.  This is a foreign key to the Accounts entity.  Cannot be null.
+\item date \textit{date\_created}-  Date in which the patient allowed the hcp to view the medical record.  date datatype is of the form YY:MM:DD.  Cannot be null.
+\item varchar(1) \textit{permission\_type}- The type of permission that another account has to a specific medical record.  varchar(1) datatype allows a maximum of 1 characters.  It can either be ``0'' for read or ``1'' for write.  By default it is ``0''.
+\end{description}
+
+
+\subsubsection{Connections}
+Holds all of the information for every connection.  This entity has two total 1:N relationships with the Accounts entity.  One is for the person requesting the connection and the other one is for the person accepting the connection.
+
+\begin{description}
+\item serial \textit{connection\_id}-  ID to uniquely identify the connection from other connections. serial datatype automatically creates the connection\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item serial \textit{sender\_id}- Unique account ID of the requester that establishes a connection with another account.  This is a foreign key to the Accounts entity.  Cannot be null.  
+\item serial \textit{receiver\_id}- Unique account ID of the receiver that accepts the connection request sent from the sender account.  This is a foreign key to the Accounts entity.  Cannot be null.
+\item boolean \textit{accepted}- States whether the request was accepted by the receiver account.  boolean datatype value is either true or false.  By default it is false.  If receiver account accepts the request, its status is changed to true.
+\item date \textit{date\_connected}- Date in which the request was sent by the requesting account to the accepter account.  date datatype is of the form YY:MM:DD.  Cannot be null.
+\item varchar(1) \textit{connection\_level}- The connection level that is extablished between two accounts in reference to accepting referrals and giving permission to medical records.  varchar(1) datatype allows a maximum of 1 characters.  It can be ``0'' for accepting referrals manually and giving permission to medical records manually.  It can be ``1'' for accepting referrals manually and automatically giving permission to medical records that the refering hcp had permission too.  It can be ``2'' for accepting referrals automatically and giving permission to medical records manually.  It can be ``3'' for automatically accepting referrals and automatically giving permission to medical records that the refering hcp had permission too.  By default it is ``0''.
+\end{description}
+
+\subsubsection{Refers}
+Holds all of the information for the referrals a patient receives from a hcp.  This entity has two total 1:N relationships with the HCP\_Account entity.  It has another total 1:N relationship with the Patient\_Account entity.
+
+\begin{description}
+\item serial \textit{referal\_id}-  ID to uniquely identify the referral from other referrals. serial datatype automatically creates the referral\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item serial \textit{refering\_id}- ID of the hcp creating the referral.  This is a foreign key to the HCP\_Account entity.  Cannot be null.
+\item serial \textit{is\_refered\_id}- ID of the hcp that is being referred.  This is a foreign key to the HCP\_Account entity.  Cannot be null.
+\item serial \textit{patient\_id}- ID of the patient that is going to be receiving the referral.  This is a foreign key to the Patient\_Account entity.  Cannot be null.
+\item timestamp \textit{date\_time}-  Date the referral is created.  timestamp datatype of the form YY:MM:DD HH:MM:SS.  Default is the current day and time.  Cannot be null.
+\item boolean \textit{status}- States whether the referral was accepter or not by the patient.  boolean datatype value is either true or false.  By default it is false.  If patient accepts the referral, its status is changed to true.
+\end{description}
+
+\subsubsection{Groups}
+Holds all of the information for the social network groups.  This entity has a partial N:M and a total 1:N relationship with the Accounts entity.
+
+\begin{description}
+\item serial \textit{group\_id}-  ID to uniquely identify the group from other groups. serial datatype automatically creates the group\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
+\item serial \textit{account\_id}- ID of the person that created the group.  This is the foreign key to the Accounts entity.  Cannot be null.
+\item text \textit{name}- Name of the group.  text datatype allows unlimited number of characters.  Cannot be null.
+\item text \textit{description}- Description of the purpose of the group.  text datatype allows unlimited number of characters.  Cannot be null.
+\item varchar(1) \textit{public\_private}-  States whether the group is private or public.  varchar(1) datatype allows a maximum of 1 characters. It can be ``0'' for public or it can be ``1'' for private.  Cannot be null.
+
+\item varchar(1) \textit{group\_type}- States who the members of the group can be.   varchar(1) datatype allows a maximum of 1 characters.  It can be ``0'' for a group that is only for patients.  It can be ``1'' for a group that is for patients and hcps.  It can be ``2'' for a group that is only for hcps.
+\end{description}
+
+\subsubsection{Is\_In}
+Holds all of the information to be able to determine which account is in which group.  This relationship has a partial N:M relationship with the Accounts entity and the Groups entity.
+
+\begin{description}
+\item serial \textit{account\_id}-  ID of the account that belongs to a particular group.  Combination of the account\_id and the group\_id compose the primary key of the table.  This is also a foreign key to the Accounts entity.  Cannot be null.
+\item serial \textit{group\_id}- ID of the group that an account belongs too.  Combination of the group\_id and the account\_id compose the primary key of the table.  This is also a foreign key to the Groups entity.  Cannot be null.
+\item varchar(1) \textit{permissions}- The permission level that an account has in a particular group.  varchar(1) datatype allows a maximum of 1 characters.  It can be ``0'' if the account can only post to the group.  It can be ``1'' if the account can post and invite other accounts to join the group.  It can be ``2'' if the account can post to the group, invite other accounts to join the group, and they can delete members from the group.  It can be ``3'' if the account can can post to the group, invite other accounts to join the group, delete members from the group as well as delete the whole group.  By default the creater of the group has permission level ``3''.  Cannot be null.
+\end{description}
+
+\subsubsection{Scripts to start the server and load the data}
+We used many scripts to create the database described above.  First of all we have a bash script called start\_everything.sh which as its name implies, starts everything.  It starts the PostgreSQL server, creates a PostgreSQL database, and then it uses an sql file called create\_tables.sql to create all of the tables described in the ER diagram.  It then calls the file load\_data.sql which loads all of the tables with test data.  In case we want to drop all of the test data we have an sql file called drop.sql.  In case we wanted to delete everything and start over, we have a bash script called delete\_everything.sh. 
+
+\section{MVC implementation}
+\label{sec:mvcimplement}
+In this section we will provide detailed, low-level information about the MVC that we implemented. Secondly, we list all the important assumptions that we made, that are fundamental for the understanding of the system.
+
+\subsection{Doxygen documentation}
+All the models, views and controllers have been implemented incorporated into the CodeIgniter framework in Php. We used the Doxygen\footnote{www.doxygen.org} comment format to be able to create a complete and organized implementation documentation out of the comments. This documentation is in a separate document called \emph{Salute - MVC Implementation}. There, one can find all the necessary details, together with a list of ``todo's'', ``tests'' and  ``bugs''.
+
+\subsection{Assumptions}
+We made these remarkable assumptions during the implementation of the MVC.
+\begin{itemize}
+\item Doctors cannot delete medical records even if they uploaded them, only patients can
+\item Both doctors and patients can upload medical records
+\item When a doctor uploads a medical record, he has automatic viewing privileges
+\item doctors cannot request appointments
+\item patients cannot accept an appointment
+\item doctors aren't allowed to reschedule an appointment
+\item both doctors and patients can cancel an appointment
+\item can only deactivate their account. records will not be destroyed, but all information will be hidden. 
+\end{itemize}
+
+\section{Interface implementation}
+In the design description we gave a high-level view of the interface, without going into details. We have seen that the UI is composed by five 'dynamic' components. Now we will show how those components all fit together into an actual code and how server and client are aware of the interface and can interact with it.
+
+\subsection{Layouts}
+A layout, as we believe, is just a way to reorganize spatially the content of a web page. The first thing a layout does is place all the UI panels into an XHTML structure. All the XHTML content is provided to the client without any other presentational description, except the hierarchical representation. Pages without a layout would be a simple flow of objects (text, lists, tables and images) in cascade.
+
+Then, we used CSS to provide more presentational aspects to a layout. We also used some JavaScript when we wanted to add some other features to that layout. For example, you can see that every page is showed gradually and smoothly when loaded.
+
+\paragraph{Layout XHTML files}
+Our implementation does not force us to use only one, predefined layout. On the contrary, we could define a set of different layout, each of one locates the UI panels in different ways on the screen. Then, the server will decide which one of them to load, and this choice could even be done dynamically.
+
+For each layout there must be a specific XHTML template file that organize the five components of the interface into an XML tree. These files are contained into the folder
+\begin{verbatim}
+/system/application/views/layouts
+\end{verbatim}
+Every template file contains the five interface components: 'header', 'navbar', 'mainpane', 'sidepane' and 'footer'. We decided to use the template parser provided by CodeIgniter, so that the XHTML contains only references to these components. Thanks to the parser, all the content decided by the controllers will be automatically placed into the XHTML hierarchy.
+
+\paragraph{Layout style folder}
+All layouts styles (CSS and Javascript) are contained into the folder /layouts. This folder has a specific folder for each specific layout (for each XHTML layout that we discussed previously). At this moment of implementation we have one layout called ''faux-8-2-col''\footnote{We used a free css layout from http://www.code-sucks.com/css\%20layouts/}. Inside its folder you can see all the .css and .js files necessary to describe \emph{position}, \emph{color}, \emph{size} and so forth, of every object in the XHTML page. It's also the layout that decides whether using Ajax or not, because we believe that the XHR functionality is a layout matter\footnote{We anticipate that the server will automatically behave accordingly to the request that it receives from the client, so that if it is Ajax, it will answer with a JSon array, otherwise it will provide the full UI.}.
+
+\paragraph{Server Layout management}
+On the server side, all the logic for the layout has been implemented in the class \begin{verbatim}/system/application/libraries/layout.php
+\end{verbatim}
+This class contains all the possible layouts. There is a method to set the current layout and a method get all the XHTML for the current layout. This method only needs an array that contains all the strings to put inside the interface panels, as we already discussed. Then, it will simply call the CodeIgniter template parser to insert all the content into the template.
+
+\paragraph{JQuery}
+We use JQuery for at least three reasons: provide `fancy' effects to the page, implement some client checks on forms and make Ajax requests. JQuery is a framework for JavaScript that makes all of these features easy to implement and cross-browser.
+
+\subsection{Ajax interaction between client and server}
+It is clear that if the client does an XMLHTTPRequest the server should be aware of this, and answer correctly. This is what this class does
+\begin{verbatim}/system/application/libraries/ui.php
+\end{verbatim}
+It checks whether the request has been received via XHR (Ajax) or not. If the request was made using XHR, on the destruction of the class, the server will send to the client only the panel contents, parsed into a JSon array. Otherwise, it will call the layout class to get the whole interface (comprising the XHTML structure) and send it to the client.
+
+This class is actually more complex and handles also redirections, error messages and normal messages. It is used throughout the code by the controllers, to define at each step the new UI to provide to the client. We will describe it in details in the next subsection.
+
+\subsection{Interaction between Controllers and Layout/Ajax}
+All the controllers will decide the new UI content, based on their checks and execution results. At the end of their computation they will call the class 'Ui', passing an array of strings that contain the new content for all the panels. Passing a `NULL' instead of a string, will make the corresponding panel unchanged (or a default panel).
+
+In the same way, it is possible to set error messages and normal messages in a standardized way. For example, to set an error message to the UI, we simply call a method `set\_error' in the \emph{UI} class.
+
+
+\section{Authorization}
+We already mentioned how the login phase works. In this section we will show in details how we use http cookies to memorize the authorized state of clients.
+\subsection{Session cookie}
+After a client successfully logs in (after its e-mail and password match a row in the database), a session cookie is created. This cookie will contain this information:
+\begin{itemize}
+\item The account\_id of the user
+\item The type of the user (either 'patient' or 'hcp')
+\item The email of the user
+\item His/her first name
+\item His/her last name\footnote{First name and last name may not be useful if we decide to change the definition of HCPs to 'group of people' instead of individuals. But this would require a little change only in the database and its model. The session cookie may have these two fields empty, or add extra fields.}
+\end{itemize}
+We also used a functionality in CodeIgniter, to save the session\_id into a special table in the database. Those tuples will be handled automatically by CodeIgniter every time a user creates or sends a session cookie.
+
+\paragraph{Auth class}
+After the cookie will be created, the client will send it to the user in each https request. In this way the server can remember the status of every connected clients. To automatically read the session cookie at each client request, we implemented a class called Auth in
+\begin{verbatim}
+/system/application/libraries/auth.php
+\end{verbatim}
+An instance of this class is created automatically at the instantiation of each controller class. Its constructor will read the session cookie and store its content for future, rapid access by the controller.

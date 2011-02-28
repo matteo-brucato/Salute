@@ -1,6 +1,7 @@
 --
 --DROP TABLES
 --	
+
 DROP TABLE accounts CASCADE;
 DROP TABLE messages CASCADE;
 DROP TABLE patient_account CASCADE;
@@ -10,9 +11,12 @@ DROP TABLE medical_record CASCADE;
 DROP TABLE payment CASCADE;
 DROP TABLE p_d_Connection CASCADE;
 DROP TABLE d_d_Connection CASCADE;
+DROP TABLE connections CASCADE;
 DROP TABLE permission CASCADE;
 DROP TABLE ci_sessions CASCADE;
 DROP TABLE groups CASCADE;
+DROP TABLE refers;
+DROP TABLE is_in;
 
 
 --
@@ -60,7 +64,6 @@ CREATE TABLE patient_account(
 	fax_number VARCHAR(11),
 	address TEXT,
 	picture_name TEXT,
-	auto_connection BOOLEAN DEFAULT FALSE,
 	PRIMARY KEY(account_id),
 	FOREIGN KEY (account_id) REFERENCES accounts(account_id)
 );
@@ -175,20 +178,22 @@ CREATE TABLE groups(
 	public_private VARCHAR(1) NOT NULL,
 	group_type VARCHAR(1) NOT NULL,
 	PRIMARY KEY(group_id),
-	FOREIGN KEY (account_id) REFERENCES accounts(account_id)	
+	FOREIGN KEY (account_id) REFERENCES accounts(account_id) ON DELETE CASCADE
 );
 
 --Connections Table
 CREATE TABLE connections(
 	connection_id SERIAL NOT NULL,
-	requester_id SERIAL NOT NULL,
-	accepter_id SERIAL NOT NULL,
+	--requester_id SERIAL NOT NULL,
+	--accepter_id SERIAL NOT NULL,
+	sender_id SERIAL NOT NULL,
+	receiver_id SERIAL NOT NULL,
 	accepted BOOLEAN NOT NULL DEFAULT FALSE,
 	date_connected DATE NOT NULL,
 	connection_level VARCHAR(1) DEFAULT '0',
 	PRIMARY KEY (connection_id),
-	FOREIGN KEY (requester_id) REFERENCES accounts(account_id),
-	FOREIGN KEY (accepter_id) REFERENCES accounts(account_id)
+	FOREIGN KEY (sender_id) REFERENCES accounts(account_id),
+	FOREIGN KEY (receiver_id) REFERENCES accounts(account_id)
 );
 	
 
@@ -227,7 +232,7 @@ CREATE TABLE is_in(
 	permissions VARCHAR(1),
 	PRIMARY KEY (account_id, group_id),
 	FOREIGN KEY (account_id) REFERENCES accounts(account_id),
-	FOREIGN KEY (group_id) REFERENCES groups(group_id)
+	FOREIGN KEY (group_id) REFERENCES groups(group_id) ON DELETE CASCADE
 );
 
 

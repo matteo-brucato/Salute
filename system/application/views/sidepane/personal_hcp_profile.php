@@ -37,6 +37,8 @@
 			<li><a href="/connections/pending/in">Pending incoming</a></li>
 		</ul>
 	</li>
+
+	<li><a href="/groups/lists/mine" class="ajax">My Groups</a></li>
 	
 	<li><a href="/refers" class="ajax">My Referals</a>
 		<ul>

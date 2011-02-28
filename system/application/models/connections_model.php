@@ -28,8 +28,8 @@ class Connections_model extends Model {
 		$sql = "SELECT P.*
 			FROM connections D, patient_account P
 			WHERE D.accepted = TRUE AND (
-			      (D.requester_id = ? AND D.accepter_id = P.account_id)
-			OR    (D.accepter_id = ? AND D.requester_id = P.account_id))";
+			      (D.sender_id = ? AND D.receiver_id = P.account_id)
+			OR    (D.receiver_id = ? AND D.sender_id = P.account_id))";
 		$query = $this->db->query($sql, array($account_id, $account_id));
 		
 		if ($this->db->trans_status() === FALSE)
@@ -56,8 +56,8 @@ class Connections_model extends Model {
 		$sql = "SELECT H.*
 			FROM connections D, hcp_account H
 			WHERE D.accepted = TRUE AND (
-			      (D.requester_id = ? AND D.accepter_id = H.account_id)
-			OR    (D.accepter_id = ? AND D.requester_id = H.account_id))";
+			      (D.sender_id = ? AND D.receiver_id = H.account_id)
+			OR    (D.receiver_id = ? AND D.sender_id = H.account_id))";
 		$query = $this->db->query($sql, array($account_id, $account_id));
 		
 		if ($this->db->trans_status() === FALSE)
@@ -83,7 +83,7 @@ class Connections_model extends Model {
 	function list_my_hcps($inputs) {
 		$sql = "SELECT H.*
 			FROM connections D, hcp_account H
-			WHERE D.accepted = TRUE AND D.requester_id =  ? AND H.account_id = D.accepter_id";
+			WHERE D.accepted = TRUE AND D.sender_id =  ? AND H.account_id = D.receiver_id";
 		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
@@ -110,7 +110,7 @@ class Connections_model extends Model {
 	 {
 		$sql = "SELECT H.*
 	 		FROM connections C, hcp_account H
-			WHERE C.accepted = FALSE AND C.requester_id = ? AND C.accepter_id = H.account_id";
+			WHERE C.accepted = FALSE AND C.sender_id = ? AND C.receiver_id = H.account_id";
  		$query = $this->db->query($sql, $inputs);
  		
  		if ($this->db->trans_status() === FALSE)
@@ -136,7 +136,7 @@ class Connections_model extends Model {
 	{
 		$sql = "SELECT P.*
 			FROM connections C, patient_account P
-			WHERE C.accepted = FALSE AND C.requester_id = ? AND C.accepter_id = P.account_id";
+			WHERE C.accepted = FALSE AND C.sender_id = ? AND C.receiver_id = P.account_id";
  		$query = $this->db->query($sql, $inputs);
  		
  		if ($this->db->trans_status() === FALSE)
@@ -163,7 +163,7 @@ class Connections_model extends Model {
 	{
 		$sql = "SELECT H.*
 			FROM connections C, hcp_account H
-			WHERE C.accepted = FALSE AND C.accepter_id = ? AND H.account_id = C.requester_id";
+			WHERE C.accepted = FALSE AND C.receiver_id = ? AND H.account_id = C.sender_id";
 		$query = $this->db->query($sql, $inputs);
 
 		if ($this->db->trans_status() === FALSE)
@@ -191,7 +191,7 @@ class Connections_model extends Model {
 	{
 		$sql = "SELECT P.*
 	 		FROM connections C, patient_account P
-			WHERE C.accepted = FALSE AND C.accepter_id = ? AND P.account_id = C.requester_id";
+			WHERE C.accepted = FALSE AND C.receiver_id = ? AND P.account_id = C.sender_id";
  		$query = $this->db->query($sql, $inputs);
 	
 		if ($this->db->trans_status() === FALSE)
@@ -221,7 +221,7 @@ class Connections_model extends Model {
 	 {
 		$sql = "SELECT A.*
 	 		FROM connections D, hcp_account A
-			WHERE D.requester_id = ? AND D.accepted = FALSE AND A.account_id = D.accepter_id";
+			WHERE D.sender_id = ? AND D.accepted = FALSE AND A.account_id = D.receiver_id";
  		$query = $this->db->query($sql, $inputs);
 	
 		if ($this->db->trans_status() === FALSE)
@@ -247,8 +247,8 @@ class Connections_model extends Model {
 		// Try to get the connection from connections table
 		$sql = "SELECT *
 				FROM connections C
-				WHERE (C.requester_id = ? AND C.accepter_id = ?)
-				OR    (C.accepter_id = ? AND C.requester_id = ?)";
+				WHERE (C.sender_id = ? AND C.receiver_id = ?)
+				OR    (C.receiver_id = ? AND C.sender_id = ?)";
 		$query = $this->db->query($sql, array($a_id, $b_id, $a_id, $b_id));
 		if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -262,8 +262,8 @@ class Connections_model extends Model {
 		// Try to get the connection from hcp-hcp table
 		//$sql = "SELECT *
 		//		FROM connections C
-		//		WHERE (C.requester_id = ? AND C.accepter_id = ?)
-		//		OR    (C.accepter_id = ? AND C.requester_id = ?)";
+		//		WHERE (C.sender_id = ? AND C.receiver_id = ?)
+		//		OR    (C.receiver_id = ? AND C.sender_id = ?)";
 		//$query = $this->db->query($sql, array($a_id, $b_id, $a_id, $b_id));
 		//if ($this->db->trans_status() === FALSE)
 		//	return -1;
@@ -293,8 +293,8 @@ class Connections_model extends Model {
 		$sql = "(SELECT *
 			FROM connections DD
 			WHERE DD.accepted = true AND
-				((DD.requester_id = ? AND DD.accepter_id = ?)
-			OR   (DD.accepter_id = ? AND DD.requester_id = ?)))";
+				((DD.sender_id = ? AND DD.receiver_id = ?)
+			OR   (DD.receiver_id = ? AND DD.sender_id = ?)))";
 		
 				//UNION
 				//(SELECT *
@@ -327,8 +327,8 @@ class Connections_model extends Model {
 		$sql = "(SELECT *
 			FROM connections DD
 			WHERE
-				((DD.requester_id = ? AND DD.accepter_id = ?)
-				OR (DD.accepter_id = ? AND DD.requester_id = ?)))";
+				((DD.sender_id = ? AND DD.receiver_id = ?)
+				OR (DD.receiver_id = ? AND DD.sender_id = ?)))";
 				
 				//UNION
 				//(SELECT *
@@ -351,7 +351,7 @@ class Connections_model extends Model {
 	 * Connection setting 'accepted' to FALSE.
 	 * 
 	 * @param
-	 *   $inputs of the form array(requester_id, accepter_id)
+	 *   $inputs of the form array(sender_id, receiver_id)
 	 *
 	 * @note
 	 *   If account A request a connection with B, but B already
@@ -363,25 +363,24 @@ class Connections_model extends Model {
 	 *  -3 if the connection already exists
 	 *   0 if everything goes fine
 	 * 
-	 * @todo We still need to test the auto-acceptance if both hcps
-	 * ask for the same connection.
+	 * @test Auto-acceptance works
 	 * */
 	function add_connection($inputs) {
 		//testing to see if requestor is sending 2nd request
 		$sql = "SELECT *
 			FROM connections D
-			WHERE (D.requester_id = ? AND D.accepter_id = ?)";
+			WHERE (D.sender_id = ? AND D.receiver_id = ?)";
 		$query = $this->db->query($sql, $inputs);
 		
 		// If the other part already requested me the connection,
 		// This request will be considered as an acceptance
 		if ($query->num_rows() > 0) {
 			// This is an update to the original request
-			return $this->accept_connection($inputs); /** @todo Needs to be tested */
+			return $this->accept_connection($inputs);
 		}
 
 		// Request has never been made in either direction
-		$this->db->query("INSERT INTO connections (requester_id, accepter_id, date_connected)
+		$this->db->query("INSERT INTO connections (sender_id, receiver_id, date_connected)
 			VALUES (?, ?, current_timestamp)", $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
@@ -407,7 +406,7 @@ class Connections_model extends Model {
 		//test to see if connection already exists
 		$sql = "SELECT *
 				FROM connections D
-				WHERE D.requester_id = ? AND D.accepter_id = ?";
+				WHERE D.sender_id = ? AND D.receiver_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE) {
@@ -418,7 +417,7 @@ class Connections_model extends Model {
 			return -3;
 		}
 			
-		$this->db->query("INSERT INTO connections (requester_id, accepter_id, date_connected)
+		$this->db->query("INSERT INTO connections (sender_id, receiver_id, date_connected)
 			VALUES (? , ?, current_timestamp)", $inputs);
 		
 		if ($this->db->trans_status() === FALSE) {
@@ -442,8 +441,11 @@ class Connections_model extends Model {
 	 *   0 if everything goes fine
 	 * */
 	function accept_connection($inputs) {
+		
+		//echo 'here1';
+		
 		$query = $this->db->query("SELECT * FROM connections
-			WHERE requester_id = ? AND accepter_id = ?", $inputs);
+			WHERE sender_id = ? AND receiver_id = ?", $inputs);
 		
 		if ($this->db->trans_status() === FALSE) {
 			return -1; // query error
@@ -460,7 +462,7 @@ class Connections_model extends Model {
 		
 		// Accept connection
 		$this->db->query("UPDATE connections SET accepted = TRUE
-			WHERE requester_id = ? AND accepter_id = ?", $inputs);
+			WHERE sender_id = ? AND receiver_id = ?", $inputs);
 		
 		if ($this->db->trans_status() === FALSE) {
 			return -1; // query error
@@ -486,18 +488,25 @@ class Connections_model extends Model {
 		//copy if it came via referal
 		foreach ($result as $value) {
 			
-			//for each referal, get the level of the connection between the is_refered hcp and the refering hcp
+			//echo 'here2';
+			
+			//for each referal, get the level of the connection between the refering hcp and the patient
 			$sql = "SELECT *
 				FROM connections C
-				WHERE (C.requester_id = ? OR C.accepter_id = ?) AND (C.requester_id = ? OR C.accepter_id = ?)";
-			$level = $this->db->query($sql, array($inputs[1], $inputs[1], $value['refering_id'], $value['refering_id']));
+				WHERE (C.sender_id = ? OR C.receiver_id = ?) AND (C.sender_id = ? OR C.receiver_id = ?)";
+			$level = $this->db->query($sql, array($inputs[0], $inputs[0], $value['refering_id'], $value['refering_id']));
 			if ($this->db->trans_status() === FALSE) {
 				return -1; /* query error */
 			}
 			
 			$level_res = $level->result_array();
+			//echo ' ';
+			//echo $level_res[0]['connection_level'];
+			//echo ' ';
 			
-			if( $level_res['connection_level'] === '1' OR $level_res['connection_level'] === '3') {
+			if( $level_res[0]['connection_level'] === '1' OR $level_res[0]['connection_level'] === '3') {
+				
+				//echo 'here3';
 				
 				//get the medical records that the refering hcp has permission to view for the corresponding patient
 				$sql = "SELECT *
@@ -513,12 +522,15 @@ class Connections_model extends Model {
 				
 				//for each medical record, allow is_refered hcp permission to view it
 				foreach ($medical as $medical_rec) {
+					
+					//echo 'here4';
+					
 					$sql = "INSERT INTO permission (medical_rec_id, account_id, date_created)
 						VALUES (?, ?, current_date)";
 					$query = $this->db->query($sql, array($medical_rec['medical_rec_id'], $inputs[1]));
 					if ($this->db->trans_status() === FALSE)
 						return -1;
-					}
+				}
 			}
 		}
 		return 0;
@@ -540,7 +552,7 @@ class Connections_model extends Model {
 	 * *
 	function accept_patient_hcp($inputs) {
 		$query = $this->db->query("SELECT * FROM connections
-			WHERE requester_id = ? AND accepter_id = ?", $inputs);
+			WHERE sender_id = ? AND receiver_id = ?", $inputs);
 		
 		if ($this->db->trans_status() === FALSE) {
 			return -1; /* query error *
@@ -558,7 +570,7 @@ class Connections_model extends Model {
 		
 		// Accept connection
 		$this->db->query("UPDATE connections SET accepted = TRUE
-			WHERE requester_id = ? AND accepter_id = ?", $inputs);
+			WHERE sender_id = ? AND receiver_id = ?", $inputs);
 		
 		if ($this->db->trans_status() === FALSE) {
 			return -1; /* query error *
@@ -616,7 +628,7 @@ class Connections_model extends Model {
 		
 		// Now, delete the connection
 		$sql = "DELETE FROM connections
-				WHERE (requester_id = ? AND accepter_id = ?) OR (accepter_id = ? AND requester_id = ?)";
+				WHERE (sender_id = ? AND receiver_id = ?) OR (receiver_id = ? AND sender_id = ?)";
 		$query = $this->db->query($sql, array($a_id, $b_id, $a_id, $b_id));
 				
 		//$sql = "DELETE FROM p_d_connection
@@ -647,7 +659,7 @@ class Connections_model extends Model {
 		
 		// Now, delete the connection
 		$sql = "DELETE FROM connections
-				WHERE (requester_id = ? AND accepter_id = ?) OR (accepter_id = ? AND requester_id = ?)";
+				WHERE (sender_id = ? AND receiver_id = ?) OR (receiver_id = ? AND sender_id = ?)";
 		$query = $this->db->query($sql, array($a_id, $b_id, $a_id, $b_id));
 		
 		//$sql = "DELETE FROM p_d_connection
@@ -670,15 +682,15 @@ class Connections_model extends Model {
 	 *  -2 if the connection does not exist
 	 *   array with the connection level
 	 * */
-	 function get_level($inputs){
-		 //check if te connection exists
-		 $check = $this->is_connected_with($inputs[0], $inputs[1]);
-		 if ($check === -1) return -1;
-		 if ($check === FALSE) return -2;
-		 
-		 $sql = "SELECT C.connection_level
+	 function get_level($inputs) {
+		//check if te connection exists
+		$check = $this->is_connected_with($inputs[0], $inputs[1]);
+		if ($check === -1) return -1;
+		if ($check === FALSE) return -2;
+		
+		$sql = "SELECT C.connection_level
 			FROM connections C
-			WHERE C.requester_id = ? AND C.accepter_id = ?";
+			WHERE C.sender_id = ? AND C.receiver_id = ?";
 		$query = $this->db->query($sql, array($inputs[0], $inputs[1]));
 		
 		if ($this->db->trans_status() === FALSE)
@@ -738,7 +750,7 @@ class Connections_model extends Model {
 		//test to see if connection exists
 		$sql = "SELECT *
 				FROM d_d_connection
-				WHERE (requester_id = ? AND accepter_id = ?) OR (requester_id = ? AND accepter_id = ?)";
+				WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)";
 		$query = $this->db->query($sql, array($inputs[0], $inputs[1], $inputs[1], $inputs[0]));
 		
 		if ($this->db->trans_status() === FALSE)
@@ -748,7 +760,7 @@ class Connections_model extends Model {
 			return -2;
 		
 		$sql = "DELETE FROM d_d_connection
-				WHERE (requester_id = ? AND accepter_id = ?) OR (requester_id = ? AND accepter_id = ?)";
+				WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)";
 		$query = $this->db->query($sql, array($inputs[0], $inputs[1], $inputs[1], $inputs[0]));
 		
 		if ($this->db->trans_status() === FALSE)

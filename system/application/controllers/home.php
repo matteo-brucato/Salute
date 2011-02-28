@@ -16,6 +16,15 @@ class Home extends Controller {
 		$this->load->library('auth');
 	}
 	
+	function __destruct() {
+		/**
+		 * @todo If we start transactions in the constructor, and 
+		 * end them in the destructor, would it be possible to do this?
+		 * */
+		//if ($this->db->trans_status() === FALSE)
+		//	$this->ui->set_query_error();
+	}
+	
 	/**
 	 * Default home 
 	 * If not logged in load default welcome page and login side panel
@@ -33,6 +42,7 @@ class Home extends Controller {
 		// Already logged in
 		else 
 			$this->ui->set_redirect('/profile');
+		
 	}
 
 	/**
@@ -211,7 +221,6 @@ class Home extends Controller {
 		
 		// Start a transaction now
 		$this->db->trans_start();
-		//$this->db->trans_begin();
 		
 		// load respective forms.
 		$this->load->model('account_model');
@@ -286,7 +295,6 @@ class Home extends Controller {
 		
 		// End transaction
 		$this->db->trans_complete();
-		//$this->db->trans_rollback();
 	}
 	
 	function sitemap() {
