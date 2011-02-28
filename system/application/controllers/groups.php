@@ -28,52 +28,39 @@ class Groups extends Controller {
 		$this->groups('all');
 	}
 	
-	function groups($direction = 'all' , $subdir = 'all', $group_id = NULL, $account_id = NULL){
-		if ( $direction = 'all' )
-			$this->_groups_all();
-		else if ( $direction = 'mine' )
-			$this->_groups_mine();
-		else if ( $direction = 'create' )
-			$this->_groups_create();
-		else if ( $direction = 'create_do' )
-			$this->_groups_create_do();
-		else if ( $direction = 'delete' )
-			$this->_groups_delete($group_id);
-		else if ( $direction = 'edit' )		
-			$this->_groups_edit($group_id);
-		else if ( $direction = 'edit_do' )		
-			$this->_groups_edit_do($group_id);
-		else if ( $direction = 'members' )
-			$this->_groups_members($subdir,$group_id, $account_id);
+	function lists($direction = 'all'){
+		if ( $direction == 'all' )
+			$this->_lists_all();
+		else if ( $direction == 'mine' )
+			$this->_lists_mine();
 		else
-			$this->ui->set_error('Input not valid: <b>'.$param.'</b>');
+			$this->ui->set_error('Input not valid: <b>'.$direction.'</b>');
 	}
 	
-	function _groups_members($subdir = 'all', $group_id = NULL, $account_id = NULL){
-		if ( $subdir = 'all' )
-			$this->_members_all($group_id);
-		else if ( $subdir = 'edit' )
+	function members($direction = 'list', $group_id = NULL, $account_id = NULL){
+		if ( $direction == 'list' )
+			$this->_members_list($group_id);
+		else if ( $direction == 'edit' )
 			$this->_members_edit($group_id,$account_id);
-		else if ( $subdir = 'edit_do' )
+		else if ( $direction == 'edit_do' )
 			$this->_members_edit($group_id,$account_id);
-		else if ( $subdir = 'join' )
+		else if ( $direction == 'join' )
 			$this->_members_join($group_id);
-		else if ( $subdir = 'leave' )
+		else if ( $direction == 'leave' )
 			$this->_members_leave($group_id);
-		else if ( $subdir = 'delete' )		
+		else if ( $direction == 'delete' )		
 			$this->_members_delete($group_id,$account_id);
-		else if ( $subdir = 'invite' )		
+		else if ( $direction == 'invite' )		
 			$this->_members_invite($group_id,$account_id);
 		else
-			$this->ui->set_error('Input not valid: <b>'.$subdir.'</b>');	
+			$this->ui->set_error('Input not valid: <b>'.$direction.'</b>');	
 	}
 	
 	
 	/**
 	 * Loads Create New Group Form
 	 * */
-	function _groups_create(){
-
+	function create(){
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
 		}
@@ -84,7 +71,7 @@ class Groups extends Controller {
 	/**
 	 * Create a New Group
 	 * */
-	function _groups_create_do(){
+	function create_do(){
 
 		$name = $this->input->post('name');
 		$description = $this->input->post('description');
@@ -113,7 +100,6 @@ class Groups extends Controller {
 		}
 		
 		$this->ui->set_message("You have successfully created the group: $name",'Confirmation');
-		
 		$this->db->trans_complete();
 	}
 
@@ -121,7 +107,7 @@ class Groups extends Controller {
 	/**
 	 * Delete an Existing Group
 	 * */
-	function _groups_delete($group_id = NULL){
+	function delete($group_id = NULL){
 		
 		if ($this->auth->check(array(auth::CurrLOG, auth::GRP, $group_id)) !== TRUE) {
 			return;
@@ -254,7 +240,7 @@ class Groups extends Controller {
 	 * @attention invite must be sent to a Salute Member
 	 * @attention invite may only be sent by: permission #s 1,2,3 (all except 0)
 	 * */
-	function invite($aid = NULL) {
+	function _members_invite($aid = NULL) {
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
 		}
@@ -270,7 +256,7 @@ class Groups extends Controller {
 	/**
 	 * List Existing Groups
 	 * */
-	function _groups_all(){
+	function _lists_all(){
 
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
@@ -305,7 +291,7 @@ class Groups extends Controller {
 	/**
 	 * List My Groups
 	 * */
-	function _groups_mine(){
+	function _lists_mine(){
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
 		}
@@ -338,7 +324,7 @@ class Groups extends Controller {
 	/**
 	 * Edit an Existing Group
 	 * */
-	function _groups_edit($group_id = NULL){
+	function edit($group_id = NULL){
 
 		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id)) !== TRUE) {
 			return;
@@ -370,7 +356,7 @@ class Groups extends Controller {
 		$this->db->trans_complete();
 	}
 	
-	function _groups_edit_do($group_id = NULL){
+	function _edit_do($group_id = NULL){
 
 		$name = $this->input->post('name');
 		$description = $this->input->post('description');
@@ -406,7 +392,7 @@ class Groups extends Controller {
 	/**
 	 * List members of a group
 	 * */
-	function _members_all($group_id = NULL){
+	function _members_list($group_id = NULL){
 
 		if ($this->auth->check(array(auth::CurrLOG,auth::CurrGRPMEM,$group_id)) !== TRUE) {
 			return;
