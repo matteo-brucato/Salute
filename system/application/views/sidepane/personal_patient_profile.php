@@ -43,7 +43,7 @@
 		</ul>
 	</li>
 
-	<li><a href="/groups/list_my_groups" class="ajax">My Groups</a></li>
+	<li><a href="/groups/lists/mine" class="ajax">My Groups</a></li>
 	
 	<li><a href="/medical_records" class="ajax">Medical Records</a>
 		<ul>

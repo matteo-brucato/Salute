@@ -38,7 +38,7 @@
 		</ul>
 	</li>
 
-	<li><a href="/groups/list_my_groups" class="ajax">My Groups</a></li>
+	<li><a href="/groups/lists/mine" class="ajax">My Groups</a></li>
 	
 	<li><a href="/refers" class="ajax">My Referals</a>
 		<ul>
