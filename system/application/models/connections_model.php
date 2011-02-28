@@ -501,10 +501,10 @@ class Connections_model extends Model {
 			
 			$level_res = $level->result_array();
 			//echo ' ';
-			//echo $level_res[0]['connection_level'];
+			//echo $level_res[0]['sender_level'];
 			//echo ' ';
 			
-			if( $level_res[0]['connection_level'] === '1' OR $level_res[0]['connection_level'] === '3') {
+			if( $level_res[0]['sender_level'] === '1' OR $level_res[0]['sender_level'] === '3') {
 				
 				//echo 'here3';
 				
@@ -688,7 +688,7 @@ class Connections_model extends Model {
 		if ($check === -1) return -1;
 		if ($check === FALSE) return -2;
 		
-		$sql = "SELECT C.connection_level
+		$sql = "SELECT C.sender_level
 			FROM connections C
 			WHERE C.sender_id = ? AND C.receiver_id = ?";
 		$query = $this->db->query($sql, array($inputs[0], $inputs[1]));

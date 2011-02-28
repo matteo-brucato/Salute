@@ -55,7 +55,7 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 	}
 }
 
-echo '<form method="post" action="medical_records/do_change_permissions" id="change_perm">';
+echo '<form method="post" action="/medical_records/do_change_permissions" id="change_perm">';
 view_table($table);
 
 echo 	'<br />';
