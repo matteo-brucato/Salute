@@ -25,7 +25,7 @@ class Groups extends Controller {
 	 * 		List all groups
 	 * */
 	function index(){
-		$this->groups('all');
+		$this->lists();
 	}
 	
 	function lists($direction = 'all'){
