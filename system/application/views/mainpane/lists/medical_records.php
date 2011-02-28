@@ -60,6 +60,8 @@ if ($this->auth->get_type() === 'patient') {
 	$table['tuples'][$i]['file'] .= '</ul>';
 }*/
 
-
 view_table($table);
+
+
+
 ?>
