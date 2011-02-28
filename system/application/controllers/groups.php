@@ -10,6 +10,13 @@
 
 /**
  * Class Controller Groups
+ * @todo: 	if you create a group, you should automatically be added to it with permission 3
+ * 			edit member permission form
+ * 			fix list members
+ * 			invite members
+ * 			implement auth checks
+ * 			form checking
+ * 			when you join a group, your permission should be automatically set to 0
  * */
 class Groups extends Controller {
 
@@ -23,11 +30,15 @@ class Groups extends Controller {
 	/**
 	 * Default method:
 	 * 		List all groups
+	 * tested.
 	 * */
 	function index(){
 		$this->lists();
 	}
 	
+	/**
+	 * tested.
+	 * */
 	function lists($direction = 'all'){
 		if ( $direction == 'all' )
 			$this->_lists_all();
@@ -59,6 +70,7 @@ class Groups extends Controller {
 	
 	/**
 	 * Loads Create New Group Form
+	 * tested.
 	 * */
 	function create(){
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
@@ -70,6 +82,7 @@ class Groups extends Controller {
 
 	/**
 	 * Create a New Group
+	 * tested.
 	 * */
 	function create_do(){
 
@@ -106,10 +119,12 @@ class Groups extends Controller {
 	
 	/**
 	 * Delete an Existing Group
+	 * 
+	 * tested.
 	 * */
 	function delete($group_id = NULL){
 		
-		if ($this->auth->check(array(auth::CurrLOG, auth::GRP, $group_id)) !== TRUE) {
+		if ($this->auth->check(array(auth::CurrLOG, /*auth::GRP, $group_id*/)) !== TRUE) {
 			return;
 		}
 		
@@ -134,7 +149,7 @@ class Groups extends Controller {
 	 * Join an Existing Group
 	 * */
 	function _members_join($group_id = NULL){
-		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id)) !== TRUE) return;
+		if ($this->auth->check(array(auth::CurrLOG/*,auth::GRP,$group_id*/)) !== TRUE) return;
 		
 		$this->db->trans_start();
 		
@@ -158,13 +173,13 @@ class Groups extends Controller {
 		$this->db->trans_complete();
 		
 		// check again that they're in 'is_in'
-		if ($this->auth->check(array(auth::CurrGRPMEM,$group_id)) === TRUE){
+		//if ($this->auth->check(array(auth::CurrGRPMEM,$group_id)) === TRUE){
 			$this->ui->set_message('You have successfully joined the group.','Confirmation');
-			$this->groups('mine');
-		} else {
+			//link to view my groups.
+		/*} else {
 			$this->ui->set_error('Internal Server Error','server');
 			return;
-		}
+		}*/
 	}
 	
 	/**
@@ -296,9 +311,7 @@ class Groups extends Controller {
 			return;
 		}
 		
-		// Start a transaction now
 		$this->db->trans_start();
-		//$this->db->trans_begin();
 		
 		$list = $this->groups_model->list_my_groups($this->auth->get_account_id());
 		if ($list === -1){
@@ -325,12 +338,13 @@ class Groups extends Controller {
 	 * Edit an Existing Group
 	 * */
 	function edit($group_id = NULL){
-
-		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id)) !== TRUE) {
+		
+		if ($this->auth->check(array(auth::CurrLOG/*,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id*/)) !== TRUE) {
 			return;
 		}
-		$this->db->trans_start();
-		
+
+		//$this->db->trans_start();
+
 		$mem = $this->groups_model->get_member($this->auth->get_account_id(),$group_id);
 		if ($mem === -1){
 			$this->ui->set_query_error();
@@ -338,7 +352,7 @@ class Groups extends Controller {
 		} else if ($mem === NULL) {
 			$this->ui->set_error('You are no longer a member of this group.');
 			return;
-		} else if ($mem[0]['permissions'] !== '3'){
+		} else if ($mem['permissions'] !== '3'){
 			$this->ui->set_error('You do not have permission to edit this group.');
 			return;
 		}
@@ -353,18 +367,18 @@ class Groups extends Controller {
 		}
 		$this->ui->set(array($this->load->view('mainpane/forms/edit_group', array('curr_info' => $curr_info), TRUE)));
 		
-		$this->db->trans_complete();
+		//$this->db->trans_complete();
 	}
 	
-	function _edit_do($group_id = NULL){
+	function edit_do($group_id = NULL){
 
 		$name = $this->input->post('name');
 		$description = $this->input->post('description');
-		$privacy = $this->input->post('public_private');
+		$public_private = $this->input->post('public_private');
 		$group_type = $this->input->post('group_type');
 		
 		// Form Checking will replace this
-		if($name == NULL || $description == NULL || $privacy == NULL || $group_type == NULL )	{
+		if($name == NULL || $description == NULL || $public_private == NULL || $group_type == NULL )	{
 			$this->ui->set_error('All Fields are Mandatory.','Missing Arguments'); 
 			return;
 		}
@@ -372,11 +386,11 @@ class Groups extends Controller {
 		$this->db->trans_start();
 		
 		$result = $this->groups_model->edit_group(array(
-													'name' => $name, 
-													'description' => $description, 
-													'public_private' => $privacy,
-													'group_type' => $group_type,
-													'group_id' => $group_id
+													$name, 
+													$description, 
+													$public_private,
+													$group_type,
+													$group_id
 												)); 
 		
 		if($result === -1){
@@ -394,7 +408,7 @@ class Groups extends Controller {
 	 * */
 	function _members_list($group_id = NULL){
 
-		if ($this->auth->check(array(auth::CurrLOG,auth::CurrGRPMEM,$group_id)) !== TRUE) {
+		if ($this->auth->check(array(auth::CurrLOG/*,auth::CurrGRPMEM,$group_id*/)) !== TRUE) {
 			return;
 		}
 

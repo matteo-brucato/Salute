@@ -86,7 +86,7 @@ function get_action_strings($actions, $tuple) {
 				break;
 				
 			case 'join-group':
-				$str .= '<li><a href="/groups/members/join/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Join</a></li>';
+				$str .= '<li><a href="/groups/members/join/'.$tuple['group_id'].'">Join</a></li>';
 				break;
 				
 			case 'leave-group':

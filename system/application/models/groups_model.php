@@ -51,7 +51,7 @@ class Groups_model extends Model {
 		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)
 			return -1;
-		return 1;
+		return 0;
 	}
 
 	
