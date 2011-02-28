@@ -15,27 +15,27 @@ $this->load->helper('table_result');
 $table['table-name'] = 'my-groups-table';
 
 // Names of the headers in the table
-$table['th'] = array('Account Id','First Name', 'Last Name', 'Actions');
+$table['th'] = array('Account Id', 'Group Id','First Name', 'Last Name', 'Actions');
 
 // Classes for columns (order matters)
-$table['th_class'] = array('id_keeper', '', '', '');
-$table['td_class'] = array('id_keeper', '', '', '');
+$table['th_class'] = array('id_keeper', 'id_keeper', '', '', '');
+$table['td_class'] = array('id_keeper', 'id_keeper', '', '', '');
 
 
 // All the results from the database
 $table['tuples'] = $mem_list;
 
 // Attributes to display
-$table['attr'] = array('account_id','first_name','last_name','actions');
+$table['attr'] = array('account_id', 'group_id','first_name','last_name','actions');
 
 if($perm['permissions'] == '0')
 	$actions = array('request-conn');  
 else if ($perm['permissions'] == '1')
 	$actions = array('request-conn');  
 else if ($perm['permissions'] == '2')
-	$actions = array('request-conn', 'delete-member','change-mem-perm');  
+	$actions = array('request-conn', 'delete-member','edit-mem');  
 else if ($perm['permissions'] == '3')
-	$actions = array('request-conn', 'delete-member','change-mem-perm','edit-group','delete-group');  
+	$actions = array('request-conn', 'delete-member','edit-mem','edit-group','delete-group');  
 
 for ($i = 0; $i < count($table['tuples']); $i++) {
 	

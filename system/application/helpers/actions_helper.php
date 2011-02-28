@@ -105,11 +105,11 @@ function get_action_strings($actions, $tuple) {
 				break;
 				
 			case 'invite-to-group':
-				$str .= '<li><a href="/groups/members/delete/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Delete Member</a></li>';
+				$str .= '<li><a href="/groups/members/invite/'.$tuple['group_id'].'">Invite a Member</a></li>';
 				break;
 				
-			case 'change-mem-perm':
-				$str .= '<li><a href="/groups/members/edit/'.$tuple['account_id'].'/'.$tuple['group_id'].'">Change Permissions</a></li>';
+			case 'edit-mem':
+				$str .= '<li><a href="/groups/members/edit/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Change Permissions</a></li>';
 				break;
 			
 			case 'edit-group':
