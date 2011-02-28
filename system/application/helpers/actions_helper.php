@@ -86,11 +86,11 @@ function get_action_strings($actions, $tuple) {
 				break;
 				
 			case 'join-group':
-				$str .= '<li><a href="/groups/join/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Join</a></li>';
+				$str .= '<li><a href="/groups/members/join/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Join</a></li>';
 				break;
 				
 			case 'leave-group':
-				$str .= '<li><a href="/groups/leave/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Leave</a></li>';
+				$str .= '<li><a href="/groups/members/leave/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Leave</a></li>';
 				break;
 			
 			case 'delete-group':
@@ -98,11 +98,11 @@ function get_action_strings($actions, $tuple) {
 				break;
 					
 			case 'delete-member':
-				$str .= '<li><a href="/groups/delete_member/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Delete Member</a></li>';
+				$str .= '<li><a href="/groups/members/delete/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Delete Member</a></li>';
 				break;
 				
 			case 'change-mem-perm':
-				$str .= '<li><a href="/groups/change_member_permissions/'.$tuple['account_id'].'/'.$tuple['group_id'].'">Change Permissions</a></li>';
+				$str .= '<li><a href="/groups/members/edit/'.$tuple['account_id'].'/'.$tuple['group_id'].'">Change Permissions</a></li>';
 				break;
 			
 			case 'edit-group':

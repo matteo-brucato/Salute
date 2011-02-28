@@ -1,6 +1,7 @@
 --
 --DROP TABLES
 --	
+
 DROP TABLE accounts CASCADE;
 DROP TABLE messages CASCADE;
 DROP TABLE patient_account CASCADE;
@@ -14,6 +15,8 @@ DROP TABLE connections CASCADE;
 DROP TABLE permission CASCADE;
 DROP TABLE ci_sessions CASCADE;
 DROP TABLE groups CASCADE;
+DROP TABLE refers;
+DROP TABLE is_in;
 
 
 --
@@ -175,7 +178,7 @@ CREATE TABLE groups(
 	public_private VARCHAR(1) NOT NULL,
 	group_type VARCHAR(1) NOT NULL,
 	PRIMARY KEY(group_id),
-	FOREIGN KEY (account_id) REFERENCES accounts(account_id)	
+	FOREIGN KEY (account_id) REFERENCES accounts(account_id) ON DELETE CASCADE
 );
 
 --Connections Table

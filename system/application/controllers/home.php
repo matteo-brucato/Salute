@@ -42,6 +42,7 @@ class Home extends Controller {
 		// Already logged in
 		else 
 			$this->ui->set_redirect('/profile');
+		
 	}
 
 	/**
