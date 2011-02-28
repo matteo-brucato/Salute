@@ -48,6 +48,9 @@ class Medical_records extends Controller {
 	*/
 	function myrecs()
 	{
+		
+
+	
 		if (DEBUG) $this->output->enable_profiler(TRUE);
 //		$this->auth->check_logged_in();
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
@@ -287,6 +290,108 @@ class Medical_records extends Controller {
 		$this->ui->set(array(
 			$this->load->view('mainpane/forms/add_permission', array('medrec_id' => $mrec_id), TRUE)
 		));
+	}
+	
+	function change_permissions($hcp_id) {
+		
+		//$this->auth->check_logged_in();
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}
+		$hcpsrecs = $this->medical_records_model->get_patient_records(array($this->auth->get_account_id(), $hcp_id));
+		$allrecs = $this->medical_records_model->list_my_records(array($this->auth->get_account_id()));
+		//$hcpsrecs = $this->medical_records_model->list_my_records(array($this->auth->get_account_id()));
+		// All ok
+		$this->ui->set(array(
+			$this->load->view('mainpane/lists/medical_records_form',
+				array('list_name' => 'Change permissions', 'list' => $allrecs, 'list2'=>$hcpsrecs, 'hcp_id'=>$hcp_id ) , TRUE)
+		));
+	}
+			//	echo $allrecs[$i]['medical_rec_id'];
+			//check if that medical record was marked
+				//if it is marked, check if hcp is already allowed
+					//if already allowed, do nothing
+					//if not allowed, allow access
+				//if it is not marked, check if hcp is already allowed
+					//if allowed, disallow permission
+					//if not allowed, do nothing
+	function do_change_permissions() {
+		// error checking needed
+		$hcp_id = $this->input->post('hcp_id');
+		if (isset($_POST["box"]) && is_array($_POST["box"]) && count($_POST["box"]) > 0) {
+			$box = $_POST['box'];
+		}
+		else{
+			$box = array();
+		}
+		$allrecs = $this->medical_records_model->list_my_records(array($this->auth->get_account_id()));
+		//error checking needed		
+		for($i = 0; $i < count($allrecs); $i++ ){
+			$temp = $allrecs[$i]['medical_rec_id'] ;
+			echo $temp;
+			$isit = FALSE;
+			//check if that medical record was marked
+			for( $j = 0; $j < count($box); $j++ )
+				if( $box[$j] == $temp )
+					$isit = TRUE;
+			//if marked
+			if( $isit === TRUE ){
+				
+				echo ' was selected. ';
+				//check if allowed
+				$res = $this->medical_records_model->is_account_allowed(array($temp,$hcp_id));
+				switch($res){
+					case -1:
+						echo 'error';
+						$this->ui->set(array('Query error in is_allowed !',''));
+						return;
+					//if not allowed
+					case FALSE:
+						//add permission
+						$result = allow_permission(array($temp,$hcp_id));
+						switch($result){
+							case -1:
+								$this->ui->set(array('Query error! in allow_permission',''));
+								return;
+							case -2:
+								$this->ui->set_error('Server Error', 'server');
+								return;
+							default:
+								break;								
+						}	
+					default:
+						break;
+				}				
+			}
+			//if not marked
+			else{
+				echo ' was not selected. ';
+				//check if allowed
+				$res = $this->medical_records_model->is_account_allowed(array($temp,$hcp_id));
+				switch($res){
+					case -1:
+						echo 'error';
+						$this->ui->set(array('Query error! in is _allowed',''));
+						return;
+					//if allowed
+					case TRUE:
+						//delete permission
+						$result = delete_permission(array($temp,$hcp_id));		
+						switch($result){
+							case -1:
+								$this->ui->set(array('Query error! in delete',''));
+								return;
+							default:
+								break;
+						}
+					default:
+						break;
+				}	
+			}		
+		}
+		
+		$this->ui->set_message('Successfully changed Permissions.', 'Confirmation'); 
+		return;
 	}
 	
 	/**
