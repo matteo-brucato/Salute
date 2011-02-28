@@ -317,29 +317,54 @@ class Medical_records extends Controller {
 					//if not allowed, do nothing
 	function do_change_permissions() {
 		// error checking needed
+		
+		//get hcp_id from view
 		$hcp_id = $this->input->post('hcp_id');
+		
+		//get array of medical_rec_ids that were selected, empty array if none are selected
 		if (isset($_POST["box"]) && is_array($_POST["box"]) && count($_POST["box"]) > 0) {
 			$box = $_POST['box'];
 		}
 		else{
 			$box = array();
 		}
+		
+		//get a list of all my medical records
 		$allrecs = $this->medical_records_model->list_my_records(array($this->auth->get_account_id()));
 		//error checking needed		
+		echo count($box);
+		echo '  ';
+		echo count($allrecs);
+		
 		for($i = 0; $i < count($allrecs); $i++ ){
 			$temp = $allrecs[$i]['medical_rec_id'] ;
-			echo $temp;
 			$isit = FALSE;
+
+		
 			//check if that medical record was marked
 			for( $j = 0; $j < count($box); $j++ )
 				if( $box[$j] == $temp )
 					$isit = TRUE;
 			//if marked
 			if( $isit === TRUE ){
-				
-				echo ' was selected. ';
 				//check if allowed
 				$res = $this->medical_records_model->is_account_allowed(array($temp,$hcp_id));
+				if( $res === -1 ){
+					$this->ui->set(array('Query error in is_allowed !',''));
+					return;								
+				}
+				if( $res === FALSE ){
+					$result = $this->medical_records_model->allow_permission(array($temp,$hcp_id));
+					if( $result === -1 ){
+						$this->ui->set(array('Query error! in allow_permission',''));
+						return;
+					}
+					else if( $result === -2 ){
+						$this->ui->set_error('Server Error', 'server');
+						return;						
+					}
+				}
+				/*
 				switch($res){
 					case -1:
 						echo 'error';
@@ -361,13 +386,25 @@ class Medical_records extends Controller {
 						}	
 					default:
 						break;
-				}				
+				}	*/			
 			}
 			//if not marked
-			else{
-				echo ' was not selected. ';
+			else if( $isit === FALSE ){
 				//check if allowed
 				$res = $this->medical_records_model->is_account_allowed(array($temp,$hcp_id));
+				if( $res === -1 ){
+					$this->ui->set(array('Query error! in is _allowed',''));
+					return;
+				}
+				if( $res === TRUE ){
+					$result = $this->medical_records_model->delete_permission(array($temp,$hcp_id));
+					if( $result === -1 ){
+						$this->ui->set(array('Query error! in delete',''));
+						return;
+					}
+					
+				}
+				/*
 				switch($res){
 					case -1:
 						echo 'error';
@@ -386,12 +423,11 @@ class Medical_records extends Controller {
 						}
 					default:
 						break;
-				}	
+				}*/	
 			}		
 		}
 		
 		$this->ui->set_message('Successfully changed Permissions.', 'Confirmation'); 
-		return;
 	}
 	
 	/**

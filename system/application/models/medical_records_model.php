@@ -220,10 +220,6 @@ class Medical_records_model extends Model {
 	 *   -1 if error in query
 	 * */
 	function is_account_allowed($inputs){
-	
-		echo $inputs[0];
-			echo '    ';
-		echo $inputs[1];
 		$sql = "SELECT *
 			FROM permission P
 			WHERE P.medical_rec_id = ? AND P.account_id = ?";
@@ -234,6 +230,8 @@ class Medical_records_model extends Model {
 			return TRUE;
 		return FALSE;
 	}
+	
+	
 	
 	/**
 	 * Get all the accounts (HCPs for now) that have access to this

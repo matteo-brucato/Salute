@@ -25,6 +25,8 @@ class Groups extends Controller {
 		$this->load->library('ui');
 		$this->load->library('auth');
 		$this->load->model('groups_model');
+		$this->load->model('connections_model');
+		$this->load->model('account_model');
 	}
 	
 	/**
@@ -59,10 +61,10 @@ class Groups extends Controller {
 			$this->_members_join($group_id);
 		else if ( $direction == 'leave' )
 			$this->_members_leave($group_id);
-		else if ( $direction == 'delete' )		
+		else if ( $direction == 'delete' )
 			$this->_members_delete($group_id,$account_id);
-		else if ( $direction == 'invite' )		
-			$this->_members_invite($group_id,$account_id);
+		else if ( $direction == 'invite' )
+			$this->_members_invite($group_id);
 		else
 			$this->ui->set_error('Input not valid: <b>'.$direction.'</b>');	
 	}
@@ -258,18 +260,106 @@ class Groups extends Controller {
 	 * @attention invite must be sent to a Salute Member
 	 * @attention invite may only be sent by: permission #s 1,2,3 (all except 0)
 	 * */
-	function _members_invite($aid = NULL) {
-		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+	function _members_invite($gid = NULL) {
+		if ($this->auth->check(array(
+			auth::CurrLOG,
+			auth::GRP, $gid,		// gid must be a group id
+			auth::CurrGRPMEM, $gid		// current must be member of group gid
+			)) !== TRUE) return;
+		
+		$results = $this->connections_model->list_my_patients($this->auth->get_account_id()); 
+		if ($results === -1) {$this->ui->set_query_error(); return;}
+		
+		$mainview = $this->load->view('mainpane/forms/pick_multiple_patients',
+			array(
+				'list_name' => 'Select patients to invite to this group',
+				'list' => $results,
+				'form_action' => '/groups/members_invite_do/'.$gid), TRUE);
+		
+		$results = $this->connections_model->list_my_hcps($this->auth->get_account_id()); 
+		if ($results === -1) {$this->ui->set_query_error(); return;}
+		
+		$mainview .= $this->load->view('mainpane/forms/pick_multiple_hcps',
+			array(
+				'list_name' => 'Select HCPs to invite to this group',
+				'list' => $results,
+				'form_action' => '/groups/members_invite_do/'.$gid), TRUE);
+		
+		$this->ui->set(array($mainview));
+	}
+	
+	function members_invite_do($gid = NULL) {
+		if ($this->auth->check(array(
+			auth::CurrLOG,
+			auth::GRP, $gid,				// gid must be a group id
+			auth::CurrGRPMEM, $gid		// current must be member of group gid
+		)) !== TRUE) return;
+		
+		// Get the group tuple
+		$group = $this->groups_model->get_group($gid);
+		if ($group === -1) {$this->ui->set_query_error(); return;}
+		if ($group === NULL) {$this->ui->set_error('Group not found'); return;}
+		
+		// Get POST variables (an array of ids to invite to gid group)
+		$invite_ids = $this->input->post('ids');
+		
+		// Form input check
+		if ($invite_ids == NULL) {
+			$this->ui->set_error('No input', 'Form input missing');
 			return;
 		}
 		
-		if ($aid === NULL) {
-			$this->ui->set(array(
-				$this->load->view('mainpane/forms/pick_patient',
-					array('list_name' => 'a', 'list' => array(), 'hcp_id' => 12), TRUE)
-			));
+		$alert = '';
+		foreach ($invite_ids as $iid) {
+			
+			// Current must be connected with it
+			if ($this->auth->check(array(
+				auth::CurrCONN, $iid
+			)) !== TRUE) {
+				$alert .= 'Ignoring id '.$iid.'<br />';
+				continue;
+			}
+			
+			$alert .= 'Inviting id '.$iid.'... ';
+			
+			// Try to send the email
+			$email = $this->account_model->get_account_email(array($iid));
+			if($email === -1) {
+				$alert .= 'error, could not send invitation email<br />';
+				continue;
+			}
+			$message_body = 'Hello Salute member,<br /><br />'.
+				$this->auth->get_first_name().' '.$this->auth->get_last_name().
+				' invited you to join group '.$group['name'].'!<br />'.
+				'Click <a href="/grups/members/join/'.$gid.'">here</a> to join the group.';
+			$this->load->library('email');
+			$config['mailtype'] = 'html';
+			$this->email->initialize($config);
+			$this->email->from($this->auth->get_email());
+			$this->email->to($email[0]['email']);
+			$this->email->subject('Salute - Group Invitation');
+			$this->email->message($message_body);
+			$this->email->send();
+			
+			$alert .= 'email invitation sent!<br />';
 		}
+		
+		$this->ui->set_message($alert);
 	}
+	
+	/*function members_invite_hcps_do($gid = NULL) {
+		$hcp_ids = $this->input->post('hcp_ids');
+		
+		// Form input check
+		if ($hcp_ids == NULL) {
+			$this->ui->set_error('No input', 'Form input missing');
+			return;
+		}
+		
+		foreach ($hcp_ids as $hid) {
+			echo $hid.' ';
+		}
+	}*/
 	
 	/**
 	 * List Existing Groups
