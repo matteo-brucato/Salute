@@ -88,7 +88,10 @@
 		//load a view to display and choose a colleague
 		$this->ui->set(array(
 			$this->load->view('mainpane/forms/pick_hcp',
-			array('list_name' => 'My Colleagues', 'list' => $results, 'status' => 'connected') , TRUE)
+			array(
+				'list_name' => 'My Colleagues',
+				'list' => $results,
+				'form_action' => '/refers/create_referral_do1'), TRUE)
 		));
 	}
 	
@@ -128,7 +131,10 @@
 		//loads the view to display and choose a patient
 		$this->ui->set(array(
 			$this->load->view('mainpane/forms/pick_patient',
-			array('list_name' => 'My Patients', 'list' => $results, 'status' => 'connected', 'hcp_id' => $hcp_id) , TRUE)
+			array(
+				'list_name' => 'My Patients',
+				'list' => $results, 'status' => 'connected',
+				'form_action' => '/refers/create_referral_do2/'.$hcp_id), TRUE)
 		));
 	}
 	
@@ -141,25 +147,26 @@
 	 * @return
 	 * 	successfully create the referral and give success message
 	 * */
-	function create_referral_do2() {
+	function create_referral_do2($hcp_id = NULL) {
 		$check = $this->auth->check(array(
 			auth::CurrLOG,
-			auth::CurrHCP));
+			auth::CurrHCP,
+			auth::HCP, $hcp_id,
+			auth::CurrCONN, $hcp_id));
 		if ($check !== TRUE) return;
 		
 		//get input from the form
 		$patient_id = $this->input->post('patient_id');
-		$hcp_id = $this->input->post('hcp_id');
+		//$hcp_id = $this->input->post('hcp_id'); /** @note Now, it takes hcp_id from the function parameters! */
 		
-		if ($hcp_id == NULL || $patient_id == NULL) {
+		if ($patient_id == NULL) {
 			$this->ui->set_error('Select a patient.','Missing Arguments'); 
 			return;
 		}
 		
+		// Current must also be connected to patient id
 		$check = $this->auth->check(array(
-			auth::HCP, $hcp_id,
 			auth::PAT, $patient_id,
-			auth::CurrCONN, $hcp_id,
 			auth::CurrCONN, $patient_id));
 		if ($check !== TRUE) return;
 		
