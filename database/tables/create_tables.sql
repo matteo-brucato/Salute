@@ -63,7 +63,7 @@ CREATE TABLE patient_account(
 	tel_number VARCHAR(11),
 	fax_number VARCHAR(11),
 	address TEXT,
-	picture_name TEXT
+	picture_name TEXT,
 	PRIMARY KEY(account_id),
 	FOREIGN KEY (account_id) REFERENCES accounts(account_id)
 );
