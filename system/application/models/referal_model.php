@@ -96,7 +96,7 @@ class Referal_model extends Model {
 	 *  -1 in case of error in a query
 	 *  -2 referal ID does not exist
 	 *  -3 the doctor has already created the same referral
-	 *  -4 the doctor being refered is already friends with the patient //may not be neccessary
+	 *  -4 the doctor being refered is already friends with the patient
 	 *   referal_id if everything goes fine
 	 * */
 	function create_referal($inputs){
@@ -110,17 +110,16 @@ class Referal_model extends Model {
 			return -1;
 		if ($query->num_rows() > 0)
 			return -3;
-		
-		/*	
+			
 		//check if the patient and the is refered hcp are already connected
 		$sql = "SELECT *
 			FROM connections C
-			WHERE (C.sender_id = ? OR C.receiver_id = ?) AND (C.sender_id = ? OR C.receiver_id = ?)";
-		$query = $this->db->query($sql, array($inputs[1], $inputs[2], $inputs[1], $inputs[2]));
+			WHERE (C.sender_id = ? OR C.receiver_id = ?) AND (C.sender_id = ? OR C.receiver_id = ?) AND C.accepted = TRUE";
+		$query = $this->db->query($sql, array($inputs[1], $inputs[1], $inputs[2], $inputs[2]));
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 		if ($query->num_rows() > 0)
-			return -4; */
+			return -4; 
 		
 		//create the referral
 		$sql = "INSERT INTO refers (refering_id, is_refered_id, patient_id)
@@ -130,7 +129,9 @@ class Referal_model extends Model {
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 		
-		//get the referral id of the referral just created
+		//get the referral id of the referral just created,
+		//  so that if the level is high to be able to accept the
+		//  the referral
 		$sql = "select last_value from refers_referal_id_seq";
 			$query = $this->db->query($sql);
 			if ($this->db->trans_status() === FALSE)
@@ -142,6 +143,27 @@ class Referal_model extends Model {
 			} else {
 				return -2;
 			}
+			
+		// set the status of the referral to true (meaning request sent)
+		//   if the same request already exists and it has been accepted
+		$sql = "SELECT *
+			FROM refers R
+			WHERE R.is_refered_id = ? AND R.patient_id = ? AND R.status = TRUE";
+		$query = $this->db->query($sql, array($inputs[1], $inputs[2]));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		if ($query->num_rows() > 1) {
+			
+			$sql = "UPDATE refers
+				SET status = TRUE
+				WHERE referal_id = ?";
+			$query = $this->db->query($sql, $referal_id);
+			
+			if ($this->db->trans_status() === FALSE)
+				return -1;
+		}
 				
 		return $referal_id;
 	}
@@ -253,10 +275,14 @@ class Referal_model extends Model {
 		if ($query->num_rows() < 1)
 			return -2;
 		
+		$result = $query->result_array();
+		
+		//if a low level referal comes in firts, and then its follewed by a high level referal,
+		//  set the low level referal status to true (meaning) request sent
 		$sql = "UPDATE refers
 			SET status = TRUE
-			WHERE referal_id = ?";
-		$query = $this->db->query($sql, $inputs);
+			WHERE patient_id = ? and is_refered_id = ?";
+		$query = $this->db->query($sql, array($result[0]['patient_id'], $result[0]['is_refered_id']));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
