@@ -35,7 +35,7 @@ $table['attr'] = array('account_id', 'first_name', 'last_name', 'specialization'
 // Special columns to dislpay
 if ($status === 'connected') {
 	if ($this->auth->get_type() === 'patient') {
-		$actions = array('profile', 'send-email', 'delete-conn', 'request-app');
+		$actions = array('profile', 'send-email', 'delete-conn', 'request-app', 'change-perm');
 	} else {
 		$actions = array('profile', 'send-email', 'delete-conn');
 	}

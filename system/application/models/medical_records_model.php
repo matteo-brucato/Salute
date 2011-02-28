@@ -223,7 +223,7 @@ class Medical_records_model extends Model {
 		
 		$sql = "SELECT *
 			FROM permission P
-			WHERE P.account_id = ? and P.medical_rec_id = ?";
+			WHERE P.account_id = ? AND P.medical_rec_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)
 			return -1;
