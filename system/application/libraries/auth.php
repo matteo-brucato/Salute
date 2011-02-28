@@ -244,12 +244,46 @@ class Auth {
 					break;
 				
 				case auth::GRP:
-					return auth::GRP;
+					if ($a[$i+1] === NULL) {
+						$this->CI->ui->set_error('No input provided');
+						return auth::GRP;
+					}
+					if (! is_numeric($a[$i+1])) {
+						$this->CI->ui->set_error('Not numeric');
+						return auth::GRP;
+					}
+					$this->CI->load->model('groups_model');
+					$check = $this->CI->groups_model->get_group($a[$i+1]);
+					if ($check === -1) {
+						$this->CI->ui->set_query_error();
+						return auth::GRP;
+					}
+					else if ($check === NULL) {
+						$this->CI->ui->set_error('This id does not refer to any group');
+						return auth::GRP;
+					}
 					$i++;
 					break;
 
 				case auth::CurrGRPMEM:
-					return auth::CurrGRPMEM;
+					if ($a[$i+1] === NULL) {
+						$this->CI->ui->set_error('No input provided');
+						return auth::CurrGRPMEM;
+					}
+					if (! is_numeric($a[$i+1])) {
+						$this->CI->ui->set_error('Not numeric');
+						return auth::CurrGRPMEM;
+					}
+					$this->CI->load->model('groups_model');
+					$check = $this->CI->groups_model->get_member($this->account_id, $a[$i+1]);
+					if ($check === -1) {
+						$this->CI->ui->set_query_error();
+						return auth::CurrGRPMEM;
+					}
+					else if ($check === NULL) {
+						$this->CI->ui->set_error('You are not member of this group');
+						return auth::CurrGRPMEM;
+					}
 					$i++;
 					break;
 				
@@ -333,12 +367,12 @@ class Auth {
 						}
 						if( $results[0]['patient_kept'] === 'f' ){
 							$this->CI->ui->set_error('This bill has already been deleted.');
-							return auth::BILL_DELC;						
+							return auth::BILL_DELC;
 						}
 						if( $results[0]['cleared'] === 'f' && $results[0]['hcp_kept'] === 't' ){
 							$this->CI->ui->set_error('Cannot delete active bills.');
 							return auth::BILL_DELC;	
-						}				
+						}
 					}
 					else{
 						if( $results[0]['hcp_id'] !== $this->account_id ){
