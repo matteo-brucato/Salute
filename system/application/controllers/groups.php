@@ -147,6 +147,8 @@ class Groups extends Controller {
 	
 	/**
 	 * Join an Existing Group
+	 * functionality tested.
+	 * @bug does not check if you have permission to join ( e.g. pats only, docs only )
 	 * */
 	function _members_join($group_id = NULL){
 		if ($this->auth->check(array(auth::CurrLOG/*,auth::GRP,$group_id*/)) !== TRUE) return;
@@ -184,12 +186,13 @@ class Groups extends Controller {
 	
 	/**
 	 * Group Member Leave from the Existing Group
+	 * tested.
 	 * */
 	function _members_leave($group_id = NULL){
 
 		if ($this->auth->check(array(
 										auth::CurrLOG, 
-										auth::CurrGRPMEM, $this->auth->get_account_id()
+									/*	auth::CurrGRPMEM, $this->auth->get_account_id()*/
 									)) !== TRUE) {
 			return;
 		}
@@ -210,10 +213,10 @@ class Groups extends Controller {
 			$this->ui->set_error('Internal Server Error','server');
 			return;
 		}
-		$this->db->trans_complete();		
-		
+
+		$this->db->trans_complete();				
 		$this->ui->set_message('You have successfully left the group.','Confirmation');
-		$this->groups('mine');
+		// put link to see my groups / all groups...
 	}
 	
 	// a member is being removed by the group admin
@@ -241,13 +244,13 @@ class Groups extends Controller {
 		}
 		$this->db->trans_complete();		
 		
-		if ($this->auth->check(array(auth::CurrGRPMEM,$group_id)) !== TRUE){
+		//if ($this->auth->check(array(auth::CurrGRPMEM,$group_id)) !== TRUE){
 			$this->ui->set_message('You have successfully left the group.','Confirmation');
-			$this->groups('members');
-		} else {
+			// link to my groups
+		/*} else {
 			$this->ui->set_error('Internal Server Error','server');
 			return;
-		}
+		}*/
 	}
 	
 	/**
@@ -270,6 +273,7 @@ class Groups extends Controller {
 	
 	/**
 	 * List Existing Groups
+	 * tested.
 	 * */
 	function _lists_all(){
 
@@ -305,6 +309,7 @@ class Groups extends Controller {
 	
 	/**
 	 * List My Groups
+	 * tested.
 	 * */
 	function _lists_mine(){
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
@@ -370,6 +375,8 @@ class Groups extends Controller {
 		//$this->db->trans_complete();
 	}
 	
+	
+	// @bug does not change database
 	function edit_do($group_id = NULL){
 
 		$name = $this->input->post('name');
@@ -436,7 +443,7 @@ class Groups extends Controller {
 	
 	function _members_edit($group_id = NULL, $account_id = NULL){
 
-		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id)) !== TRUE) {
+		if ($this->auth->check(array(auth::CurrLOG/*,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id*/)) !== TRUE) {
 			return;
 		}
 		$this->db->trans_start();
