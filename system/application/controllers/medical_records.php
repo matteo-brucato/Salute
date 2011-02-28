@@ -325,73 +325,62 @@ class Medical_records extends Controller {
 			$box = array();
 		}
 		$allrecs = $this->medical_records_model->list_my_records(array($this->auth->get_account_id()));
-		//error checking needed
-		
+		//error checking needed		
 		for($i = 0; $i < count($allrecs); $i++ ){
-
 			$temp = $allrecs[$i]['medical_rec_id'] ;
 			echo $temp;
-			echo '/  ';
-
 			$isit = FALSE;
 			//check if that medical record was marked
-			for( $j = 0; $j < count($box); $j++ ){
-				if( $box[$j] === $temp ){
+			for( $j = 0; $j < count($box); $j++ )
+				if( $box[$j] == $temp )
 					$isit = TRUE;
-				}
-			}
 			//if marked
 			if( $isit === TRUE ){
-				$res = $this->medical_records_model->is_account_allowed(array($hcp_id,$temp));
+				
+				echo ' was selected. ';
 				//check if allowed
+				$res = $this->medical_records_model->is_account_allowed(array($temp,$hcp_id));
 				switch($res){
-
-					//if not allowed
-
 					case -1:
+						echo 'error';
 						$this->ui->set(array('Query error in is_allowed !',''));
-						echo $temp;
-						echo ' ';
-						echo $hcp_id;
 						return;
+					//if not allowed
 					case FALSE:
 						//add permission
-						$result = allow_permission(array($allrecs[$i]['medical_rec_id'], $hcp_id));
+						$result = allow_permission(array($temp,$hcp_id));
 						switch($result){
 							case -1:
 								$this->ui->set(array('Query error! in allow_permission',''));
-								break;
+								return;
 							case -2:
 								$this->ui->set_error('Server Error', 'server');
-								break;
+								return;
 							default:
-								break;
-								
+								break;								
 						}	
 					default:
 						break;
-				}
-				
-				
+				}				
 			}
+			//if not marked
 			else{
+				echo ' was not selected. ';
 				//check if allowed
-				$res = $this->medical_records_model->is_account_allowed(array($hcp_id,$temp));
+				$res = $this->medical_records_model->is_account_allowed(array($temp,$hcp_id));
 				switch($res){
 					case -1:
+						echo 'error';
 						$this->ui->set(array('Query error! in is _allowed',''));
-						echo $temp;
-						echo ' ';
-						echo $hcp_id;
 						return;
 					//if allowed
 					case TRUE:
 						//delete permission
-						$result = delete_permission(array($allrecs[$i]['medical_rec_id'], $hcp_id));		
+						$result = delete_permission(array($temp,$hcp_id));		
 						switch($result){
 							case -1:
 								$this->ui->set(array('Query error! in delete',''));
-								break;
+								return;
 							default:
 								break;
 						}
@@ -400,9 +389,9 @@ class Medical_records extends Controller {
 				}	
 			}		
 		}
+		
+		$this->ui->set_message('Successfully changed Permissions.', 'Confirmation'); 
 		return;
-		//$this->ui->set_message('Successfully changed Permissions.', 'Confirmation'); 
-
 	}
 	
 	/**

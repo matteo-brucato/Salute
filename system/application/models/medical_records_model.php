@@ -214,16 +214,19 @@ class Medical_records_model extends Model {
 	 * Determines if a medical record can be viewed by another account
 	 * 
 	 * @param $inputs
-	 *   Is of the form: array(account_id, medical_rec_id)
+	 *   Is of the form: array(medical_rec_id, account_id)
 	 * @return
 	 *   True or Flase
 	 *   -1 if error in query
 	 * */
 	function is_account_allowed($inputs){
-		
+	
+		echo $inputs[0];
+			echo '    ';
+		echo $inputs[1];
 		$sql = "SELECT *
 			FROM permission P
-			WHERE P.account_id = ? AND P.medical_rec_id = ?";
+			WHERE P.medical_rec_id = ? AND P.account_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)
 			return -1;
