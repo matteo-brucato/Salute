@@ -29,10 +29,15 @@ $table['attr'] = array('group_id','name', 'description', 'group_type', 'actions'
 
 // Everybody has the same action, in this implementation
 for ($i = 0; $i < count($table['tuples']); $i++) {
-	if($perm[$i]['can_delete'] === TRUE)
-		$actions = array('leave-group','delete-group');  
-	else 
+	if($perm[$i]['perm'] === '0')
 		$actions = array('leave-group');
+	else if ($perm[$i]['perm'] === '3')
+		$actions = array('invite-to-group','leave-group', 'edit-group','delete-group');
+	else if($perm[$i]['perm'] !== '0' && $perm[$i]['perm'] !== NULL)
+		$actions = array('invite-to-group','leave-group'); // later: add link that loads a whole form to change all member perms
+	else
+		$actions = array(''); 
+	
 	if($table['tuples'][$i]['group_type'] == 0) $table['tuples'][$i]['group_type'] = 'patients only';
 	else if($table['tuples'][$i]['group_type'] == 1) $table['tuples'][$i]['group_type'] = 'healthcare providers only';
 	else $table['tuples'][$i]['group_type'] = 'patients and healthcare providers';

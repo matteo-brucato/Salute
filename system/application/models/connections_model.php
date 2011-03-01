@@ -520,6 +520,7 @@ class Connections_model extends Model {
 				
 				$medical = $query->result_array();
 				
+				//MAGIC
 				//for each medical record, allow is_refered hcp permission to view it
 				foreach ($medical as $medical_rec) {
 					
@@ -626,6 +627,28 @@ class Connections_model extends Model {
 		if ($check === -1) return -1;
 		if ($check === FALSE) return -2;
 		
+		//remove medical records that the the hcp had permission to view
+		$sql = "SELECT  PR.permission_id 
+			FROM patient_account P, medical_record M, permission PR, accounts A 
+			WHERE (P.account_id = ? OR P.account_id = ?) AND P.account_id = M.patient_id AND 
+				  M.medical_rec_id = PR.medical_rec_id AND PR.account_id = A.account_id AND 
+				  (A.account_id = ? OR A.account_id = ?)";
+		$query = $this->db->query($sql, array($a_id, $b_id, $a_id, $b_id));
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		$medical_rec_ids = $query->result_array();	
+		
+		//delete from the permission table
+		foreach ($medical_rec_ids AS $ID) {
+			
+			$sql = "DELETE FROM permission
+				WHERE permission_id = ?";
+			$query = $this->db->query($sql, $ID['permission_id']);
+			if ($this->db->trans_status() === FALSE)
+				return -1;
+		}
+			
 		// Now, delete the connection
 		$sql = "DELETE FROM connections
 				WHERE (sender_id = ? AND receiver_id = ?) OR (receiver_id = ? AND sender_id = ?)";

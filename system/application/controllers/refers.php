@@ -186,6 +186,10 @@
 			$this->ui->set_error('You have already created this referral', 'Notice');
 			return;
 		}
+		elseif ($referal_id == -4){
+			$this->ui->set_error('The doctor being referred is already friends with that patient', 'Notice');
+			return;
+		}
 			
 		//check level. if its 2 or 3 patient accepts connection automatically
 		$level = $this->connections_model->get_level(array($patient_id, $this->auth->get_account_id()));
