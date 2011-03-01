@@ -67,3 +67,8 @@ td.tables-1-selected-tds {
 	padding: 10px;
 	border: 1px solid red;
 }
+
+.checkAll {
+	display: block;
+	float: right;
+}

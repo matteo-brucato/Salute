@@ -104,12 +104,12 @@ class Medical_records_model extends Model {
 	 * */
 	function add_medical_record($inputs){
 	
-		//$data = array( 'patient_id' => $inputs[0], 'account_id' => $inputs[1], 'issue' => $inputs[2], 'suplementary_info' => $inputs[3], 'file_path' => $inputs[4]);
+		//$data = array( 'patient_id', 'account_id', 'issue', 'suplementary_info', 'description', 'file_path');
 		//$this->db->insert('Medical_Records', $data);	
 		
 		$this->db->trans_start();
-		$sql = "INSERT INTO medical_record (patient_id, account_id, issue, suplementary_info, file_path)
-			VALUES (?, ?, ?, ?, ?)";
+		$sql = "INSERT INTO medical_record (patient_id, account_id, issue, suplementary_info, description, file_name)
+			VALUES (?, ?, ?, ?, ?, ?)";
 		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -173,8 +173,8 @@ class Medical_records_model extends Model {
 		//$this->db->insert( 'Permissions', $data);
 		
 		$sql = "SELECT *
-			FROM hcp_account A
-			WHERE A.account_id = ?";
+			FROM accounts
+			WHERE account_id = ?";
 		$query = $this->db->query($sql, array($inputs[1]));
 		if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -234,7 +234,7 @@ class Medical_records_model extends Model {
 	
 	
 	/**
-	 * Get all the accounts (HCPs for now) that have access to this
+	 * Get all the HCPs that have access to this
 	 * medical record.
 	 * 
 	 * @param $mid
@@ -244,10 +244,36 @@ class Medical_records_model extends Model {
 	 * 		an array with all the allowed accounts
 	 * 		an empty array if no allowed account is present
 	 * */
-	function get_medrec_allowed_accounts($mid) {
+	function get_medrec_allowed_hcps($mid) {
 		$sql = "
 			SELECT H.*, M.medical_rec_id
 			FROM   medical_record M, hcp_account H, permission P, accounts A
+			WHERE  M.medical_rec_id = ? AND M.medical_rec_id = P.medical_rec_id
+				   AND P.account_id = A.account_id AND A.account_id = H.account_id";
+		$query = $this->db->query($sql, $mid);
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if ($query->num_rows() <= 0)
+			return array();
+		return $query->result_array();
+
+	}
+	
+	/**
+	 * Get all the patients that have access to this
+	 * medical record.
+	 * 
+	 * @param $mid
+	 * 		A medical record id
+	 * @return
+	 * 		-1 in case of query error
+	 * 		an array with all the allowed accounts
+	 * 		an empty array if no allowed account is present
+	 * */
+	function get_medrec_allowed_patients($mid) {
+		$sql = "
+			SELECT H.*, M.medical_rec_id
+			FROM   medical_record M, patient_account H, permission P, accounts A
 			WHERE  M.medical_rec_id = ? AND M.medical_rec_id = P.medical_rec_id
 				   AND P.account_id = A.account_id AND A.account_id = H.account_id";
 		$query = $this->db->query($sql, $mid);

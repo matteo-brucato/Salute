@@ -34,7 +34,7 @@ $table['attr'] = array('account_id', 'first_name', 'last_name', 'actions');
 
 // Special columns to dislpay
 if ($status === 'connected') {
-	$actions = array('profile', 'send-email', 'delete-conn', 'upload-med-rec', 'issue-bill');
+	$actions = array('profile', 'send-email', 'delete-conn', 'upload-med-rec', 'issue-bill', 'change-perm');
 }
 else if ($status === 'pending_in') {
 	$actions = array('accept-conn-req', 'reject-conn-req');

@@ -1,4 +1,4 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
 /**
  * @file download.php
  * @brief Controller to downlad resources from the server
@@ -37,17 +37,19 @@ class Upload extends Controller {
 	 * */
 	function medical_record($pid = NULL) {
 		if ($this->auth->check(array(
-			auth::CurrLOG,
-			auth::PAT, $pid,
-			
-		)) !=== TRUE) return;
+			auth::CurrLOG,				// current must be logged in
+			auth::PAT, $pid,			// $pid must refer to a patient
+			auth::CurrIS_or_CONN, $pid	// current must be either the patient $pid or connected with $pid
+		)) !== TRUE) return;
 		if (DEBUG) $this->output->enable_profiler(TRUE);
 		
 		// Get POST vars
 		$issue = $this->input->post('issue');
 		$info = $this->input->post('info');
-		if ($issue == '' || $issue == FALSE) {
-			$this->ui->set_error('Please specify Issue and Info','Missing Arguments');
+		$description = $this->input->post('description');
+		if ($issue == '' || $issue == FALSE || $description == FALSE || $description == '') {
+			$this->ui->set_error('Please, specify Issue and Description','Missing Arguments');
+			return;
 		}
 		
 		/* Check if $patient_id actually refers to a patient
@@ -56,18 +58,18 @@ class Upload extends Controller {
 			return;
 		}*/
 		
-		// Check if I am the patient_id of the file to upload
+		/* Check if I am the patient_id of the file to upload
 		if ($patient_id !== $this->auth->get_account_id()) {
 			// Check if I'm an HCP connected with this patient
 			if (! $this->connections_model->is_connected_with($patient_id, $this->auth->get_account_id())) {
 				$this->ui->set_error('You don\'t have permissions to upload a medical record for this patient','Permission Denied');
 				return;
 			}
-		}
+		}*/
 		
-		$config['upload_path'] = './resources/medical_records/'.$patient_id.'/';
+		$config['upload_path'] = './resources/medical_records/'.$pid.'/';
 		$config['allowed_types'] = 'pdf';
-		$config['max_size']	= '1000';
+		$config['max_size']	= '2000';
 		//$config['max_width']  = '1024';
 		//$config['max_height']  = '768';
 		
@@ -96,7 +98,7 @@ class Upload extends Controller {
 		// Now, track this record into the DB
 		$this->load->model('medical_records_model');
 		$result = $this->medical_records_model->add_medical_record(
-			array($patient_id, $this->auth->get_account_id(), $issue, $info, $data['file_name'])
+			array($pid, $this->auth->get_account_id(), $issue, $info, $description, $data['file_name'])
 		);
 		
 		switch ($result) {

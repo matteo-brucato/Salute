@@ -41,26 +41,25 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 		}	
 	}
 	if( $isit === TRUE ){
-		$table['tuples'][$i]['actions'] = '<center><input type="checkbox" 
+		$table['tuples'][$i]['actions'] = '<input type="checkbox" 
 													name="box[]" 
 													value=" '.$table['tuples'][$i]['medical_rec_id'].'" 
-													checked = "checked" /n>
-													</center>';
+													checked = "checked" />';
 	}
 	else{
-		$table['tuples'][$i]['actions'] = '<center><input type="checkbox" 
+		$table['tuples'][$i]['actions'] = '<input type="checkbox" 
 													name="box[]" 
-													value=" '.$table['tuples'][$i]['medical_rec_id'].'"/n>
-													</center>';
+													value=" '.$table['tuples'][$i]['medical_rec_id'].'"/>';
 	}
 }
 
-echo '<form method="post" action="/medical_records/do_change_permissions" id="change_perm">';
+echo '<form method="post" action="/medical_records/do_change_permissions/'.$aid.'" id="change_perm">';
 view_table($table);
 
+echo	'<div class="checkAll"><input type="checkbox" name="checkAll" /> Check/Uncheck All</div>';
 echo 	'<br />';
 echo 	'<p>';
-echo		'<input type="hidden" name="hcp_id" value = "'.$hcp_id.'" />';
+//echo		'<input type="hidden" name="hcp_id" value = "'.$hcp_id.'" />';
 echo		'<input type="submit" name="submit" value="Submit" class="submit-button" />';
 echo		'<input type="reset" />';
 echo 	'</p>';
