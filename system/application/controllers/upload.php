@@ -15,6 +15,8 @@ class Upload extends Controller {
 		$this->load->library('ui');
 		$this->load->library('auth');
 		$this->load->helper('download');
+		$this->load->model('patient_model');
+		$this->load->model('connections_model');
 	}
 
 	/*
@@ -33,25 +35,26 @@ class Upload extends Controller {
 	 * @attention Only the patient him/herself or a connected hcp 
 	 * can upload a file
 	 * */
-	function medical_record($patient_id = FALSE) {
+	function medical_record($pid = NULL) {
+		if ($this->auth->check(array(
+			auth::CurrLOG,
+			auth::PAT, $pid,
+			
+		)) !=== TRUE) return;
 		if (DEBUG) $this->output->enable_profiler(TRUE);
-		$this->auth->check_logged_in();
-		$this->load->model('patient_model');
-		$this->load->model('connections_model');
 		
-		// Get the patient_id
-		//$patient_id = $this->input->post('patient_id');
+		// Get POST vars
 		$issue = $this->input->post('issue');
 		$info = $this->input->post('info');
-		if ($patient_id == FALSE || $issue == '' || $issue == FALSE) {
-			$this->ui->set_error('Unable to upload.','Missing Arguments');
+		if ($issue == '' || $issue == FALSE) {
+			$this->ui->set_error('Please specify Issue and Info','Missing Arguments');
 		}
 		
-		// Check if $patient_id actually refers to a patient
+		/* Check if $patient_id actually refers to a patient
 		if (! $this->patient_model->is_patient($patient_id)) {
 			$this->ui->set_error('This id does not refer to a patient');
 			return;
-		}
+		}*/
 		
 		// Check if I am the patient_id of the file to upload
 		if ($patient_id !== $this->auth->get_account_id()) {
