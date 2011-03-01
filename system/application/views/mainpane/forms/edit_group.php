@@ -1,4 +1,4 @@
-<form method="post" action="/groups/edit_do" id="edit-group">
+<form method="post" action="/groups/edit_do/<?php echo $group_id; ?>" id="edit-group">
 	<fieldset id="edit-group-fieldset">
 		<legend>Edit Group</legend>
 		<table>

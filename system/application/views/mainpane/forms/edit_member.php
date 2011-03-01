@@ -1,4 +1,4 @@
-<form method="post" action="/groups/members/edit_do" id="edit-member">
+<form method="post" action="/groups/members/edit_do/<? echo $group_id; ?>/<? echo $account_id; ?>" id="edit-member">
 	<fieldset id="edit-member-fieldset">
 		<legend>Edit Member</legend>
 			<td><label for="permissions-input"><b>Permission level:</b></label></td><br>

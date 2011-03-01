@@ -112,6 +112,10 @@ function get_action_strings($actions, $tuple) {
 				$str .= '<li><a href="/groups/members/edit/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Change Permissions</a></li>';
 				break;
 			
+			case 'list-mems':
+				$str .= '<li><a href="/groups/members/list/'.$tuple['group_id'].'">List Members</a></li>';
+				break;
+				
 			case 'edit-group':
 				$str .= '<li><a href="/groups/edit/'.$tuple['group_id'].'">Edit Group</a></li>';
 				break;

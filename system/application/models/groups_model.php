@@ -72,7 +72,6 @@ class Groups_model extends Model {
 	 * @param $group_id
 	 *   Is of the form: array($group_id)
 	 * @return
-	 *   -1 if error in delete
 	 *   1 if group was properly deleted
 	 * */
 	function delete($group_id){

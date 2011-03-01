@@ -52,8 +52,7 @@ class Groups extends Controller {
 		if ( $direction == 'list' )
 			$this->_members_list($group_id);
 		else if ( $direction == 'edit' )
-			//$this->_members_edit($group_id,$account_id);
-			echo 'hi';
+			$this->_members_edit($group_id,$account_id);
 		else if ( $direction == 'edit_do' )
 			$this->_members_edit_do($group_id,$account_id);
 		else if ( $direction == 'join' )
@@ -501,7 +500,7 @@ class Groups extends Controller {
 			$this->ui->set_error('Internal Server Error','server');
 			return;
 		}
-		$this->ui->set(array($this->load->view('mainpane/forms/edit_group', array('curr_info' => $curr_info), TRUE)));
+		$this->ui->set(array($this->load->view('mainpane/forms/edit_group', array('curr_info' => $curr_info, 'group_id' => $group_id), TRUE)));
 		
 		$this->db->trans_complete();
 	}
@@ -509,7 +508,10 @@ class Groups extends Controller {
 	
 	// @bug does not change database
 	function edit_do($group_id = NULL){
-
+		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id)) !== TRUE) {
+			return;
+		}
+		
 		$name = $this->input->post('name');
 		$description = $this->input->post('description');
 		$public_private = $this->input->post('public_private');
@@ -522,7 +524,6 @@ class Groups extends Controller {
 		}
 		
 		$this->db->trans_start();
-		
 		$result = $this->groups_model->edit_group(array(
 													$name, 
 													$description, 
@@ -530,15 +531,13 @@ class Groups extends Controller {
 													$group_type,
 													$group_id
 												)); 
-		
+ 		$this->db->trans_complete();		
 		if($result === -1){
 			$this->ui->set_query_error(); 
 			return;
 		}
 		
-		$this->ui->set_message("You have successfully edited the group: $name",'Confirmation');
-		
- 		$this->db->trans_complete();
+ 		$this->ui->set_message("You have successfully edited the group: $name",'Confirmation');
 	}
 	
 	/**
@@ -603,24 +602,33 @@ class Groups extends Controller {
 			return;
 		}
 		$this->db->trans_start();
-		$mem = $this->groups_model->get_member($this->auth->get_account_id(),$group_id);
-		if ($mem === -1){
+		
+		$curr_info = $this->groups_model->get_member($this->auth->get_account_id(),$group_id);
+		if ($curr_info === -1){
 			$this->ui->set_query_error();
 			return;
-		} else if ($mem === NULL) {
+		} else if ($curr_info === NULL) {
 			$this->ui->set_error('You are no longer a member of this group.');
 			return;
-		} else if ($mem['permissions'] != '2' && $mem['permissions'] != '3' ){
+		} else if ($curr_info['permissions'] != '2' && $curr_info['permissions'] != '3' ){
 			$this->ui->set_error('You do not have permission to edit this member.');
 			return;
 		}
 
-		$this->ui->set(array($this->load->view('mainpane/forms/edit_member',array('curr_info' => $curr_info), TRUE)));
+		$this->ui->set(array($this->load->view('mainpane/forms/edit_member',array(
+																			'curr_info' => $curr_info, 
+																			'group_id' => $group_id, 
+																			'account_id' => $account_id),
+																			 TRUE)));
 
 		$this->db->trans_complete();
 	}
 	
 	function _members_edit_do($group_id = NULL,$account_id = NULL){
+		
+		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id)) !== TRUE) {
+			return;
+		}
 		$perm = $this->input->post('permissions');
 		
 		// Form Checking will replace this
@@ -637,6 +645,7 @@ class Groups extends Controller {
 													'permissions' => $perm, 
 												)); 
 		
+		$this->db->trans_complete();
 		if($result === -1){
 			$this->ui->set_query_error(); 
 			return;
@@ -645,7 +654,7 @@ class Groups extends Controller {
 		/*todo: link back to members list*/
 		$this->ui->set_message('You have successfully edited the member','Confirmation');
 		
- 		$this->db->trans_complete();
+ 	
 	}
 }
 /** @} */
