@@ -22,8 +22,8 @@ $table['table-name'] = 'medical_records-table';
 $table['th'] = array('Medical Record Id', 'Patient', 'Created By', 'Issue', 'Info', 'Actions');
 
 // Classes for columns (order matters)
-$table['th_class'] = array('id_keeper', '', '', '', '', '');
-$table['td_class'] = array('id_keeper', '', '', '', '', '');
+$table['th_class'] = array('id_keeper', '', '', '', '', 'checkbox');
+$table['td_class'] = array('id_keeper', '', '', '', '', 'checkbox');
 
 // All the results from the database
 $table['tuples'] = $list;
@@ -37,8 +37,9 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 	$isit = FALSE;
 	for($j = 0; $j < count($table['hcptuples']); $j++ ){
 		if( $table['tuples'][$i]['medical_rec_id'] === $table['hcptuples'][$j]['medical_rec_id'] ){
-				$isit = true;
-		}	
+			$isit = true;
+			break;
+		}
 	}
 	if( $isit === TRUE ){
 		$table['tuples'][$i]['actions'] = '<input type="checkbox" 

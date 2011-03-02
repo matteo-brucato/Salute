@@ -151,8 +151,9 @@ class Medical_records_model extends Model {
 	 * @param $inputs
 	 *   Is of the form: array(medical_rec_id, account_id)
 	 * @return
-	 *  -1 if error in insert
-	 *  1 otherwise
+	 *  -1 if query error
+	 *  -2 if account already has permission for that med rec
+	 *  1 if permission inserted
 	 * 
 	 * @note We are forcing permission only to other doctors
 	 * */
@@ -169,6 +170,10 @@ class Medical_records_model extends Model {
 		//if ($query->num_rows() <= 0) {
 		//	return -2;
 		//}
+		
+		// Check if account has permission
+		$is_allowed = $this->is_account_allowed($inputs);
+		if ($is_allowed === TRUE) return -2;
 		
 		$sql = "INSERT INTO permission (medical_rec_id, account_id, date_created)
 			VALUES (?, ?, current_date)";
@@ -209,10 +214,16 @@ class Medical_records_model extends Model {
 	 * @param $inputs
 	 *   Is of the form: array(medical_rec_id, account_id)
 	 * @return
-	 *   Deletes a row in the Permissions table
+	 *   -1 if query error
+	 *   -2 if there no permission to delete (account already has no perm)
+	 *   1 if it deletes it
 	 * */
 	function delete_permission($inputs) {
 		//$this->db->delete('Permissions', array( 'medical_rec_id' => $inputs[0], 'account_id' => $inputs[1]);
+		
+		// Check if account has permission
+		$is_allowed = $this->is_account_allowed($inputs);
+		if ($is_allowed === FALSE) return -2;
 		
 		$sql = "DELETE FROM permission
 			WHERE medical_rec_id = ? AND account_id = ?";

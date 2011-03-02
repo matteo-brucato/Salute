@@ -284,7 +284,7 @@ class Medical_records extends Controller {
 		//$hcpsrecs = $this->medical_records_model->list_my_records(array($this->auth->get_account_id()));
 		// All ok
 		$this->ui->set(array(
-			$this->load->view('mainpane/forms/medical_records_permissions',
+			$this->load->view('mainpane/forms/account_permissions',
 				array(
 				'list_name' => 'Select medical records to share',
 				'list' => $allrecs,
@@ -321,9 +321,9 @@ class Medical_records extends Controller {
 		//get a list of all my medical records
 		$allrecs = $this->medical_records_model->list_my_records(array($this->auth->get_account_id()));
 		//error checking needed		
-		echo count($box);
-		echo '  ';
-		echo count($allrecs);
+		//echo count($box);
+		//echo '  ';
+		//echo count($allrecs);
 		
 		for($i = 0; $i < count($allrecs); $i++ ){
 			$temp = $allrecs[$i]['medical_rec_id'] ;
@@ -475,44 +475,21 @@ class Medical_records extends Controller {
 			auth::ACCOUNT, $aid
 		)) !== TRUE) return;
 		
-		/* the account that will lose permission
-		$account_id = $this->input->post('account_id');
-		if ($account_id == '' || $account_id == FALSE) {
-			$this->ui->set_error('No account id specified');
-			return;
-		}*/
-		
-		/* Get tuple for this medical record
-		$get = $this->medical_records_model->get_medicalrecord(array($mid));
-		if ($get === -1) {
-			$this->ui->set_query_error(); 
-			return;
-		} else if (sizeof($get) == 0) {
-			$this->ui->set_error('Specified medical record does not exist');
-			return;
-		} else if ($get[0]['patient_id'] != $this->auth->get_account_id()) {
-			$this->ui->set_error('Only the owner can modify this medical record','Permission Denied');
-			return;
-		}*/
+		$this->db->trans_start();
 		
 		// Try to change permission
-		// Check if its already allowed to be seen by hcp
-		$isalready = $this->medical_records_model->is_account_allowed(array($mid, $aid));
-		if ($isalready === -1) {
-			$this->ui->set_query_error(); 
-			return;
-		}
-		if (! $isalready) {
-			$this->ui->set_message('This record is already forbidden to this hcp.','Notice');
-			return;
-		}
 		$res = $this->medical_records_model->delete_permission(array($mid, $aid));
 		
 		if($res === -1) {
 			$this->ui->set_query_error(); 
 			return;
 		}
+		if ($res === -2) {
+			$this->ui->set_message('This record is already forbidden to this hcp.','Notice');
+			return;
+		}
 		
+		$this->db->trans_complete();
 		$this->ui->set_message('This record is now forbidden to that HCP', 'Confirmation');
 	}
 	
@@ -523,7 +500,7 @@ class Medical_records extends Controller {
 	 * 
 	 * @test Tested
 	 * */
-	function add_permission($mid = NULL) {
+	function permissions($mid = NULL) {
 		//$this->auth->check_logged_in();
 		if ($this->auth->check(array(
 			auth::CurrLOG,
@@ -534,33 +511,36 @@ class Medical_records extends Controller {
 		//	$this->load->view('mainpane/forms/add_permission', array('medrec_id' => $mrec_id), TRUE)
 		//));
 		
+		// Take all permissions for $mid
+		$perm1 = $this->medical_records_model->get_medrec_allowed_hcps(array($mid));
+		$perm2 = $this->medical_records_model->get_medrec_allowed_patients(array($mid));
 		
-		$results = $this->connections_model->list_hcps_connected_with($this->auth->get_account_id()); 
-		if ($results === -1) {
+		// Get complete list of hcps and patients
+		$res1 = $this->connections_model->list_hcps_connected_with($this->auth->get_account_id()); 
+		$res2 = $this->connections_model->list_patients_connected_with($this->auth->get_account_id()); 
+		
+		if ($perm1 === -1 || $perm2 === -1 || $res1 === -1 || $res2 === -1) {
 			$this->ui->set_query_error();
 			return;
 		}
-		$main = $this->load->view('mainpane/forms/pick_hcp',
+		
+		$main = $this->load->view('mainpane/forms/medical_record_hcps_perms',
 			array(
 				'list_name' => 'My HCPs',
-				'list' => $results,
-				'form_action' => '/medical_records/add_permission_do/'.$mid
+				'list' => $res1,
+				'list2' => $perm1,
+				'form_action' => '/medical_records/permissions_do/'.$mid
 			), TRUE
 		);
 		
-		$results = $this->connections_model->list_patients_connected_with($this->auth->get_account_id()); 
-		if ($results === -1) {
-			$this->ui->set_query_error();
-			return;
-		}
-		$main .= $this->load->view('mainpane/forms/pick_patient',
+		$main .= $this->load->view('mainpane/forms/medical_record_patients_perms',
 			array(
 				'list_name' => 'My Patient Friends',
-				'list' => $results,
-				'form_action' => '/medical_records/add_permission_do/'.$mid
+				'list' => $res2,
+				'list2' => $perm2,
+				'form_action' => '/medical_records/permissions_do/'.$mid
 			), TRUE
 		);
-		
 		
 		$this->ui->set(array($main));
 	}
@@ -574,54 +554,74 @@ class Medical_records extends Controller {
 	 * 
 	 * @test Tested
 	 * */
-	function add_permission_do($mid = NULL) {
+	function permissions_do($mid = NULL) {
 		$this->auth->check(array(
 			auth::CurrLOG,
 			auth::CurrMED_OWN, $mid
 		));
 		
+		$this->db->trans_start();
+		
 		// Get from POST the account that will have permission
-		$hid = $this->input->post('hcp_id');
-		$pid = $this->input->post('patient_id');
-		if ($hid !== FALSE) {
-			$account_id = $hid;
+		$change = $this->input->post('change');
+		$hid = $this->input->post('hcps');
+		$pid = $this->input->post('pats');
+		
+		if ($change === 'hcps') {
+			$account_id = $hid; // I'm managing hcps
+			$complete = $this->connections_model->list_hcps_connected_with($this->auth->get_account_id()); 
 		}
-		else if ($pid !== FALSE) {
-			$account_id = $pid;
+		else if ($change === 'patients') {
+			$account_id = $pid; // I'm managing pats
+			$complete = $this->connections_model->list_patients_connected_with($this->auth->get_account_id()); 
 		}
 		else {
 			$this->ui->set_error('No account id specified','Missing Arguments');
 			return;
 		}
 		
-		// You must be connected with that account
-		if ($this->auth->check(array(auth::CurrCONN, $account_id)) !== TRUE) return;
-		
-		// Check if its already allowed to be seen by hcp
-		$isalready = $this->medical_records_model->is_account_allowed(array($mid, $account_id));
-		if ($isalready === -1) {
-			$this->ui->set_query_error(); 
-			return;
-		}
-		if ($isalready === TRUE) {
-			$this->ui->set_message('This record is already allowed to this hcp.','Notice');
+		if ($complete === -1) {
+			$this->ui->set_query_error();
 			return;
 		}
 		
-		// Try to change permission
-		$res = $this->medical_records_model->allow_permission(array($mid, $account_id));
-		switch ($res) {
-			case -1:
-				$this->ui->set_query_error(); 
-				return;
-			case -2:
-				$this->ui->set_error('The account specified does not exist or you
-				are trying to give an authorize account access');
-				return;
-			default:
-				$this->ui->set_message('This record is now public to that account', 'Confirmation');
-				return;
+		// Go for each connected account and see if its corresp. checkbox is checked
+		foreach ($complete as $a) {
+			$aid = $a['account_id'];
+			$ison = FALSE;
+			// Check if checkbox for $aid is checked
+			if (is_array($account_id) && count($account_id) > 0)
+			foreach ($account_id as $b) {
+				if ($b === $aid) {
+					$ison = TRUE;
+					break;
+				}
+			}
+			
+			if ($ison === TRUE) {
+				// Give permission
+				$res = $this->medical_records_model->allow_permission(array($mid, $aid));
+				if ($res === -1) {
+					$this->ui->set_query_error(); 
+					return;
+				}
+				// if account has already perms, skip
+				if ($res === -2) continue;
+			} else {
+				// Remove permission
+				$res = $this->medical_records_model->delete_permission(array($mid, $aid));
+				if ($res === -1) {
+					$this->ui->set_query_error(); 
+					return;
+				}
+				// if account does not have perms already, skip
+				if ($res === -2) continue;
+			}
 		}
+		
+		$this->db->trans_complete();
+		$this->ui->set_message('Permissions have been changed', 'Confirmation');
+		$this->permissions($mid);
 	}
 
 	/**

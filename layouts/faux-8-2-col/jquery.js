@@ -28,10 +28,21 @@ function show_history() {
 //	execute_ajax(href);
 //}
 
+function upload_history(href) {
+	// New page, new history element
+	// Upload history and history index
+	hist_i = (hist_i + 1) % HISTORY_MAX;
+	hist[hist_i] = href;
+}
+
 $(document).ready(function() {			// Wait for the document to be able to be manipulated
 	
 	// First thing... hide everything... then show it slowly
 	$("#wrapper").hide().animate({"height": "toggle", "opacity": "toggle"}, 1000);
+	
+	if ($("#message").html() != '') {
+		$("#message").show();
+	}
 	
 	// Get the current page
 	//var curpage = window.location.pathname;
@@ -77,12 +88,7 @@ function layout_bindings() {
 			
 			var href = $(this).attr('href');
 			
-			{
-				// New page, new history element
-				// Upload history and history index
-				hist_i = (hist_i + 1) % HISTORY_MAX;
-				hist[hist_i] = href;
-			}
+			upload_history(href);
 		}
 		
 		// If it's a history.back() request
@@ -101,6 +107,7 @@ function layout_bindings() {
 			}
 		}
 		
+		// If it's a history.forward() request
 		else if ($(this).hasClass('history_forth')) {
 			if (! AJAX_ACTIVE) return;
 			event.preventDefault();
@@ -120,6 +127,17 @@ function layout_bindings() {
 		
 		//show_history();
 		execute_ajax(href);
+	});
+	
+	// Form submit bindings
+	$('form').live('submit', function(event) {
+		//alert($(this).serialize());
+		if (! AJAX_ACTIVE) return;
+		event.preventDefault();
+		href = $(this).attr('action');
+		upload_history(href);
+		execute_ajax(href, $(this).serialize());
+		return false;
 	});
 	
 	/*$("a.ajax").live("click", function(event) {
@@ -148,6 +166,11 @@ function layout_bindings() {
 		$(this).children().toggleClass("tables-1-selected-tds");
 	});
 	
+	$("#message a").live('click', function(event) {
+		event.preventDefault();
+		$('#message').slideUp(150);
+	});
+	
 	/*$("#mypatients-table tr, #mydoctors-table tr").live("click", function(event) {
 		//var href = $(this).find("a:first").attr('href');
 		var account_id = $(this).find('.id_keeper:first').html();
@@ -155,8 +178,9 @@ function layout_bindings() {
 		execute_ajax('/profile/user/' + account_id);
 	});*/
 	
-	$('.checkAll').click(function() {
-		$("input[type='checkbox'][name!='checkAll']").attr('checked', $('.checkAll input').is(':checked'));
+	$('.checkAll').live('click', function() {
+		$("input[type='checkbox'][name!='checkAll']")
+			.attr('checked', $('.checkAll input').is(':checked'));
 	}
 )
 }
@@ -173,8 +197,9 @@ function show_hcp_form() {
 	$("#registration-hcp-fieldset").fadeIn(400);
 }
 
-function execute_ajax(href) {
+function execute_ajax(href, postdata) {
 	//if (href == curpage) return;
+	$("#message").fadeOut(100);
 	$("#leftcolumn_content").slideUp(50, function() {
 		//var beenslow = false;
 		//$("#leftcolumn").empty();
@@ -194,7 +219,8 @@ function execute_ajax(href) {
 			//alert(request.getResponseHeader('Last-Modified'));
 			alert(request.status);
 		});*/
-		$.get(href, function(data, status, request) {
+		
+		$.post(href, postdata, function(data, status, request) {
 			//$("#leftcolumn").dequeue("beenslow");
 			//$("#leftcolumn").stop();
 			//$("#leftcolumn").hide();
@@ -235,6 +261,10 @@ function execute_ajax(href) {
 			
 			if (data.curr_url != '') {
 				$("#curr_url").html(data.curr_url);
+			}
+			
+			if (data.message != '') {
+				$("#message").html(data.message).show();
 			}
 			
 		}, 'json');

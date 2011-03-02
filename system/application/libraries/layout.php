@@ -60,7 +60,8 @@ class Layout {
 					'navbar' 			=> $panels[2],
 					'footer' 			=> $panels[3],
 					'header' 			=> $panels[4],
-					'curr_location' 	=> $panels[5]
+					'curr_location' 	=> $panels[5],
+					'message'			=> $panels[6]
 				);
 				break;
 		}

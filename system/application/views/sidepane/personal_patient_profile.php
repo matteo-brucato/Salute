@@ -28,10 +28,8 @@
 	<li><a href="/connections/myhcps" class="ajax">My HCPs</a>
 		<ul>
 			<li><a href="/connections/pending/out" class="ajax">Pending outgoing</a></li>
+			<li><a href="/refers" class="ajax">My Referrals</a></li>
 		</ul>
-	</li>
-	
-	<li><a href="/refers" class="ajax">My Referrals</a>
 	</li>
 	
 	<li><a href="/connections/mypatients" class="ajax">My Patient Friends</a>
