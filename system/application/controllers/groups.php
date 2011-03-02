@@ -307,7 +307,7 @@ class Groups extends Controller {
 			auth::CurrGRPMEM, $gid		// current must be member of group gid
 			)) !== TRUE) return;
 		
-		$results = $this->connections_model->list_my_patients($this->auth->get_account_id()); 
+		$results = $this->connections_model->list_patients_connected_with($this->auth->get_account_id()); 
 		if ($results === -1) {$this->ui->set_query_error(); return;}
 		
 		$mainview = $this->load->view('mainpane/forms/pick_multiple_patients',
@@ -316,7 +316,7 @@ class Groups extends Controller {
 				'list' => $results,
 				'form_action' => '/groups/members_invite_do/'.$gid), TRUE);
 		
-		$results = $this->connections_model->list_my_hcps($this->auth->get_account_id()); 
+		$results = $this->connections_model->list_hcps_connected_with($this->auth->get_account_id()); 
 		if ($results === -1) {$this->ui->set_query_error(); return;}
 		
 		$mainview .= $this->load->view('mainpane/forms/pick_multiple_hcps',

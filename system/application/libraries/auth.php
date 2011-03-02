@@ -173,7 +173,7 @@ class Auth {
 						break;
 					}
 					$this->CI->load->model('connections_model');
-					$c = $this->CI->connections_model->is_connected_with(array($a[$i+1]), $this->account_id);
+					$c = $this->CI->connections_model->is_connected_with($a[$i+1], $this->account_id);
 					if ($c === -1) {
 						$this->CI->ui->set_query_error();
 						return auth::CurrIS_or_CONN;

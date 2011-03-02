@@ -41,7 +41,6 @@ class Upload extends Controller {
 			auth::PAT, $pid,			// $pid must refer to a patient
 			auth::CurrIS_or_CONN, $pid	// current must be either the patient $pid or connected with $pid
 		)) !== TRUE) return;
-		if (DEBUG) $this->output->enable_profiler(TRUE);
 		
 		// Get POST vars
 		$issue = $this->input->post('issue');
@@ -52,21 +51,7 @@ class Upload extends Controller {
 			return;
 		}
 		
-		/* Check if $patient_id actually refers to a patient
-		if (! $this->patient_model->is_patient($patient_id)) {
-			$this->ui->set_error('This id does not refer to a patient');
-			return;
-		}*/
-		
-		/* Check if I am the patient_id of the file to upload
-		if ($patient_id !== $this->auth->get_account_id()) {
-			// Check if I'm an HCP connected with this patient
-			if (! $this->connections_model->is_connected_with($patient_id, $this->auth->get_account_id())) {
-				$this->ui->set_error('You don\'t have permissions to upload a medical record for this patient','Permission Denied');
-				return;
-			}
-		}*/
-		
+		// Set the new file options
 		$config['upload_path'] = './resources/medical_records/'.$pid.'/';
 		$config['allowed_types'] = 'pdf';
 		$config['max_size']	= '2000';
@@ -95,25 +80,54 @@ class Upload extends Controller {
 		// File uploaded!
 		$data = $this->upload->data();
 		
-		// Now, track this record into the DB
+		// Start db transaction
+		$this->db->trans_start();
+		
+		// Now, track this record into the DB (this automatically allow permission to
 		$this->load->model('medical_records_model');
-		$result = $this->medical_records_model->add_medical_record(
+		$mid = $this->medical_records_model->add_medical_record(
 			array($pid, $this->auth->get_account_id(), $issue, $info, $description, $data['file_name'])
 		);
-		
-		switch ($result) {
-			case -1:
-				$this->ui->set_error('Error recording the uploaded file in the database.', 'Database Error');
-				/** @bug This can lead to untracket uploaded files in the server */
-				break;
-			case -2:
-				$this->ui->set_error('Error adding permissions to the database.','Database Error');
-				break;
-			default:
-				$mainview = 'Your medical record was successfully uploaded!';
-				$this->ui->set(array($mainview));
-				break;
+		if ($mid === -1) {
+			$this->ui->set_error('Error recording the uploaded file in the database', 'Database Error');
+			/** @bug This can yield to untracked uploaded files in the server
+			 * You should simply remove the file from the server
+			 *  */
+			return;
 		}
+		if ($mid === -2) {
+			$this->ui->set_error('Error retrieving last inserted medical record', 'Database Error');
+			return;
+		}
+		if ($mid === NULL) {
+			$this->ui->set_error('Did not insert anything in the db','Database Error');
+			return;
+		}
+		
+		// Give the person that added it permission to view the file
+		if ($this->auth->get_type() !== 'patient') {
+			$res = $this->medical_records_model->allow_permission(array($mid, $this->auth->get_account_id()));
+			if ($res === -1) {
+				$this->ui->set_query_error();
+				return;
+			}
+			else if ($res === -2) {
+				$this->ui->set_error('Error recording permission in the database for the uploaded file
+				<br />However, the file was succesfully uploaded', 'Database error');
+				return;
+			}
+		}
+		
+		// Now, add permission for this file, to every doctor with high level
+		$result = $this->medical_records_model->add_permissions_to_high_levels($mid, $pid);
+		if ($result === -1) {
+			$this->ui->set_error('Medical record has been successfully uploaded,
+			but permissions were not granted to high level connections');
+			return;
+		}
+		
+		$this->db->trans_complete();
+		$this->ui->set(array('Medical record uploaded successfully!'));
 	}
 }
 /**@}*/

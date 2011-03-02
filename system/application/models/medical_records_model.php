@@ -100,42 +100,31 @@ class Medical_records_model extends Model {
 	 * @return
 	 *   -1 if error in insert
 	 *   -2 cannot retrieve medical record id of last inserted tuple
-	 *    1 if medical record was properly inserted
+	 *    <the new id inserted> if medical record was properly inserted
 	 * */
 	function add_medical_record($inputs){
 	
 		//$data = array( 'patient_id', 'account_id', 'issue', 'suplementary_info', 'description', 'file_path');
 		//$this->db->insert('Medical_Records', $data);	
 		
-		$this->db->trans_start();
 		$sql = "INSERT INTO medical_record (patient_id, account_id, issue, suplementary_info, description, file_name)
 			VALUES (?, ?, ?, ?, ?, ?)";
 		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 		
-		//give the doctor permission to view the medical record since he added it	
-		if ($inputs[0] != $inputs[1]) {
-			//get the last medical_rec_id inserted 
-			$sql = "select last_value from medical_record_medical_rec_id_seq";
-			$query = $this->db->query($sql);
-			if ($this->db->trans_status() === FALSE)
-				return -1;
-			
-			if ($query->num_rows() > 0) {
-				$res = $query->result_array();
-				$med_rec_id = $res[0]['last_value'];
-			} else {
-				return -2;
-			}
-			
-			//automatically give the person that added it permission to view the file
-			$res = $this->allow_permission(array($med_rec_id, $inputs[1]));
-			if ($res === -1)
-				return -1;
+		//get the last medical_rec_id inserted 
+		$sql = "select last_value from medical_record_medical_rec_id_seq";
+		$query = $this->db->query($sql);
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		
+		if ($query->num_rows() > 0) {
+			$res = $query->result_array();
+			return $res[0]['last_value'];
+		} else {
+			return -2;
 		}
-		$this->db->trans_complete();
-		return 1;
 	}
 	
 	/**
@@ -163,7 +152,6 @@ class Medical_records_model extends Model {
 	 *   Is of the form: array(medical_rec_id, account_id)
 	 * @return
 	 *  -1 if error in insert
-	 *  -2 if account_id does not exist
 	 *  1 otherwise
 	 * 
 	 * @note We are forcing permission only to other doctors
@@ -172,15 +160,15 @@ class Medical_records_model extends Model {
 		//$data = array( 'medical_rec_id' => $inputs[0], 'account_id' => $inputs[1]);
 		//$this->db->insert( 'Permissions', $data);
 		
-		$sql = "SELECT *
-			FROM accounts
-			WHERE account_id = ?";
-		$query = $this->db->query($sql, array($inputs[1]));
-		if ($this->db->trans_status() === FALSE)
-			return -1;
-		if ($query->num_rows() <= 0) {
-			return -2;
-		}
+		//$sql = "SELECT *
+		//	FROM accounts
+		//	WHERE account_id = ?";
+		//$query = $this->db->query($sql, array($inputs[1]));
+		//if ($this->db->trans_status() === FALSE)
+		//	return -1;
+		//if ($query->num_rows() <= 0) {
+		//	return -2;
+		//}
 		
 		$sql = "INSERT INTO permission (medical_rec_id, account_id, date_created)
 			VALUES (?, ?, current_date)";
@@ -189,6 +177,30 @@ class Medical_records_model extends Model {
 			return -1;
 		return 1;
 	
+	}
+	
+	/**
+	 * Add permission to see $mid to all accounts connected with $pid
+	 * with a high level connection (1 or 3).
+	 * */
+	function add_permissions_to_high_levels($mid, $pid) {
+		$sql = "SELECT * FROM connections WHERE sender_id = ? AND (sender_level = '1' OR sender_level = '3')";
+		$query = $this->db->query($sql, array((int)$pid));
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		$res = $query->result_array();
+		foreach ($res as $r) {
+			$this->allow_permission(array($mid, $r['receiver_id']));
+		}
+		
+		$sql = "SELECT * FROM connections WHERE receiver_id = ? AND (receiver_id = '1' OR receiver_id = '3')";
+		$query = $this->db->query($sql, array($pid));
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		$res = $query->result_array();
+		foreach ($res as $r) {
+			$this->allow_permission(array($mid, $r['sender_id']));
+		}
 	}
 	
 	/**

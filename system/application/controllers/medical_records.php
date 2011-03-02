@@ -266,23 +266,9 @@ class Medical_records extends Controller {
 	}*/
 	
 	/**
-	 * Show a form to ask for an hcp to add permission to
-	 * 
-	 * @attention Accessible only to patients
-	 * 
-	 * @test Tested
+	 * Shows a view with all the medical records that you are sharing
+	 * and not sharing with a specific account $aid (connected with you)
 	 * */
-	function add_permission($mrec_id) {
-		//$this->auth->check_logged_in();
-		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
-			return;
-		}
-		
-		$this->ui->set(array(
-			$this->load->view('mainpane/forms/add_permission', array('medrec_id' => $mrec_id), TRUE)
-		));
-	}
-	
 	function change_permissions($aid = NULL) {
 		if ($this->auth->check(array(
 			auth::CurrLOG,
@@ -298,7 +284,7 @@ class Medical_records extends Controller {
 		//$hcpsrecs = $this->medical_records_model->list_my_records(array($this->auth->get_account_id()));
 		// All ok
 		$this->ui->set(array(
-			$this->load->view('mainpane/lists/medical_records_form',
+			$this->load->view('mainpane/forms/medical_records_permissions',
 				array(
 				'list_name' => 'Select medical records to share',
 				'list' => $allrecs,
@@ -361,10 +347,6 @@ class Medical_records extends Controller {
 					if( $result === -1 ){
 						$this->ui->set(array('Query error! in allow_permission',''));
 						return;
-					}
-					else if( $result === -2 ){
-						$this->ui->set_error('Server Error', 'server');
-						return;						
 					}
 				}
 				/*
@@ -533,7 +515,56 @@ class Medical_records extends Controller {
 		
 		$this->ui->set_message('This record is now forbidden to that HCP', 'Confirmation');
 	}
-
+	
+	/**
+	 * Show a form to ask for an hcp to add permission to
+	 * 
+	 * @attention Accessible only to patients
+	 * 
+	 * @test Tested
+	 * */
+	function add_permission($mid = NULL) {
+		//$this->auth->check_logged_in();
+		if ($this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrMED_OWN, $mid
+		)) !== TRUE) return;
+		
+		//$this->ui->set(array(
+		//	$this->load->view('mainpane/forms/add_permission', array('medrec_id' => $mrec_id), TRUE)
+		//));
+		
+		
+		$results = $this->connections_model->list_hcps_connected_with($this->auth->get_account_id()); 
+		if ($results === -1) {
+			$this->ui->set_query_error();
+			return;
+		}
+		$main = $this->load->view('mainpane/forms/pick_hcp',
+			array(
+				'list_name' => 'My HCPs',
+				'list' => $results,
+				'form_action' => '/medical_records/add_permission_do/'.$mid
+			), TRUE
+		);
+		
+		$results = $this->connections_model->list_patients_connected_with($this->auth->get_account_id()); 
+		if ($results === -1) {
+			$this->ui->set_query_error();
+			return;
+		}
+		$main .= $this->load->view('mainpane/forms/pick_patient',
+			array(
+				'list_name' => 'My Patient Friends',
+				'list' => $results,
+				'form_action' => '/medical_records/add_permission_do/'.$mid
+			), TRUE
+		);
+		
+		
+		$this->ui->set(array($main));
+	}
+	
 	/**
 	 * Add permission to see the specified medical record to the 
 	 * specified hcp.
@@ -544,69 +575,41 @@ class Medical_records extends Controller {
 	 * @test Tested
 	 * */
 	function add_permission_do($mid = NULL) {
-		$this->auth->check_logged_in();
-		$this->load->model('connections_model');
+		$this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrMED_OWN, $mid
+		));
 		
-		if ($mid == NULL) {
-			$this->ui->set_error('Missing medical record id','Missing Arguments');
-			return;
+		// Get from POST the account that will have permission
+		$hid = $this->input->post('hcp_id');
+		$pid = $this->input->post('patient_id');
+		if ($hid !== FALSE) {
+			$account_id = $hid;
 		}
-		
-		// the account that will have permission
-		$account_id = $this->input->post('account_id');
-		if ($account_id == '' || $account_id == FALSE) {
+		else if ($pid !== FALSE) {
+			$account_id = $pid;
+		}
+		else {
 			$this->ui->set_error('No account id specified','Missing Arguments');
 			return;
 		}
 		
-		// You must be connected with that account first
-		$conn = $this->connections_model->is_connected_with(
-			$this->auth->get_account_id(), $account_id
-		);
-		if ($conn === -1) {
-			$this->ui->set_query_error(); 
-			return;
-		} else if ($conn == FALSE) {
-			$this->ui->set_error('You must be connected to this hcp
-			to grant him/her access to your medical records!');
-			return;
-		}
+		// You must be connected with that account
+		if ($this->auth->check(array(auth::CurrCONN, $account_id)) !== TRUE) return;
 		
-		// Get tuple for this medical record
-		$get = $this->medical_records_model->get_medicalrecord(array($mid));
-		if ($get === -1) {
+		// Check if its already allowed to be seen by hcp
+		$isalready = $this->medical_records_model->is_account_allowed(array($mid, $account_id));
+		if ($isalready === -1) {
 			$this->ui->set_query_error(); 
 			return;
 		}
-		else if (sizeof($get) == 0) {
-			$this->ui->set_error('Specified medical record does not exist');
-			return;
-		}
-		else if ($get[0]['patient_id'] != $this->auth->get_account_id()) {
-			$this->ui->set_error('Only the owner can modify this medical record','Permission Denied');
+		if ($isalready === TRUE) {
+			$this->ui->set_message('This record is already allowed to this hcp.','Notice');
 			return;
 		}
 		
 		// Try to change permission
-		if ($this->auth->get_type() === 'patient') {
-			
-			// Check if its already allowed to be seen by hcp
-			$isalready = $this->medical_records_model->is_account_allowed(array($account_id, $mid));
-			if ($isalready === -1) {
-				$this->ui->set_query_error(); 
-				return;
-			}
-			if ($isalready) {
-				$this->ui->set_message('This record is already allowed to this hcp.','Notice');
-				return;
-			}
-			$res = $this->medical_records_model->allow_permission(array($mid, $account_id));
-			
-		} else {
-			$this->ui->set_error('Only patients can modify permissions','Permission Denied');
-			return;
-		}
-		
+		$res = $this->medical_records_model->allow_permission(array($mid, $account_id));
 		switch ($res) {
 			case -1:
 				$this->ui->set_query_error(); 
@@ -616,7 +619,7 @@ class Medical_records extends Controller {
 				are trying to give an authorize account access');
 				return;
 			default:
-				$this->ui->set_message('This record is now public to that HCP.', 'Confirmation');
+				$this->ui->set_message('This record is now public to that account', 'Confirmation');
 				return;
 		}
 	}
@@ -628,54 +631,45 @@ class Medical_records extends Controller {
 	 * 
 	 * @test Tested
 	 * */
-	function delete($medical_record_id = FALSE) {
-		if (DEBUG) $this->output->enable_profiler(TRUE);
-		$this->auth->check_logged_in();
-		$type = '';
+	function delete($mid = FALSE) {
+		$this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrMED_OWN, $mid
+		));
 		
-		// Check input
-		if ($medical_record_id == FALSE) {
-			$this->ui->set_error('Invalid input');
-			return;
-		}
-		
-		// Only the patient can delete it
-		$get = $this->medical_records_model->get_medicalrecord($medical_record_id);
-		
+		// Get medical record tuple to retrieve filename
+		$get = $this->medical_records_model->get_medicalrecord($mid);
 		if ($get === -1) {
 			$this->ui->set_query_error(); 
 			return;
 		} else if (sizeof($get) == 0) {
-			$error = 'Medical record does not exist';
-		} else if ($get[0]['patient_id'] != $this->auth->get_account_id()) {
-			$error = 'You don\'t have permissions to delete this record.';
-			$type = 'Permission Denied';
+			$this->ui->set_error('Medical record does not exist');
+			return;
+		}
+		$filename = $get[0]['file_name'];
+		
+		// Delete record
+		$del = $this->medical_records_model->delete_medical_record(array($mid));
+		if ($del === -1) {
+			$this->ui->set_query_error(); 
+			return;
 		} else {
-			$filename = $get[0]['file_name'];
-			
-			$del = $this->medical_records_model->delete_medical_record(array($medical_record_id));
-			
-			if ($del === -1) {
-				$this->ui->set_query_error(); 
-				return;
+			// Delete file from file system
+			$filepath = 'resources/medical_records/'.$this->auth->get_account_id().'/'.$filename;
+			if (! is_file($filepath)) {
+				$error = 'Medical record entry deleted, but file does not exist!';
+				$type = 'Notice';
+			}
+			else if (! unlink($filepath)) {
+				$error = 'Medical record entry deleted, but file still in the server!';
+				$type = 'Notice';
 			} else {
-				// Delete file from file system
-				$filepath = 'resources/medical_records/'
-					.$this->auth->get_account_id().'/'.$filename;
-				if (! is_file($filepath)) {
-					$error = 'Medical record entry deleted, but file does not exist!';
-				}
-				else if (! unlink($filepath)) {
-					$error = 'Medical record entry deleted, but file still in the server!';
-					$type = 'Notice';
-				} else {
-					$this->ui->set_message('Medical record deleted successfully!','Confirmation');
-					return;
-				}
+				$this->ui->set_message('Medical record deleted successfully!','Confirmation');
+				return;
 			}
 		}
-
-		$this->ui->set_error($error,$type);
+		
+		$this->ui->set_error($error, $type);
 	}
 }
 /** @} */

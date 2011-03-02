@@ -24,7 +24,7 @@ class Connections_model extends Model {
 	 *   Array with all the patients a hcp has
 	 *   empty array() if none
 	 * */
-	function list_my_patients($account_id) {
+	function list_patients_connected_with($account_id) {
 		$sql = "SELECT P.*
 			FROM connections D, patient_account P
 			WHERE D.accepted = TRUE AND (
@@ -52,7 +52,7 @@ class Connections_model extends Model {
 	 *   Array with all the hcp friends
 	 *   empty array() if none
 	 * */
-	function list_my_hcps($account_id) {
+	function list_hcps_connected_with($account_id) {
 		$sql = "SELECT H.*
 			FROM connections D, hcp_account H
 			WHERE D.accepted = TRUE AND (
@@ -80,7 +80,7 @@ class Connections_model extends Model {
 	 *   Array of all the hcp friends
 	 *   empty array() if none
 	 * *
-	function list_my_hcps($inputs) {
+	function list_hcps_connected_with($inputs) {
 		$sql = "SELECT H.*
 			FROM connections D, hcp_account H
 			WHERE D.accepted = TRUE AND D.sender_id =  ? AND H.account_id = D.receiver_id";
@@ -699,7 +699,7 @@ class Connections_model extends Model {
 	 * Gives the connection level between a patient and a hcp
 	 * 
 	 * @param $inputs
-	 *   Is of the form: array(patient_id, hcp_id)
+	 *   Is of the form: array(account_id, account_id)
 	 * @return
 	 *  -1 in case of error in a query
 	 *  -2 if the connection does not exist
