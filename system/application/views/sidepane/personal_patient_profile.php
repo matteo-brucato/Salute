@@ -34,7 +34,7 @@
 	<li><a href="/refers" class="ajax">My Referrals</a>
 	</li>
 	
-	<li><a href="/connections/mypatients" class="ajax">My Patients (???)</a>
+	<li><a href="/connections/mypatients" class="ajax">My Patient Friends</a>
 		<ul>
 			<li><a href="/connections/pending/in" class="ajax">Pending incoming</a></li>
 		</ul>

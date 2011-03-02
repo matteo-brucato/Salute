@@ -52,13 +52,15 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 		if ($table['tuples'][$i]['status'] === 'pending')
 			$actions = array('accept-ref', 'delete-ref');
 		else
-			$actions = array();
+			$actions = array('delete-ref');
 	} 
 	else {
-		if ($table['tuples'][$i]['status'] === 'Request Sent')
+		$actions = array('delete-ref');
+		/*if ($table['tuples'][$i]['status'] === 'Request Sent')
 			$actions = array();
 		else
-			$actions = array('delete-ref');		
+			$actions = array('delete-ref');	*/
+		  	
 	}
 	
 	$table['tuples'][$i]['actions'] = '<ul>';

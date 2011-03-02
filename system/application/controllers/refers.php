@@ -78,7 +78,7 @@
 			auth::CurrHCP));
 		if ($check !== TRUE) return;
 		
-		$results = $this->connections_model->list_my_hcps($this->auth->get_account_id()); 
+		$results = $this->connections_model->list_hcps_connected_with($this->auth->get_account_id()); 
 		
 		if ($results === -1) {
 			$this->ui->set_query_error();
@@ -121,7 +121,7 @@
 		if ($check !== TRUE) return;
 		
 		//get all of the patients
-		$results = $this->connections_model->list_my_patients($this->auth->get_account_id());
+		$results = $this->connections_model->list_patients_connected_with($this->auth->get_account_id());
 		
 		if ($results === -1) {
 			$this->ui->set_query_error();
@@ -184,6 +184,10 @@
 		}
 		elseif ($referal_id == -3){
 			$this->ui->set_error('You have already created this referral', 'Notice');
+			return;
+		}
+		elseif ($referal_id == -4){
+			$this->ui->set_error('The doctor being referred is already friends with that patient', 'Notice');
 			return;
 		}
 			

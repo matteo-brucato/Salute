@@ -48,7 +48,7 @@ class Connections extends Controller {
 		$check = $this->auth->check(array(auth::CurrLOG));
 		if ($check !== TRUE) return;
 		
-		$results  = $this->connections_model->list_my_hcps($this->auth->get_account_id()); 
+		$results  = $this->connections_model->list_hcps_connected_with($this->auth->get_account_id()); 
 		
 		if ($results === -1) {
 			$this->ui->set_query_error();
@@ -74,7 +74,7 @@ class Connections extends Controller {
 		$check = $this->auth->check(array(auth::CurrLOG));
 		if ($check !== TRUE) return;
 		
-		$res = $this->connections_model->list_my_patients($this->auth->get_account_id());
+		$res = $this->connections_model->list_patients_connected_with($this->auth->get_account_id());
 		
 		if ($res === -1) {
 			$this->ui->set_query_error();
@@ -428,6 +428,21 @@ class Connections extends Controller {
 				$this->ui->set_message('This connection has been rejected.','Confirmation');
 				break;
 		}
+	}
+	
+	function change_level($aid = NULL) {
+		$check = $this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrCONN, $aid		// current must be connected with id
+		));
+		if ($check !== TRUE) return;
+		
+		// Take the current level and send it to the view
+		$this->connections_model->
+		
+		$this->ui->set(array(
+			$this->load->view('mainpane/forms/change_conn_level', array('aid' => $aid), TRUE)
+		));
 	}
 }
 /** @} */

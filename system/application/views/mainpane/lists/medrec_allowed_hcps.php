@@ -17,36 +17,23 @@ $this->load->helper('table_result');
 echo '<h2>'.$list_name.'</h2>';
 
 // Id of the table
-$table['table-name'] = 'mypatients-table';
+$table['table-name'] = 'allowed-hcps-table';
 
 // Names of the headers in the table
-$table['th'] = array('Account Id', 'First Name', 'Last Name', 'Actions');
+$table['th'] = array('Doctor Id', 'First Name', 'Last Name', 'Specialty', 'Actions');
 
 // Classes for columns (order matters)
-$table['th_class'] = array('id_keeper', '', '', '');
-$table['td_class'] = array('id_keeper', '', '', '');
+$table['th_class'] = array('id_keeper', '', '', '', '');
+$table['td_class'] = array('id_keeper', '', '', '', '');
 
 // All the results from the database
 $table['tuples'] = $list;
 
 // Attributes to display
-$table['attr'] = array('account_id', 'first_name', 'last_name', 'actions');
+$table['attr'] = array('account_id', 'first_name', 'last_name', 'specialization', 'actions');
 
-// Special columns to dislpay
-if ($status === 'connected') {
-	$actions = array('profile', 'send-email', 'delete-conn', 'upload-med-rec', 'issue-bill', 'change-perm', 'change-level');
-}
-else if ($status === 'pending_in') {
-	$actions = array('accept-conn-req', 'reject-conn-req');
-}
-else if ($status === 'pending_out') {
-	$actions = array('profile', 'cancel-conn-req');
-}
-else {
-	$actions = array(); /** @attention SHOULD NEVER HAPPEN! */
-}
-
-// Everybody has the same action, in this implementation
+// Special actions
+$actions = array('delete-perm');
 for ($i = 0; $i < count($table['tuples']); $i++) {
 	$table['tuples'][$i]['actions'] = '<ul>';
 	$table['tuples'][$i]['actions'] .= get_action_strings($actions, $list[$i]);

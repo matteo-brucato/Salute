@@ -1,4 +1,8 @@
-794786543;436490796;Checkup;Don't eat Mc Donald's;rstar.pdf;gave prescription abc
+794786543;436490796;Checkup1;1;rstar.pdf;gave prescription 1
+794786543;436490796;Checkup2;2;rstar.pdf;gave prescription 2
+794786543;436490796;Checkup3;3;rstar.pdf;gave prescription 3
+794786543;436490796;Checkup4;4;rstar.pdf;gave prescription 4
+794786543;436490796;Checkup5;5;rstar.pdf;gave prescription 5
 794786543;436490796;Kidney Transplant;;rstar.pdf;gave prescription fgh
 873947364;972387934;Checkup;...;rstar.pdf;gave prescription cde
 873947364;873947364;Heart Surgery;Took place in China.  Dr. Kimosoto;rstar.pdf;gave prescription ijk
@@ -6,3 +10,4 @@
 982532435;848943874;Checkup;;rstar.pdf;gave prescription opq
 782893498;972387934;Checkup;;rstar.pdf;gave prescription rst
 \.
+

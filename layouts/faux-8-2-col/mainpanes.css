@@ -26,7 +26,8 @@ table.tables-1 {
 }
 .tables-1 th {
 	height: 22px;
-	background-color: #abbebe;
+	/*background-color: #abbebe;*/
+	background-color: #ACD0A0;
 	color: black;
 	padding: 2px 4px;
 	margin: 0;
@@ -40,7 +41,8 @@ table.tables-1 {
 	background-color: #ffffff;
 }
 td.tables-1-selected-tds {
-	background-color: #aabbcc;
+	/*background-color: #aabbcc;*/
+	background-color: #AADBAC;
 	/*cursor: pointer;*/
 }
 
@@ -66,4 +68,9 @@ td.tables-1-selected-tds {
 	font-style: italic;
 	padding: 10px;
 	border: 1px solid red;
+}
+
+.checkAll {
+	display: block;
+	float: right;
 }

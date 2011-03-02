@@ -154,6 +154,11 @@ function layout_bindings() {
 		alert(account_id);
 		execute_ajax('/profile/user/' + account_id);
 	});*/
+	
+	$('.checkAll').click(function() {
+		$("input[type='checkbox'][name!='checkAll']").attr('checked', $('.checkAll input').is(':checked'));
+	}
+)
 }
 
 function show_patient_form() {

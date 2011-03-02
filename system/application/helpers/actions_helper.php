@@ -24,7 +24,7 @@ function get_action_strings($actions, $tuple) {
 				$str .= '<li><a href="/appointments/request/'.$tuple['account_id'].'">Request Appointment</a></li>';
 				break;	
 			case 'cancel-app':
-				$str .= '<li><a href="/appointments/cancel/'.$tuple['appointment_id'].'">Cancel</a></li>';
+				$str .= '<li><a href="/appointments/cancel/'.$tuple['appointment_id'].'" class="confirm">Cancel</a></li>';
 				break;
 			case 'reschedule-app':
 				$str .= '<li><a href="/appointments/reschedule/'.$tuple['appointment_id'].'">Reschedule</a></li>';
@@ -34,19 +34,22 @@ function get_action_strings($actions, $tuple) {
 				break;	
 
 			case 'delete-conn':
-				$str .= '<li><a href="/connections/destroy/'.$tuple['account_id'].'" class="ajax-confirm">Delete Connection</a></li>';
+				$str .= '<li><a href="/connections/destroy/'.$tuple['account_id'].'" class="confirm">Delete Connection</a></li>';
 				break;
 			case 'accept-conn-req':
-				$str .= '<li><a href="/connections/accept/'.$tuple['account_id'].'" class="ajax-confirm">Accept Connection</a></li>';
+				$str .= '<li><a href="/connections/accept/'.$tuple['account_id'].'" class="confirm">Accept Connection</a></li>';
 				break;
 			case 'reject-conn-req':
-				$str .= '<li><a href="/connections/reject/'.$tuple['account_id'].'" class="ajax-confirm">Reject Connection</a></li>';
+				$str .= '<li><a href="/connections/reject/'.$tuple['account_id'].'" class="confirm">Reject Connection</a></li>';
 				break;
 			case 'cancel-conn-req':
-				$str .= '<li><a href="/connections/cancel/'.$tuple['account_id'].'" class="ajax-confirm">Cancel Connection Request</a></li>';
+				$str .= '<li><a href="/connections/cancel/'.$tuple['account_id'].'" class="confirm">Cancel Connection Request</a></li>';
 				break;
 			case 'request-conn':
-				$str .= '<li><a href="/connections/request/'.$tuple['account_id'].'" class=\"ajax-confirm\">Request Connection</a></li>';
+				$str .= '<li><a href="/connections/request/'.$tuple['account_id'].'" class=\"confirm\">Request Connection</a></li>';
+				break;
+			case 'change-level':
+				$str .= '<li><a href="/connections/change_level/'.$tuple['account_id'].'" class=\"\">Change Connection Level</a></li>';
 				break;
 			
 			case 'issue-bill':
@@ -72,17 +75,17 @@ function get_action_strings($actions, $tuple) {
 				$str .= '<li><a href="/download/medical_record/'.$tuple['patient_id'].'/'.$tuple['medical_rec_id'].'">Download</a></li>';
 				break;
 			case 'delete-med-rec':
-				$str .= '<li><a href="/medical_records/delete/'.$tuple['medical_rec_id'].'">Delete</a></li>';
+				$str .= '<li><a href="/medical_records/delete/'.$tuple['medical_rec_id'].'" class="confirm">Delete</a></li>';
 				break;
 			
 			case 'add-perm':
 				$str .= '<li><a href="/medical_records/add_permission/'.$tuple['medical_rec_id'].'">Add a permission</a></li>';
 				break;
 			case 'delete-perm':
-				$str .= '<li><a href="/medical_records/remove_permission/'.$tuple['medical_rec_id'].'">Remove permission</a></li>';
+				$str .= '<li><a href="/medical_records/remove_permission/'.$tuple['medical_rec_id'].'/'.$tuple['account_id'].'" class="confirm">Remove permission</a></li>';
 				break;
 			case 'change-perm':
-				$str .= '<li><a href="/medical_records/change_permissions/'.$tuple['account_id'].'">Change permissions</a></li>';
+				$str .= '<li><a href="/medical_records/change_permissions/'.$tuple['account_id'].'">Change shared medical records</a></li>';
 				break;
 			case 'view-all-perm':
 				$str .= '<li><a href="/medical_records/see_permissions/'.$tuple['medical_rec_id'].'">View all permissions</a></li>';
@@ -93,7 +96,7 @@ function get_action_strings($actions, $tuple) {
 				break;
 				
 			case 'leave-group':
-				$str .= '<li><a href="/groups/members/leave/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Leave</a></li>';
+				$str .= '<li><a href="/groups/members/leave/'.$tuple['group_id'].'/'.$tuple['account_id'].'" class="confirm">Leave</a></li>';
 				break;
 			
 			case 'delete-group':
@@ -101,7 +104,7 @@ function get_action_strings($actions, $tuple) {
 				break;
 					
 			case 'delete-member':
-				$str .= '<li><a href="/groups/members/delete/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Delete Member</a></li>';
+				$str .= '<li><a href="/groups/members/delete/'.$tuple['group_id'].'/'.$tuple['account_id'].'" class="confirm">Delete Member</a></li>';
 				break;
 				
 			case 'invite-to-group':
@@ -125,7 +128,7 @@ function get_action_strings($actions, $tuple) {
 				$str .= '<li><a href="/refers/accept_referal/'.$tuple['referal_id'].'">Request Connection</a></li>';
 				break;
 			case 'delete-ref':
-				$str .= '<li><a href="/refers/delete_referal/'.$tuple['referal_id'].'">Delete</a></li>';
+				$str .= '<li><a href="/refers/delete_referal/'.$tuple['referal_id'].'" class="confirm">Delete</a></li>';
 				break;
 
 		}

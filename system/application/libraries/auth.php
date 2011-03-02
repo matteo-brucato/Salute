@@ -31,6 +31,7 @@ class Auth {
 	const CurrCONN_RECV	= 5;	// requires one account id: tests if the current is the receiver of a connection to the account id
 	const CurrGRPMEM	= 6;	// requires one groupid: tests if the current is a member of the groupid
 	const CurrREFOWN	= 7;	// requires one referral id: tests if referral id is owned by the current user
+	const CurrIS_or_CONN = 222; // requires one account id: tests if current is account provided or at least connected with it
 	
 	const ACCOUNT		= 8;	// requires one id: tests if it's an account id
 	const PAT			= 9;	// requires one id: tests if it's a patient id
@@ -43,7 +44,7 @@ class Auth {
 	const BILL_DELC		= 14;	// requires one id: tests if bill id is deletable
 	const BILL_PAYC		= 15;	// requires one id: tests if bill id is inactive=payable
 	
-	const MEDREC		= 16;	// requires one id: tests if the id is a medical record id
+	const CurrMED_OWN	= 16;	// requires one id: tests if current is the owner of the medical record specified
 	
 	
 	
@@ -156,7 +157,34 @@ class Auth {
 					}
 					$i++;
 					break;
-
+				
+				// current user must be either the account specified or connected with it
+				case auth::CurrIS_or_CONN:
+					if ($a[$i+1] === NULL) {
+						$this->CI->ui->set_error('No input provided');
+						return auth::CurrIS_or_CONN;
+					}
+					if (! is_numeric($a[$i+1])) {
+						$this->CI->ui->set_error('Not numeric');
+						return auth::CurrIS_or_CONN;
+					}
+					if ($a[$i+1] == $this->account_id) {
+						$i++;
+						break;
+					}
+					$this->CI->load->model('connections_model');
+					$c = $this->CI->connections_model->is_connected_with($a[$i+1], $this->account_id);
+					if ($c === -1) {
+						$this->CI->ui->set_query_error();
+						return auth::CurrIS_or_CONN;
+					}
+					else if ($c === FALSE) {
+						$this->CI->ui->set_error('You are not the owner or not connected with this account','Permission Denied');
+						return auth::CurrIS_or_CONN;
+					}
+					$i++;
+					break;
+				
 				case auth::ACCOUNT:
 					if ($a[$i+1] === NULL) {
 						$this->CI->ui->set_error('No input provided');
@@ -392,7 +420,7 @@ class Auth {
 						$this->CI->ui->set_error('No input provided');
 						return auth::BILL_PAYC;
 					}
-					if (! is_numeric($perm[$i+1])) {
+					if (! is_numeric($a[$i+1])) {
 						$this->CI->ui->set_error('Not numeric');
 						return auth::BILL_PAYC;
 					}
@@ -419,25 +447,29 @@ class Auth {
 						return auth::BILL_PAYC;				
 					}
 					$i++;
-					break;	
+					break;
 				
-				case auth::MEDREC:
+				case auth::CurrMED_OWN:
 					if ($a[$i+1] === NULL) {
 						$this->CI->ui->set_error('Missing medical record id','Missing Arguments');
-						return auth::MEDREC;
+						return auth::CurrMED_OWN;
+					}
+					if (! is_numeric($a[$i+1])) {
+						$this->CI->ui->set_error('Not numeric');
+						return auth::CurrMED_OWN;
 					}
 					$get = $this->CI->medical_records_model->get_medicalrecord(array($a[$i+1]));
 					if ($get === -1) {
 						$this->CI->ui->set_query_error(); 
-						return auth::MEDREC;
+						return auth::CurrMED_OWN;
 					}
 					else if (sizeof($get) == 0) {
 						$this->CI->ui->set_error('Specified medical record does not exist');
-						return auth::MEDREC;
+						return auth::CurrMED_OWN;
 					}
-					else if ($get[0]['patient_id'] != $this->get_account_id()) {
+					else if ($get[0]['patient_id'] != $this->account_id) {
 						$this->CI->ui->set_error('Only the owner can modify this medical record','Permission Denied');
-						return auth::MEDREC;
+						return auth::CurrMED_OWN;
 					}
 					$i++;
 					break;
