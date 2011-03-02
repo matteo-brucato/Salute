@@ -624,6 +624,8 @@ class Groups extends Controller {
 		$this->db->trans_complete();
 	}
 	
+	//@bug Missing argument 2 for Groups_model::edit_member(), called in /home/nada/Desktop/cs180/Salute/system/application/controllers/groups.php on line 648 and defined
+	//@bug Missing argument 3 for Groups_model::edit_member(), called in /home/nada/Desktop/cs180/Salute/system/application/controllers/groups.php on line 648 and defined
 	function _members_edit_do($group_id = NULL,$account_id = NULL){
 		
 		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id)) !== TRUE) {
@@ -636,13 +638,15 @@ class Groups extends Controller {
 			$this->ui->set_error('All Fields are Mandatory.','Missing Arguments'); 
 			return;
 		}
+
+		echo $group_id.' '.$account_id.' '.$perm;
 		
 		$this->db->trans_start();
 		
 		$result = $this->groups_model->edit_member(array(
 													'account_id' => $account_id, 
 													'group_id' => $group_id, 
-													'permissions' => $perm, 
+													'permissions' => $perm 
 												)); 
 		
 		$this->db->trans_complete();
