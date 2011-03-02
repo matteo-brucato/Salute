@@ -11,3 +11,7 @@ Use this file as a list for simple things to do
 - add a glossary in the documentation
 - describe bettere how MVC has been implemented (structure of folders and files)
 - mention about test performance (CodeIgniter is very fast and each controller has a streightforward flow)
+
+
+PROFILE
+- Implement pictures and related information
