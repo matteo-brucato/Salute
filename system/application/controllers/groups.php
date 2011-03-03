@@ -76,6 +76,7 @@ class Groups extends Controller {
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
 			return;
 		}
+		
 		$this->ui->set(array($this->load->view('mainpane/forms/create_group', '', TRUE), ''));
 	}
 
@@ -91,9 +92,19 @@ class Groups extends Controller {
 		$privacy = $this->input->post('public_private');
 		$group_type = $this->input->post('group_type');
 		
+		$type = $this->auth->get_type();
+		
 		// Form Checking will replace this
 		if($name == NULL || $description == NULL || $privacy == NULL || $group_type == NULL )	{
 			$this->ui->set_error('All Fields are Mandatory.','Missing Arguments'); 
+			return;
+		}
+		
+		if ($group_type === 0 && $type === 'hcp'){
+			$this->ui->set_error('You are a healthcare provider. You cannot create a patient only group.', 'Permission Denied');
+			return;
+		} else if ($group_type === 1 && $type === 'patient'){
+			$this->ui->set_error('You are a patient. You cannot create a healthcare provider only group.', 'Permission Denied');
 			return;
 		}
 		
@@ -144,17 +155,24 @@ class Groups extends Controller {
 		}
 		
 		// check that they have permission
+		$mem = $this->groups_model->get_member($this->auth->get_account_id(),$group_id); 
+		if ($mem === -1){
+			$this->ui->set_query_error();
+			return;	
+		} else if ($mem['permissions'] !== '3') {
+			$this->ui->set_error('You do not have permission to delete this group.','Permission Denied');
+			return;	
+		}
 		
 		$this->db->trans_start();
 				
 		$result = $this->groups_model->delete(array($group_id));
 		
 		if ($result === -1){
-				$this->auth->set_query_error();
-				return;
+			$this->ui->set_query_error();
+			return;
 		}
 	
-		//@todo later...make it fancy.
 		$this->ui->set_message('The group has been deleted.','Confirmation');
 		
 		$this->db->trans_complete();
@@ -185,11 +203,13 @@ class Groups extends Controller {
 			if($mem === -1 || $mem === FALSE){
 				$mem = $this->hcp_model->is_hcp($this->auth->get_account_id());
 				// if not, server error
-				if($mem === -1 || $mem === FALSE){
+				if($mem === -1){
 					$this->ui->set_error('Internal server error1','server');
 					return;
-				}
-				else{
+				} else if ($mem === FALSE){
+					$this->ui->set_error('Internal server error1','server');
+					return;
+				} else{
 					if ( $group['group_type'] === '0' ){
 						$this->ui->set_error('This is a patient only group.','Permission Denied');
 						return;
@@ -217,7 +237,6 @@ class Groups extends Controller {
 		// check again that they're in 'is_in'
 		if ($this->auth->check(array(auth::CurrGRPMEM,$group_id)) === TRUE){
 			$this->ui->set_message('You have successfully joined the group.','Confirmation');
-			//link to view my groups.
 		} else {
 			$this->ui->set_error('Internal Server Error4','server');
 			return;

@@ -203,7 +203,7 @@ CREATE TABLE connections(
 --
 --RELATIONSHIP TABLES
 --
-
+/*
 --Patient to Doctor Table
 CREATE TABLE p_d_connection(
 	patient_id SERIAL NOT NULL,
@@ -227,7 +227,7 @@ CREATE TABLE d_d_connection(
 	FOREIGN KEY (accepter_id) REFERENCES hcp_account(account_id)
 );
 
-
+*/
 --Is In Table
 CREATE TABLE is_in(
 	account_id SERIAL NOT NULL,
