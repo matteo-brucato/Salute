@@ -17,6 +17,10 @@ DOCUMENTATION
 PROFILE
 - Implement pictures and related information
 
+MEDICAL RECORDS
+- add a view for patients to see his/her connected patients medical records
+  (maybe it can be added to the patient's profile...)
+
 GROUPS
 - create is_invited table, to be able to verify whether someone trying to join a private group came via invitation.
 - logic checking:
