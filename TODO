@@ -27,6 +27,7 @@ GROUPS
 - When listing group members, just use the already existing views to
   list patients and doctors (unless there is a specific reason to have
   a new view).
+- When click on create group, side panel dissapears! Needs fixing...
 
 PRESENTATION
 - Prepare a list of actions to perform during the presentation (we all need to do that, I think)
