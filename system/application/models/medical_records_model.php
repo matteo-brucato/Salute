@@ -249,7 +249,7 @@ class Medical_records_model extends Model {
 		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)
 			return -1;
-		if( $query->num_rows() > 0)
+		if ($query->num_rows() > 0)
 			return TRUE;
 		return FALSE;
 	}

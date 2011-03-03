@@ -72,7 +72,7 @@ function get_action_strings($actions, $tuple) {
 				$str .= '<li><a href="/medical_records/upload/'.$tuple['account_id'].'">Upload Medical Record</a></li>';
 				break;
 			case 'download-med-rec':
-				$str .= '<li><a href="/download/medical_record/'.$tuple['patient_id'].'/'.$tuple['medical_rec_id'].'">Download</a></li>';
+				$str .= '<li><a href="/download/medical_record/'.$tuple['patient_id'].'/'.$tuple['medical_rec_id'].'" class="noajax">Download</a></li>';
 				break;
 			case 'delete-med-rec':
 				$str .= '<li><a href="/medical_records/delete/'.$tuple['medical_rec_id'].'" class="confirm">Delete</a></li>';

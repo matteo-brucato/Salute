@@ -145,7 +145,7 @@ class Medical_records extends Controller {
 	}
 	
 	/**
-	 * Loads view that allows you to upload a medical record
+	 * Loads view that allows you to upload a medical record to patient $pid
 	 * 
 	 * @test Tested
 	 * */
@@ -168,102 +168,6 @@ class Medical_records extends Controller {
 				array('patient_id' => $pid) , TRUE)
 		));
 	}
-	
-	/*
-	 * Add the new medical record
-	 * @attention should the patient approve this first before having it added to their list of records?
-	 *
-	function upload_do()
-	{
-		$this->auth->check_logged_in();
-		$this->load->model('medical_records_model');
-
-		$file = $this->input->post('filepath');
-		
-		// Patient adding their own file
-		if ($this->auth->get_type() === 'patient') {
-			$results = $this->medical_record_model->add_med_record(array(
-																			'patient_id' => $this->auth->get_account_id(), 
-																			'account_id' => $this->auth->get_account_id(), 
-																			'file_path' => $file,
-																	)); 
-		}
-
-		// hcp adds medical record of a specific patient 
-		else if ($this->auth->get_type() === 'hcp') {
-			$patient_id = $this->input->post('patient_id');
-			$results = $this->medical_record_model->add_med_record(array(
-																			'patient_id' => $this->auth->get_account_id(),
-																			'account_id' => $this->auth->get_account_id(), 
-																			'file_path' => $file,
-																	)); 
-		}
-		else {		
-			$this->ui->error('Internal Logic Error.', 500);
-			return;
-		}
-		
-		switch ($results) {
-			case -1:
-				$this->ui->set(array('Query error!',''));
-				break;
-			default:
-				$this->ui->set_redirect('/medical_records/list_med_recs');
-				break; 
-		}	
-	}*/
-
-	/**
-	 * Gets called when an individual medical record is selected to be viewed
-	 * loads a view that prints Name, Expanded Info, Date, ...etc
-	 * should list all hcps who have permission to see it
-	 * should have a button that lets you give another hcp permission , or remove permission 
-	 * should have a button to delete a medical record
-	 * @todo Implement this function and then make it 'public' (remove _ at
-	 * the beginning of the name)
-	 * @todo: need a view that lists medical records: Name, Description, link to file
-	 * *
-	function _view($med_rec_id) {
-		$this->auth->check_logged_in();
-		$this->load->model('medical_records_model');
-		
-		// Check if the medical record belongs to user
-		if($this->auth->get_type() === 'patient'){
-			$result = $this->medical_records_model->is_myrecord(array($this->auth->get_account_id(), $med_rec_id));
-		}
-		// If hcp: check if he/she has permission to see it
-		else if($this->auth->get_type() === 'hcp'){
-			$result = $this->permissions_model->____(array($this->auth->get_account_id(), $med_rec_id)); /*@todo: update fn call*
-		}
-		else {
-				$this->ui->error('Internal Logic Error.',500);
-				return;
-		}
-		
-		switch ($result) {
-			case -1:
-				$mainview = 'Query error!';
-				$sideview = '';
-				$error = TRUE;
-				break;
-			case FALSE:
-				$mainview = 'You do not have permission to see this medical record.';
-				$sideview = '';
-				$error = TRUE;
-			default:
-				$error = FALSE;
-				break;
-		}
-		
-		if($error){
-			$this->ui->set(array($mainview,$sideview));
-			return;
-		}
-				
-		$res = $this->medical_records_model->get_medicalrecord(array($med_rec_id));
-		
-		$this->ui->set(array($this->load->view('mainpane/______', $res, TRUE),''));	
-	}*/
 	
 	/**
 	 * Shows a view with all the medical records that you are sharing

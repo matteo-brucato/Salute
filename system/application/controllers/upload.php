@@ -46,6 +46,7 @@ class Upload extends Controller {
 		$issue = $this->input->post('issue');
 		$info = $this->input->post('info');
 		$description = $this->input->post('description');
+		echo $this->input->post('userfile');
 		if ($issue == '' || $issue == FALSE || $description == FALSE || $description == '') {
 			$this->ui->set_error('Please, specify Issue and Description','Missing Arguments');
 			return;
@@ -74,6 +75,9 @@ class Upload extends Controller {
 			//$error = array('error' => $this->upload->display_errors());
 			//$mainview = $this->load->view('upload_form', $error);
 			$this->ui->set_error($this->upload->display_errors());
+			foreach($this->upload->data() as $item => $value) {
+				echo $item.': '.$value.'<br>';
+			}
 			return;
 		}
 		
@@ -127,7 +131,7 @@ class Upload extends Controller {
 		}
 		
 		$this->db->trans_complete();
-		$this->ui->set(array('Medical record uploaded successfully!'));
+		$this->ui->set_message('Medical record uploaded successfully!', 'Confirmation');
 	}
 }
 /**@}*/
