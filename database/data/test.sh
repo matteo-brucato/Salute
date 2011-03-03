@@ -1,17 +1,19 @@
 #!/bin/bash
 #generate information for hcp account
 
-counter=2;
+bill_id=1
 for ((i = 1; i <= 50; i++))
 do
-	for(( j = 1 ; j < 5 && i <= 50 && counter <=50; j++))
+	for(( j = `expr $i + 50`; j < `expr $i + 54` && j <= 100; j++))
 	do
-		if [ `expr $counter % 2` -eq 0 ]; then
-			echo $i";"$counter";true;2011-03-01" >>  connections.txt
+		if [ `expr $bill_id % 2` -eq 0 ]; then	
+			echo $bill_id";"$i";"$j";1234.56;Checkup_"$bill_id";2011-03-22 12:00:00;true;true;true;2011-02-22 12:00:00" >>  a.txt
 		else
-			echo $i";"$counter";false;2011-03-01" >>  connections.txt
+			echo $bill_id";"$i";"$j";1234.56;Checkup_"$bill_id";2011-03-22 12:00:00;false;true;true;2011-02-22 12:00:00" >>  a.txt
 		fi
-		((counter++))
+		((bill_id++))
 	done
 done
+
+echo "\." >> a.txt
 
