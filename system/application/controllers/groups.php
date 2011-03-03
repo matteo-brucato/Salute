@@ -12,7 +12,9 @@
  * Class Controller Groups
  * @todo: 	
  * 			add more action links to Group's List / My Groups list
- * 			form checking
+ *			should group names be unique? 
+ * @other bugs:
+ * 		request connection seems to be broken?
  * */
 class Groups extends Controller {
 
@@ -70,7 +72,7 @@ class Groups extends Controller {
 	
 	/**
 	 * Loads Create New Group Form
-	 * tested.
+	 * @bug, keeps reloading form after completion...
 	 * */
 	function create(){
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
@@ -100,10 +102,10 @@ class Groups extends Controller {
 			return;
 		}
 		
-		if ($group_type === 0 && $type === 'hcp'){
+		if ($group_type === '0' && $type === 'hcp'){
 			$this->ui->set_error('You are a healthcare provider. You cannot create a patient only group.', 'Permission Denied');
 			return;
-		} else if ($group_type === 1 && $type === 'patient'){
+		} else if ($group_type === '1' && $type === 'patient'){
 			$this->ui->set_error('You are a patient. You cannot create a healthcare provider only group.', 'Permission Denied');
 			return;
 		}
@@ -137,9 +139,9 @@ class Groups extends Controller {
 			$this->ui->set_query_error(); 
 			return;
 		}
-		
-		$this->ui->set_message("You have successfully created the group: $name",'Confirmation');
 		$this->db->trans_complete();
+		
+		$this->ui->set_message("You have successfully created the group: $name", 'Confirmation');
 	}
 
 	
@@ -172,10 +174,8 @@ class Groups extends Controller {
 			$this->ui->set_query_error();
 			return;
 		}
-	
-		$this->ui->set_message('The group has been deleted.','Confirmation');
-		
 		$this->db->trans_complete();
+		$this->ui->set_message('The group has been deleted.','Confirmation');
 	}
 	
 	/**
@@ -274,19 +274,27 @@ class Groups extends Controller {
 			return;
 		}
 
-		$this->db->trans_complete();				
+		$this->db->trans_complete();
+						
 		$this->ui->set_message('You have successfully left the group.','Confirmation');
-		// put link to see my groups / all groups...
 	}
 	
 	// a member is being removed by the group admin
 	function _members_delete($group_id = NULL, $account_id = NULL){
 	
-		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) return;
+		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id)) !== TRUE) return;
 		
 		$this->db->trans_start();
 		
 		// check that current member has permission to do this
+		$mem = $this->groups_model->get_member($this->auth->get_account_id(),$group_id); 
+		if ($mem === -1){
+			$this->ui->set_query_error();
+			return;	
+		} else if ($mem['permissions'] !== '3' || $mem['permissions'] !== '2') {
+			$this->ui->set_error('You do not have permission to delete members from this group.','Permission Denied');
+			return;	
+		}
 			
 		$mem = $this->groups_model->is_member($account_id,$group_id);
 		if($mem === -1){
@@ -305,8 +313,8 @@ class Groups extends Controller {
 		$this->db->trans_complete();		
 		
 		if ($this->auth->check(array(auth::CurrGRPMEM,$group_id)) !== TRUE){
-			$this->ui->set_message('You have successfully left the group.','Confirmation');
-			// link to my groups
+			$this->ui->set_message(' Member successfully deleted from group.','Confirmation');
+			return;
 		} else {
 			$this->ui->set_error('Internal Server Error','server');
 			return;
@@ -438,6 +446,7 @@ class Groups extends Controller {
 			return;
 		}
 
+		$member = '';
 		for ($i = 0; $i < count($list); $i++) {
 			$is_mem = $this->groups_model->is_member($this->auth->get_account_id(),$list[$i]['group_id']); 
 			$mem = $this->groups_model->get_member($this->auth->get_account_id(),$list[$i]['group_id']); 
@@ -556,11 +565,15 @@ class Groups extends Controller {
 			return;
 		}
 		
- 		$this->ui->set_message("You have successfully edited the group: $name",'Confirmation');
+ 		$this->ui->set(array("You have successfully edited the group: $name"));
 	}
 	
 	/**
 	 * List members of a group
+	 * @bug, you can request connection to yourself...
+	 * @bug, actions do not change. e.g. if you request the connection, it still shows you the option of requesting connection. 
+	 * 		 similarly for deleting member. 
+	 * 
 	 * */
 	function _members_list($group_id = NULL){
 

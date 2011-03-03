@@ -1,5 +1,7 @@
 Use this file as a list for simple things to do
 -----------------------------------------------
+AJAX
+- I think its a little broken... doesn't reload when you do an action. Changes are only shown when you hit refresh. 
 
 CONNECTIONS/PERMISSIONS/MEDRECS
 - when changing level for a connection, if connection goes from low to high, add permissions to all medical records
@@ -16,18 +18,27 @@ DOCUMENTATION
 
 PROFILE
 - Implement pictures and related information
+- Profile shortcut from NavBar fails to load sidepanel
 
 GROUPS
 - create is_invited table, to be able to verify whether someone trying to join a private group came via invitation.
 - logic checking:
-	- if patient only: should not be allowed to invite a hcp
-	- if hcp only: should not be allowed to invite a patient
+	- if patient only: should not be allowed to invite a hcp DONE
+	- if hcp only: should not be allowed to invite a patient DONE
 - Make one view, general, to see groups, instead of having mygroups and
   groups, that are basically the same thing
+  
+  REPLY by Nada: I disagree, 'Groups' shows all groups that are publice (including ones you are not in,
+				 and might want to join), 'My Groups' lists the groups you are actually a member of (showing both 
+				 private and public)
+
 - When listing group members, just use the already existing views to
   list patients and doctors (unless there is a specific reason to have
   a new view).
+  REPLY by Nada: There are additional features depending on your permission level. Ex:delete member, change perms,etc
+
 - When click on create group, side panel dissapears! Needs fixing...
+
 
 PRESENTATION
 - Prepare a list of actions to perform during the presentation (we all need to do that, I think)
