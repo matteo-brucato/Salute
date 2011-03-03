@@ -1,17 +1,34 @@
 Use this file as a list for simple things to do
 -----------------------------------------------
 
-- when adding a medical record, add a permission to all doctors with high level
+CONNECTIONS/PERMISSIONS/MEDRECS
 - when changing level for a connection, if connection goes from low to high, add permissions to all medical records
+
+DOCUMENTATION
+- add a glossary in the documentation
+- describe bettere how MVC has been implemented (structure of folders and files)
+- mention about test performance (CodeIgniter is very fast and each controller has a streightforward flow)
+- add a (possibly big) list with all the possible changes that we anticipate.
+  just to show that we are taking care of that aspect
 - go to github and for each issue reported do one of the following:
     - fix the bug
     - report the bug in the documentation
 
-- DOCUMENTATION
-- add a glossary in the documentation
-- describe bettere how MVC has been implemented (structure of folders and files)
-- mention about test performance (CodeIgniter is very fast and each controller has a streightforward flow)
-
-
 PROFILE
 - Implement pictures and related information
+
+GROUPS
+- create is_invited table, to be able to verify whether someone trying to join a private group came via invitation.
+- logic checking:
+	- if patient only: should not be allowed to invite a hcp
+	- if hcp only: should not be allowed to invite a patient
+- Make one view, general, to see groups, instead of having mygroups and
+  groups, that are basically the same thing
+- When listing group members, just use the already existing views to
+  list patients and doctors (unless there is a specific reason to have
+  a new view).
+- When click on create group, side panel dissapears! Needs fixing...
+
+PRESENTATION
+- Prepare a list of actions to perform during the presentation (we all need to do that, I think)
+... (my memory is bad...)

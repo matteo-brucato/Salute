@@ -72,45 +72,40 @@ function get_action_strings($actions, $tuple) {
 				$str .= '<li><a href="/medical_records/upload/'.$tuple['account_id'].'">Upload Medical Record</a></li>';
 				break;
 			case 'download-med-rec':
-				$str .= '<li><a href="/download/medical_record/'.$tuple['patient_id'].'/'.$tuple['medical_rec_id'].'">Download</a></li>';
+				$str .= '<li><a href="/download/medical_record/'.$tuple['patient_id'].'/'.$tuple['medical_rec_id'].'" class="noajax">Download</a></li>';
 				break;
 			case 'delete-med-rec':
 				$str .= '<li><a href="/medical_records/delete/'.$tuple['medical_rec_id'].'" class="confirm">Delete</a></li>';
 				break;
 			
-			case 'add-perm':
-				$str .= '<li><a href="/medical_records/add_permission/'.$tuple['medical_rec_id'].'">Add a permission</a></li>';
+			case 'see-perms':
+				$str .= '<li><a href="/medical_records/permissions/'.$tuple['medical_rec_id'].'">Permission</a></li>';
 				break;
-			case 'delete-perm':
+			/*case 'delete-perm':
 				$str .= '<li><a href="/medical_records/remove_permission/'.$tuple['medical_rec_id'].'/'.$tuple['account_id'].'" class="confirm">Remove permission</a></li>';
-				break;
+				break;*/
 			case 'change-perm':
 				$str .= '<li><a href="/medical_records/change_permissions/'.$tuple['account_id'].'">Change shared medical records</a></li>';
 				break;
-			case 'view-all-perm':
+			/*case 'view-all-perm':
 				$str .= '<li><a href="/medical_records/see_permissions/'.$tuple['medical_rec_id'].'">View all permissions</a></li>';
-				break;
+				break;*/
 				
 			case 'join-group':
 				$str .= '<li><a href="/groups/members/join/'.$tuple['group_id'].'">Join</a></li>';
 				break;
-				
 			case 'leave-group':
 				$str .= '<li><a href="/groups/members/leave/'.$tuple['group_id'].'/'.$tuple['account_id'].'" class="confirm">Leave</a></li>';
 				break;
-			
 			case 'delete-group':
-				$str .= '<li><a href="/groups/delete/'.$tuple['group_id'].'">Delete Group</a></li>';
+				$str .= '<li><a href="/groups/delete/'.$tuple['group_id'].'" class="confirm">Delete Group</a></li>';
 				break;
-					
 			case 'delete-member':
 				$str .= '<li><a href="/groups/members/delete/'.$tuple['group_id'].'/'.$tuple['account_id'].'" class="confirm">Delete Member</a></li>';
 				break;
-				
 			case 'invite-to-group':
 				$str .= '<li><a href="/groups/members/invite/'.$tuple['group_id'].'">Invite a Member</a></li>';
 				break;
-				
 			case 'edit-mem':
 				$str .= '<li><a href="/groups/members/edit/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Change Permissions</a></li>';
 				break;

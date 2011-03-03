@@ -57,6 +57,7 @@ class Ui {
 			$this->panels[3] = NULL;
 			$this->panels[4] = NULL;
 			$this->panels[5] = $curr_url;
+			$this->panels[6] = NULL;
 		} else {
 			$this->panels[0] = $this->CI->load->view('mainpane/default', '', TRUE);
 			$this->panels[1] = $this->CI->load->view('sidepane/default', '', TRUE);
@@ -64,6 +65,7 @@ class Ui {
 			$this->panels[3] = $this->CI->load->view('others/footer', '', TRUE);
 			$this->panels[4] = $this->CI->load->view('others/header', '', TRUE);
 			$this->panels[5] = $curr_url;
+			$this->panels[6] = '';
 		}
 	}
 	
@@ -93,7 +95,8 @@ class Ui {
 				'navbar'	=> $this->panels[2],
 				'footer'	=> $this->panels[3],
 				'header'	=> $this->panels[4],
-				'curr_url'	=> $this->panels[5]
+				'curr_url'	=> $this->panels[5],
+				'message'	=> $this->panels[6]
 			));
 		} else {
 			// View the previously specified layout
@@ -124,7 +127,7 @@ class Ui {
 	 */
 	function set($panels = array()) {
 		for ($i = 0; $i < count($panels); $i++) {
-			if ($panels[$i] === NULL ) continue;
+			if ($panels[$i] === NULL) continue;
 			$this->panels[$i] = $panels[$i];
 		}
 		$this->status_code = ALL_OK; // no error
@@ -134,7 +137,13 @@ class Ui {
 	 * Show an error message (in the main panel)
 	 * */
 	function set_error($error_message, $type = 'Generic error') {
-		$this->panels[0] = "<h2 class=\"error_hdr\">Error</h2><p class=\"error_type\"><i>type: </i>$type</p><p class=\"error_body\">$error_message</p>";
+		//$this->panels[6] ='<h2 class="error_hdr">Error</h2><p class="error_type"><i>type: </i>'.$type.'</p><p class="error_body">'.$error_message.'</p>';
+		$this->panels[6] = '
+			<div class="error_body">
+			<div class="error_hdr">'.$type.'</div>
+			<h4>'.$error_message.'</h4>
+			<a href="">Hide</a>
+			</div>';
 		$this->status_code = CTR_ERROR; // controller error
 	}
 	
@@ -147,7 +156,12 @@ class Ui {
 	 * Show a message (in the main panel)
 	 * */
 	function set_message($message, $type = '') {
-		$this->panels[0] = "<h2 class=\"message_hdr\">$type</h2><h3 class=\"message_body\">$message</h3>";
+		$this->panels[6] = '
+			<div class="message_body">
+			<div class="message_hdr">'.$type.'</div>
+			<h4>'.$message.'</h4>
+			<a href="">Hide</a>
+			</div>';
 		$this->status_code = OK_MESSAGE; // message, no error
 	}
 

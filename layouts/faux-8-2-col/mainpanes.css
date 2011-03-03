@@ -52,25 +52,50 @@ td.tables-1-selected-tds {
 }
 
 
-.message_hdr, .error_type {
-	margin-bottom: 20px;
+#message {
+	display: none;
 }
-.message_body {
+.message_hdr, .error_type {
+	/*margin-bottom: 20px;*/
+	float: left;
+	vertical-align: top;
+	margin: 0 5px;
+}
+.message_hdr, .error_hdr {
+	display: none;
+	/*font-weight: bold;
+	font-size: 1.2em;*/
+}
+.message_body, .error_body {
 	display: block;
 	background-color: #D1DBDB;
 	font-style: italic;
 	padding: 10px;
 	border: 1px solid #ABBEBE;
+	position: relative;
 }
+.message_body a, .error_body a {
+	//display: block;
+	position: absolute;
+	right: 10px;
+	bottom: 10px;
+	//float: right;
+	vertical-align: middle;
+}
+.message_body h4 {}
 .error_body {
-	display: block;
-	background-color: #D1DBDB;
-	font-style: italic;
-	padding: 10px;
 	border: 1px solid red;
 }
 
 .checkAll {
 	display: block;
 	float: right;
+}
+
+td.checkbox {
+	text-align: center;
+}
+
+td.radio {
+	text-align: center;
 }
