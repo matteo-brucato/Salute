@@ -75,6 +75,10 @@ $(document).ready(function() {			// Wait for the document to be able to be manip
 function layout_bindings() {
 	$("a").live("click", function(event) {
 		
+		if ($(this).hasClass('noajax')) {
+			return;
+		}
+		
 		if ($(this).hasClass('confirm')) {
 			if (! confirm('Please confirm')) {
 				event.preventDefault();
@@ -132,6 +136,7 @@ function layout_bindings() {
 	// Form submit bindings
 	$('form').live('submit', function(event) {
 		//alert($(this).serialize());
+		if ($(this).hasClass('noajax')) return;
 		if (! AJAX_ACTIVE) return;
 		event.preventDefault();
 		href = $(this).attr('action');

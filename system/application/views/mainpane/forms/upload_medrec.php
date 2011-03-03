@@ -1,4 +1,4 @@
-<?php echo form_open_multipart('upload/medical_record/'.$patient_id);?>
+<form method="post" action="/upload/medical_record/<?php echo $patient_id;?>" enctype="multipart/form-data" class="noajax">
 <fieldset id="upload-medrec-fd">
 <legend>Upload a medical record</legend>
 <table>
