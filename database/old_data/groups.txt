@@ -1,0 +1,4 @@
+14;794786543;Cancer Survivors;For people who have survived cancer;0;0
+15;436490796;Cool Doctors;For cool doctors only;1;1
+16;972387934;Diabetes Support Group;Support group for my diabetes patients;1;2
+\.
