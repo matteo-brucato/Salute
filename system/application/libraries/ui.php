@@ -65,7 +65,7 @@ class Ui {
 			$this->panels[3] = $this->CI->load->view('others/footer', '', TRUE);
 			$this->panels[4] = $this->CI->load->view('others/header', '', TRUE);
 			$this->panels[5] = $curr_url;
-			$this->panels[6] = '';
+			$this->panels[6] = NULL;
 		}
 	}
 	

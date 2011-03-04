@@ -25,7 +25,7 @@ table.tables-1 {
 	border-collapse: collapse;
 }
 .tables-1 th {
-	height: 22px;
+	height: 18px;
 	/*background-color: #abbebe;*/
 	background-color: #ACD0A0;
 	color: black;
@@ -44,6 +44,10 @@ td.tables-1-selected-tds {
 	/*background-color: #aabbcc;*/
 	background-color: #AADBAC;
 	/*cursor: pointer;*/
+}
+.tables-1 ul {
+	margin-left: 15px;
+	padding: 0;
 }
 
 

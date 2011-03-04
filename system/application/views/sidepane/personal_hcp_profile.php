@@ -38,14 +38,14 @@
 		</ul>
 	</li>
 
-	<li><a href="/groups/lists/all" class="ajax">Groups</a>
+	<li><a href="/groups/lists/mine" class="ajax">My Groups</a></li>
 		<ul>
-			<li><a href="/groups/lists/mine" class="ajax">My Groups</a></li>
 			<li><a href="/groups/create" class="ajax">Create a New Group</a></li>
+			<li><a href="/groups/lists/all" class="ajax">All Groups</a>
 		</ul>
 	</li>
 	
-	<li><a href="/refers" class="ajax">My Referals</a>
+	<li><a href="/refers" class="ajax">My Referrals</a>
 		<ul>
 			<li><a href="/refers/create_referral">Create referral</a></li>
 		</ul>

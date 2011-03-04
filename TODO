@@ -1,6 +1,14 @@
 Use this file as a list for simple things to do
 -----------------------------------------------
 
+GENERAL
+- It shouldn't be:
+     $this->ui->set($this->members('list', $group_id));
+  but simply
+     $this->members('list', $group_id);
+  and the same in all other cases. The idea is that you call the controller
+  method and then it will load the main panel, eventually.
+
 Public/Private Accounts
 - ONLY applicable to patients, NOT hcps 
 - fix patient / hcp search list (take into account private/public setting in accounts table)
@@ -64,6 +72,11 @@ GROUPS
 <<	- if patient only: should not be allowed to invite a hcp >>
 <<	- if hcp only: should not be allowed to invite a patient >>
 <<- add data: groups.txt invite.txt >>
+- Should a hcp be able to see "patient only" groups in the group listing?
+  (similarly, should a patient be able to see "hcps only" ones?)
+- Edit group does not work well... I change something and it says "all fields mandatory"
+- Also, it has that strange behaviour in dislpaying the description...
+- There is a bug: I can join a private group just with the URL...
 
 Make one view, general, to see groups, instead of having mygroups and groups, that are basically the same thing ##NADA##
 

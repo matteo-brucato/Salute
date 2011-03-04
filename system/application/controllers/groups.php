@@ -34,7 +34,7 @@ class Groups extends Controller {
 	 * 		List all groups
 	 * tested.
 	 * */
-	function index(){
+	function index() {
 		$this->lists();
 	}
 	
@@ -69,7 +69,6 @@ class Groups extends Controller {
 			$this->ui->set_error('Input not valid: <b>'.$direction.'</b>');	
 	}
 	
-	
 	/**
 	 * Loads Create New Group Form
 	 * @bug, keeps reloading form after completion...
@@ -77,14 +76,14 @@ class Groups extends Controller {
 	function create(){
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) return;
 		
-		$type = $this->auth->get_type();
+		//$type = $this->auth->get_type();
 		
-		if ($type === 'hcp')
-			$sideview = $this->load->view('sidepane/personal_hcp_profile', '', TRUE);
-		else if ($type === 'patient')
-			$sideview = $this->load->view('sidepane/personal_patient_profile', '', TRUE);
+		//if ($type === 'hcp')
+		//	$sideview = $this->load->view('sidepane/personal_hcp_profile', '', TRUE);
+		//else if ($type === 'patient')
+		//	$sideview = $this->load->view('sidepane/personal_patient_profile', '', TRUE);
 		
-		$this->ui->set(array($this->load->view('mainpane/forms/create_group', '', TRUE), $sideview));
+		$this->ui->set(array($this->load->view('mainpane/forms/create_group', '', TRUE)));
 	}
 
 
@@ -147,8 +146,7 @@ class Groups extends Controller {
 		$this->db->trans_complete();
 		
 		$this->ui->set_message("You have successfully created the group: $name", 'Confirmation');
-		
-		$this->ui->set($this->lists('mine'));
+		$this->lists('mine');
 	}
 
 	
@@ -711,7 +709,7 @@ class Groups extends Controller {
 		}
 
 		$this->ui->set_message('You have successfully edited the member','Confirmation');
-		$this->ui->set($this->members('list', $group_id));
+		$this->members('list', $group_id);
 	}
 }
 /** @} */

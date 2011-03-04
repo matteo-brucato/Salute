@@ -41,7 +41,7 @@ define('IS_AJAX', isset($_SERVER['HTTP_X_REQUESTED_WITH'])
 
 define('SITENAME', "Salute");
 
-define('DEBUG', TRUE);
+define('DEBUG', FALSE);
 define('TESTING_ON',FALSE);
 
 // Result constants for application testing when TESTING_ON = true

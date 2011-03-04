@@ -21,8 +21,8 @@ $table['table-name'] = 'doctors-table';
 $table['th'] = array('Account Id', 'First Name', 'Last Name', 'Specialty', 'Select');
 
 // Classes for columns (order matters)
-$table['th_class'] = array('id_keeper', '', '', '', '');
-$table['td_class'] = array('id_keeper', '', '', '', '');
+$table['th_class'] = array('id_keeper', '', '', '', 'radio');
+$table['td_class'] = array('id_keeper', '', '', '', 'radio');
 
 // All the results from the database
 $table['tuples'] = $list;
