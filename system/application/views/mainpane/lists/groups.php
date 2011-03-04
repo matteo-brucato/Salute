@@ -41,8 +41,7 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 			$actions = array('list-mems','invite-to-group','leave-group'); 
 		else
 			$actions = array(''); 
-	}
-	
+	}		
 	if($table['tuples'][$i]['group_type'] == 0) $table['tuples'][$i]['group_type'] = 'patients only';
 	else if($table['tuples'][$i]['group_type'] == 1) $table['tuples'][$i]['group_type'] = 'healthcare providers only';
 	else $table['tuples'][$i]['group_type'] = 'patients and healthcare providers';

@@ -467,19 +467,21 @@ class Groups extends Controller {
 		}
 		
 		$this->db->trans_start();
-		
-		$list = $this->groups_model->list_all_groups();
-		
+		$type = $this->auth->get_type();
+		if ($type === 'patient')
+			$list = $this->groups_model->list_all_groups_for_pats();
+		if ($type === 'hcp')
+			$list = $this->groups_model->list_all_groups_for_hcps();
+			
 		if ($list === -1){
 			$this->auth->set_query_error();
 			return;
 		}
 
-		$member = '';
 		for ($i = 0; $i < count($list); $i++) {
 			$is_mem = $this->groups_model->is_member($this->auth->get_account_id(),$list[$i]['group_id']); 
 			$mem = $this->groups_model->get_member($this->auth->get_account_id(),$list[$i]['group_id']); 
-			if ($is_mem === -1 || $mem === -1 ){
+			if ($is_mem === -1 || $mem === -1){
 				$this->auth->set_query_error();
 				return;	
 			} else if ($is_mem) {
@@ -490,10 +492,11 @@ class Groups extends Controller {
 				$member[$i]['perm'] = NULL;
 			}
 		}
-
 		$this->db->trans_complete();
 		$mainview = $this->load->view('mainpane/lists/groups', 
-							array('list_name'=> 'Public Groups' ,'group_list' => $list, 'member' => $member),TRUE);
+										array('list_name'=> 'Public Groups' ,
+											  'group_list' => $list, 'member' => $member 
+											  ),TRUE);
 		$this->ui->set(array($mainview));
 	}
 	
