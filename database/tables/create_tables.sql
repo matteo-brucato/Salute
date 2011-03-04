@@ -17,6 +17,7 @@ DROP TABLE ci_sessions CASCADE;
 DROP TABLE groups CASCADE;
 DROP TABLE refers;
 DROP TABLE is_in;
+DROP TABLE invite;
 
 
 --
