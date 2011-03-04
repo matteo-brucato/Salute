@@ -699,17 +699,13 @@ class Connections_model extends Model {
 	 * Gives the connection level between a patient and a hcp
 	 * 
 	 * @param $inputs
-	 *   Is of the form: array(account_id, account_id)
+	 *   Is of the form: array(sender account_id, accepter account_id)
 	 * @return
 	 *  -1 in case of error in a query
 	 *  -2 if the connection does not exist
 	 *   array with the connection level
 	 * */
 	 function get_level($inputs) {
-		//check if te connection exists
-		$check = $this->is_connected_with($inputs[0], $inputs[1]);
-		if ($check === -1) return -1;
-		if ($check === FALSE) return -2;
 		
 		$sql = "SELECT C.sender_level
 			FROM connections C
@@ -719,8 +715,10 @@ class Connections_model extends Model {
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 		
-		if ($query->num_rows() > 0)	
-			return $query->result_array();
+		if ($query->num_rows() > 0){	
+			$level = $query->result_array();
+			return $level[0];
+		}
 	 }
 	
 	

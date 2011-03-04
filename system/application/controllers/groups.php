@@ -12,7 +12,9 @@
  * Class Controller Groups
  * @todo: 	
  * 			add more action links to Group's List / My Groups list
- * 			form checking
+ *			should group names be unique? 
+ * @other bugs:
+ * 		request connection seems to be broken?
  * */
 class Groups extends Controller {
 
@@ -52,8 +54,7 @@ class Groups extends Controller {
 		if ( $direction == 'list' )
 			$this->_members_list($group_id);
 		else if ( $direction == 'edit' )
-			//$this->_members_edit($group_id,$account_id);
-			echo 'hi';
+			$this->_members_edit($group_id,$account_id);
 		else if ( $direction == 'edit_do' )
 			$this->_members_edit_do($group_id,$account_id);
 		else if ( $direction == 'join' )
@@ -71,13 +72,19 @@ class Groups extends Controller {
 	
 	/**
 	 * Loads Create New Group Form
-	 * tested.
+	 * @bug, keeps reloading form after completion...
 	 * */
 	function create(){
-		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
-			return;
-		}
-		$this->ui->set(array($this->load->view('mainpane/forms/create_group', '', TRUE), ''));
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) return;
+		
+		$type = $this->auth->get_type();
+		
+		if ($type === 'hcp')
+			$sideview = $this->load->view('sidepane/personal_hcp_profile', '', TRUE);
+		else if ($type === 'patient')
+			$sideview = $this->load->view('sidepane/personal_patient_profile', '', TRUE);
+		
+		$this->ui->set(array($this->load->view('mainpane/forms/create_group', '', TRUE), $sideview));
 	}
 
 
@@ -92,9 +99,19 @@ class Groups extends Controller {
 		$privacy = $this->input->post('public_private');
 		$group_type = $this->input->post('group_type');
 		
+		$type = $this->auth->get_type();
+		
 		// Form Checking will replace this
 		if($name == NULL || $description == NULL || $privacy == NULL || $group_type == NULL )	{
 			$this->ui->set_error('All Fields are Mandatory.','Missing Arguments'); 
+			return;
+		}
+		
+		if ($group_type === '0' && $type === 'hcp'){
+			$this->ui->set_error('You are a healthcare provider. You cannot create a patient only group.', 'Permission Denied');
+			return;
+		} else if ($group_type === '1' && $type === 'patient'){
+			$this->ui->set_error('You are a patient. You cannot create a healthcare provider only group.', 'Permission Denied');
 			return;
 		}
 		
@@ -127,9 +144,11 @@ class Groups extends Controller {
 			$this->ui->set_query_error(); 
 			return;
 		}
-		
-		$this->ui->set_message("You have successfully created the group: $name",'Confirmation');
 		$this->db->trans_complete();
+		
+		$this->ui->set_message("You have successfully created the group: $name", 'Confirmation');
+		
+		$this->ui->set($this->lists('mine'));
 	}
 
 	
@@ -145,20 +164,27 @@ class Groups extends Controller {
 		}
 		
 		// check that they have permission
+		$mem = $this->groups_model->get_member($this->auth->get_account_id(),$group_id); 
+		if ($mem === -1){
+			$this->ui->set_query_error();
+			return;	
+		} else if ($mem['permissions'] !== '3') {
+			$this->ui->set_error('You do not have permission to delete this group.','Permission Denied');
+			return;	
+		}
 		
 		$this->db->trans_start();
 				
 		$result = $this->groups_model->delete(array($group_id));
 		
 		if ($result === -1){
-				$this->auth->set_query_error();
-				return;
+			$this->ui->set_query_error();
+			return;
 		}
-	
-		//@todo later...make it fancy.
-		$this->ui->set_message('The group has been deleted.','Confirmation');
-		
 		$this->db->trans_complete();
+
+		$this->ui->set_message('The group has been deleted.','Confirmation');
+		$this->ui->set($this->lists('mine'));
 	}
 	
 	/**
@@ -186,11 +212,13 @@ class Groups extends Controller {
 			if($mem === -1 || $mem === FALSE){
 				$mem = $this->hcp_model->is_hcp($this->auth->get_account_id());
 				// if not, server error
-				if($mem === -1 || $mem === FALSE){
+				if($mem === -1){
 					$this->ui->set_error('Internal server error1','server');
 					return;
-				}
-				else{
+				} else if ($mem === FALSE){
+					$this->ui->set_error('Internal server error1','server');
+					return;
+				} else{
 					if ( $group['group_type'] === '0' ){
 						$this->ui->set_error('This is a patient only group.','Permission Denied');
 						return;
@@ -218,11 +246,11 @@ class Groups extends Controller {
 		// check again that they're in 'is_in'
 		if ($this->auth->check(array(auth::CurrGRPMEM,$group_id)) === TRUE){
 			$this->ui->set_message('You have successfully joined the group.','Confirmation');
-			//link to view my groups.
 		} else {
 			$this->ui->set_error('Internal Server Error4','server');
 			return;
 		}
+		$this->ui->set($this->lists('mine'));
 	}
 	
 	/**
@@ -256,19 +284,28 @@ class Groups extends Controller {
 			return;
 		}
 
-		$this->db->trans_complete();				
+		$this->db->trans_complete();
+						
 		$this->ui->set_message('You have successfully left the group.','Confirmation');
-		// put link to see my groups / all groups...
+		$this->ui->set($this->lists('mine'));
 	}
 	
 	// a member is being removed by the group admin
 	function _members_delete($group_id = NULL, $account_id = NULL){
 	
-		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) return;
+		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id)) !== TRUE) return;
 		
 		$this->db->trans_start();
 		
 		// check that current member has permission to do this
+		$mem = $this->groups_model->get_member($this->auth->get_account_id(),$group_id); 
+		if ($mem === -1){
+			$this->ui->set_query_error();
+			return;	
+		} else if ($mem['permissions'] !== '3' && $mem['permissions'] !== '2') {
+			$this->ui->set_error('You do not have permission to delete members from this group.','Permission Denied');
+			return;	
+		}
 			
 		$mem = $this->groups_model->is_member($account_id,$group_id);
 		if($mem === -1){
@@ -286,13 +323,8 @@ class Groups extends Controller {
 		}
 		$this->db->trans_complete();		
 		
-		if ($this->auth->check(array(auth::CurrGRPMEM,$group_id)) !== TRUE){
-			$this->ui->set_message('You have successfully left the group.','Confirmation');
-			// link to my groups
-		} else {
-			$this->ui->set_error('Internal Server Error','server');
-			return;
-		}
+		$this->ui->set_message(' Member successfully deleted from group.','Confirmation');
+		$this->ui->set($this->members('list',$group_id));
 	}
 	
 	/**
@@ -310,21 +342,29 @@ class Groups extends Controller {
 		$results = $this->connections_model->list_patients_connected_with($this->auth->get_account_id()); 
 		if ($results === -1) {$this->ui->set_query_error(); return;}
 		
-		$mainview = $this->load->view('mainpane/forms/pick_multiple_patients',
-			array(
-				'list_name' => 'Select patients to invite to this group',
-				'list' => $results,
-				'form_action' => '/groups/members_invite_do/'.$gid), TRUE);
+		// Get the group tuple
+		$group = $this->groups_model->get_group($gid);
+		if ($group === -1) {$this->ui->set_query_error(); return;}
+		if ($group === NULL) {$this->ui->set_error('Group not found'); return;}
 		
+		$mainview = '';
+		if ($group['group_type'] !== '1'){		
+			$mainview .= $this->load->view('mainpane/forms/pick_multiple_patients',
+				array(
+					'list_name' => 'Select patients to invite to this group',
+					'list' => $results,
+					'form_action' => '/groups/members_invite_do/'.$gid), TRUE);
+		}
 		$results = $this->connections_model->list_hcps_connected_with($this->auth->get_account_id()); 
 		if ($results === -1) {$this->ui->set_query_error(); return;}
 		
-		$mainview .= $this->load->view('mainpane/forms/pick_multiple_hcps',
-			array(
-				'list_name' => 'Select HCPs to invite to this group',
-				'list' => $results,
-				'form_action' => '/groups/members_invite_do/'.$gid), TRUE);
-		
+		if ($group['group_type'] !== '0'){		
+			$mainview .= $this->load->view('mainpane/forms/pick_multiple_hcps',
+				array(
+					'list_name' => 'Select HCPs to invite to this group',
+					'list' => $results,
+					'form_action' => '/groups/members_invite_do/'.$gid), TRUE);
+		}
 		$this->ui->set(array($mainview));
 	}
 	
@@ -334,6 +374,7 @@ class Groups extends Controller {
 			auth::GRP, $gid,				// gid must be a group id
 			auth::CurrGRPMEM, $gid		// current must be member of group gid
 		)) !== TRUE) return;
+		
 		
 		// Get the group tuple
 		$group = $this->groups_model->get_group($gid);
@@ -360,8 +401,24 @@ class Groups extends Controller {
 				continue;
 			}
 			
-			$alert .= 'Inviting id '.$iid.'... ';
+			$is_inv = $this->groups_model->is_invited($iid,$gid);
+			if($is_inv === -1){
+				$this->ui->set_query_error();
+				return;
+			}else if ($is_inv){
+				$this->ui->set_message('This user has already been invited to the group.');
+				$this->ui->set($this->list('mine'));
+			}
 			
+			
+			$alert .= 'Inviting id '.$iid.'... ';
+
+			$invitation = $this->groups_model->invite($this->auth->get_account_id(),$iid,$gid);
+			if ($invitation === -1){
+				$this->ui->set_query_error();
+				return;
+			}
+
 			// Try to send the email
 			$email = $this->account_model->get_account_email(array($iid));
 			if($email === -1) {
@@ -383,8 +440,8 @@ class Groups extends Controller {
 			
 			$alert .= 'email invitation sent!<br />';
 		}
-		
 		$this->ui->set_message($alert);
+		$this->ui->set($this->lists('mine'));
 	}
 	
 	/*function members_invite_hcps_do($gid = NULL) {
@@ -420,6 +477,7 @@ class Groups extends Controller {
 			return;
 		}
 
+		$member = '';
 		for ($i = 0; $i < count($list); $i++) {
 			$is_mem = $this->groups_model->is_member($this->auth->get_account_id(),$list[$i]['group_id']); 
 			$mem = $this->groups_model->get_member($this->auth->get_account_id(),$list[$i]['group_id']); 
@@ -501,7 +559,7 @@ class Groups extends Controller {
 			$this->ui->set_error('Internal Server Error','server');
 			return;
 		}
-		$this->ui->set(array($this->load->view('mainpane/forms/edit_group', array('curr_info' => $curr_info), TRUE)));
+		$this->ui->set(array($this->load->view('mainpane/forms/edit_group', array('curr_info' => $curr_info, 'group_id' => $group_id), TRUE)));
 		
 		$this->db->trans_complete();
 	}
@@ -509,7 +567,10 @@ class Groups extends Controller {
 	
 	// @bug does not change database
 	function edit_do($group_id = NULL){
-
+		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id)) !== TRUE) {
+			return;
+		}
+		
 		$name = $this->input->post('name');
 		$description = $this->input->post('description');
 		$public_private = $this->input->post('public_private');
@@ -522,7 +583,6 @@ class Groups extends Controller {
 		}
 		
 		$this->db->trans_start();
-		
 		$result = $this->groups_model->edit_group(array(
 													$name, 
 													$description, 
@@ -530,19 +590,21 @@ class Groups extends Controller {
 													$group_type,
 													$group_id
 												)); 
-		
+ 		$this->db->trans_complete();		
 		if($result === -1){
 			$this->ui->set_query_error(); 
 			return;
 		}
 		
-		$this->ui->set_message("You have successfully edited the group: $name",'Confirmation');
-		
- 		$this->db->trans_complete();
+ 		$this->ui->set(array("You have successfully edited the group: $name"));
 	}
 	
 	/**
 	 * List members of a group
+	 * @bug, you can request connection to yourself...
+	 * @bug, actions do not change. e.g. if you request the connection, it still shows you the option of requesting connection. 
+	 * 		 similarly for deleting member. 
+	 * 
 	 * */
 	function _members_list($group_id = NULL){
 
@@ -587,6 +649,7 @@ class Groups extends Controller {
 			
 		}
 		$perm = $this->groups_model->get_member($this->auth->get_account_id(),$group_id);
+		$this->db->trans_complete();
 		if ($perm === -1){
 			$this->ui->set_query_error();
 			return;	
@@ -595,7 +658,6 @@ class Groups extends Controller {
 		$this->ui->set(array($this->load->view('mainpane/lists/group_members', 
 										array('mem_list' => $list, 'perm' => $perm, 'info' => $info),
 										TRUE)));
-		$this->db->trans_complete();
 	}
 	
 	function _members_edit($group_id = NULL, $account_id = NULL){
@@ -603,24 +665,33 @@ class Groups extends Controller {
 			return;
 		}
 		$this->db->trans_start();
-		$mem = $this->groups_model->get_member($this->auth->get_account_id(),$group_id);
-		if ($mem === -1){
+		
+		$curr_info = $this->groups_model->get_member($this->auth->get_account_id(),$group_id);
+		if ($curr_info === -1){
 			$this->ui->set_query_error();
 			return;
-		} else if ($mem === NULL) {
+		} else if ($curr_info === NULL) {
 			$this->ui->set_error('You are no longer a member of this group.');
 			return;
-		} else if ($mem['permissions'] != '2' && $mem['permissions'] != '3' ){
+		} else if ($curr_info['permissions'] != '2' && $curr_info['permissions'] != '3' ){
 			$this->ui->set_error('You do not have permission to edit this member.');
 			return;
 		}
 
-		$this->ui->set(array($this->load->view('mainpane/forms/edit_member',array('curr_info' => $curr_info), TRUE)));
+		$this->ui->set(array($this->load->view('mainpane/forms/edit_member',array(
+																			'curr_info' => $curr_info, 
+																			'group_id' => $group_id, 
+																			'account_id' => $account_id),
+																			 TRUE)));
 
 		$this->db->trans_complete();
 	}
 	
 	function _members_edit_do($group_id = NULL,$account_id = NULL){
+		
+		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id)) !== TRUE) {
+			return;
+		}
 		$perm = $this->input->post('permissions');
 		
 		// Form Checking will replace this
@@ -628,24 +699,19 @@ class Groups extends Controller {
 			$this->ui->set_error('All Fields are Mandatory.','Missing Arguments'); 
 			return;
 		}
-		
+
 		$this->db->trans_start();
 		
-		$result = $this->groups_model->edit_member(array(
-													'account_id' => $account_id, 
-													'group_id' => $group_id, 
-													'permissions' => $perm, 
-												)); 
+		$result = $this->groups_model->edit_member($account_id, $group_id, $perm); 
 		
+		$this->db->trans_complete();
 		if($result === -1){
 			$this->ui->set_query_error(); 
 			return;
 		}
 
-		/*todo: link back to members list*/
 		$this->ui->set_message('You have successfully edited the member','Confirmation');
-		
- 		$this->db->trans_complete();
+		$this->ui->set($this->members('list', $group_id));
 	}
 }
 /** @} */

@@ -438,11 +438,26 @@ class Connections extends Controller {
 		if ($check !== TRUE) return;
 		
 		// Take the current level and send it to the view
-		$this->connections_model->
+		$connection = $this->connections_model->get_connection($this->auth->get_account_id(), $aid);
 		
-		$this->ui->set(array(
-			$this->load->view('mainpane/forms/change_conn_level', array('aid' => $aid), TRUE)
-		));
+		if ( $this->auth->get_account_id() === $connection['sender_id'])
+			$connection_level = $this->connections_model->get_level(array($this->auth->get_account_id(), $aid));
+		else
+			$connection_level = $this->connections_model->get_level(array($aid, $this->auth->get_account_id()));
+			
+		// Switch the response from the model, to select the correct view
+		switch ($connection_level) {
+			case -1:
+				$this->ui->set_query_error();
+				break;
+			case -2:
+				$this->ui->set_error('Connection does not exist.', 'Permission Denied');
+				break;
+			default:
+				$this->ui->set(array(
+				$this->load->view('mainpane/forms/change_conn_level', array('aid' => $aid, 'con_level' => $connection_level), TRUE)));
+				
+		}
 	}
 }
 /** @} */

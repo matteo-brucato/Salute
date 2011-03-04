@@ -30,11 +30,11 @@ $table['attr'] = array('group_id','name', 'description', 'group_type', 'actions'
 // Everybody has the same action, in this implementation
 for ($i = 0; $i < count($table['tuples']); $i++) {
 	if($perm[$i]['perm'] === '0')
-		$actions = array('leave-group');
+		$actions = array('list-mems','leave-group');
 	else if ($perm[$i]['perm'] === '3')
-		$actions = array('invite-to-group','leave-group', 'edit-group','delete-group');
+		$actions = array('list-mems','invite-to-group','leave-group', 'edit-group','delete-group');
 	else if($perm[$i]['perm'] !== '0' && $perm[$i]['perm'] !== NULL)
-		$actions = array('invite-to-group','leave-group'); // later: add link that loads a whole form to change all member perms
+		$actions = array('list-mems','invite-to-group','leave-group'); // later: add link that loads a whole form to change all member perms
 	else
 		$actions = array(''); 
 	

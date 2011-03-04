@@ -31,11 +31,11 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 	
 	if($member[$i]['is'] === TRUE){
 		if($member[$i]['perm'] === '0')
-			$actions = array('leave-group');
+			$actions = array('list-mems','leave-group');
 		else if ($member[$i]['perm'] === '3')
-			$actions = array('invite-to-group','leave-group', 'edit-group','delete-group');
+			$actions = array('list-mems', 'invite-to-group','leave-group', 'edit-group','delete-group');
 		else if($member[$i]['perm'] !== '0' && $member[$i]['perm'] !== NULL)
-			$actions = array('invite-to-group','leave-group'); // later: add link that loads a whole form to change all member perms
+			$actions = array('list-mems','invite-to-group','leave-group'); // later: add link that loads a whole form to change all member perms
 		else
 			$actions = array(''); 
 	}else 

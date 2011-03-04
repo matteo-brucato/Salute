@@ -72,7 +72,6 @@ class Groups_model extends Model {
 	 * @param $group_id
 	 *   Is of the form: array($group_id)
 	 * @return
-	 *   -1 if error in delete
 	 *   1 if group was properly deleted
 	 * */
 	function delete($group_id){
@@ -288,14 +287,37 @@ class Groups_model extends Model {
 	
 	function edit_member($account_id,$group_id,$permissions){
 	
-		$sql = "UPDATE is_in SET permissions = ?
-			WHERE account_id = ? AND group_id = ?";
+		$sql = "UPDATE is_in SET permissions = ? WHERE account_id = ? AND group_id = ?";
 		
 		$this->db->query($sql,array($permissions,$account_id,$group_id));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1; // query error
 		return 0;
+	}
+	
+	function invite($inviter_id,$invitee_id,$group_id){
+	
+		$sql = "INSERT INTO invite(inviter_id, invitee_id,group_id) VALUES(?,?,?) ";
+		
+		$this->db->query($sql,array($inviter_id,$invitee_id,$group_id));
+		if ($this->db->trans_status() === FALSE)
+			return -1; // query error
+		return 0;
+	}
+	
+	function is_invited($invitee_id,$group_id){
+		
+		$sql = "SELECT *
+				FROM invite
+				WHERE invitee_id = ? AND group_id = ?";
+
+		$query = $this->db->query($sql, array($invitee_id,$group_id));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		return ($query->num_rows() > 0);
 	}
 	
 }
