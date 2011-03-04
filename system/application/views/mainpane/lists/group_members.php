@@ -35,7 +35,7 @@ else if ($perm['permissions'] == '1')
 else if ($perm['permissions'] == '2')
 	$actions = array('request-conn', 'delete-member','edit-mem');  
 else if ($perm['permissions'] == '3')
-	$actions = array('request-conn', 'delete-member','edit-mem','edit-group','delete-group');  
+	$actions = array('request-conn', 'delete-member','edit-mem');  
 
 for ($i = 0; $i < count($table['tuples']); $i++) {
 	

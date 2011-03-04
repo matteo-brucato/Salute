@@ -1,6 +1,16 @@
 Use this file as a list for simple things to do
 -----------------------------------------------
 
+Public/Private Accounts
+- ONLY applicable to patients, NOT hcps 
+- fix patient / hcp search list (take into account private/public setting in accounts table)
+- Patient's who have a private profile are in summary: users who only want to send requests themselves, they cannot
+  receive connection requests. They can receive referals and group invitations ONLY becasue they are received from their
+  connected friends/hcps. If private patient joins a group, they will be listed in the group members list; this is because
+  if they want to be part of the group, they only want to be public in that group.
+- change connection requests: deny if the receiver account is private
+- 
+
 CONNECTIONS/PERMISSIONS/MEDRECS
 - when changing level for a connection, if connection goes from low to high, add permissions to all medical records
 - 'type' in permissions table: 0 is read access 1 is read+write access => change all models/fns that use permissions
@@ -17,28 +27,49 @@ DOCUMENTATION
     - report the bug in the documentation
 
 PROFILE
-- Implement pictures and related information
+- Implement pictures
+
 - Profile shortcut from NavBar fails to load sidepanel
 
+- DECISION:
+-- Controller General Logic:
+		if(connected)
+			show related profile
+		else if (not connected) 
+			if (private)
+				deny
+			else 
+				show public profile
+					
+-- IN SUMMARY : 8 scenarios needed 
+	
+**	curr_user-->id_to_give_to_controller_fn // view name
+	
+	hcp-->hcp // hcp_to_hcp_related_profile 
+	hcp-->pat // hcp_to_pat_related_profile
+	pat-->hcp // pat_to_hcp_related_profile
+	pat-->pat // pat_to_pat_related_profile
+	no_conn-->pat // deny if patient is private. else pat_public_profile (name and picture)
+	no_conn-->hcp // hcp_public_profile (picture and everything)
+	hcp // hcp_personal_profile
+	pat	// pat_personal_profile
+
 GROUPS
-- create is_invited table, to be able to verify whether someone trying to join a private group came via invitation. --DONE--
-- logic checking:
-	- if patient only: should not be allowed to invite a hcp --DONE--
-	- if hcp only: should not be allowed to invite a patient --DONE--
+<<create is_invited table, to be able to verify whether someone trying to join a private group came via invitation.>>
+<<logic checking:>>
+<<	- if patient only: should not be allowed to invite a hcp >>
+<<	- if hcp only: should not be allowed to invite a patient >>
 
-- Make one view, general, to see groups, instead of having mygroups and
+Make one view, general, to see groups, instead of having mygroups and
   groups, that are basically the same thing
-  REPLY by Nada: I disagree, 'Groups' shows all groups that are publice (including ones you are not in,
-				 and might want to join), 'My Groups' lists the groups you are actually a member of (showing both 
-				 private and public)
 
-- When listing group members, just use the already existing views to
+When listing group members, just use the already existing views to
   list patients and doctors (unless there is a specific reason to have
   a new view).
-  REPLY by Nada: There are additional features depending on your permission level. Ex:delete member, change perms,etc
-  
-- add data: groups.txt invite.txt  -- DONE --
 
+  
+<<- add data: groups.txt invite.txt >>
+- in the member list, it gives you the option to 'request connection' this doesnt check if they are already connected/have been requested already
 - create test set
 
 PRESENTATION
