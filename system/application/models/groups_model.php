@@ -296,6 +296,30 @@ class Groups_model extends Model {
 		return 0;
 	}
 	
+	function invite($inviter_id,$invitee_id,$group_id){
+	
+		$sql = "INSERT INTO invite(inviter_id, invitee_id,group_id) VALUES(?,?,?) ";
+		
+		$this->db->query($sql,array($inviter_id,$invitee_id,$group_id));
+		if ($this->db->trans_status() === FALSE)
+			return -1; // query error
+		return 0;
+	}
+	
+	function is_invited($invitee_id,$group_id){
+		
+		$sql = "SELECT *
+				FROM invite
+				WHERE invitee_id = ? AND group_id = ?";
+
+		$query = $this->db->query($sql, array($invitee_id,$group_id));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		return ($query->num_rows() > 0);
+	}
+	
 }
 /**@}*/
 ?>
