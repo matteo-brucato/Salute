@@ -146,11 +146,11 @@ CREATE TABLE permission(
 	medical_rec_id SERIAL NOT NULL,
 	account_id SERIAL NOT NULL,
 	date_created DATE NOT NULL,
-	permission_type VARCHAR(1) DEFAULT '0',
+	type VARCHAR(1) DEFAULT '0', -- 0 is read access 1 is write access
 	PRIMARY KEY (permission_id),
 	UNIQUE (medical_rec_id,account_id),
-	FOREIGN KEY (medical_rec_id) REFERENCES medical_record(medical_rec_id)  ON DELETE CASCADE,
-	FOREIGN KEY (account_id) REFERENCES accounts(account_id)  ON DELETE CASCADE
+	FOREIGN KEY (medical_rec_id) REFERENCES medical_record(medical_rec_id) ON DELETE CASCADE,
+	FOREIGN KEY (account_id) REFERENCES accounts(account_id) ON DELETE CASCADE
 
 );
 
@@ -199,6 +199,15 @@ CREATE TABLE connections(
 	FOREIGN KEY (receiver_id) REFERENCES accounts(account_id)
 );
 	
+CREATE TABLE invite(
+	inviter_id SERIAL NOT NULL,
+	invitee_id SERIAL NOT NULL,
+	group_id SERIAL NOT NULL,
+	PRIMARY KEY(invitee_id,group_id),
+	FOREIGN KEY (inviter_id) REFERENCES accounts(account_id) ON DELETE CASCADE, 
+	FOREIGN KEY (invitee_id) REFERENCES accounts(account_id) ON DELETE CASCADE,
+	FOREIGN KEY (group_id) REFERENCES groups(group_id) ON DELETE CASCADE
+);
 
 --
 --RELATIONSHIP TABLES
@@ -247,3 +256,4 @@ CREATE TABLE ci_sessions (
 	user_data text NOT NULL,
 	PRIMARY KEY (session_id)
 );
+

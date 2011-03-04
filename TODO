@@ -5,6 +5,8 @@ AJAX
 
 CONNECTIONS/PERMISSIONS/MEDRECS
 - when changing level for a connection, if connection goes from low to high, add permissions to all medical records
+- 'type' in permissions table: 0 is read access 1 is read+write access => change all models/fns that use permissions
+	to take this new case into account. 
 
 DOCUMENTATION
 - add a glossary in the documentation
@@ -23,8 +25,9 @@ PROFILE
 GROUPS
 - create is_invited table, to be able to verify whether someone trying to join a private group came via invitation.
 - logic checking:
-	- if patient only: should not be allowed to invite a hcp DONE
-	- if hcp only: should not be allowed to invite a patient DONE
+	- if patient only: should not be allowed to invite a hcp
+	- if hcp only: should not be allowed to invite a patient
+
 - Make one view, general, to see groups, instead of having mygroups and
   groups, that are basically the same thing
   
