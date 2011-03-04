@@ -491,9 +491,10 @@ class Groups extends Controller {
 			}
 		}
 
-		$this->ui->set(array($this->load->view('mainpane/lists/groups', array('group_list' => $list, 'member' => $member), TRUE)));
-		
 		$this->db->trans_complete();
+		$mainview = $this->load->view('mainpane/lists/groups', 
+							array('list_name'=> 'Public Groups' ,'group_list' => $list, 'member' => $member),TRUE);
+		$this->ui->set(array($mainview));
 	}
 	
 	/**
@@ -512,16 +513,17 @@ class Groups extends Controller {
 			$this->auth->set_query_error();
 			return;
 		}
-		$perm='';
+		$member='';
 		for ($i = 0; $i < count($list); $i++) {
 			$mem = $this->groups_model->get_member($this->auth->get_account_id(),$list[$i]['group_id']); 
 			if ($mem === -1 ){
 				$this->auth->set_query_error();
 				return;	
 			} 
-			$perm[$i]['perm'] = $mem['permissions'];
+			$member[$i]['perm'] = $mem['permissions'];
+			$member[$i]['is'] = TRUE;
 		}
-		$this->ui->set(array($this->load->view('mainpane/lists/mygroups', array('group_list' => $list, 'perm' => $perm), TRUE)));
+		$this->ui->set(array($this->load->view('mainpane/lists/groups', array('list_name'=> 'My Groups','group_list' => $list, 'member' => $member), TRUE)));
 		
 		$this->db->trans_complete();
 	}
@@ -617,45 +619,62 @@ class Groups extends Controller {
 			$this->ui->set_query_error();
 			return;
 		}
-		
+			
 		for ($i = 0; $i < count($list); $i++) {
 			$mem = $this->groups_model->get_member($list[$i]['account_id'],$list[$i]['group_id']);
-			
 			if($mem === -1){
 				$this->ui->set_query_error();
 				return;
 			} else if($this->patient_model->is_patient($mem['account_id'])){
-				$pat = $this->patient_model->get_patient($mem['account_id']);
-				if ($pat === -1){
-					$this->ui->set_query_error();
-					return;	
-				}
-				$info[$i]['first_name'] = $pat[0]['first_name'];
-				$info[$i]['last_name'] = $pat[0]['last_name'];
-			} else if ($this->hcp_model->is_hcp($mem['account_id'])){
-				$hcp = $this->hcp_model->get_hcp($mem['account_id']);
-				if ($hcp === -1){
-					$this->ui->set_query_error();
-					return;	
-				}
-				$info[$i]['first_name'] = $hcp[0]['first_name'];
-				$info[$i]['last_name'] = $hcp[0]['last_name'];	
-			} else{
+				$j = $this->patient_model->get_patient($mem['account_id']);
+			} else if ($this->hcp_model->is_hcp($mem['account_id']))
+				$j = $this->hcp_model->get_hcp($mem['account_id']);
+			else{
 				$this->ui->set_error('Internal server error','server');
 				return;
 			}
+			if ($j === -1){
+				$this->ui->set_query_error();
+				return;	
+			}
+			$info[$i]['first_name'] = $j[0]['first_name'];
+			$info[$i]['last_name'] = $j[0]['last_name'];
 			
+			$is_conn = $this->connections_model->is_connected_with($this->auth->get_account_id(),$mem['account_id']);
+			if ($is_conn === -1){
+					$this->ui->set_query_error();
+					return;	
+			}
+			if ($is_conn === FALSE){
+				$is_pen = $this->connections_model->is_pending_with($this->auth->get_account_id(),$mem['account_id']);
+				if ($is_pen === -1){
+					$this->ui->set_query_error();
+					return;	
+				}else if($is_pen === TRUE)
+					$info[$i]['connected'] = 'pending';		
+				$info[$i]['connected'] = FALSE;		
+			} else 
+				$info[$i]['connected'] = TRUE;
 		}
 		$perm = $this->groups_model->get_member($this->auth->get_account_id(),$group_id);
-		$this->db->trans_complete();
+		
 		if ($perm === -1){
 			$this->ui->set_query_error();
 			return;	
 		}
 		$perm = $perm['permissions'];
-		$this->ui->set(array($this->load->view('mainpane/lists/group_members', 
-										array('mem_list' => $list, 'perm' => $perm, 'info' => $info),
-										TRUE)));
+		
+		$group = $this->groups_model->get_group($group_id);
+		if ($group === -1){
+			$this->ui->set_query_error();
+			return;	
+		}
+		$this->db->trans_complete();
+		$list_name = $group['name'].' Members';
+		$mainview = $this->load->view('mainpane/lists/group_members', 
+									  array('list_name' => $list_name,'mem_list' => $list,
+											'perm' => $perm, 'info' => $info), TRUE);
+		$this->ui->set(array($mainview));
 	}
 	
 	function _members_edit($group_id = NULL, $account_id = NULL){
