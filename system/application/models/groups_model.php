@@ -72,7 +72,6 @@ class Groups_model extends Model {
 	 * @param $group_id
 	 *   Is of the form: array($group_id)
 	 * @return
-	 *   -1 if error in delete
 	 *   1 if group was properly deleted
 	 * */
 	function delete($group_id){
@@ -288,8 +287,7 @@ class Groups_model extends Model {
 	
 	function edit_member($account_id,$group_id,$permissions){
 	
-		$sql = "UPDATE is_in SET permissions = ?
-			WHERE account_id = ? AND group_id = ?";
+		$sql = "UPDATE is_in SET permissions = ? WHERE account_id = ? AND group_id = ?";
 		
 		$this->db->query($sql,array($permissions,$account_id,$group_id));
 		
