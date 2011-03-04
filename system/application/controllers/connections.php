@@ -82,7 +82,7 @@ class Connections extends Controller {
 		}
 		
 		$mainview = $this->load->view('mainpane/lists/patients',
-			array('list_name' => 'My Patients', 'list' => $res, 'status' => 'connected') , TRUE);
+			array('list_name' => 'My Patient Friends', 'list' => $res, 'status' => 'connected') , TRUE);
 		
 		// Give results to the client
 		$this->ui->set(array($mainview));
@@ -433,20 +433,15 @@ class Connections extends Controller {
 	function change_level($aid = NULL) {
 		$check = $this->auth->check(array(
 			auth::CurrLOG,
+			auth::CurrPAT,
 			auth::CurrCONN, $aid		// current must be connected with id
 		));
 		if ($check !== TRUE) return;
 		
-		// Take the current level and send it to the view
-		$connection = $this->connections_model->get_connection($this->auth->get_account_id(), $aid);
-		
-		if ( $this->auth->get_account_id() === $connection['sender_id'])
-			$connection_level = $this->connections_model->get_level(array($this->auth->get_account_id(), $aid));
-		else
-			$connection_level = $this->connections_model->get_level(array($aid, $this->auth->get_account_id()));
+		$con_level = $this->connections_model->get_level(array($aid, $this->auth->get_account_id()));
 			
 		// Switch the response from the model, to select the correct view
-		switch ($connection_level) {
+		switch ($con_level) {
 			case -1:
 				$this->ui->set_query_error();
 				break;
@@ -454,10 +449,71 @@ class Connections extends Controller {
 				$this->ui->set_error('Connection does not exist.', 'Permission Denied');
 				break;
 			default:
-				$this->ui->set(array(
-				$this->load->view('mainpane/forms/change_conn_level', array('aid' => $aid, 'con_level' => $connection_level), TRUE)));
-				
+				if ( $this->auth->get_account_id() === $con_level['sender_id'] ) {
+					$this->ui->set(array(
+					$this->load->view('mainpane/forms/change_conn_level', array(
+																				'aid' => $aid, 
+																				'con_level' => $con_level['sender_level']), TRUE)));
+				}
+				else {
+					$this->ui->set(array(
+					$this->load->view('mainpane/forms/change_conn_level', array(
+																				'aid' => $aid, 
+																				'con_level' => $con_level['receiver_level']), TRUE)));
+				}	
 		}
+	}
+	
+	function change_level_do( $aid = NULL) {
+		
+		$check = $this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrPAT,
+			auth::CurrCONN, $aid));		// current must be connected with id
+		if ($check !== TRUE) return;
+		
+		$new_level = $this->input->post('level');
+		
+		if ($new_level == NULL) {
+			$this->ui->set_error('Select a level.','Missing Arguments'); 
+			return;
+		}
+		
+		$connection = $this->connections_model->get_connection($aid, $this->auth->get_account_id());
+			
+		// Switch the response from the model, to select the correct view
+		switch ($connection) {
+			case -1:
+				$this->ui->set_query_error();
+				break;
+			case NULL:
+				$this->ui->set_error('Connection does not exist.', 'Permission Denied');
+				break;
+			default:
+				if ( $this->auth->get_account_id() === $connection['sender_id'] ) {
+					$change = $this->connections_model->update_connection_level(array(
+																					  $connection['connection_id'],
+																					  $new_level,
+																					  'sender'));
+					//check return value	
+					if ($change == -1)
+						$this->ui->set_query_error();
+					elseif ( $change == 0 )
+						$this->ui->set_message('Connection level updated.','Confirmation');
+					
+				}
+				else {
+					$change = $this->connections_model->update_connection_level(array(
+																					  $connection['connection_id'],
+																					  $new_level,
+																					  'receiver'));
+					//check return value														
+					if ($change == -1)
+						$this->ui->set_query_error();
+					elseif ( $change == 0 )
+						$this->ui->set_message('Connection level updated.','Confirmation');
+				}
+		}		
 	}
 }
 /** @} */

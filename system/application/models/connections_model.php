@@ -389,6 +389,7 @@ class Connections_model extends Model {
 		return 0;
 	}
 	
+	
 	/**
 	 * Creates a new request for a patient hcp connection.
 	 * 
@@ -699,7 +700,7 @@ class Connections_model extends Model {
 	 * Gives the connection level between a patient and a hcp
 	 * 
 	 * @param $inputs
-	 *   Is of the form: array(sender account_id, accepter account_id)
+	 *   Is of the form: array(account_id, account_id)
 	 * @return
 	 *  -1 in case of error in a query
 	 *  -2 if the connection does not exist
@@ -707,10 +708,10 @@ class Connections_model extends Model {
 	 * */
 	 function get_level($inputs) {
 		
-		$sql = "SELECT C.sender_level
+		$sql = "SELECT C.sender_level, C.receiver_level, C.sender_id, C.receiver_id
 			FROM connections C
-			WHERE C.sender_id = ? AND C.receiver_id = ?";
-		$query = $this->db->query($sql, array($inputs[0], $inputs[1]));
+			WHERE (C.sender_id = ? AND C.receiver_id = ?) OR (C.sender_id = ? AND C.receiver_id = ?)";
+		$query = $this->db->query($sql, array($inputs[0], $inputs[1], $inputs[1], $inputs[0]));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;
@@ -720,6 +721,38 @@ class Connections_model extends Model {
 			return $level[0];
 		}
 	 }
+	 
+	 /**
+	 * Updates the connection level between two accounts
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(connection_id, new_level, sender or receiver)
+	 * @return
+	 *  -1 in case of error in a query
+	 *  -0 if everything goes fine
+	 * */
+	 function update_connection_level($inputs) {
+		
+		if ($inputs[2] === 'sender' )
+		{
+			$sql = "UPDATE connections
+				SET sender_level = ?
+				WHERE connection_id = ?";
+			$query = $this->db->query($sql, array($inputs[1], $inputs[0]));
+			if ($this->db->trans_status() === FALSE)
+				return -1;
+		}
+		else {
+			$sql = "UPDATE connections
+				SET receiver_level = ?
+				WHERE connection_id = ?";
+			$query = $this->db->query($sql, array($inputs[1], $inputs[0]));
+			if ($this->db->trans_status() === FALSE)
+				return -1;
+		}
+		
+		return 0;
+	}
 	
 	
 	/**
