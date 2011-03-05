@@ -296,7 +296,7 @@ class Connections extends Controller {
 	{
 		$check = $this->auth->check(array(
 			auth::CurrLOG,
-			auth::ACCOUNT, $receiver_id // the receiver must be an existing account id
+			auth::BE_PUBLIC, $receiver_id // the receiver must be a public account
 		));
 		if ($check !== TRUE) return;
 		
