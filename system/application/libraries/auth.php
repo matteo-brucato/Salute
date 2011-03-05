@@ -34,6 +34,7 @@ class Auth {
 	const CurrIS_or_CONN = 222; // requires one account id: tests if current is account provided or at least connected with it
 	
 	const ACCOUNT		= 8;	// requires one id: tests if it's an account id
+	const BE_PUBLIC		= 333;	// requires one id: tests if it's a public account id
 	const PAT			= 9;	// requires one id: tests if it's a patient id
 	const HCP			= 10;	// requires one id: tests if it's a hcp id
 	const GRP			= 11;	// requires one id: tests if it's a group_id
@@ -206,7 +207,34 @@ class Auth {
 					}
 					$i++;
 					break;
+				
+				case auth::BE_PUBLIC:
+					if ($a[$i+1] === NULL) {
+						$this->CI->ui->set_error('No input provided');
+						return auth::BE_PUBLIC;
+					}
+					if (! is_numeric($a[$i+1])) {
+						$this->CI->ui->set_error('Not numeric');
+						return auth::BE_PUBLIC;
+					}
+					$this->CI->load->model('account_model');
+					$pub = $this->CI->account_model->is_public(array($a[$i+1]));
+					if ($pub === -1) {
+						$this->CI->ui->set_query_error();
+						return auth::BE_PUBLIC;
+					}
+					else if($pub === NULL) {
+						$this->CI->ui->set_error('This is not an account.');
+						return auth::BE_PUBLIC;
+					}
+					else if($pub === FALSE) {
+						$this->CI->ui->set_error('No such account OR account is not public');
+						return auth::BE_PUBLIC;
+					}
+					$i++;
+					break;
 					
+				
 				case auth::PAT:
 					if ($a[$i+1] === NULL) {
 						$this->CI->ui->set_error('No input provided');

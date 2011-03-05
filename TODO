@@ -16,7 +16,7 @@ Public/Private Accounts
   receive connection requests. They can receive referals and group invitations ONLY becasue they are received from their
   connected friends/hcps. If private patient joins a group, they will be listed in the group members list; this is because
   if they want to be part of the group, they only want to be public in that group.
-- change connection requests: deny if the receiver account is private ## MATTEO ##
+//- change connection requests: deny if the receiver account is private ## MATTEO ##
 - 
 
 CONNECTIONS/PERMISSIONS/MEDRECS
