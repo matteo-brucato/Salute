@@ -57,7 +57,7 @@ class Groups_model extends Model {
 	 * */
 	function edit_group($inputs){
 		$sql = "UPDATE groups
-				SET name = ?,  description = ?, public_private = ?, group_type = ?
+				SET name = ?,  description = ?
 				WHERE group_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)
@@ -161,16 +161,16 @@ class Groups_model extends Model {
 
 	
 	/**
-	 * Lists all Groups
+	 * Lists all Groups ; excluding hcp only groups
 	 * @param none
 	 * @return
 	 * 		-1 if query error
 	 * 		empty array
 	 * 		array of groups
 	 * */
-	function list_all_groups(){
+	function list_all_groups_for_pats(){
 		
-		$sql = "SELECT * FROM groups WHERE public_private = '0' ";
+		$sql = "SELECT * FROM groups WHERE public_private = '0' AND group_type <> '1' ";
 
 		$query = $this->db->query($sql);
 		
@@ -182,6 +182,29 @@ class Groups_model extends Model {
 		
 		return array();
 	}
+	/**
+	 * Lists all Groups ; excluding patient only groups
+	 * @param none
+	 * @return
+	 * 		-1 if query error
+	 * 		empty array
+	 * 		array of groups
+	 * */
+	function list_all_groups_for_hcps(){
+		
+		$sql = "SELECT * FROM groups WHERE public_private = '0' AND group_type <> '0' ";
+
+		$query = $this->db->query($sql);
+		
+		if ($this->db->trans_status() === FALSE) 
+			return -1;
+			
+		if ($query->num_rows() > 0)
+			return $query->result_array();
+		
+		return array();
+	}
+
 
 	/**
 	 * Lists all my groups

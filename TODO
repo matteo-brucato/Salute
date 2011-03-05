@@ -72,20 +72,26 @@ GROUPS
 <<	- if patient only: should not be allowed to invite a hcp >>
 <<	- if hcp only: should not be allowed to invite a patient >>
 <<- add data: groups.txt invite.txt >>
-- Should a hcp be able to see "patient only" groups in the group listing?
-  (similarly, should a patient be able to see "hcps only" ones?)
-- Edit group does not work well... I change something and it says "all fields mandatory"
-- Also, it has that strange behaviour in dislpaying the description...
-- There is a bug: I can join a private group just with the URL...
-
-Make one view, general, to see groups, instead of having mygroups and groups, that are basically the same thing ##NADA##
-
-When listing group members, just use the already existing views to 				 ##NADA##
+<< Make one view, general, to see groups, instead of having mygroups and groups, that are basically the same thing >>
+<< in the member list, it gives you the option to 'request connection' this doesnt check if they are already 
+	connected/have been requested already >>
+<< When listing group members, just use the already existing views to
   list patients and doctors (unless there is a specific reason to have
-  a new view).
+  a new view). REPLY :: I was going to...BUT due to some difficulties, it doesnt really work so easily, and its 
+  really not that important. 
+ >>
+<<- Should a hcp be able to see "patient only" groups in the group listing?
+  (similarly, should a patient be able to see "hcps only" ones?)>>
 
-- in the member list, it gives you the option to 'request connection' this doesnt check if they are already 
-	connected/have been requested already  ##NADA##
+<<- Edit group does not work well... I change something and it says "all fields mandatory">>
+<<- Also, it has that strange behaviour in dislpaying the description...>>
+
+- Bugs:
+---- I can join a private group just with the URL...
+---- lets me invite a member who is already invited 
+	 (sortof...doesnt give me error message...) 
+	 it shouldnt even list him in the possible invitees
+
 - create test set  ##NADA##
 
 PRESENTATION

@@ -9,7 +9,7 @@ $this->load->helper('table_result');
  * 		$member 		Boolean
  * */
 
-//echo '<h2>'.$list_name.'</h2>';
+echo '<h2>'.$list_name.'</h2>';
 
 // Id of the table
 $table['table-name'] = 'groups-table';
@@ -27,21 +27,21 @@ $table['tuples'] = $group_list;
 // Attributes to display
 $table['attr'] = array('group_id','name', 'description', 'group_type', 'actions');
 
+$actions = array('');
+
 for ($i = 0; $i < count($table['tuples']); $i++) {
-	
-	if($member[$i]['is'] === TRUE){
+	if ($member[$i]['is'] === FALSE)
+		$actions = array('join-group');
+	else {
 		if($member[$i]['perm'] === '0')
 			$actions = array('list-mems','leave-group');
 		else if ($member[$i]['perm'] === '3')
 			$actions = array('list-mems', 'invite-to-group','leave-group', 'edit-group','delete-group');
 		else if($member[$i]['perm'] !== '0' && $member[$i]['perm'] !== NULL)
-			$actions = array('list-mems','invite-to-group','leave-group'); // later: add link that loads a whole form to change all member perms
+			$actions = array('list-mems','invite-to-group','leave-group'); 
 		else
 			$actions = array(''); 
-	}else 
-		$actions = array('join-group');
-	
-		
+	}		
 	if($table['tuples'][$i]['group_type'] == 0) $table['tuples'][$i]['group_type'] = 'patients only';
 	else if($table['tuples'][$i]['group_type'] == 1) $table['tuples'][$i]['group_type'] = 'healthcare providers only';
 	else $table['tuples'][$i]['group_type'] = 'patients and healthcare providers';
