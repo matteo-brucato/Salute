@@ -125,7 +125,7 @@ class Home extends Controller {
 	 * Clears current session info
 	 * @return redirect to default page
 	 * */
-	function logout(){
+	function logout() {
 		$this->session->sess_destroy();
 		$this->ui->set_redirect('/');
 	}
@@ -134,7 +134,7 @@ class Home extends Controller {
 	 * Loads view when user clicks 'Forgot Password'
 	 * prompts for email address
 	 * */
-	function retrieve_password(){
+	function retrieve_password() {
 		$this->ui->set(array(
 			$this->load->view('mainpane/forms/forgot_password', '', TRUE)
 		));
@@ -147,7 +147,7 @@ class Home extends Controller {
 	 * @testing
 	 * 		working and tested.
 	 * */
-	function retrieve_password_do(){
+	function retrieve_password_do() {
 		$email = $this->input->post('email');
 
 		if ( $email == NULL ){
@@ -157,13 +157,12 @@ class Home extends Controller {
 		$this->load->model('account_model');
 		
 		$result = $this->account_model->get_account(array($email)); 
-		$password = $result[0]['password'];
-		
-		if ($password == NULL){
+		if (count($result) <= 0) {
 			$this->ui->set_error('Sorry, this email is not registered.'); 
 			return;
 		}
-
+		$password = $result[0]['password'];
+		
 		$this->load->library('email');
 		$config['mailtype'] = 'html';
 		$this->email->initialize($config);
@@ -183,6 +182,11 @@ class Home extends Controller {
 	 * */
 	function register()
 	{
+		if ($this->auth->check(auth::CurrLOG) === TRUE) {
+			$this->ui->set_message('You are already logged in');
+			return;
+		}
+		
 		$this->ui->set(array($this->load->view('mainpane/forms/registration', '', TRUE)));
 	}
 
@@ -206,7 +210,12 @@ class Home extends Controller {
 	 * */
 	function register_do($type = NULL)
 	{
-		if( $type == NULL || ( $type !== 'patient' && $type !== 'hcp' ) ){
+		if ($this->auth->check(auth::CurrLOG) === TRUE) {
+			$this->ui->set_message('You are already logged in');
+			return;
+		}
+		
+		if ($type == NULL || ( $type !== 'patient' && $type !== 'hcp' )) {
 			$this->ui->set_error('Invalid type.'); 
 			return;
 		}
@@ -214,7 +223,7 @@ class Home extends Controller {
 		$email = $this->input->post('email');
 		$password = $this->input->post('password');
 	
-		if($email == NULL || $password == NULL)	{
+		if ($email == NULL || $password == NULL) {
 			$this->ui->set_error('Email and Password are mandatory to register.','Missing Arguments'); 
 			return;
 		}
@@ -226,14 +235,14 @@ class Home extends Controller {
 		$this->load->model('account_model');
 		$result = $this->account_model->add_account(array('email' => $email, 'password' => $password)); 
 		
-		if($result === -1){
+		if ($result === -1) {
 			$this->ui->set_query_error(); 
 			return;
 		}
 		
 		$account_id = $result[0]['account_id'];
-				
-		if ($type === 'patient'){
+		
+		if ($type === 'patient') {
 			$input=array(
 						$account_id,
 						$this->input->post('firstname'),
@@ -269,15 +278,15 @@ class Home extends Controller {
 			$this->load->model('hcp_model');
 			$res = $this->hcp_model->register($input); 
 		}
-		else{
+		else {
 			$this->ui->set_error('Internal Server Error.', 'server'); 
 			return;
 		} 
-		if ( $res === -1 ){
+		if ($res === -1) {
 			$this->ui->set_query_error();
 			return;
 		}
-		else{
+		else {
 			$this->load->library('email');
 			$config['mailtype'] = 'html';
 			$this->email->initialize($config);

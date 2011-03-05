@@ -1,6 +1,7 @@
 <ul>
-	<li><a href="javascript:history.back();" class="ajax history_back">Back</a></li>
-	<li><a href="javascript:history.forward();" class="ajax history_forth">Forth</a></li>
+	<li><a href="javascript:history.back();" class="history_back">Back</a></li>
+	<li><a href="javascript:window.location.reload();" class="history_reload">Reload</a></li>
+	<li><a href="javascript:history.forward();" class="history_forth">Forth</a></li>
 	<li>
 		<?php 
 		if ($this->auth->is_logged_in())

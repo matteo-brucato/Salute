@@ -1,6 +1,6 @@
 /* Functions needed by the application */
 
-var AJAX_ACTIVE = true;
+var AJAX_ACTIVE = false;
 
 const HISTORY_MAX = 30;
 var hist = new Array(HISTORY_MAX);
@@ -93,6 +93,19 @@ function layout_bindings() {
 			} else {
 				href = hist[i];
 				hist_i = i;
+			}
+		}
+		
+		else if ($(this).hasClass('history_reload')) {
+			if (! AJAX_ACTIVE) return;
+			event.preventDefault();
+			
+			if (hist[hist_i] == null) {
+				// No history
+				window.location.reload();
+				return;
+			} else {
+				href = hist[hist_i];
 			}
 		}
 		

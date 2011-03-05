@@ -33,7 +33,7 @@ class Medical_records_model extends Model {
 			(SELECT M.*, P.first_name AS pat_first_name, P.last_name AS pat_last_name, A.*, P2.first_name , P2.last_name
 			FROM patient_account P, patient_account P2, accounts A, medical_record M
 			WHERE M.patient_id = ? AND M.patient_id = P.account_id AND M.account_id = A.account_id AND A.account_id = P2.account_id)";
-				
+		
 		$query = $this->db->query($sql, array($inputs[0], $inputs[0]));
 		
 		if ($this->db->trans_status() === FALSE)
@@ -185,6 +185,26 @@ class Medical_records_model extends Model {
 	}
 	
 	/**
+	 * Give permissions to all $from_id's medical records to $to_id
+	 * 
+	 * @note This function ignores query errors
+	 * */
+	function give_all_ones_medrec_to($from_id, $to_id) {
+		$sql = "SELECT M.*
+			FROM medical_record M
+			WHERE M.patient_id = ?";
+		$query = $this->db->query($sql, array((int)$from_id));
+		if ($query->num_rows() <= 0) return;
+		$meds = $query->result_array();
+		foreach ($meds as $m) {
+			echo $m['medical_rec_id'].' ';
+			$sql = "INSERT INTO permission (medical_rec_id, account_id, date_created)
+				VALUES (?, ?, current_date)";
+			$query = $this->db->query($sql, array((int)$m['medical_rec_id'], (int)$to_id));
+		}
+	}
+	
+	/**
 	 * Add permission to see $mid to all accounts connected with $pid
 	 * with a high level connection (1 or 3).
 	 * */
@@ -193,18 +213,22 @@ class Medical_records_model extends Model {
 		$query = $this->db->query($sql, array((int)$pid));
 		if ($this->db->trans_status() === FALSE)
 			return -1;
-		$res = $query->result_array();
-		foreach ($res as $r) {
-			$this->allow_permission(array($mid, $r['receiver_id']));
+		if ($query->num_rows() > 0) {
+			$res = $query->result_array();
+			foreach ($res as $r) {
+				$this->allow_permission(array($mid, $r['receiver_id']));
+			}
 		}
 		
 		$sql = "SELECT * FROM connections WHERE receiver_id = ? AND (receiver_id = '1' OR receiver_id = '3')";
 		$query = $this->db->query($sql, array($pid));
 		if ($this->db->trans_status() === FALSE)
 			return -1;
-		$res = $query->result_array();
-		foreach ($res as $r) {
-			$this->allow_permission(array($mid, $r['sender_id']));
+		if ($query->num_rows() > 0) {
+			$res = $query->result_array();
+			foreach ($res as $r) {
+				$this->allow_permission(array($mid, $r['sender_id']));
+			}
 		}
 	}
 	

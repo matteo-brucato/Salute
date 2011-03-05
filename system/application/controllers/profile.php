@@ -35,13 +35,15 @@ class Profile extends Controller {
 
 		if ($this->auth->get_type() === 'patient') {
 			$this->ui->set(array(
-				$this->load->view('mainpane/personal_patient_profile', '', TRUE)
+				$this->load->view('mainpane/personal_patient_profile', '', TRUE),
+				$this->load->view('sidepane/personal_patient_profile', '', TRUE)
 			));
 		}
 
 		else if ($this->auth->get_type() === 'hcp') {
 			$this->ui->set(array(
-				$this->load->view('mainpane/personal_hcp_profile', '', TRUE)
+				$this->load->view('mainpane/personal_hcp_profile', '', TRUE),
+				$this->load->view('sidepane/personal_hcp_profile', '', TRUE)
 			));
 		}
 
