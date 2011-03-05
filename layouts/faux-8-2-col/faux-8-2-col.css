@@ -34,6 +34,9 @@ body {
  /*background: #D1DBDB;*/
  background-image: url(msaucr_logo.png);
 }
+#header h1 {
+ display: none;
+}
 #navigation {
  color: #333;
  padding: 10px;

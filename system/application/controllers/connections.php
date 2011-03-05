@@ -21,6 +21,7 @@ class Connections extends Controller {
 		$this->load->library('ui');
 		$this->load->library('auth');
 		$this->load->model('connections_model');
+		$this->load->model('medical_records_model');
 		$this->load->model('hcp_model');
 	}
 
@@ -82,7 +83,7 @@ class Connections extends Controller {
 		}
 		
 		$mainview = $this->load->view('mainpane/lists/patients',
-			array('list_name' => 'My Patients', 'list' => $res, 'status' => 'connected') , TRUE);
+			array('list_name' => 'My Patient Friends', 'list' => $res, 'status' => 'connected') , TRUE);
 		
 		// Give results to the client
 		$this->ui->set(array($mainview));
@@ -186,6 +187,100 @@ class Connections extends Controller {
 	}
 	
 	/**
+	 * Shows a view with all the medical records that you are sharing
+	 * and not sharing with a specific account $aid (connected with you)
+	 * */
+	function change_permissions($aid = NULL) {
+		if ($this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrPAT,
+			auth::CurrCONN, $aid
+		)) !== TRUE) return;
+		
+		// First, get all the records that $aid can see
+		$allowedrecs = $this->medical_records_model->get_patient_records(array($this->auth->get_account_id(), $aid));
+		
+		// Then, get all the records of the current user (must be a patient)
+		$allrecs = $this->medical_records_model->list_my_records(array($this->auth->get_account_id()));
+		//$hcpsrecs = $this->medical_records_model->list_my_records(array($this->auth->get_account_id()));
+		// All ok
+		$this->ui->set(array(
+			$this->load->view('mainpane/forms/change_conn_perms',
+				array(
+				'list_name' => 'Select medical records to share',
+				'list' => $allrecs,
+				'list2'=>$allowedrecs,
+				'aid'=>$aid), TRUE)
+		));
+	}
+	
+	function change_permissions_do($aid = NULL) {
+		if ($this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrPAT,
+			auth::CurrCONN, $aid
+		)) !== TRUE) return;
+		
+		//get array of medical_rec_ids that were selected, empty array if none are selected
+		if (isset($_POST["box"]) && is_array($_POST["box"]) && count($_POST["box"]) > 0) {
+			$box = $_POST['box'];
+		}
+		else{
+			$box = array();
+		}
+		
+		//get a list of all my medical records
+		$allrecs = $this->medical_records_model->list_my_records(array($this->auth->get_account_id()));
+		
+		for($i = 0; $i < count($allrecs); $i++ ){
+			$temp = $allrecs[$i]['medical_rec_id'] ;
+			$isit = FALSE;
+
+		
+			//check if that medical record was marked
+			for( $j = 0; $j < count($box); $j++ )
+				if( $box[$j] == $temp )
+					$isit = TRUE;
+			//if marked
+			if( $isit === TRUE ){
+				//check if allowed
+				$res = $this->medical_records_model->is_account_allowed(array($temp,$aid));
+				if ($res === -1) {
+					$this->ui->set_query_error();
+					return;
+				}
+				if ($res === FALSE) {
+					$result = $this->medical_records_model->allow_permission(array($temp,$aid));
+					if ($result === -1) {
+						$this->ui->set_query_error();
+						return;
+					}
+				}
+			}
+			//if not marked
+			else if( $isit === FALSE ){
+				//check if allowed
+				$res = $this->medical_records_model->is_account_allowed(array($temp,$aid));
+				if( $res === -1 ){
+					$this->ui->set_query_error();
+					return;
+				}
+				if( $res === TRUE ){
+					$result = $this->medical_records_model->delete_permission(array($temp,$aid));
+					if( $result === -1 ){
+						$this->ui->set_query_error();
+						return;
+					}
+					
+				}
+			}
+		}
+		
+		$this->ui->set_message('Successfully changed Permissions.', 'Confirmation');
+		$this->change_permissions($aid);
+	}
+	
+	/**
 	 * Request a new connection to a hcp.
 	 * 
 	 * @param
@@ -201,7 +296,7 @@ class Connections extends Controller {
 	{
 		$check = $this->auth->check(array(
 			auth::CurrLOG,
-			auth::ACCOUNT, $receiver_id // the receiver must be an existing account id
+			auth::BE_PUBLIC, $receiver_id // the receiver must be a public account
 		));
 		if ($check !== TRUE) return;
 		
@@ -433,20 +528,15 @@ class Connections extends Controller {
 	function change_level($aid = NULL) {
 		$check = $this->auth->check(array(
 			auth::CurrLOG,
+			auth::CurrPAT,				// changing level only allowed to patients
 			auth::CurrCONN, $aid		// current must be connected with id
 		));
 		if ($check !== TRUE) return;
 		
-		// Take the current level and send it to the view
-		$connection = $this->connections_model->get_connection($this->auth->get_account_id(), $aid);
+		$con_level = $this->connections_model->get_level(array($aid, $this->auth->get_account_id()));
 		
-		if ( $this->auth->get_account_id() === $connection['sender_id'])
-			$connection_level = $this->connections_model->get_level(array($this->auth->get_account_id(), $aid));
-		else
-			$connection_level = $this->connections_model->get_level(array($aid, $this->auth->get_account_id()));
-			
 		// Switch the response from the model, to select the correct view
-		switch ($connection_level) {
+		switch ($con_level) {
 			case -1:
 				$this->ui->set_query_error();
 				break;
@@ -454,10 +544,76 @@ class Connections extends Controller {
 				$this->ui->set_error('Connection does not exist.', 'Permission Denied');
 				break;
 			default:
-				$this->ui->set(array(
-				$this->load->view('mainpane/forms/change_conn_level', array('aid' => $aid, 'con_level' => $connection_level), TRUE)));
-				
+				if ( $this->auth->get_account_id() === $con_level['sender_id'] ) {
+					$this->ui->set(array(
+					$this->load->view('mainpane/forms/change_conn_level', array(
+																				'aid' => $aid, 
+																				'con_level' => $con_level['sender_level']), TRUE)));
+				}
+				else {
+					$this->ui->set(array(
+					$this->load->view('mainpane/forms/change_conn_level', array(
+																				'aid' => $aid, 
+																				'con_level' => $con_level['receiver_level']), TRUE)));
+				}	
 		}
+	}
+	
+	function change_level_do($aid = NULL) {
+		$check = $this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrPAT,				// changing level only allowed to patients
+			auth::CurrCONN, $aid));		// current must be connected with id
+		if ($check !== TRUE) return;
+		
+		$new_level = $this->input->post('level');
+		if ($new_level == NULL) {
+			$this->ui->set_error('Select a level.','Missing Arguments'); 
+			return;
+		}
+		
+		$connection = $this->connections_model->get_connection($aid, $this->auth->get_account_id());
+		
+		// Switch the response from the model, to select the correct view
+		if ($connection === -1) {
+			$this->ui->set_query_error();
+			return;
+		}
+		if ($connection === NULL) {
+			$this->ui->set_error('Connection does not exist.', 'Permission Denied');
+			return;
+		}
+		
+		// Decide whether you are the sender or the receiver
+		if ($this->auth->get_account_id() === $connection['sender_id']) {
+			$tochange = 'sender';
+		}
+		else {
+			$tochange = 'receiver';
+		}
+		
+		// Change the level
+		$change = $this->connections_model->update_connection_level(array(
+																		  $connection['connection_id'],
+																		  $new_level,
+																		  $tochange));
+		//check return value
+		if ($change == -1) {
+			$this->ui->set_query_error();
+			return;
+		}
+		$this->ui->set_message('Connection level updated.','Confirmation');
+		
+		// Now, if you changed to a high level (1 or 3), give him all your med recs
+		if ($new_level == '1' || $new_level == '3') {
+			if ($this->auth->get_account_id() === $connection['sender_id']) {
+				$this->medical_records_model->give_all_ones_medrec_to($this->auth->get_account_id(), $connection['receiver_id']);
+			} else {
+				$this->medical_records_model->give_all_ones_medrec_to($this->auth->get_account_id(), $connection['sender_id']);
+			}
+		}
+		
+		$this->change_level($aid);
 	}
 }
 /** @} */

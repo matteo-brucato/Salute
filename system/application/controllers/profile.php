@@ -137,7 +137,8 @@ class Profile extends Controller {
 
 		else if ($this->auth->get_type() === 'hcp') {
 			$this->ui->set(array(
-				$this->load->view('mainpane/personal_hcp_profile', '', TRUE)
+				$this->load->view('mainpane/personal_hcp_profile', '', TRUE),
+				$this->load->view('sidepane/personal_hcp_profile', '', TRUE)
 			));
 		}
 

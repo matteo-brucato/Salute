@@ -34,7 +34,7 @@ class Groups extends Controller {
 	 * 		List all groups
 	 * tested.
 	 * */
-	function index(){
+	function index() {
 		$this->lists();
 	}
 	
@@ -69,7 +69,6 @@ class Groups extends Controller {
 			$this->ui->set_error('Input not valid: <b>'.$direction.'</b>');	
 	}
 	
-	
 	/**
 	 * Loads Create New Group Form
 	 * @bug, keeps reloading form after completion...
@@ -77,14 +76,14 @@ class Groups extends Controller {
 	function create(){
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) return;
 		
-		$type = $this->auth->get_type();
+		//$type = $this->auth->get_type();
 		
-		if ($type === 'hcp')
-			$sideview = $this->load->view('sidepane/personal_hcp_profile', '', TRUE);
-		else if ($type === 'patient')
-			$sideview = $this->load->view('sidepane/personal_patient_profile', '', TRUE);
+		//if ($type === 'hcp')
+		//	$sideview = $this->load->view('sidepane/personal_hcp_profile', '', TRUE);
+		//else if ($type === 'patient')
+		//	$sideview = $this->load->view('sidepane/personal_patient_profile', '', TRUE);
 		
-		$this->ui->set(array($this->load->view('mainpane/forms/create_group', '', TRUE), $sideview));
+		$this->ui->set(array($this->load->view('mainpane/forms/create_group', '', TRUE)));
 	}
 
 
@@ -147,8 +146,7 @@ class Groups extends Controller {
 		$this->db->trans_complete();
 		
 		$this->ui->set_message("You have successfully created the group: $name", 'Confirmation');
-		
-		$this->ui->set($this->lists('mine'));
+		$this->lists('mine');
 	}
 
 	
@@ -469,19 +467,21 @@ class Groups extends Controller {
 		}
 		
 		$this->db->trans_start();
-		
-		$list = $this->groups_model->list_all_groups();
-		
+		$type = $this->auth->get_type();
+		if ($type === 'patient')
+			$list = $this->groups_model->list_all_groups_for_pats();
+		if ($type === 'hcp')
+			$list = $this->groups_model->list_all_groups_for_hcps();
+			
 		if ($list === -1){
 			$this->auth->set_query_error();
 			return;
 		}
 
-		$member = '';
 		for ($i = 0; $i < count($list); $i++) {
 			$is_mem = $this->groups_model->is_member($this->auth->get_account_id(),$list[$i]['group_id']); 
 			$mem = $this->groups_model->get_member($this->auth->get_account_id(),$list[$i]['group_id']); 
-			if ($is_mem === -1 || $mem === -1 ){
+			if ($is_mem === -1 || $mem === -1){
 				$this->auth->set_query_error();
 				return;	
 			} else if ($is_mem) {
@@ -492,10 +492,12 @@ class Groups extends Controller {
 				$member[$i]['perm'] = NULL;
 			}
 		}
-
-		$this->ui->set(array($this->load->view('mainpane/lists/groups', array('group_list' => $list, 'member' => $member), TRUE)));
-		
 		$this->db->trans_complete();
+		$mainview = $this->load->view('mainpane/lists/groups', 
+										array('list_name'=> 'Public Groups' ,
+											  'group_list' => $list, 'member' => $member 
+											  ),TRUE);
+		$this->ui->set(array($mainview));
 	}
 	
 	/**
@@ -514,16 +516,17 @@ class Groups extends Controller {
 			$this->auth->set_query_error();
 			return;
 		}
-		$perm='';
+		$member='';
 		for ($i = 0; $i < count($list); $i++) {
 			$mem = $this->groups_model->get_member($this->auth->get_account_id(),$list[$i]['group_id']); 
 			if ($mem === -1 ){
 				$this->auth->set_query_error();
 				return;	
 			} 
-			$perm[$i]['perm'] = $mem['permissions'];
+			$member[$i]['perm'] = $mem['permissions'];
+			$member[$i]['is'] = TRUE;
 		}
-		$this->ui->set(array($this->load->view('mainpane/lists/mygroups', array('group_list' => $list, 'perm' => $perm), TRUE)));
+		$this->ui->set(array($this->load->view('mainpane/lists/groups', array('list_name'=> 'My Groups','group_list' => $list, 'member' => $member), TRUE)));
 		
 		$this->db->trans_complete();
 	}
@@ -573,30 +576,24 @@ class Groups extends Controller {
 		
 		$name = $this->input->post('name');
 		$description = $this->input->post('description');
-		$public_private = $this->input->post('public_private');
-		$group_type = $this->input->post('group_type');
 		
 		// Form Checking will replace this
-		if($name == NULL || $description == NULL || $public_private == NULL || $group_type == NULL )	{
+		if($name == NULL || $description == NULL )	{
 			$this->ui->set_error('All Fields are Mandatory.','Missing Arguments'); 
 			return;
 		}
-		
+			
 		$this->db->trans_start();
-		$result = $this->groups_model->edit_group(array(
-													$name, 
-													$description, 
-													$public_private,
-													$group_type,
-													$group_id
-												)); 
+		$result = $this->groups_model->edit_group(array($name, $description,$group_id));
  		$this->db->trans_complete();		
+
 		if($result === -1){
 			$this->ui->set_query_error(); 
 			return;
 		}
 		
- 		$this->ui->set(array("You have successfully edited the group: $name"));
+ 		$this->ui->set_message("You have successfully edited the group: $name");
+ 		$this->ui->set(array($this->lists('mine')));
 	}
 	
 	/**
@@ -619,45 +616,62 @@ class Groups extends Controller {
 			$this->ui->set_query_error();
 			return;
 		}
-		
+			
 		for ($i = 0; $i < count($list); $i++) {
 			$mem = $this->groups_model->get_member($list[$i]['account_id'],$list[$i]['group_id']);
-			
 			if($mem === -1){
 				$this->ui->set_query_error();
 				return;
 			} else if($this->patient_model->is_patient($mem['account_id'])){
-				$pat = $this->patient_model->get_patient($mem['account_id']);
-				if ($pat === -1){
-					$this->ui->set_query_error();
-					return;	
-				}
-				$info[$i]['first_name'] = $pat[0]['first_name'];
-				$info[$i]['last_name'] = $pat[0]['last_name'];
-			} else if ($this->hcp_model->is_hcp($mem['account_id'])){
-				$hcp = $this->hcp_model->get_hcp($mem['account_id']);
-				if ($hcp === -1){
-					$this->ui->set_query_error();
-					return;	
-				}
-				$info[$i]['first_name'] = $hcp[0]['first_name'];
-				$info[$i]['last_name'] = $hcp[0]['last_name'];	
-			} else{
+				$j = $this->patient_model->get_patient($mem['account_id']);
+			} else if ($this->hcp_model->is_hcp($mem['account_id']))
+				$j = $this->hcp_model->get_hcp($mem['account_id']);
+			else{
 				$this->ui->set_error('Internal server error','server');
 				return;
 			}
+			if ($j === -1){
+				$this->ui->set_query_error();
+				return;	
+			}
+			$info[$i]['first_name'] = $j[0]['first_name'];
+			$info[$i]['last_name'] = $j[0]['last_name'];
 			
+			$is_conn = $this->connections_model->is_connected_with($this->auth->get_account_id(),$mem['account_id']);
+			if ($is_conn === -1){
+					$this->ui->set_query_error();
+					return;	
+			}
+			if ($is_conn === FALSE){
+				$is_pen = $this->connections_model->is_pending_with($this->auth->get_account_id(),$mem['account_id']);
+				if ($is_pen === -1){
+					$this->ui->set_query_error();
+					return;	
+				}else if($is_pen === TRUE)
+					$info[$i]['connected'] = 'pending';		
+				$info[$i]['connected'] = FALSE;		
+			} else 
+				$info[$i]['connected'] = TRUE;
 		}
 		$perm = $this->groups_model->get_member($this->auth->get_account_id(),$group_id);
-		$this->db->trans_complete();
+		
 		if ($perm === -1){
 			$this->ui->set_query_error();
 			return;	
 		}
 		$perm = $perm['permissions'];
-		$this->ui->set(array($this->load->view('mainpane/lists/group_members', 
-										array('mem_list' => $list, 'perm' => $perm, 'info' => $info),
-										TRUE)));
+		
+		$group = $this->groups_model->get_group($group_id);
+		if ($group === -1){
+			$this->ui->set_query_error();
+			return;	
+		}
+		$this->db->trans_complete();
+		$list_name = $group['name'].' Members';
+		$mainview = $this->load->view('mainpane/lists/group_members', 
+									  array('list_name' => $list_name,'mem_list' => $list,
+											'perm' => $perm, 'info' => $info), TRUE);
+		$this->ui->set(array($mainview));
 	}
 	
 	function _members_edit($group_id = NULL, $account_id = NULL){
@@ -711,7 +725,7 @@ class Groups extends Controller {
 		}
 
 		$this->ui->set_message('You have successfully edited the member','Confirmation');
-		$this->ui->set($this->members('list', $group_id));
+		$this->members('list', $group_id);
 	}
 }
 /** @} */

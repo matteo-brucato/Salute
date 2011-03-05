@@ -25,7 +25,7 @@ table.tables-1 {
 	border-collapse: collapse;
 }
 .tables-1 th {
-	height: 22px;
+	height: 18px;
 	/*background-color: #abbebe;*/
 	background-color: #ACD0A0;
 	color: black;
@@ -44,6 +44,10 @@ td.tables-1-selected-tds {
 	/*background-color: #aabbcc;*/
 	background-color: #AADBAC;
 	/*cursor: pointer;*/
+}
+.tables-1 ul {
+	margin-left: 15px;
+	padding: 0;
 }
 
 
@@ -74,15 +78,15 @@ td.tables-1-selected-tds {
 	border: 1px solid #ABBEBE;
 	position: relative;
 }
-.message_body a, .error_body a {
-	//display: block;
+.message_a {
 	position: absolute;
 	right: 10px;
 	bottom: 10px;
-	//float: right;
 	vertical-align: middle;
 }
-.message_body h4 {}
+.message_body h4, .error_body h4 {
+	width: 95%;
+}
 .error_body {
 	border: 1px solid red;
 }

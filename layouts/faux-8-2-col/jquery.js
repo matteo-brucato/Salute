@@ -1,6 +1,6 @@
 /* Functions needed by the application */
 
-var AJAX_ACTIVE = true;
+var AJAX_ACTIVE = false;
 
 const HISTORY_MAX = 30;
 var hist = new Array(HISTORY_MAX);
@@ -22,12 +22,6 @@ function show_history() {
 	alert(hist);
 }
 
-
-//function callback(href) {
-//	alert(href);
-//	execute_ajax(href);
-//}
-
 function upload_history(href) {
 	// New page, new history element
 	// Upload history and history index
@@ -43,31 +37,6 @@ $(document).ready(function() {			// Wait for the document to be able to be manip
 	if ($("#message").html() != '') {
 		$("#message").show();
 	}
-	
-	// Get the current page
-	//var curpage = window.location.pathname;
-	
-	/*$("#rightcolumn > a").click(function(event) {		// Do something on click on a specific tag <a/>
-		event.preventDefault(); 						// Don't use <a/> as usual, stay here
-		alert("Good job! Now enjoy the magic");
-		$(this).hide("slow");
-		$("#lorem-ipsum").delay(800).show("slow");
-	});
-	
-	$("#lorem-ipsum > a").click(function(event) {
-		event.preventDefault();
-		$(this).parent().hide(2500, function() {	// very slow fade out!
-			$("#rightcolumn > a").show();			// this is a callback example
-		});
-	});*/
-	
-	// History plugin
-	//$.hist.init(execute_ajax);
-	/*$("a[rel|='hist']").click(function(event) {
-		event.preventDefault();
-		$.hist.load(this.href.replace(/^.*#/, ''));
-		return false;
-	});*/
 	
 	layout_bindings();
 });
@@ -127,6 +96,19 @@ function layout_bindings() {
 			}
 		}
 		
+		else if ($(this).hasClass('history_reload')) {
+			if (! AJAX_ACTIVE) return;
+			event.preventDefault();
+			
+			if (hist[hist_i] == null) {
+				// No history
+				window.location.reload();
+				return;
+			} else {
+				href = hist[hist_i];
+			}
+		}
+		
 		else return;
 		
 		//show_history();
@@ -145,24 +127,6 @@ function layout_bindings() {
 		return false;
 	});
 	
-	/*$("a.ajax").live("click", function(event) {
-		if (! AJAX_ACTIVE) return;
-		event.preventDefault();
-		var href = $(this).attr('href');
-		execute_ajax(href);
-	});
-	
-	$("a.confirm").live("click", function(event) {
-		if (! confirm('Please confirm')) {
-			event.preventDefault();
-			return;
-		}
-		/*if (! AJAX_ACTIVE) return;
-		event.preventDefault();
-		var href = $(this).attr('href');
-		execute_ajax(href);*
-	});*/
-	
 	$("#mypatients-table tr, #mydoctors-table tr").live("hover",
 	function() {
 		$(this).children().toggleClass("tables-1-selected-tds");
@@ -175,13 +139,6 @@ function layout_bindings() {
 		event.preventDefault();
 		$('#message').slideUp(150);
 	});
-	
-	/*$("#mypatients-table tr, #mydoctors-table tr").live("click", function(event) {
-		//var href = $(this).find("a:first").attr('href');
-		var account_id = $(this).find('.id_keeper:first').html();
-		alert(account_id);
-		execute_ajax('/profile/user/' + account_id);
-	});*/
 	
 	$('.checkAll').live('click', function() {
 		$("input[type='checkbox'][name!='checkAll']")
@@ -206,39 +163,11 @@ function execute_ajax(href, postdata) {
 	//if (href == curpage) return;
 	$("#message").fadeOut(100);
 	$("#leftcolumn_content").slideUp(50, function() {
-		//var beenslow = false;
-		//$("#leftcolumn").empty();
-		//$("#leftcolumn").append("<center>Loading...</center>").delay(600, "beenslow").slideToggle(1000, function() {
-		//	beenslow = true;
-		//});
-		/*$.ajax({
-			type: "GET",
-			url: href,
-			complete: function(request, status) {
-					//alert(request.getResponseHeader('Last-Modified'));
-					alert(request.status + ' ' + status);
-				},
-			dataType: 'json'
-		});
-		$.get(href, function(data, status, request) {
-			//alert(request.getResponseHeader('Last-Modified'));
-			alert(request.status);
-		});*/
-		
 		$.post(href, postdata, function(data, status, request) {
-			//$("#leftcolumn").dequeue("beenslow");
-			//$("#leftcolumn").stop();
-			//$("#leftcolumn").hide();
-			//$("#leftcolumn").empty();
-			//if (beenslow) {
-				//$("#leftcolumn").slideToggle(1);
-			//}
-			//alert(data.redirect);
 			
 			if (data.redirect != "") {
 				// data.redirect contains the string URL to redirect to
 				window.location.href = data.redirect;
-				//$(window.location).attr('href', data.redirect);
 				return;
 			}
 			
@@ -259,16 +188,21 @@ function execute_ajax(href, postdata) {
 				$("#header").animate({"height": "toggle", "opacity": "toggle"}, 200);
 			}
 			
+			if (data.navbar != null) {
+				$("#navbar").slideUp(20).empty().append(data.navbar);
+				$("#navbar").animate({"height": "toggle", "opacity": "toggle"}, 200);
+			}
+			
 			if (data.footer != null) {
 				$("#footer").slideUp(20).empty().append(data.header);
 				$("#footer").animate({"height": "toggle", "opacity": "toggle"}, 200);
 			}
 			
-			if (data.curr_url != '') {
+			if (data.curr_url != null) {
 				$("#curr_url").html(data.curr_url);
 			}
 			
-			if (data.message != '') {
+			if (data.message != null) {
 				$("#message").html(data.message).show();
 			}
 			

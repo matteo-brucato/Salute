@@ -21,9 +21,9 @@ $table['table-name'] = 'myreferals-table';
 
 // Names of the headers in the table
 if ($this->auth->get_type() === 'patient')
-	$table['th'] = array( 'Doc First Name', 'Doc Last Name', 'Doc First Name', 'Doc Last Name', 'Specialization', 'Date & Time', 'Status', 'Actions');
+	$table['th'] = array( 'Hcp First Name', 'Hcp Last Name', 'Hcp First Name', 'Hcp Last Name', 'Specialization', 'Created', 'Status', 'Actions');
 else
-	$table['th'] = array( 'Pat First Name', 'Pat Last Name', 'Doc First Name', 'Doc Last Name', 'Specialization', 'Date & Time', 'Status', 'Actions');
+	$table['th'] = array( 'Pat First Name', 'Pat Last Name', 'Hcp First Name', 'Hcp Last Name', 'Specialization', 'Created', 'Status', 'Actions');
 
 	
 // Classes for columns (order matters)

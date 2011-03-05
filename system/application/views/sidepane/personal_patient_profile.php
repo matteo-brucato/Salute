@@ -8,7 +8,7 @@
 		</ul>
 	</li>
 -->	
-	<li><a href="/appointments" class="ajax">Appointments</a>
+	<li><a href="/appointments" class="ajax">My Appointments</a>
 		<ul>
 			<li><a href="/appointments/all" class="ajax">All</a></li>
 			<li><a href="/appointments/upcoming" class="ajax">Upcoming</a></li>
@@ -17,7 +17,7 @@
 		</ul>
 	</li>
 	
-	<li><a href="/bills" class="ajax">Bills</a>
+	<li><a href="/bills" class="ajax">My Bills</a>
 		<ul>
 			<li><a href="/bills/all" class="ajax">All</a></li>
 			<li><a href="/bills/current" class="ajax">Current</a></li>
@@ -41,14 +41,14 @@
 		</ul>
 	</li>
 
-	<li><a href="/groups/lists/all" class="ajax">Groups</a>
+	<li><a href="/groups/lists/mine" class="ajax">My Groups</a></li>
 		<ul>
-			<li><a href="/groups/lists/mine" class="ajax">My Groups</a></li>
 			<li><a href="/groups/create" class="ajax">Create a New Group</a></li>
+			<li><a href="/groups/lists/all" class="ajax">All Groups</a>
 		</ul>
 	</li>
 	
-	<li><a href="/medical_records" class="ajax">Medical Records</a>
+	<li><a href="/medical_records" class="ajax">My Medical Records</a>
 		<ul>
 			<li><a href="/medical_records/upload" class="ajax">Upload</a></li>
 		</ul>

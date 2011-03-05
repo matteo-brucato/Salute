@@ -65,7 +65,7 @@ class Ui {
 			$this->panels[3] = $this->CI->load->view('others/footer', '', TRUE);
 			$this->panels[4] = $this->CI->load->view('others/header', '', TRUE);
 			$this->panels[5] = $curr_url;
-			$this->panels[6] = '';
+			$this->panels[6] = NULL;
 		}
 	}
 	
@@ -142,7 +142,7 @@ class Ui {
 			<div class="error_body">
 			<div class="error_hdr">'.$type.'</div>
 			<h4>'.$error_message.'</h4>
-			<a href="">Hide</a>
+			<a href="" class="message_a">Hide</a>
 			</div>';
 		$this->status_code = CTR_ERROR; // controller error
 	}
@@ -160,7 +160,7 @@ class Ui {
 			<div class="message_body">
 			<div class="message_hdr">'.$type.'</div>
 			<h4>'.$message.'</h4>
-			<a href="">Hide</a>
+			<a href="" class="message_a">Hide</a>
 			</div>';
 		$this->status_code = OK_MESSAGE; // message, no error
 	}

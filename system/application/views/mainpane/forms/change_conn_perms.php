@@ -54,7 +54,7 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 	}
 }
 
-echo '<form method="post" action="/medical_records/do_change_permissions/'.$aid.'" id="change_perm">';
+echo '<form method="post" action="/connections/change_permissions_do/'.$aid.'" id="change_perm">';
 view_table($table);
 
 echo	'<div class="checkAll"><input type="checkbox" name="checkAll" /> Check/Uncheck All</div>';
