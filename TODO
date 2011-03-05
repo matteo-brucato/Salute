@@ -89,11 +89,11 @@ GROUPS
 
 - Bugs:
 
----- groups list doesnt take into account if you've been invited.
+
 ---- lets me invite a member who is already invited 
 	 (sortof...doesnt give me error message...) 
 	 it shouldnt even list him in the possible invitees
-
+- create invitation list
 - create test set  ##NADA##
 
 PRESENTATION
