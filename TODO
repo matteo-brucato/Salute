@@ -20,7 +20,7 @@ Public/Private Accounts
 - 
 
 CONNECTIONS/PERMISSIONS/MEDRECS
-- when changing level for a connection, if connection goes from low to high, add permissions to all medical records ##MATTEO##
+<<- when changing level for a connection, if connection goes from low to high, add permissions to all medical records ##MATTEO##>>
 - 'type' in permissions table: 0 is read access 1 is read+write access => change all models/fns that use permissions
 	to take this new case into account. ## MATTEO## 
 
@@ -37,7 +37,7 @@ DOCUMENTATION ## LAST THING SINCE ITS NOT DUE TILL 15th ##
 PROFILE ##ASHWIN ##
 - Implement pictures ## ASHWIN ##
 
-- Profile shortcut from NavBar fails to load sidepanel ## MATTEO ##
+<<- Profile shortcut from NavBar fails to load sidepanel ## MATTEO ##>>
 
 - DECISION:
 -- Controller General Logic:
