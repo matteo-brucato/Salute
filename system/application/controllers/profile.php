@@ -20,6 +20,7 @@ class Profile extends Controller {
 		$this->load->model('medical_records_model');
 		$this->load->model('bills_model');
 		$this->load->model('connections_model');
+		$this->load->model('referal_model');
 		//$this->load->view('other_patient_profile');
 		//$this->load->view('');
 		//$this->load->view('');
@@ -65,7 +66,9 @@ class Profile extends Controller {
 							
 			$mainview .= $this->load->view('mainpane/personal_patient_profile',
 										array('info' => $patient_info[0]), TRUE);
-			$mainview .= '<a href="/profile/edit">Edit</a>';
+			$mainview .= '<a href="/profile/edit">Edit</a><br>';
+			$mainview .= '<a href="/connections/myhcps">View all my HCPS</a><br>';
+			$mainview .= '<a href="/connections/mypatients">View all my patient friends</a><br>';
 
 			$appointments = $this->appointments_model->view_recent_five(array('account_id' => $this->auth->get_account_id(),
 																 'type' => $this->auth->get_type()));
@@ -76,14 +79,7 @@ class Profile extends Controller {
 			$mainview .= $this->load->view('mainpane/lists/appointments',
 										array('list' => $appointments, 'list_name' => 'My Appointments'), TRUE);
 			$mainview .= '<a href="/appointments/all">View all appointments</a>';
-			$medical_recs= $this->medical_records_model->list_recent_five(array($this->auth->get_account_id()));
-			if( $medical_recs === -1 ){
-				$this->auth->set_query_error();
-				return;
-			}
-			$mainview .= $this->load->view('mainpane/lists/medical_records',
-										array('list' => $medical_recs, 'list_name' => 'My Medical Records'), TRUE);
-			$mainview .= '<a href="/medical_records/myrecs">View all medical records</a>';
+	
 			
 			$bills= $this->bills_model->view_top_five(array( $this->auth->get_account_id(), $this->auth->get_type()));
 			if( $bills === -1 ){
@@ -94,54 +90,125 @@ class Profile extends Controller {
 										array('list' => $bills, 'list_name' => 'My Bills'), TRUE);
 			$mainview .= '<a href="/bills/all">View all bills</a>';
 			
-			$patients= $this->connections_model->list_patients_top_five($this->auth->get_account_id());
-			if( $patients === -1 ){
-				$this->auth->set_query_error();
-				return;
-			}		
-			$mainview .= $this->load->view('mainpane/lists/patients',
-										array('list' => $patients, 'list_name' => 'My Patients', 'status' => 'connected'),  TRUE);			
-			$mainview .= '<a href="/connections/mypatients">View all patients</a>';
-			$this->ui->set(array($mainview));
-			
-			$hcps= $this->connections_model->list_hcps_top_five($this->auth->get_account_id());
-			if( $hcps === -1 ){
-				$this->auth->set_query_error();
-				return;
-			}		
-			$mainview .= $this->load->view('mainpane/lists/patients',
-										array('list' => $hcps, 'list_name' => 'My HCPs', 'status' => 'connected'),  TRUE);			
-			$mainview .= '<a href="/connections/mypatients">View all patients</a>';
-			$this->ui->set(array($mainview));
-			
-		/*
-			//load patient account information
-			$patient_info = $this->patient_model->get_patient( array($this->auth->get_account_id()) );
-			if( $patient_info === -1 ){
-				$this->auth->set_query_error();
-				return;
-			}
-			if( count($patient_info) <= 0 ){
-				$this->auth->set_error('Internal Logic Server Error.','server');
-				return;
-			}
-			//$picsrc = $patient_info[0]['picture_name']
-			$mainview = '<img src="/resources/images/default_patient.jpg"/>';
-		//	$mainview = $this->load->view('mainpaine/forms/edit_patient_info', array('curr_info' => $res[0]), TRUE);
-			
 
-			//$this->ui->set(array($mainview));
+						
+			
+			$refs= $this->referal_model->view_top_five(array('account_id' => $this->auth->get_account_id(),
+																 'type' => $this->auth->get_type()));
+			if( $refs === -1 ){
+				$this->auth->set_query_error();
+				return;
+			}
+			$mainview .= $this->load->view('mainpane/lists/referals',
+										array('list' => $refs, 'list_name' => 'Incoming Referals'), TRUE);
+			$mainview .= '<a href="/refers">View all referals</a>';
+			
+			
+			
+			$conns= $this->connections_model->pending_incoming_patients_top_five(array($this->auth->get_account_id()));
+			if( $conns === -1 ){
+				$this->auth->set_query_error();
+				return;
+			}
+			$mainview .= $this->load->view('mainpane/lists/patients',
+			array('list_name' => 'Incoming requests from patients', 'list' => $conns, 'status' => 'pending') , TRUE);
+			
+			
+			$mainview .= '<a href="/connections/pending/in">View all incoming requests from patients</a>';
+			
 			$this->ui->set(array($mainview));
-			return;*/
 		}
 
 		else if ($this->auth->get_type() === 'hcp') {
-			$this->ui->set(array(
-				$this->load->view('mainpane/personal_hcp_profile', '', TRUE),
-				$this->load->view('sidepane/personal_hcp_profile', '', TRUE)
-			));
-		}
+			$hcp_info = $this->hcp_model->get_hcp(array($this->auth->get_account_id()));
+			if( $hcp_info === -1 ){
+				$this->auth->set_query_error();
+				return;
+			}
+			if( count($hcp_info) <= 0 ){
+				$this->auth->set_error('Internal Logic Server Error.','server');
+				return;
+			}
+			//$mainview = 'mainpane/forms/edit_patient_info';
+			//$this->ui->set(array($this->load->view($mainview, array('curr_info' => $res[0]), TRUE)));
+			$mainview = '';
+			$mainview .= '<img src="/resources/images/default_hcp.jpg"/>';
+			//$mainview.= 
+			//$mainview .= $this->load->view('mainpaine/forms/edit_patient_info', 
+										//array('curr_info' => $res[0]), TRUE);
+										
+						
+			$mainview .= $this->load->view('mainpane/personal_hcp_profile',
+										array('info' => $hcp_info[0]), TRUE);
+			$mainview .= '<a href="/profile/edit">Edit</a><br>';
+			$mainview .= '<a href="/connections/myhcps">View all my HCPS</a><br>';
+			$mainview .= '<a href="/connections/mypatients">View all my patients</a><br>';
 
+			$appointments = $this->appointments_model->view_recent_five(array('account_id' => $this->auth->get_account_id(),
+																 'type' => $this->auth->get_type()));
+			if( $appointments === -1 ){
+				$this->auth->set_query_error();
+				return;
+			}
+			$mainview .= $this->load->view('mainpane/lists/appointments',
+										array('list' => $appointments, 'list_name' => 'My Appointments'), TRUE);
+			$mainview .= '<a href="/appointments/all">View all appointments</a>';
+	
+			
+			$bills= $this->bills_model->view_top_five(array( $this->auth->get_account_id(), $this->auth->get_type()));
+			if( $bills === -1 ){
+				$this->auth->set_query_error();
+				return;
+			}
+			$mainview .= $this->load->view('mainpane/lists/bills',
+										array('list' => $bills, 'list_name' => 'My Bills'), TRUE);
+			$mainview .= '<a href="/bills/all">View all bills</a>';
+			
+
+					
+			
+			$refs= $this->referal_model->view_top_five(array('account_id' => $this->auth->get_account_id(),
+																 'type' => $this->auth->get_type()));
+			if( $refs === -1 ){
+				$this->auth->set_query_error();
+				return;
+			}
+			$mainview .= $this->load->view('mainpane/lists/referals',
+										array('list' => $refs, 'list_name' => 'Incoming Referals'), TRUE);
+			$mainview .= '<a href="/refers">View all referals</a>';
+			
+			
+			
+			$conns= $this->connections_model->pending_incoming_patients_top_five(array($this->auth->get_account_id()));
+			if( $conns === -1 ){
+				$this->auth->set_query_error();
+				return;
+			}
+			$mainview .= $this->load->view('mainpane/lists/patients',
+			array('list_name' => 'Incoming requests from patients', 'list' => $conns, 'status' => 'pending') , TRUE);
+			
+			
+			$mainview .= '<a href="/connections/pending/in">View all incoming requests from patients</a>';
+	
+
+			$connp= $this->connections_model->pending_incoming_hcps_top_five(array($this->auth->get_account_id()));
+			if( $connp === -1 ){
+				$this->auth->set_query_error();
+				return;
+			}
+			$mainview .= $this->load->view('mainpane/lists/hcps',
+			array('list_name' => 'Incoming requests from HCPs', 'list' => $connp, 'status' => 'pending') , TRUE);
+			
+			
+			$mainview .= '<a href="/connections/pending/in">View all incoming requests from patients</a>';
+
+			
+			$this->ui->set(array($mainview));
+			//$this->ui->set(array(
+			//	$this->load->view('mainpane/personal_hcp_profile', '', TRUE),
+			//	$this->load->view('sidepane/personal_hcp_profile', '', TRUE)
+			//));
+		}
 		else {
 			$this->ui->set_error('Access to this page not allowed', 'forbidden');
 			return;
