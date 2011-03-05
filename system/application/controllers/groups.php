@@ -205,34 +205,38 @@ class Groups extends Controller {
 			return;
 		} else if ($mem === FALSE){
 			// Check if its a patient
-			$mem = $this->patient_model->is_patient($this->auth->get_account_id());
-			//if not, check if its a doctor
-			if($mem === -1 || $mem === FALSE){
-				$mem = $this->hcp_model->is_hcp($this->auth->get_account_id());
-				// if not, server error
-				if($mem === -1){
-					$this->ui->set_error('Internal server error1','server');
-					return;
-				} else if ($mem === FALSE){
-					$this->ui->set_error('Internal server error1','server');
-					return;
-				} else{
-					if ( $group['group_type'] === '0' ){
-						$this->ui->set_error('This is a patient only group.','Permission Denied');
-						return;
-					}
-				}
-			} else{ //else it is a patient.
-				if ( $group['group_type'] === '1' ){
+			$type = $this->auth->get_type();
+			if($type === 'patient'){
+				if ( $group['group_type'] === '1'){
 					$this->ui->set_error('This is a healthcare provider only group.','Permission Denied');
 					return;
 				}
 			}
-		} else {
-			$this->ui->set_error('Internal server error2','server');
-			return;
+			else if($type === 'hcp'){
+				if ( $group['group_type'] === '0'){
+					$this->ui->set_error('This is a patient only group.','Permission Denied');
+					return;	
+				}
+			}
+			else {
+				$this->ui->set_error('Internal server error','server');
+				return;	
+			}
 		}
-			
+		
+		// if its a private group, check that they have an invitation
+		if($group['public_private'] === '1'){
+			$invited = $this->groups_model->is_invited($this->auth->get_account_id(),$group_id);
+			if ($invited === -1){
+				$this->ui->set_query_error();
+				return;	
+			}
+			if($invited === FALSE){
+				$this->ui->set_error('You must be invited to join this private group.','Permission Denied');
+				return;
+			}
+		}
+		
 		$check = $this->groups_model->join($this->auth->get_account_id(),$group_id);
 		if ($check === -1){
 			$this->ui->set_query_error();

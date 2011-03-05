@@ -85,9 +85,11 @@ GROUPS
 
 <<- Edit group does not work well... I change something and it says "all fields mandatory">>
 <<- Also, it has that strange behaviour in dislpaying the description...>>
+<< bug : I can join a private group just with the URL...>>
 
 - Bugs:
----- I can join a private group just with the URL...
+
+---- groups list doesnt take into account if you've been invited.
 ---- lets me invite a member who is already invited 
 	 (sortof...doesnt give me error message...) 
 	 it shouldnt even list him in the possible invitees
