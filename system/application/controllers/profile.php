@@ -41,6 +41,15 @@ class Profile extends Controller {
 			return;
 		}
 		
+		// Check if there is a picture, otherwise set the default one
+		if (is_file('/resources/images/account_pictures/'.$this->auth->get_account_id().'.jpg')) {
+			$picture = '/resources/images/account_pictures/'.$this->auth->get_account_id();
+		} else {
+			$picture = '/resources/images/account_pictures/default_'.$this->auth->get_type();
+		}
+		
+		$mainview = '';
+		
 		if ($this->auth->get_type() === 'patient') {
 			/*			$this->ui->set(array(
 				$this->load->view('mainpane/personal_patient_profile', '', TRUE)
@@ -57,15 +66,13 @@ class Profile extends Controller {
 			}
 			//$mainview = 'mainpane/forms/edit_patient_info';
 			//$this->ui->set(array($this->load->view($mainview, array('curr_info' => $res[0]), TRUE)));
-			$mainview = '';
-			$mainview .= '<img src="/resources/images/default_patient.jpg"/>';
 			//$mainview.= 
 			//$mainview .= $this->load->view('mainpaine/forms/edit_patient_info', 
 										//array('curr_info' => $res[0]), TRUE);
 										
 							
 			$mainview .= $this->load->view('mainpane/personal_patient_profile',
-										array('info' => $patient_info[0]), TRUE);
+				array('info' => $patient_info[0], 'picture' => $picture), TRUE);
 			$mainview .= '<a href="/profile/edit">Edit</a><br>';
 			$mainview .= '<a href="/connections/myhcps">View all my HCPS</a><br>';
 			$mainview .= '<a href="/connections/mypatients">View all my patient friends</a><br>';
@@ -131,15 +138,17 @@ class Profile extends Controller {
 			}
 			//$mainview = 'mainpane/forms/edit_patient_info';
 			//$this->ui->set(array($this->load->view($mainview, array('curr_info' => $res[0]), TRUE)));
-			$mainview = '';
-			$mainview .= '<img src="/resources/images/default_hcp.jpg"/>';
+			//$mainview = '';
+			//$mainview .= '<img src="/resources/images/default_hcp.jpg"/>';
 			//$mainview.= 
 			//$mainview .= $this->load->view('mainpaine/forms/edit_patient_info', 
 										//array('curr_info' => $res[0]), TRUE);
 										
 						
+			//$mainview .= $this->load->view('mainpane/personal_hcp_profile',
+			//							array('info' => $hcp_info[0]), TRUE);
 			$mainview .= $this->load->view('mainpane/personal_hcp_profile',
-										array('info' => $hcp_info[0]), TRUE);
+				array('info' => $hcp_info[0], 'picture' => $picture), TRUE);
 			$mainview .= '<a href="/profile/edit">Edit</a><br>';
 			$mainview .= '<a href="/connections/myhcps">View all my HCPS</a><br>';
 			$mainview .= '<a href="/connections/mypatients">View all my patients</a><br>';
