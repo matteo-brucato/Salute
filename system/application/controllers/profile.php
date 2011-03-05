@@ -114,7 +114,7 @@ class Profile extends Controller {
 			array('list_name' => 'Incoming requests from patients', 'list' => $conns, 'status' => 'pending') , TRUE);
 			
 			
-			$mainview .= '<a href="/connections/pending/in">View all incoming requests from patients</a>';
+			$mainview .= '<a href="/connections/pending/in">View all incoming requests</a>';
 			
 			$this->ui->set(array($mainview));
 		}
@@ -174,7 +174,7 @@ class Profile extends Controller {
 				return;
 			}
 			$mainview .= $this->load->view('mainpane/lists/referals',
-										array('list' => $refs, 'list_name' => 'Incoming Referals'), TRUE);
+										array('list' => $refs, 'list_name' => 'Referals'), TRUE);
 			$mainview .= '<a href="/refers">View all referals</a>';
 			
 			
@@ -188,7 +188,7 @@ class Profile extends Controller {
 			array('list_name' => 'Incoming requests from patients', 'list' => $conns, 'status' => 'pending') , TRUE);
 			
 			
-			$mainview .= '<a href="/connections/pending/in">View all incoming requests from patients</a>';
+			$mainview .= '<a href="/connections/pending/in">View all incoming requests</a>';
 	
 
 			$connp= $this->connections_model->pending_incoming_hcps_top_five(array($this->auth->get_account_id()));
@@ -200,7 +200,7 @@ class Profile extends Controller {
 			array('list_name' => 'Incoming requests from HCPs', 'list' => $connp, 'status' => 'pending') , TRUE);
 			
 			
-			$mainview .= '<a href="/connections/pending/in">View all incoming requests from patients</a>';
+			$mainview .= '<a href="/connections/pending/in">View all incoming requests</a>';
 
 			
 			$this->ui->set(array($mainview));
