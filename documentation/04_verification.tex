@@ -139,9 +139,74 @@ Each controller's functions were tested in several ways to anticipate possible u
 
 
 \section{Database Tests}
-The database was initially tested with simple SELECT * queries to see if the database tables were created and loaded correctly using the automated scripts\footnote{The bash script start\_everything.sh was used to automate the database creation process.  It used create\_tables.sql and load\_data.sql to create and populate the database.}. The database was populated with test data from thirteen different files (approximately one for every table)\footnote{These test files are: accounts.txt, appointments.txt, connections.txt, groups.txt, hcp\_account.txt, is\_in.txt, medical\_records.txt, messages.txt, patient\_account.txt, payment.txt, permissions.txt, refers.txt, and invite.txt.}.  Then as the functions in each model were being implemented, the sql queries for each function would first be tested in the database to make sure that the correct result was returned.  Only after the sql query was tested and returned the correct information to the function in the model, would we determine that the function was fully implemented.  Additionally, error checking is done in each function to determine if an sql query sent to the database was successfully executed.
+The database was initially tested with simple SELECT * queries to see if the database tables were created and loaded correctly using the automated scripts\footnote{The bash script start\_everything.sh was used to automate the database creation process.  It used create\_tables.sql and load\_data.sql to create and populate the database.}. The database was populated with test data from thirteen different files (approximately one for every table)\footnote{These test files are: accounts.txt, appointments.txt, connections.txt, groups.txt, hcp\_account.txt, invite.txt, is\_in.txt, medical\_records.txt, messages.txt, patient\_account.txt, payment.txt, permissions.txt and refers.txt.}.  Then as the functions in each model were being implemented, the sql queries for each function would first be tested in the database to make sure that the correct result was returned.  Only after the sql query was tested and returned the correct information to the function in the model, would we determine that the function was fully implemented.  Additionally, error checking is done in each function to determine if an sql query sent to the database was successfully executed.
 
 All of the test data files that are used to populate the database not only provide testing capabilities for the models, but also for the views and the controllers since they are interrelated.  For a list of all of the tests that the controllers test, read subsection \ref{subsec:controllertests}.
 
+\subsection{Test Data} A script called generate\_data.sh was used to create all of the test data in most of the test data files\footnote{genetate\_data.sh does not generate test data for messages.txt, groups.txt, is\_in.txt, and invite.txt.  These were done manually.}.  Next we will describe all of the important test data files.
+
+\subsection{accounts.txt} There are fifty patient accounts with account ids 1-50.  There are fifty hcp accounts with account ids 51-100.
+
+\subsection{connections.txt} 
+\paragraph{Patient to Patient Connections}The first twelve patient account ids are connected with four other patients.  Patient account id 13 is only connected with one patient, patient id 50.  No two patients are connected with the same patient.
+\begin{verbatim}
+example:
+     pat_id  pat_id     pat_id  pat_id		
+        1       2          2       6			
+        1       3          2       7
+        1       4          2       8
+        1       5          2       9		
+\end{verbatim}
+
+\paragraph{Patient to HCP Connections} Each patient account is connected with five hcps.  Patient account id 50 is only connected with one hcp, hcp account id 100.  There is an overlap of four, which means two patients are connected with the same four hcps.
+\begin{verbatim}
+example:
+     pat_id  hcp_id     pat_id  hcp_id		
+        1       51         2       52
+        1       52         2       53
+        1       53         2       54
+        1       54         2       55
+        1       55         2       56
+\end{verbatim}
+
+\paragraph{HCP to HCP Connections}  Each hcp account is connected with two other hcps that are seven and eight account ids away respectively.  Hcp account id 93 is only connected with one hcp, hcp account id 100.  There is an overlap of one, which means two hcps are connected with the same hcp.
+\begin{verbatim}
+example:
+     hcp_id  hcp_id     hcp_id  hcp_id		
+        51      58         52      59
+        51      59         52      60
+\end{verbatim}
+
+\subsection{appointments.txt}
+\paragraph{Past Appointments}  Each patient has four past appointments with the first four hcps they are connected with.
+\paragraph{Upcomming Appointments} Each patient has four upcomming appointments with the first four hcps they are connected with.  Two of them have been accepted by the hcp, two of them have not been accepted by the hcp.
+
+\subsection{groups.txt}  There are six groups to represent all of the possible types of groups.  The possible types of groups are: public patient to patient, public patient to hcp, public hcp to hcp, private patient to patient, private patient to hcp, private hcp to hcp.
+
+\subsection{invite.txt}
+Sender account id, receiver account id and group id to represent all of the invitations to private groups that the sender belongs to.
+
+\subsection{is\_in.txt}
+Patient and hcp account ids, group id, level type to represent the groups that they belong to.
+
+\subsection{medical\_records.txt}
+Each patient has four medical records for their past four appointments.
+
+\subsection{payment.txt}
+Each patient has four bills that correspond to their past four appointments.  Two of them have been paid, two of them have not been paid.
+
+\subsection{permissions.txt}
+Each hcp has permission to view the medical records that they uploaded for each one of their past appointments.
+
+\subsection{refers.txt}
+Each hcp has two referrals for their fist connected patient.  Hcps stop making referrals at account id 93.  Hcp account id 93 has only one referral.  The patient gets referred to an hcp that is seven and eight account ids away. These are the hcps that the referring hcp is connected with.
+\begin{verbatim}
+example:
+     refering_hcp_id     is_referred_hcp_id     pat_id	
+             51                    58              1
+             51                    59              1
+             52                    59              2
+             52                    60              2
+\end{verbatim}
 
 \chapter{Analysis}
