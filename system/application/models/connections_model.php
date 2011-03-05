@@ -232,6 +232,34 @@ class Connections_model extends Model {
 		return array();
 	}
 	
+		/**
+	 * List all pending incoming connections requests, coming from hcps,
+	 * for the specified account
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id)
+	 * @return
+	 * 	 -1 in case of error in a query
+	 *    Array with all pending requests OR 
+	 *    empty array() if none
+	 * */
+	function pending_incoming_hcps_top_five($inputs)
+	{
+		$sql = "SELECT H.*
+			FROM connections C, hcp_account H
+			WHERE C.accepted = FALSE AND C.receiver_id = ? AND H.account_id = C.sender_id
+			ORDER BY C.date_connected
+			LIMIT 5";
+		$query = $this->db->query($sql, $inputs);
+
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+
+		if ($query->num_rows() > 0)
+			return $query->result_array();
+
+		return array();
+	}
 	
 	/**
 	 * List all pending incoming connections requests, coming from patients,
@@ -261,7 +289,35 @@ class Connections_model extends Model {
 	 }
 	 
 	 
+		/**
+	 * List all pending incoming connections requests, coming from patients,
+	 * for the specified account
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id)
+	 * @return
+	 *  -1 in case of error in a query
+	 *   Array with all pending requests
+	 *   empty array() if none
+	 * */
+	function pending_incoming_patients_top_five($inputs)
+	{
+		$sql = "SELECT P.*
+	 		FROM connections C, patient_account P
+			WHERE C.accepted = FALSE AND C.receiver_id = ? AND P.account_id = C.sender_id
+			ORDER BY C.date_connected
+			LIMIT 5";
+ 		$query = $this->db->query($sql, $inputs);
 	
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		
+		if ($query->num_rows() > 0)
+			return $query->result_array();
+		
+		return array();
+	 }
+	 
 	 
 	 
 	 /**
