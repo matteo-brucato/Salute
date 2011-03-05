@@ -529,6 +529,15 @@ class Connections extends Controller {
 		}
 	}
 	
+	
+	/**
+	 * Loads the view to change the connection level of an account with another account
+	 * 
+	 * @param $inputs
+	 *   Is of the form:
+	 * @return
+	 *	 Loads the view
+	 * */
 	function change_level($aid = NULL) {
 		$check = $this->auth->check(array(
 			auth::CurrLOG,
@@ -563,6 +572,15 @@ class Connections extends Controller {
 		}
 	}
 	
+	
+	/**
+	 * Changes the connection level of an account with another account
+	 * 
+	 * @param $inputs
+	 *   Is of the form: account_id for the account you would like to change the level
+	 * @return
+	 *	 Display message
+	 * */
 	function change_level_do($aid = NULL) {
 		$check = $this->auth->check(array(
 			auth::CurrLOG,

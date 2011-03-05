@@ -13,7 +13,7 @@ GENERAL:
 
 Public/Private Accounts:
 - ONLY applicable to patients, NOT hcps 
-- fix patient / hcp search list (take into account private/public setting in accounts table)
+//- fix patient / hcp search list (take into account private/public setting in accounts table)
 - Patient's who have a private profile are in summary: users who only want to send requests themselves, they cannot
   receive connection requests. They can receive referals and group invitations ONLY becasue they are received from their
   connected friends/hcps. If private patient joins a group, they will be listed in the group members list; this is because

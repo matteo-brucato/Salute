@@ -218,6 +218,61 @@ class Settings extends Controller {
 		$msg = 'Your Account has been reactivated. Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.';
 		$this->ui->set_message($msg,'Confirmation');		
 	}
+	
+	
+	/**
+	 * Loads the view to change the privacy level of an account
+	 * 
+	 * @param $inputs
+	 *   Is of the form:
+	 * @return
+	 *	 Loads the view
+	 * */
+	function change_privacy() {
+			
+		if ($this->auth->check(array(auth::CurrLOG, auth::CurrPAT)) !== TRUE) {
+			return;
+		}
+		
+		$privacy = $this->account_model->is_public($this->auth->get_account_id());
+		if ($privacy === -1){
+			$this->ui->set_query_error();
+			return;
+		} elseif ( $privacy === NULL ){
+			$this->ui->set_message('Account does not exist.','Error');
+		}
+		else
+			$this->ui->set(array($this->load->view('mainpane/forms/change_privacy', array( 'privacy' => $privacy), TRUE)));		
+	}
+	
+	
+	/**
+	 * Changes the privacy level of an account with another account
+	 * 
+	 * @param $inputs
+	 *   
+	 * @return
+	 *	 Display message
+	 * */
+	function change_privacy_do(){
+		
+		if ($this->auth->check(array(auth::CurrLOG, auth::CurrPAT)) !== TRUE) {
+			return;
+		}
+		
+		$new_level = $this->input->post('level');
+		if ($new_level == NULL) {
+			$this->ui->set_error('Select a level.','Missing Arguments'); 
+			return;
+		}
+		
+		$change = $this->account_model->update_privacy(array($this->auth->get_account_id(), $new_level));
+		if ($change === -1){
+			$this->ui->set_query_error();
+			return;
+		}elseif ($change === 0)
+			$this->ui->set_message('Privacy level updated.','Confirmation');
+	}
 }
 /** @} */
 ?>

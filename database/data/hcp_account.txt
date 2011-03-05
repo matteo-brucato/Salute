@@ -1,51 +1,51 @@
-51;Musa;Rayyan;;635492165;1988-12-1;m;19096936527;19093428463;Cardioligist;Rayyan Medical Center;15632 Frederic Ave, Riverside, CA 92521;doctor1.jpeg
-52;Matteo;Brucato;;234567891;1985-5-12;m;19517253847;19519776537;Brain Surgeon;Matteo's Family Clinic;1298 Orange St, Colton, CA 92324;doctor2.jpeg
-53;Nada;Hashem;;567390804;1989-10-19;f;17028335678;17022349876;Cardio-Thoracic Surgeon;Hashem's Medical Center; 9345 Hashem St, Reno, NV 89501;doctor3.jpeg
-54;Aswhin;Gopalakrishnan;;876976546;1965-9-24;m;14803491203;14808451298;General Practitioner;Ashwin Medical Center; 2342 Saint St, Springfield, AR 85640;doctor4.jpeg
-55;Connie;Chang;;12313434;1965-9-24;f;34534546;14808451298;Pharmacy Practitioner;Kaiser; 2342 Saint St, Springfield, AR 85640;doctor4.jpeg
-56;doc_56_FN;doc_56_LN;doc_56_MN;56000000;1998-12-1;m;5600000000;0000000056;Speciality_56;clinic_56;address_56;image_56.jpeg
-57;doc_57_FN;doc_57_LN;doc_57_MN;57000000;1998-12-1;f;5700000000;0000000057;Speciality_57;clinic_57;address_57;image_57.jpeg
-58;doc_58_FN;doc_58_LN;doc_58_MN;58000000;1998-12-1;m;5800000000;0000000058;Speciality_58;clinic_58;address_58;image_58.jpeg
-59;doc_59_FN;doc_59_LN;doc_59_MN;59000000;1998-12-1;f;5900000000;0000000059;Speciality_59;clinic_59;address_59;image_59.jpeg
-60;doc_60_FN;doc_60_LN;doc_60_MN;60000000;1998-12-1;m;6000000000;0000000060;Speciality_60;clinic_60;address_60;image_60.jpeg
-61;doc_61_FN;doc_61_LN;doc_61_MN;61000000;1998-12-1;f;6100000000;0000000061;Speciality_61;clinic_61;address_61;image_61.jpeg
-62;doc_62_FN;doc_62_LN;doc_62_MN;62000000;1998-12-1;m;6200000000;0000000062;Speciality_62;clinic_62;address_62;image_62.jpeg
-63;doc_63_FN;doc_63_LN;doc_63_MN;63000000;1998-12-1;f;6300000000;0000000063;Speciality_63;clinic_63;address_63;image_63.jpeg
-64;doc_64_FN;doc_64_LN;doc_64_MN;64000000;1998-12-1;m;6400000000;0000000064;Speciality_64;clinic_64;address_64;image_64.jpeg
-65;doc_65_FN;doc_65_LN;doc_65_MN;65000000;1998-12-1;f;6500000000;0000000065;Speciality_65;clinic_65;address_65;image_65.jpeg
-66;doc_66_FN;doc_66_LN;doc_66_MN;66000000;1998-12-1;m;6600000000;0000000066;Speciality_66;clinic_66;address_66;image_66.jpeg
-67;doc_67_FN;doc_67_LN;doc_67_MN;67000000;1998-12-1;f;6700000000;0000000067;Speciality_67;clinic_67;address_67;image_67.jpeg
-68;doc_68_FN;doc_68_LN;doc_68_MN;68000000;1998-12-1;m;6800000000;0000000068;Speciality_68;clinic_68;address_68;image_68.jpeg
-69;doc_69_FN;doc_69_LN;doc_69_MN;69000000;1998-12-1;f;6900000000;0000000069;Speciality_69;clinic_69;address_69;image_69.jpeg
-70;doc_70_FN;doc_70_LN;doc_70_MN;70000000;1998-12-1;m;7000000000;0000000070;Speciality_70;clinic_70;address_70;image_70.jpeg
-71;doc_71_FN;doc_71_LN;doc_71_MN;71000000;1998-12-1;f;7100000000;0000000071;Speciality_71;clinic_71;address_71;image_71.jpeg
-72;doc_72_FN;doc_72_LN;doc_72_MN;72000000;1998-12-1;m;7200000000;0000000072;Speciality_72;clinic_72;address_72;image_72.jpeg
-73;doc_73_FN;doc_73_LN;doc_73_MN;73000000;1998-12-1;f;7300000000;0000000073;Speciality_73;clinic_73;address_73;image_73.jpeg
-74;doc_74_FN;doc_74_LN;doc_74_MN;74000000;1998-12-1;m;7400000000;0000000074;Speciality_74;clinic_74;address_74;image_74.jpeg
-75;doc_75_FN;doc_75_LN;doc_75_MN;75000000;1998-12-1;f;7500000000;0000000075;Speciality_75;clinic_75;address_75;image_75.jpeg
-76;doc_76_FN;doc_76_LN;doc_76_MN;76000000;1998-12-1;m;7600000000;0000000076;Speciality_76;clinic_76;address_76;image_76.jpeg
-77;doc_77_FN;doc_77_LN;doc_77_MN;77000000;1998-12-1;f;7700000000;0000000077;Speciality_77;clinic_77;address_77;image_77.jpeg
-78;doc_78_FN;doc_78_LN;doc_78_MN;78000000;1998-12-1;m;7800000000;0000000078;Speciality_78;clinic_78;address_78;image_78.jpeg
-79;doc_79_FN;doc_79_LN;doc_79_MN;79000000;1998-12-1;f;7900000000;0000000079;Speciality_79;clinic_79;address_79;image_79.jpeg
-80;doc_80_FN;doc_80_LN;doc_80_MN;80000000;1998-12-1;m;8000000000;0000000080;Speciality_80;clinic_80;address_80;image_80.jpeg
-81;doc_81_FN;doc_81_LN;doc_81_MN;81000000;1998-12-1;f;8100000000;0000000081;Speciality_81;clinic_81;address_81;image_81.jpeg
-82;doc_82_FN;doc_82_LN;doc_82_MN;82000000;1998-12-1;m;8200000000;0000000082;Speciality_82;clinic_82;address_82;image_82.jpeg
-83;doc_83_FN;doc_83_LN;doc_83_MN;83000000;1998-12-1;f;8300000000;0000000083;Speciality_83;clinic_83;address_83;image_83.jpeg
-84;doc_84_FN;doc_84_LN;doc_84_MN;84000000;1998-12-1;m;8400000000;0000000084;Speciality_84;clinic_84;address_84;image_84.jpeg
-85;doc_85_FN;doc_85_LN;doc_85_MN;85000000;1998-12-1;f;8500000000;0000000085;Speciality_85;clinic_85;address_85;image_85.jpeg
-86;doc_86_FN;doc_86_LN;doc_86_MN;86000000;1998-12-1;m;8600000000;0000000086;Speciality_86;clinic_86;address_86;image_86.jpeg
-87;doc_87_FN;doc_87_LN;doc_87_MN;87000000;1998-12-1;f;8700000000;0000000087;Speciality_87;clinic_87;address_87;image_87.jpeg
-88;doc_88_FN;doc_88_LN;doc_88_MN;88000000;1998-12-1;m;8800000000;0000000088;Speciality_88;clinic_88;address_88;image_88.jpeg
-89;doc_89_FN;doc_89_LN;doc_89_MN;89000000;1998-12-1;f;8900000000;0000000089;Speciality_89;clinic_89;address_89;image_89.jpeg
-90;doc_90_FN;doc_90_LN;doc_90_MN;90000000;1998-12-1;m;9000000000;0000000090;Speciality_90;clinic_90;address_90;image_90.jpeg
-91;doc_91_FN;doc_91_LN;doc_91_MN;91000000;1998-12-1;f;9100000000;0000000091;Speciality_91;clinic_91;address_91;image_91.jpeg
-92;doc_92_FN;doc_92_LN;doc_92_MN;92000000;1998-12-1;m;9200000000;0000000092;Speciality_92;clinic_92;address_92;image_92.jpeg
-93;doc_93_FN;doc_93_LN;doc_93_MN;93000000;1998-12-1;f;9300000000;0000000093;Speciality_93;clinic_93;address_93;image_93.jpeg
-94;doc_94_FN;doc_94_LN;doc_94_MN;94000000;1998-12-1;m;9400000000;0000000094;Speciality_94;clinic_94;address_94;image_94.jpeg
-95;doc_95_FN;doc_95_LN;doc_95_MN;95000000;1998-12-1;f;9500000000;0000000095;Speciality_95;clinic_95;address_95;image_95.jpeg
-96;doc_96_FN;doc_96_LN;doc_96_MN;96000000;1998-12-1;m;9600000000;0000000096;Speciality_96;clinic_96;address_96;image_96.jpeg
-97;doc_97_FN;doc_97_LN;doc_97_MN;97000000;1998-12-1;f;9700000000;0000000097;Speciality_97;clinic_97;address_97;image_97.jpeg
-98;doc_98_FN;doc_98_LN;doc_98_MN;98000000;1998-12-1;m;9800000000;0000000098;Speciality_98;clinic_98;address_98;image_98.jpeg
-99;doc_99_FN;doc_99_LN;doc_99_MN;99000000;1998-12-1;f;9900000000;0000000099;Speciality_99;clinic_99;address_99;image_99.jpeg
-100;doc_100_FN;doc_100_LN;doc_100_MN;100000000;1998-12-1;m;10000000000;00000000100;Speciality_100;clinic_100;address_100;image_100.jpeg
+51;Iulian;Neamtiu;;635492165;1978-5-6;m;19518272993;19093428463;Cardioligist;Neamtiu Medical Center;900 University Ave, Bourns College of Engineering UnitII, 412, Riverside, CA 92521
+52;Musa;Rayyan;;635492165;1988-12-1;m;19096936527;19093428463;Cardioligist;Rayyan Medical Center;15632 Frederic Ave, Riverside, CA 92521
+53;Matteo;Brucato;;234567891;1985-5-12;m;19517253847;19519776537;Brain Surgeon;Matteo's Family Clinic;1298 Orange St, Colton, CA 92324
+54;Nada;Hashem;;567390804;1989-10-19;f;17028335678;17022349876;Cardio-Thoracic Surgeon;Hashem's Medical Center; 9345 Hashem St, Reno, NV 89501
+55;Aswhin;Gopalakrishnan;;876976546;1965-9-24;m;14803491203;14808451298;General Practitioner;Ashwin Medical Center; 2342 Saint St, Springfield, AR 85640
+56;Connie;Chang;;12313434;1965-9-24;f;34534546;14808451298;Pharmacy Practitioner;Kaiser; 2342 Saint St, Springfield, AR 85640
+57;doc_57_FN;doc_57_LN;doc_57_MN;57000000;1998-12-1;f;5700000000;0000000057;Speciality_57;clinic_57;address_57
+58;doc_58_FN;doc_58_LN;doc_58_MN;58000000;1998-12-1;m;5800000000;0000000058;Speciality_58;clinic_58;address_58
+59;doc_59_FN;doc_59_LN;doc_59_MN;59000000;1998-12-1;f;5900000000;0000000059;Speciality_59;clinic_59;address_59
+60;doc_60_FN;doc_60_LN;doc_60_MN;60000000;1998-12-1;m;6000000000;0000000060;Speciality_60;clinic_60;address_60
+61;doc_61_FN;doc_61_LN;doc_61_MN;61000000;1998-12-1;f;6100000000;0000000061;Speciality_61;clinic_61;address_61
+62;doc_62_FN;doc_62_LN;doc_62_MN;62000000;1998-12-1;m;6200000000;0000000062;Speciality_62;clinic_62;address_62
+63;doc_63_FN;doc_63_LN;doc_63_MN;63000000;1998-12-1;f;6300000000;0000000063;Speciality_63;clinic_63;address_63
+64;doc_64_FN;doc_64_LN;doc_64_MN;64000000;1998-12-1;m;6400000000;0000000064;Speciality_64;clinic_64;address_64
+65;doc_65_FN;doc_65_LN;doc_65_MN;65000000;1998-12-1;f;6500000000;0000000065;Speciality_65;clinic_65;address_65
+66;doc_66_FN;doc_66_LN;doc_66_MN;66000000;1998-12-1;m;6600000000;0000000066;Speciality_66;clinic_66;address_66
+67;doc_67_FN;doc_67_LN;doc_67_MN;67000000;1998-12-1;f;6700000000;0000000067;Speciality_67;clinic_67;address_67
+68;doc_68_FN;doc_68_LN;doc_68_MN;68000000;1998-12-1;m;6800000000;0000000068;Speciality_68;clinic_68;address_68
+69;doc_69_FN;doc_69_LN;doc_69_MN;69000000;1998-12-1;f;6900000000;0000000069;Speciality_69;clinic_69;address_69
+70;doc_70_FN;doc_70_LN;doc_70_MN;70000000;1998-12-1;m;7000000000;0000000070;Speciality_70;clinic_70;address_70
+71;doc_71_FN;doc_71_LN;doc_71_MN;71000000;1998-12-1;f;7100000000;0000000071;Speciality_71;clinic_71;address_71
+72;doc_72_FN;doc_72_LN;doc_72_MN;72000000;1998-12-1;m;7200000000;0000000072;Speciality_72;clinic_72;address_72
+73;doc_73_FN;doc_73_LN;doc_73_MN;73000000;1998-12-1;f;7300000000;0000000073;Speciality_73;clinic_73;address_73
+74;doc_74_FN;doc_74_LN;doc_74_MN;74000000;1998-12-1;m;7400000000;0000000074;Speciality_74;clinic_74;address_74
+75;doc_75_FN;doc_75_LN;doc_75_MN;75000000;1998-12-1;f;7500000000;0000000075;Speciality_75;clinic_75;address_75
+76;doc_76_FN;doc_76_LN;doc_76_MN;76000000;1998-12-1;m;7600000000;0000000076;Speciality_76;clinic_76;address_76
+77;doc_77_FN;doc_77_LN;doc_77_MN;77000000;1998-12-1;f;7700000000;0000000077;Speciality_77;clinic_77;address_77
+78;doc_78_FN;doc_78_LN;doc_78_MN;78000000;1998-12-1;m;7800000000;0000000078;Speciality_78;clinic_78;address_78
+79;doc_79_FN;doc_79_LN;doc_79_MN;79000000;1998-12-1;f;7900000000;0000000079;Speciality_79;clinic_79;address_79
+80;doc_80_FN;doc_80_LN;doc_80_MN;80000000;1998-12-1;m;8000000000;0000000080;Speciality_80;clinic_80;address_80
+81;doc_81_FN;doc_81_LN;doc_81_MN;81000000;1998-12-1;f;8100000000;0000000081;Speciality_81;clinic_81;address_81
+82;doc_82_FN;doc_82_LN;doc_82_MN;82000000;1998-12-1;m;8200000000;0000000082;Speciality_82;clinic_82;address_82
+83;doc_83_FN;doc_83_LN;doc_83_MN;83000000;1998-12-1;f;8300000000;0000000083;Speciality_83;clinic_83;address_83
+84;doc_84_FN;doc_84_LN;doc_84_MN;84000000;1998-12-1;m;8400000000;0000000084;Speciality_84;clinic_84;address_84
+85;doc_85_FN;doc_85_LN;doc_85_MN;85000000;1998-12-1;f;8500000000;0000000085;Speciality_85;clinic_85;address_85
+86;doc_86_FN;doc_86_LN;doc_86_MN;86000000;1998-12-1;m;8600000000;0000000086;Speciality_86;clinic_86;address_86
+87;doc_87_FN;doc_87_LN;doc_87_MN;87000000;1998-12-1;f;8700000000;0000000087;Speciality_87;clinic_87;address_87
+88;doc_88_FN;doc_88_LN;doc_88_MN;88000000;1998-12-1;m;8800000000;0000000088;Speciality_88;clinic_88;address_88
+89;doc_89_FN;doc_89_LN;doc_89_MN;89000000;1998-12-1;f;8900000000;0000000089;Speciality_89;clinic_89;address_89
+90;doc_90_FN;doc_90_LN;doc_90_MN;90000000;1998-12-1;m;9000000000;0000000090;Speciality_90;clinic_90;address_90
+91;doc_91_FN;doc_91_LN;doc_91_MN;91000000;1998-12-1;f;9100000000;0000000091;Speciality_91;clinic_91;address_91
+92;doc_92_FN;doc_92_LN;doc_92_MN;92000000;1998-12-1;m;9200000000;0000000092;Speciality_92;clinic_92;address_92
+93;doc_93_FN;doc_93_LN;doc_93_MN;93000000;1998-12-1;f;9300000000;0000000093;Speciality_93;clinic_93;address_93
+94;doc_94_FN;doc_94_LN;doc_94_MN;94000000;1998-12-1;m;9400000000;0000000094;Speciality_94;clinic_94;address_94
+95;doc_95_FN;doc_95_LN;doc_95_MN;95000000;1998-12-1;f;9500000000;0000000095;Speciality_95;clinic_95;address_95
+96;doc_96_FN;doc_96_LN;doc_96_MN;96000000;1998-12-1;m;9600000000;0000000096;Speciality_96;clinic_96;address_96
+97;doc_97_FN;doc_97_LN;doc_97_MN;97000000;1998-12-1;f;9700000000;0000000097;Speciality_97;clinic_97;address_97
+98;doc_98_FN;doc_98_LN;doc_98_MN;98000000;1998-12-1;m;9800000000;0000000098;Speciality_98;clinic_98;address_98
+99;doc_99_FN;doc_99_LN;doc_99_MN;99000000;1998-12-1;f;9900000000;0000000099;Speciality_99;clinic_99;address_99
+100;doc_100_FN;doc_100_LN;doc_100_MN;100000000;1998-12-1;m;10000000000;00000000100;Speciality_100;clinic_100;address_100
 \.
