@@ -119,7 +119,49 @@ class Bills_model extends Model {
 		return array();	
 	}
 
+	/**
+	 * View top 5  bills a patient has received OR top 5 bills a hcp has issued
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id, type of account(hcp or patient))
+	 * @return
+	 *  -1 in case of error in a query
+	 *   Array with all bills
+	 *   empty array() if there are no bills
+	 * */
+	function view_top_five($inputs){
+	
+		//lists all bills a patient has received
+		if( $inputs[1] === 'patient'){
+			$sql = "Select B.*, H2.first_name, H2.last_name
+				FROM payment B, hcp_account H, hcp_account H2
+				WHERE B.hcp_id = H.account_id AND B.patient_id = ? AND B.hcp_id = H2.account_id AND patient_kept = TRUE
+				ORDER BY B.due_date desc
+				LIMIT 5";
+			$query = $this->db->query($sql, $inputs[0]);
+			
+			if ($this->db->trans_status() === FALSE)
+				return -1;
+			if ($query->num_rows() > 0){
+				return $query->result_array();
+			}
+			return array();	
+		}
 
+		//lists all bills a hcp has issued
+		$sql = "Select B.*, P2.first_name, P2.last_name
+			FROM payment B, patient_account P, patient_account P2
+			WHERE B.patient_id = P.account_id AND B.hcp_id = ? AND B.patient_id = P2.account_id AND hcp_kept = TRUE";
+		$query = $this->db->query($sql, $inputs[0]);
+
+		if ($this->db->trans_status() === FALSE)
+			return -1;			
+		if ($query->num_rows() > 0)
+			return $query->result_array();
+
+		return array();	
+	}
+	
 	/**
 	 * View all CURRENT bills a patient has received OR all CURRENT bills a hcp has issued
 	 * 

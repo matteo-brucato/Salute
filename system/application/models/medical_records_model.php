@@ -16,6 +16,35 @@ class Medical_records_model extends Model {
 	}
 	
 	/**
+	 * Retreives top 5 records for a patient along with the patient information and the account information of the person that 
+	 * upload the medical record
+	 * 
+	 * @params $inputs
+	 *  Is of the form: array(patient_id)
+	 * @return
+	 * -1 in case of error in a query
+	 * emtpy array if patient has no medical records
+	 * */
+	function list_recent_five($inputs){
+		$sql = "(SELECT M.*, P.first_name AS pat_first_name, P.last_name AS pat_last_name, A.*, H.first_name, H.last_name
+			FROM patient_account P, accounts A, hcp_account H, medical_record M
+			WHERE M.patient_id = ? AND M.patient_id = P.account_id AND M.account_id = A.account_id AND A.account_id = H.account_id)
+			UNION
+			(SELECT M.*, P.first_name AS pat_first_name, P.last_name AS pat_last_name, A.*, P2.first_name , P2.last_name
+			FROM patient_account P, patient_account P2, accounts A, medical_record M
+			WHERE M.patient_id = ? AND M.patient_id = P.account_id AND M.account_id = A.account_id AND A.account_id = P2.account_id)";
+				
+		$query = $this->db->query($sql, array($inputs[0], $inputs[0]));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if( $query->num_rows() > 0) {
+			return $query->result_array();
+		}
+		return array();
+	}
+	
+		/**
 	 * Retreives all records for a patient along with the patient information and the account information of the person that 
 	 * upload the medical record
 	 * 

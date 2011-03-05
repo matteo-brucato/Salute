@@ -29,7 +29,8 @@ class Connections_model extends Model {
 			FROM connections D, patient_account P
 			WHERE D.accepted = TRUE AND (
 			      (D.sender_id = ? AND D.receiver_id = P.account_id)
-			OR    (D.receiver_id = ? AND D.sender_id = P.account_id))";
+			OR    (D.receiver_id = ? AND D.sender_id = P.account_id))
+			ORDER BY P.first_name, P.last_name";
 		$query = $this->db->query($sql, array($account_id, $account_id));
 		
 		if ($this->db->trans_status() === FALSE)
@@ -41,7 +42,35 @@ class Connections_model extends Model {
 		return array();
 	}
 
-
+	/**
+	 *  Lists all of the patients the specified account has
+	 * 
+	 * @param $account_id
+	 *   Is of the form: array(account_id)
+	 * @return
+	 *  -1 in case of error in a query
+	 *   Array with all the patients a hcp has
+	 *   empty array() if none
+	 * */
+	function list_patients_top_five($account_id) {
+		$sql = "SELECT P.* 
+			FROM connections D, patient_account P
+			WHERE (D.accepted = TRUE AND (
+			      (D.sender_id = ? AND D.receiver_id = P.account_id)
+			OR    (D.receiver_id = ? AND D.sender_id = P.account_id)))
+			ORDER BY D.date_connected desc
+			LIMIT 5";
+		$query = $this->db->query($sql, array($account_id, $account_id));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		if ($query->num_rows() > 0)
+			return $query->result_array();
+		
+		return array();
+	}
+	
 	/**
 	 *  Lists all of the hcp friends the specified account has
 	 * 
@@ -57,7 +86,8 @@ class Connections_model extends Model {
 			FROM connections D, hcp_account H
 			WHERE D.accepted = TRUE AND (
 			      (D.sender_id = ? AND D.receiver_id = H.account_id)
-			OR    (D.receiver_id = ? AND D.sender_id = H.account_id))";
+			OR    (D.receiver_id = ? AND D.sender_id = H.account_id))
+			ORDER BY H.first_name, H.last_name";
 		$query = $this->db->query($sql, array($account_id, $account_id));
 		
 		if ($this->db->trans_status() === FALSE)
@@ -67,7 +97,36 @@ class Connections_model extends Model {
 			return $query->result_array();
 			
 		return array();
-	}	
+	}
+	
+		/**
+	 *  Lists all of the hcp friends the specified account has
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id)
+	 * @return
+	 *  -1 in case of error in a query
+	 *   Array with all the hcp friends
+	 *   empty array() if none
+	 * */
+	function list_hcps_top_five($account_id) {
+		$sql = "SELECT H.*
+			FROM connections D, hcp_account H
+			WHERE (D.accepted = TRUE AND (
+			      (D.sender_id = ? AND D.receiver_id = H.account_id)
+			OR    (D.receiver_id = ? AND D.sender_id = H.account_id)))
+			ORDER BY D.date_connected desc
+			LIMIT 5";
+		$query = $this->db->query($sql, array($account_id, $account_id));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		if ($query->num_rows() > 0)	
+			return $query->result_array();
+			
+		return array();
+	}		
 
 
 	/**
