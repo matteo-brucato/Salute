@@ -13,7 +13,7 @@ GENERAL:
 
 Public/Private Accounts:
 - ONLY applicable to patients, NOT hcps 
-- fix patient / hcp search list (take into account private/public setting in accounts table)
+//- fix patient / hcp search list (take into account private/public setting in accounts table)
 - Patient's who have a private profile are in summary: users who only want to send requests themselves, they cannot
   receive connection requests. They can receive referals and group invitations ONLY becasue they are received from their
   connected friends/hcps. If private patient joins a group, they will be listed in the group members list; this is because
@@ -25,8 +25,6 @@ Public/Private Accounts:
 
 CONNECTIONS/PERMISSIONS/MEDRECS:
 //- when changing level for a connection, if connection goes from low to high, add permissions to all medical records ##MATTEO##
-- 'type' in permissions table: 0 is read access 1 is read+write access => change all models/fns that use permissions
-	to take this new case into account. ## MATTEO## 
 
 ============================================================================================================================================
 
@@ -113,9 +111,9 @@ DOCUMENTATION: ## LAST THING SINCE ITS NOT DUE TILL 15th ##
 - go to github and for each issue reported do one of the following:
     - fix the bug
     - report the bug in the documentation
-    
+- FUTURE FEATURE: 'type' in permissions table: 0 is download only 1 is also delete
+
 ============================================================================================================================================
 
 PRESENTATION:
 - Prepare a list of actions to perform during the presentation (we all need to do that, I think)
-... (my memory is bad...)

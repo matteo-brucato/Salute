@@ -30,7 +30,9 @@ class Patient_model extends Model {
 	 *   empty array() if there are not any hcps in the database
 	 * */
 	function get_patients() {
-		$sql = "SELECT * FROM patient_account";
+		$sql = "SELECT * 
+			FROM patient_account P, accounts A
+			WHERE P.account_id = A.account_id and A.private = false;";
 		$query = $this->db->query($sql);
 		
 		if ($this->db->trans_status() === FALSE)

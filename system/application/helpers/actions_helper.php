@@ -85,7 +85,7 @@ function get_action_strings($actions, $tuple) {
 				$str .= '<li><a href="/medical_records/remove_permission/'.$tuple['medical_rec_id'].'/'.$tuple['account_id'].'" class="confirm">Remove permission</a></li>';
 				break;*/
 			case 'change-perms':
-				$str .= '<li><a href="/connections/change_permissions/'.$tuple['account_id'].'">Change shared medical records</a></li>';
+				$str .= '<li><a href="/connections/permissions/'.$tuple['account_id'].'">Change shared medical records</a></li>';
 				break;
 			/*case 'view-all-perm':
 				$str .= '<li><a href="/medical_records/see_permissions/'.$tuple['medical_rec_id'].'">View all permissions</a></li>';

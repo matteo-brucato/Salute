@@ -165,7 +165,7 @@ class Medical_records extends Controller {
 	 * 
 	 * @attention only accessible to patients
 	 * @todo type check $mid
-	 * */
+	 * *
 	function see_permissions($mid = NULL) {
 		if ($this->auth->check(array(
 			auth::CurrLOG,
@@ -190,13 +190,13 @@ class Medical_records extends Controller {
 			array('list_name' => 'Allowed patients '.$mid, 'list' => $res2), TRUE);
 		
 		$this->ui->set(array($mainpane));
-	}
+	}*/
 	
 	/**
 	 * Set medical record to hidden: not visible to your specified hcp
 	 * 
 	 * @test Tested
-	 * */
+	 * *
 	function remove_permission($mid = NULL, $aid = NULL) {
 		if ($this->auth->check(array(
 			auth::CurrLOG,
@@ -220,7 +220,7 @@ class Medical_records extends Controller {
 		
 		$this->db->trans_complete();
 		$this->ui->set_message('This record is now forbidden to that HCP', 'Confirmation');
-	}
+	}*/
 	
 	/**
 	 * Show a form to ask for an hcp to add permission to
@@ -284,10 +284,10 @@ class Medical_records extends Controller {
 	 * @test Tested
 	 * */
 	function permissions_do($mid = NULL) {
-		$this->auth->check(array(
+		if ($this->auth->check(array(
 			auth::CurrLOG,
 			auth::CurrMED_OWN, $mid
-		));
+		)) !== TRUE) return;
 		
 		$this->db->trans_start();
 		
@@ -361,10 +361,10 @@ class Medical_records extends Controller {
 	 * @test Tested
 	 * */
 	function delete($mid = FALSE) {
-		$this->auth->check(array(
+		if ($this->auth->check(array(
 			auth::CurrLOG,
 			auth::CurrMED_OWN, $mid
-		));
+		)) !== TRUE) return;
 		
 		// Get medical record tuple to retrieve filename
 		$get = $this->medical_records_model->get_medicalrecord($mid);

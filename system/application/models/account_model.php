@@ -282,6 +282,27 @@ class Account_model extends Model {
 
 		return $query->result_array();
 	 }
+	 
+	/**
+	 * Updates the privacy level of an account
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array($account_id, privacy level)
+	 * @return
+	 *  -1 in case of error in a query
+	 *   0 if everything goes fine
+	 * */
+	 function update_privacy($inputs) {
+		 
+		 $sql = "UPDATE accounts
+				SET private = ?
+				WHERE account_id = ?";
+		$query = $this->db->query($sql, array($inputs[1], $inputs[0]));
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		
+		return 0; 
+	 }
 }
 /** @} */
 ?>
