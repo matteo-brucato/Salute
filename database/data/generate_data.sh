@@ -30,22 +30,22 @@ echo "\." >> accounts.txt
 
 echo -e "GENERATING patient_account.txt\n"
 
-echo "1;Teresa;Ramirez;;567834576;1970-7-12;f;19098842354;;1023 River Drive, Riverside, CA 92521;patient1.jpeg" >> patient_account.txt
-echo "2;Ben;Yong;Le;846384792;1965-2-23;m;19517938734;19517638879; 9834 West Adam St., Colton, CA 92324;patient2.jpeg" >> patient_account.txt
-echo "3;Alber;Man;;530717265;2000-4-15;m;17027681264;;8345 Linden St, Reno, NV 89501;patient3.jpeg" >> patient_account.txt
-echo "4;James;Foster;;173872648;2005-9-9;m;14807892364;;1292 Main St, Sprigfield, AR 85640;patient4.jpeg" >> patient_account.txt
-echo "5;Ariana;Mejilla;Jena;452048120;1999-12-19;f;19515671290;;342 Washington, Colton, CA 92324;patient5.jpeg" >> patient_account.txt
-echo "6;Ben;Wheatherspon;;820011293;1990-3-23;m;19512392845;;9343 Blaine St, Colton, CA 92324;patient6.jpeg" >> patient_account.txt
-echo "7;Rony;Doodle;;912582348;1985-11-8;m;17028901234;;2342 Lendis St, Reno, NV 89501;patient7.jpeg" >> patient_account.txt
-echo "8;ike;James;;923011209;1992-1-13;m;14808901202;;92834 Idontknow st, Springfield, AR 85640;patient8.jpeg" >> patient_account.txt
-echo "9;Larry;Martinez;;203038287;1970-7-22;m;17022038454;;2389 Soto Ave, Reno, NV 89501;patient9.jpeg" >> patient_account.txt
+echo "1;Teresa;Ramirez;;567834576;1970-7-12;f;19098842354;;1023 River Drive, Riverside, CA 92521" >> patient_account.txt
+echo "2;Ben;Yong;Le;846384792;1965-2-23;m;19517938734;19517638879; 9834 West Adam St., Colton, CA 92324" >> patient_account.txt
+echo "3;Alber;Man;;530717265;2000-4-15;m;17027681264;;8345 Linden St, Reno, NV 89501" >> patient_account.txt
+echo "4;James;Foster;;173872648;2005-9-9;m;14807892364;;1292 Main St, Sprigfield, AR 85640" >> patient_account.txt
+echo "5;Ariana;Mejilla;Jena;452048120;1999-12-19;f;19515671290;;342 Washington, Colton, CA 92324" >> patient_account.txt
+echo "6;Ben;Wheatherspon;;820011293;1990-3-23;m;19512392845;;9343 Blaine St, Colton, CA 92324" >> patient_account.txt
+echo "7;Rony;Doodle;;912582348;1985-11-8;m;17028901234;;2342 Lendis St, Reno, NV 89501" >> patient_account.txt
+echo "8;ike;James;;923011209;1992-1-13;m;14808901202;;92834 Idontknow st, Springfield, AR 85640" >> patient_account.txt
+echo "9;Larry;Martinez;;203038287;1970-7-22;m;17022038454;;2389 Soto Ave, Reno, NV 89501" >> patient_account.txt
 
 for ((i = 10; i <= 50; i++))
 do
 	if [ `expr $i % 2` -eq 0 ]; then	
-		echo $i";patient_"$i"_FN;patient_"$i"_LN;patient_"$i"_MN;"$i"000000;1998-12-1;m;"$i"00000000;00000000"$i";address_"$i";image_"$i".jpeg"  >> patient_account.txt
+		echo $i";patient_"$i"_FN;patient_"$i"_LN;patient_"$i"_MN;"$i"000000;1998-12-1;m;"$i"00000000;00000000"$i";address_"$i  >> patient_account.txt
 	else
-		echo $i";patient_"$i"_FN;patient_"$i"_LN;patient_"$i"_MN;"$i"000000;1998-12-1;f;"$i"00000000;00000000"$i";address_"$i";image_"$i".jpeg"  >> patient_account.txt
+		echo $i";patient_"$i"_FN;patient_"$i"_LN;patient_"$i"_MN;"$i"000000;1998-12-1;f;"$i"00000000;00000000"$i";address_"$i  >> patient_account.txt
 	fi
 		
 done
@@ -60,18 +60,19 @@ echo "\." >> patient_account.txt
 
 echo -e "GENERATING hcp_account.txt\n"
 
-echo "51;Musa;Rayyan;;635492165;1988-12-1;m;19096936527;19093428463;Cardioligist;Rayyan Medical Center;15632 Frederic Ave, Riverside, CA 92521;doctor1.jpeg" >> hcp_account.txt
-echo "52;Matteo;Brucato;;234567891;1985-5-12;m;19517253847;19519776537;Brain Surgeon;Matteo's Family Clinic;1298 Orange St, Colton, CA 92324;doctor2.jpeg" >> hcp_account.txt
-echo "53;Nada;Hashem;;567390804;1989-10-19;f;17028335678;17022349876;Cardio-Thoracic Surgeon;Hashem's Medical Center; 9345 Hashem St, Reno, NV 89501;doctor3.jpeg" >> hcp_account.txt
-echo "54;Aswhin;Gopalakrishnan;;876976546;1965-9-24;m;14803491203;14808451298;General Practitioner;Ashwin Medical Center; 2342 Saint St, Springfield, AR 85640;doctor4.jpeg" >> hcp_account.txt
-echo "55;Connie;Chang;;12313434;1965-9-24;f;34534546;14808451298;Pharmacy Practitioner;Kaiser; 2342 Saint St, Springfield, AR 85640;doctor4.jpeg" >> hcp_account.txt
+echo "51;Iulian;Neamtiu;;635492165;1978-5-6;m;19518272993;19093428463;Cardioligist;Neamtiu Medical Center;900 University Ave, Bourns College of Engineering UnitII, 412, Riverside, CA 92521" >> hcp_account.txt
+echo "52;Musa;Rayyan;;635492165;1988-12-1;m;19096936527;19093428463;Cardioligist;Rayyan Medical Center;15632 Frederic Ave, Riverside, CA 92521" >> hcp_account.txt
+echo "53;Matteo;Brucato;;234567891;1985-5-12;m;19517253847;19519776537;Brain Surgeon;Matteo's Family Clinic;1298 Orange St, Colton, CA 92324" >> hcp_account.txt
+echo "54;Nada;Hashem;;567390804;1989-10-19;f;17028335678;17022349876;Cardio-Thoracic Surgeon;Hashem's Medical Center; 9345 Hashem St, Reno, NV 89501" >> hcp_account.txt
+echo "55;Aswhin;Gopalakrishnan;;876976546;1965-9-24;m;14803491203;14808451298;General Practitioner;Ashwin Medical Center; 2342 Saint St, Springfield, AR 85640" >> hcp_account.txt
+echo "56;Connie;Chang;;12313434;1965-9-24;f;34534546;14808451298;Pharmacy Practitioner;Kaiser; 2342 Saint St, Springfield, AR 85640" >> hcp_account.txt
 
-for ((i = 56; i <= 100; i++))
+for ((i = 57; i <= 100; i++))
 do
 	if [ `expr $i % 2` -eq 0 ]; then	
-		echo $i";doc_"$i"_FN;doc_"$i"_LN;doc_"$i"_MN;"$i"000000;1998-12-1;m;"$i"00000000;00000000"$i";Speciality_"$i";clinic_"$i";address_"$i";image_"$i".jpeg"  >> hcp_account.txt
+		echo $i";doc_"$i"_FN;doc_"$i"_LN;doc_"$i"_MN;"$i"000000;1998-12-1;m;"$i"00000000;00000000"$i";Speciality_"$i";clinic_"$i";address_"$i  >> hcp_account.txt
 	else
-		echo $i";doc_"$i"_FN;doc_"$i"_LN;doc_"$i"_MN;"$i"000000;1998-12-1;f;"$i"00000000;00000000"$i";Speciality_"$i";clinic_"$i";address_"$i";image_"$i".jpeg"  >> hcp_account.txt
+		echo $i";doc_"$i"_FN;doc_"$i"_LN;doc_"$i"_MN;"$i"000000;1998-12-1;f;"$i"00000000;00000000"$i";Speciality_"$i";clinic_"$i";address_"$i  >> hcp_account.txt
 	fi
 		
 done
@@ -95,7 +96,7 @@ echo -e "GENERATING connections.txt\n"
 #	1		4
 #   1		5		
 #	2		6		
-#	2		5		
+#	2		7		
 #	2		8
 #	2		9
 #ends at 13:50

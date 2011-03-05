@@ -190,7 +190,7 @@ class Connections extends Controller {
 	 * Shows a view with all the medical records that you are sharing
 	 * and not sharing with a specific account $aid (connected with you)
 	 * */
-	function change_permissions($aid = NULL) {
+	function permissions($aid = NULL) {
 		if ($this->auth->check(array(
 			auth::CurrLOG,
 			auth::CurrPAT,
@@ -214,7 +214,7 @@ class Connections extends Controller {
 		));
 	}
 	
-	function change_permissions_do($aid = NULL) {
+	function permissions_do($aid = NULL) {
 		if ($this->auth->check(array(
 			auth::CurrLOG,
 			auth::CurrPAT,
@@ -277,7 +277,7 @@ class Connections extends Controller {
 		}
 		
 		$this->ui->set_message('Successfully changed Permissions.', 'Confirmation');
-		$this->change_permissions($aid);
+		$this->permissions($aid);
 	}
 	
 	/**
@@ -529,6 +529,15 @@ class Connections extends Controller {
 		}
 	}
 	
+	
+	/**
+	 * Loads the view to change the connection level of an account with another account
+	 * 
+	 * @param $inputs
+	 *   Is of the form:
+	 * @return
+	 *	 Loads the view
+	 * */
 	function change_level($aid = NULL) {
 		$check = $this->auth->check(array(
 			auth::CurrLOG,
@@ -563,6 +572,15 @@ class Connections extends Controller {
 		}
 	}
 	
+	
+	/**
+	 * Changes the connection level of an account with another account
+	 * 
+	 * @param $inputs
+	 *   Is of the form: account_id for the account you would like to change the level
+	 * @return
+	 *	 Display message
+	 * */
 	function change_level_do($aid = NULL) {
 		$check = $this->auth->check(array(
 			auth::CurrLOG,

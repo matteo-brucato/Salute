@@ -103,3 +103,8 @@ td.checkbox {
 td.radio {
 	text-align: center;
 }
+
+img.profile-picture {
+	width: 240px;
+	height: 180px;
+}
