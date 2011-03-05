@@ -11,13 +11,13 @@ echo -e "GENERATING accounts.txt\n"
 
 for ((i = 1; i <= 50; i++))
 do
-	echo $i";patient"$i"@email.com;pat"$i  >> accounts.txt
+	echo "patient"$i"@email.com;pat"$i  >> accounts.txt
 
 done
 
 for ((i = 51; i <= 100; i++))
 do
-	echo $i";doctor"$i"@email.com;doc"$i  >> accounts.txt
+	echo "doctor"$i"@email.com;doc"$i  >> accounts.txt
 done
 
 echo "\." >> accounts.txt
@@ -37,7 +37,7 @@ echo "4;James;Foster;;173872648;2005-9-9;m;14807892364;;1292 Main St, Sprigfield
 echo "5;Ariana;Mejilla;Jena;452048120;1999-12-19;f;19515671290;;342 Washington, Colton, CA 92324;patient5.jpeg" >> patient_account.txt
 echo "6;Ben;Wheatherspon;;820011293;1990-3-23;m;19512392845;;9343 Blaine St, Colton, CA 92324;patient6.jpeg" >> patient_account.txt
 echo "7;Rony;Doodle;;912582348;1985-11-8;m;17028901234;;2342 Lendis St, Reno, NV 89501;patient7.jpeg" >> patient_account.txt
-echo "8;Mike;James;;923011209;1992-1-13;m;14808901202;;92834 Idontknow st, Springfield, AR 85640;patient8.jpeg" >> patient_account.txt
+echo "8;ike;James;;923011209;1992-1-13;m;14808901202;;92834 Idontknow st, Springfield, AR 85640;patient8.jpeg" >> patient_account.txt
 echo "9;Larry;Martinez;;203038287;1970-7-22;m;17022038454;;2389 Soto Ave, Reno, NV 89501;patient9.jpeg" >> patient_account.txt
 
 for ((i = 10; i <= 50; i++))
@@ -166,12 +166,13 @@ echo -e "GENERATING appointments.txt\n"
 #past appointments
 #creates 4 appointments for each patient
 #appointments are made with the first 4 doctors patient is connected with
+
 appointment_id=1
 for ((i = 1; i <= 50; i++))
 do
 	for(( j = `expr $i + 50`; j < `expr $i + 54` && j <= 100; j++))
 	do
-		echo $appointment_id";"$i";"$j";Checkup_"$appointment_id";2011-02-22 12:00:00;true" >>  appointments.txt
+		echo $i";"$j";Checkup_"$appointment_id";2011-02-22 12:00:00;true" >>  appointments.txt
 		((appointment_id++))
 	done
 
@@ -186,9 +187,9 @@ do
 	for(( j = `expr $i + 50`; j < `expr $i + 54` && j <= 100; j++))
 	do
 		if [ `expr $appointment_id % 2` -eq 0 ]; then	
-			echo $appointment_id";"$i";"$j";Checkup_"$appointment_id";2011-04-02 09:30:00;true" >>  appointments.txt
+			echo $i";"$j";Checkup_"$appointment_id";2011-04-02 09:30:00;true" >>  appointments.txt
 		else
-			echo $appointment_id";"$i";"$j";Checkup_"$appointment_id";2011-04-02 09:30:00;false" >>  appointments.txt
+			echo $i";"$j";Checkup_"$appointment_id";2011-04-02 09:30:00;false" >>  appointments.txt
 		fi
 		((appointment_id++))
 	done
@@ -232,9 +233,9 @@ do
 	for(( j = `expr $i + 50`; j < `expr $i + 54` && j <= 100; j++))
 	do
 		if [ `expr $bill_id % 2` -eq 0 ]; then	
-			echo $bill_id";"$i";"$j";1234.56;Checkup_"$bill_id";2011-03-22 12:00:00;true;true;true;2011-02-22 12:00:00" >>  payment.txt
+			echo $i";"$j";1234.56;Checkup_"$bill_id";2011-03-22 12:00:00;true;true;true;2011-02-22 12:00:00" >>  payment.txt
 		else
-			echo $bill_id";"$i";"$j";1234.56;Checkup_"$bill_id";2011-03-22 12:00:00;false;true;true;2011-02-22 12:00:00" >>  payment.txt
+			echo $i";"$j";1234.56;Checkup_"$bill_id";2011-03-22 12:00:00;false;true;true;2011-02-22 12:00:00" >>  payment.txt
 		fi
 		((bill_id++))
 	done
@@ -248,13 +249,14 @@ echo "\." >> payment.txt
 echo -e "GENERATING permissions.txt\n"
 
 #gives permission to all hcps that uploaded a medical record
-permission_id=1
+
+#permission_id=1
 for ((i = 1; i <= 50; i++))
 do
 	for(( j = `expr $i + 50`; j < `expr $i + 54` && j <= 100; j++))
 	do	
-		echo $permission_id";"$i";"$j";2011-02-22 12:00:00" >>  permissions.txt
-		((permission_id++))
+		echo $i";"$j";2011-02-22 12:00:00" >>  permissions.txt
+		#((permission_id++))
 	done
 done
 
@@ -280,7 +282,7 @@ for ((i = 51; i <= 100; i++))
 do
 	for(( j = `expr $i + 7`; j < `expr $i + 9` && j <= 100; j++))
 	do
-		echo  $i";"$j";"$patient_id>>  refers.txt
+		echo  $i";"$j";"$patient_id >>  refers.txt
 	done
 	((patient_id++))
 done
