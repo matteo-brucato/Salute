@@ -1,7 +1,7 @@
 1;Cancer Survivors;For people who have survived cancer;0;0
-1;Heart Association;For Hcps striving to research heart disease;0;1
-1;Nutrition;For people to share their learnings on food nutrition;0;2
-1;Drug Rehab;For people trying to overcome their drug addictions;1;0
-1;Cool Doctors;For cool doctors only;1;1
+2;Heart Association;For Hcps striving to research heart disease;0;1
+3;Nutrition;For people to share their learnings on food nutrition;0;2
+4;Drug Rehab;For people trying to overcome their drug addictions;1;0
+5;Cool Doctors;For cool doctors only;1;1
 52;Diabetes Support Group;Support group for my diabetes patients;1;2
 \.
