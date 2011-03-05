@@ -152,7 +152,8 @@ Holds all of the primary information every patient and hcp account needs to log 
 \item serial \textit{account\_id}- ID to uniquely identify the account from other accounts. serial datatype automatically creates the account\_id when a new tuple is inserted into the table.  Primary key of the table.  Cannot be null.
 \item varchar(40) \textit{email}- Email of the account holder. It is used to log into Salute along with the user password.  varchar(40) datatype allows for a maximum of 40 characters.  Cannot be null.
 \item varchar(15) \textit{password}-  Password of the account holder.  It is used to log into Salute along with the user email address.  varchar(15) datatype allows for a maximum of 15 characters.  Cannot be null.
-\item boolean \textit{active}- To determine whether the account is active or not.  boolean datatype value is either true or false.  By default it is true.  Changing the status to false means the account gets deactivated.
+\item boolean \textit{active}- To determine whether the account is active or not.  boolean datatype value is either true or false.  By default it is true.  Changing the status to false means the account gets deactivated.  Cannot be null.
+\item boolean \textit{privacy}- To determine whether a patient account is public or private.  If private it cannot be view in the local listing.  boolean datatype value is either true or false.  By deafault it is false. Cannot be null.
 \end{description}
 
 \subsubsection{Patient\_Account}
@@ -291,6 +292,15 @@ Holds all of the information to be able to determine which account is in which g
 \item varchar(1) \textit{permissions}- The permission level that an account has in a particular group.  varchar(1) datatype allows a maximum of 1 characters.  It can be ``0'' if the account can only post to the group.  It can be ``1'' if the account can post and invite other accounts to join the group.  It can be ``2'' if the account can post to the group, invite other accounts to join the group, and they can delete members from the group.  It can be ``3'' if the account can can post to the group, invite other accounts to join the group, delete members from the group as well as delete the whole group.  By default the creater of the group has permission level ``3''.  Cannot be null.
 \end{description}
 
+\subsubsection{Invite}
+Holds all of the information to be able to determine which account gets invited to a group.  This relationship has two partial N:M relationships with the Accounts entity.  It also has a partial connection with the Groups entity.
+
+\begin{description}
+\item serial \textit{inviter\_id}-  ID of the account that invites another account to join a group.  This is also a foreign key to the Accounts entity.  Cannot be null.
+\item serial \textit{invitee\_id}- ID of the account that gets invited to join a group.  Combination of the invitee\_id and the group\_id compose the primary key of the table.  This is also a foreign key to the Accounts entity.  Cannot be null.
+\item serial \textit{group\_id}-  ID of the group that an accounts gets invited to join.  Combination of the group\_id and the invitee\_id compose the primary key of the table.  This is also a foreign key to the Groups entity.  Cannot be null.
+\end{description}
+
 \subsubsection{Scripts to start the server and load the data}
 We used many scripts to create the database described above.  First of all we have a bash script called start\_everything.sh which as its name implies, starts everything.  It starts the PostgreSQL server, creates a PostgreSQL database, and then it uses an sql file called create\_tables.sql to create all of the tables described in the ER diagram.  It then calls the file load\_data.sql which loads all of the tables with test data.  In case we want to drop all of the test data we have an sql file called drop.sql.  In case we wanted to delete everything and start over, we have a bash script called delete\_everything.sh. 
 
@@ -307,11 +317,11 @@ We made these remarkable assumptions during the implementation of the MVC.
 \item Doctors cannot delete medical records even if they uploaded them, only patients can
 \item Both doctors and patients can upload medical records
 \item When a doctor uploads a medical record, he has automatic viewing privileges
-\item doctors cannot request appointments
-\item patients cannot accept an appointment
-\item doctors aren't allowed to reschedule an appointment
-\item both doctors and patients can cancel an appointment
-\item can only deactivate their account. records will not be destroyed, but all information will be hidden. 
+\item Doctors cannot request appointments
+\item Patients cannot accept an appointment
+\item Doctors aren't allowed to reschedule an appointment
+\item Both doctors and patients can cancel an appointment
+\item Can only deactivate their account. records will not be destroyed, but all information will be hidden. 
 \end{itemize}
 
 \section{Interface implementation}
@@ -375,3 +385,12 @@ After the cookie will be created, the client will send it to the user in each ht
 /system/application/libraries/auth.php
 \end{verbatim}
 An instance of this class is created automatically at the instantiation of each controller class. Its constructor will read the session cookie and store its content for future, rapid access by the controller.
+
+\section{Referrals}
+\paragraph{} A referral is a simple way to have the patient of an hcp (referring hcp) connect with a collegue of that same hcp (is referred hcp).  If the connection level between the patient and the ``referring hcp'' is 2 or 3, the referral is accepted automatically by the patient account and a friend request is automatically sent to the ``is referred hcp''.  If the connection level between the patient and the ``referring hcp'' is 0 or 1, the referral has to be manually accepted by the patient.  Once the patient manually accepts the referral, a friend request is automatically sent to the ``is referred hcp''.  Once the ``is referred hcp'' accepts the connection request, if the connection level between the patient and the ``referring hcp'' is 1 or 3, the ``is referred hcp'' will have permission to all of the medical records that the ``referring hcp'' has permissions too.
+
+\paragraph{  } If a patient receives multiple referrals from different ``referring hcps'' for the same ``is referred hcp'' a couple of things could happen depending on the order in which they arrive to the patient. First of all, if a patient receives multiple referrals from ``referring hcps'' with whom they have a connection level of 0 or 1, once one of them is accepted, all of the same referrals will have their status set to ``request sent''.  Once the ``is referred hcp'' accpets the connection request, the ``is referred hcp will have permissions to all fo the medical records from ``referring hcps'' that made the same referral and have a connection level of 1.
+
+\paragraph{  } If a patient receives multiple referrals from ''referring hcps'' with whom they have a connection level of 0 or 1, and then a referral comes from a ``referring hcp'' with whom they have a connection level of 2 or 3, the referral is accepted automatically.  Once the referral is accepted automatically, all of the same referrals will have their status set to ``request pending''.  Once the ``is referred hcp'' accpets the connection request, the ``is referred hcp will have permissions to all fo the medical records from ``referring hcps'' that made the same referral and have a connection level of 1 or 3.
+
+\paragraph{  } If a patient receives a referral from a ''referring hcps'' with whom they have a connection level of 2 or 3, and then a referral comes from a ``referring hcp'' with whom they have a connection level of 0 or 1, the status of those new referrals is set to ``request sent''.  They are set to ``request sent'' because the referral that came from the connection with level 2 or 3 already automatically accepted that same referral and automatically sent the connection request.  Once the ``is referred hcp'' accpets the connection request, the ``is referred hcp'' will have permissions to all fo the medical records from ``referring hcps'' that made the same referral and have a connection level of 1 or 3.
