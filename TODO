@@ -18,7 +18,7 @@ Public/Private Accounts:
   receive connection requests. They can receive referals and group invitations ONLY becasue they are received from their
   connected friends/hcps. If private patient joins a group, they will be listed in the group members list; this is because
   if they want to be part of the group, they only want to be public in that group.
-- change connection requests: deny if the receiver account is private ## MATTEO ##
+//- change connection requests: deny if the receiver account is private ## MATTEO ##
 - 
 
 ============================================================================================================================================
@@ -27,18 +27,6 @@ CONNECTIONS/PERMISSIONS/MEDRECS:
 //- when changing level for a connection, if connection goes from low to high, add permissions to all medical records ##MATTEO##
 - 'type' in permissions table: 0 is read access 1 is read+write access => change all models/fns that use permissions
 	to take this new case into account. ## MATTEO## 
-	
-============================================================================================================================================
-
-DOCUMENTATION: ## LAST THING SINCE ITS NOT DUE TILL 15th ##
-- add a glossary in the documentation
-- describe bettere how MVC has been implemented (structure of folders and files)
-- mention about test performance (CodeIgniter is very fast and each controller has a streightforward flow)
-- add a (possibly big) list with all the possible changes that we anticipate.
-  just to show that we are taking care of that aspect
-- go to github and for each issue reported do one of the following:
-    - fix the bug
-    - report the bug in the documentation
 
 ============================================================================================================================================
 
@@ -73,8 +61,8 @@ PROFILE: ##ASHWIN ##
 ============================================================================================================================================
 
 MEDICAL RECORDS:
-- add a view for patients to see his/her connected patients medical records
-  (maybe it can be added to the patient's profile...)
+//- add a view for patients to see his/her connected patients medical records
+//  (maybe it can be added to the patient's profile...)
 
 ============================================================================================================================================
 
@@ -111,6 +99,18 @@ GROUPS:
 
 - create test set  ##NADA##
 
+============================================================================================================================================
+
+DOCUMENTATION: ## LAST THING SINCE ITS NOT DUE TILL 15th ##
+- add a glossary in the documentation
+- describe bettere how MVC has been implemented (structure of folders and files)
+- mention about test performance (CodeIgniter is very fast and each controller has a streightforward flow)
+- add a (possibly big) list with all the possible changes that we anticipate.
+  just to show that we are taking care of that aspect
+- go to github and for each issue reported do one of the following:
+    - fix the bug
+    - report the bug in the documentation
+    
 ============================================================================================================================================
 
 PRESENTATION:

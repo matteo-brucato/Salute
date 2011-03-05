@@ -191,12 +191,12 @@ class Account_model extends Model {
 	 *   FALSE in case of no match
 	 *   TRUE otherwise
 	 * */
-	 function is_account($inputs){
-	 
-	 	$sql = "SELECT *
+	function is_account($inputs){
+	
+		$sql = "SELECT *
 			FROM accounts A
 			WHERE A.account_id = ?";
-	 	$query = $this->db->query($sql, $inputs);
+		$query = $this->db->query($sql, $inputs);
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;	
@@ -204,7 +204,33 @@ class Account_model extends Model {
 			return FALSE;
 
 		return TRUE;
-	 }
+	}
+	
+	/**
+	 * Checks if id is a public account
+	 * 
+	 * @param $inputs
+	 *   Is of the form: array(account_id)
+	 * @return
+	 *  -1 in case of error in a query
+	 *   NULL in case of no such account
+	 *   TRUE if it's public, FALSE otherwise
+	 * */
+	function is_public($inputs){
+	
+		$sql = "SELECT *
+			FROM accounts A
+			WHERE A.account_id = ?";
+		$query = $this->db->query($sql, $inputs);
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if ($query->num_rows() < 1)
+			return NULL;
+		
+		$res = $query->result_array();
+		return ($res[0]['private'] == 'f');
+	}
 	
 	
 	/**

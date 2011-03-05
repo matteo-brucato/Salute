@@ -317,8 +317,12 @@ class Connections extends Controller {
 			$this->ui->set_query_error();
 			return;
 		}
-		else if ($res === -3) {
+		else if ($res === -2) {
 			$this->ui->set_error('This connection has already been requested');
+			return;
+		}
+		else if ($res === -3) {
+			$this->ui->set_error('This connection has already been accepted');
 			return;
 		}
 		
@@ -380,7 +384,7 @@ class Connections extends Controller {
 				$this->ui->set_error('Connection does not exist.', 'Notice');
 				break;
 			default:
-				$this->ui->set_message('You have been disconnected from that health care provider.', 'Confirmation');
+				$this->ui->set_message('You have been disconnected from that health account', 'Confirmation');
 				break;
 		}
 	}
