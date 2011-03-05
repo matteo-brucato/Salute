@@ -29,7 +29,8 @@ class Connections_model extends Model {
 			FROM connections D, patient_account P
 			WHERE D.accepted = TRUE AND (
 			      (D.sender_id = ? AND D.receiver_id = P.account_id)
-			OR    (D.receiver_id = ? AND D.sender_id = P.account_id))";
+			OR    (D.receiver_id = ? AND D.sender_id = P.account_id))
+			ORDER BY P.first_name, P.last_name";
 		$query = $this->db->query($sql, array($account_id, $account_id));
 		
 		if ($this->db->trans_status() === FALSE)
@@ -85,7 +86,8 @@ class Connections_model extends Model {
 			FROM connections D, hcp_account H
 			WHERE D.accepted = TRUE AND (
 			      (D.sender_id = ? AND D.receiver_id = H.account_id)
-			OR    (D.receiver_id = ? AND D.sender_id = H.account_id))";
+			OR    (D.receiver_id = ? AND D.sender_id = H.account_id))
+			ORDER BY H.first_name, H.last_name";
 		$query = $this->db->query($sql, array($account_id, $account_id));
 		
 		if ($this->db->trans_status() === FALSE)
@@ -473,7 +475,8 @@ class Connections_model extends Model {
 	 * 
 	 * @return
 	 *  -1 in case of error in a query
-	 *  -3 if the connection already exists
+	 *  -2 if the connection already requested
+	 *  -3 if the connection already accepted
 	 *   0 if everything goes fine
 	 * 
 	 * @test Auto-acceptance works
@@ -481,8 +484,14 @@ class Connections_model extends Model {
 	function add_connection($inputs) {
 		//testing to see if requestor is sending 2nd request
 		$sql = "SELECT *
-			FROM connections D
-			WHERE (D.sender_id = ? AND D.receiver_id = ?)";
+			FROM connections
+			WHERE (sender_id = ? AND receiver_id = ?)";
+		$query = $this->db->query($sql, $inputs);
+		if ($query->num_rows() > 0) return -2;
+		
+		$sql = "SELECT *
+			FROM connections
+			WHERE (receiver_id = ? AND sender_id = ?)";
 		$query = $this->db->query($sql, $inputs);
 		
 		// If the other part already requested me the connection,
@@ -846,7 +855,7 @@ class Connections_model extends Model {
 	 * */
 	 function update_connection_level($inputs) {
 		
-		if ($inputs[2] === 'sender' )
+		if ($inputs[2] === 'sender')
 		{
 			$sql = "UPDATE connections
 				SET sender_level = ?

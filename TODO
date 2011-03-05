@@ -1,7 +1,7 @@
 Use this file as a list for simple things to do
 -----------------------------------------------
 
-GENERAL
+GENERAL:
 - It shouldn't be:
      $this->ui->set($this->members('list', $group_id));
   but simply
@@ -9,35 +9,31 @@ GENERAL
   and the same in all other cases. The idea is that you call the controller
   method and then it will load the main panel, eventually.
 
-Public/Private Accounts
+============================================================================================================================================
+
+Public/Private Accounts:
 - ONLY applicable to patients, NOT hcps 
 - fix patient / hcp search list (take into account private/public setting in accounts table)
 - Patient's who have a private profile are in summary: users who only want to send requests themselves, they cannot
   receive connection requests. They can receive referals and group invitations ONLY becasue they are received from their
   connected friends/hcps. If private patient joins a group, they will be listed in the group members list; this is because
   if they want to be part of the group, they only want to be public in that group.
-- change connection requests: deny if the receiver account is private ## MATTEO ##
+//- change connection requests: deny if the receiver account is private ## MATTEO ##
 - 
 
-CONNECTIONS/PERMISSIONS/MEDRECS
-<<- when changing level for a connection, if connection goes from low to high, add permissions to all medical records ##MATTEO##>>
+============================================================================================================================================
+
+CONNECTIONS/PERMISSIONS/MEDRECS:
+//- when changing level for a connection, if connection goes from low to high, add permissions to all medical records ##MATTEO##
 - 'type' in permissions table: 0 is read access 1 is read+write access => change all models/fns that use permissions
 	to take this new case into account. ## MATTEO## 
 
-DOCUMENTATION ## LAST THING SINCE ITS NOT DUE TILL 15th ##
-- add a glossary in the documentation
-- describe bettere how MVC has been implemented (structure of folders and files)
-- mention about test performance (CodeIgniter is very fast and each controller has a streightforward flow)
-- add a (possibly big) list with all the possible changes that we anticipate.
-  just to show that we are taking care of that aspect
-- go to github and for each issue reported do one of the following:
-    - fix the bug
-    - report the bug in the documentation
+============================================================================================================================================
 
-PROFILE ##ASHWIN ##
+PROFILE: ##ASHWIN ##
 - Implement pictures ## ASHWIN ##
 
-<<- Profile shortcut from NavBar fails to load sidepanel ## MATTEO ##>>
+//- Profile shortcut from NavBar fails to load sidepanel ## MATTEO ##
 
 - DECISION:
 -- Controller General Logic:
@@ -62,38 +58,61 @@ PROFILE ##ASHWIN ##
 	hcp // hcp_personal_profile
 	pat	// pat_personal_profile
 
-MEDICAL RECORDS
-- add a view for patients to see his/her connected patients medical records
-  (maybe it can be added to the patient's profile...)
+============================================================================================================================================
 
-GROUPS
-<<create is_invited table, to be able to verify whether someone trying to join a private group came via invitation.>>
-<<logic checking:>>
-<<	- if patient only: should not be allowed to invite a hcp >>
-<<	- if hcp only: should not be allowed to invite a patient >>
-<<- add data: groups.txt invite.txt >>
-<< Make one view, general, to see groups, instead of having mygroups and groups, that are basically the same thing >>
-<< in the member list, it gives you the option to 'request connection' this doesnt check if they are already 
-	connected/have been requested already >>
-<< When listing group members, just use the already existing views to
+MEDICAL RECORDS:
+//- add a view for patients to see his/her connected patients medical records
+//  (maybe it can be added to the patient's profile...)
+
+============================================================================================================================================
+
+GROUPS:
+//create is_invited table, to be able to verify whether someone trying to join a private group came via invitation.
+//logic checking:
+//	- if patient only: should not be allowed to invite a hcp 
+//	- if hcp only: should not be allowed to invite a patient
+//- add data: groups.txt invite.txt 
+// Make one view, general, to see groups, instead of having mygroups and groups, that are basically the same thing 
+// in the member list, it gives you the option to 'request connection' this doesnt check if they are already 
+//	connected/have been requested already
+
+/*When listing group members, just use the already existing views to
   list patients and doctors (unless there is a specific reason to have
   a new view). REPLY :: I was going to...BUT due to some difficulties, it doesnt really work so easily, and its 
   really not that important. 
- >>
-<<- Should a hcp be able to see "patient only" groups in the group listing?
-  (similarly, should a patient be able to see "hcps only" ones?)>>
+*/
 
-<<- Edit group does not work well... I change something and it says "all fields mandatory">>
-<<- Also, it has that strange behaviour in dislpaying the description...>>
+//- Edit group does not work well... I change something and it says "all fields mandatory"
+//- Also, it has that strange behaviour in dislpaying the description...
+// bug : I can join a private group just with the URL...
 
-- Bugs:
----- I can join a private group just with the URL...
----- lets me invite a member who is already invited 
+/*- Should a hcp be able to see "patient only" groups in the group listing?
+    (similarly, should a patient be able to see "hcps only" ones?) */
+
+//- Edit group does not work well... I change something and it says "all fields mandatory"
+//- Also, it has that strange behaviour in dislpaying the description...
+
+- bug: lets me invite a member who is already invited 
 	 (sortof...doesnt give me error message...) 
 	 it shouldnt even list him in the possible invitees
+//- create invitation list
 
 - create test set  ##NADA##
 
-PRESENTATION
+============================================================================================================================================
+
+DOCUMENTATION: ## LAST THING SINCE ITS NOT DUE TILL 15th ##
+- add a glossary in the documentation
+- describe bettere how MVC has been implemented (structure of folders and files)
+- mention about test performance (CodeIgniter is very fast and each controller has a streightforward flow)
+- add a (possibly big) list with all the possible changes that we anticipate.
+  just to show that we are taking care of that aspect
+- go to github and for each issue reported do one of the following:
+    - fix the bug
+    - report the bug in the documentation
+    
+============================================================================================================================================
+
+PRESENTATION:
 - Prepare a list of actions to perform during the presentation (we all need to do that, I think)
 ... (my memory is bad...)

@@ -261,6 +261,21 @@ class Groups_model extends Model {
 		
 		return array();
 	}
+
+	function list_my_invites($invitee_id){
+	
+		$sql = "SELECT * FROM groups WHERE group_id IN (SELECT group_id FROM invite WHERE invitee_id = ? )";
+		
+		$query = $this->db->query($sql,array($invitee_id));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		if ($query->num_rows() > 0)
+			return $query->result_array();
+		
+		return array();
+	}
 	
 	function is_member($account_id,$group_id){
 	
@@ -328,7 +343,7 @@ class Groups_model extends Model {
 			return -1; // query error
 		return 0;
 	}
-	
+
 	function is_invited($invitee_id,$group_id){
 		
 		$sql = "SELECT *

@@ -32,6 +32,8 @@ $actions = array('');
 for ($i = 0; $i < count($table['tuples']); $i++) {
 	if ($member[$i]['is'] === FALSE)
 		$actions = array('join-group');
+	else if ($member[$i]['is'] === 'invited')
+		$actions = array('join-group');
 	else {
 		if($member[$i]['perm'] === '0')
 			$actions = array('list-mems','leave-group');

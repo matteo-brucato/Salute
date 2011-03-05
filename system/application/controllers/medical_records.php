@@ -96,37 +96,12 @@ class Medical_records extends Controller {
 	function patient($pid = NULL) {
 		if (DEBUG) $this->output->enable_profiler(TRUE);
 //		$this->auth->check_logged_in();
-		if ($this->auth->check(array(auth::CurrLOG,auth::CurrCONN,$pid)) !== TRUE) {
-			return;
-		}
-
-		/*
-		if ($patient_id == NULL) {
-			$this->ui->set_error('No patient id specified','Missing Arguments');
-			return;
-		}
-		*/
-		/** Patients can now see other patient's medical records, if they are connected with high level of trust
-		// Current user must be an hcp
-		if ($this->auth->get_type() != 'hcp') {
-			$this->ui->set_error('Only HCPs have access to this funtionality.<br />
-			To see your medical records go <a href="/medical_records">here</a>', 'Permission Denied');
-			return;
-		}
-		* */
-		/*		
-		// Current user must be connected with the patient
-		$check = $this->connections_model->is_connected_with(
-			$this->auth->get_account_id(), $patient_id
-		);
-		if ($check === -1){ 
-			$this->ui->set_query_error(); 
-			return;
-		}
-		else if ($check == FALSE) {
-			$this->ui->set_error('You are not connected with this patient','Permission Denied');
-		} else {
-		*/
+		if ($this->auth->check(array(
+			auth::CurrLOG,
+			auth::PAT, $pid,
+			auth::CurrCONN, $pid
+		)) !== TRUE) return;
+		
 		// Get the list of medical records from the model
 		$recs = $this->medical_records_model->get_patient_records(
 			array($pid, $this->auth->get_account_id()

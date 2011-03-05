@@ -46,6 +46,8 @@ class Groups extends Controller {
 			$this->_lists_all();
 		else if ( $direction == 'mine' )
 			$this->_lists_mine();
+		else if ( $direction == 'invites' )
+			$this->_lists_invites();
 		else
 			$this->ui->set_error('Input not valid: <b>'.$direction.'</b>');
 	}
@@ -205,34 +207,38 @@ class Groups extends Controller {
 			return;
 		} else if ($mem === FALSE){
 			// Check if its a patient
-			$mem = $this->patient_model->is_patient($this->auth->get_account_id());
-			//if not, check if its a doctor
-			if($mem === -1 || $mem === FALSE){
-				$mem = $this->hcp_model->is_hcp($this->auth->get_account_id());
-				// if not, server error
-				if($mem === -1){
-					$this->ui->set_error('Internal server error1','server');
-					return;
-				} else if ($mem === FALSE){
-					$this->ui->set_error('Internal server error1','server');
-					return;
-				} else{
-					if ( $group['group_type'] === '0' ){
-						$this->ui->set_error('This is a patient only group.','Permission Denied');
-						return;
-					}
-				}
-			} else{ //else it is a patient.
-				if ( $group['group_type'] === '1' ){
+			$type = $this->auth->get_type();
+			if($type === 'patient'){
+				if ( $group['group_type'] === '1'){
 					$this->ui->set_error('This is a healthcare provider only group.','Permission Denied');
 					return;
 				}
 			}
-		} else {
-			$this->ui->set_error('Internal server error2','server');
-			return;
+			else if($type === 'hcp'){
+				if ( $group['group_type'] === '0'){
+					$this->ui->set_error('This is a patient only group.','Permission Denied');
+					return;	
+				}
+			}
+			else {
+				$this->ui->set_error('Internal server error','server');
+				return;	
+			}
 		}
-			
+		
+		// if its a private group, check that they have an invitation
+		if($group['public_private'] === '1'){
+			$invited = $this->groups_model->is_invited($this->auth->get_account_id(),$group_id);
+			if ($invited === -1){
+				$this->ui->set_query_error();
+				return;	
+			}
+			if($invited === FALSE){
+				$this->ui->set_error('You must be invited to join this private group.','Permission Denied');
+				return;
+			}
+		}
+		
 		$check = $this->groups_model->join($this->auth->get_account_id(),$group_id);
 		if ($check === -1){
 			$this->ui->set_query_error();
@@ -481,12 +487,16 @@ class Groups extends Controller {
 		for ($i = 0; $i < count($list); $i++) {
 			$is_mem = $this->groups_model->is_member($this->auth->get_account_id(),$list[$i]['group_id']); 
 			$mem = $this->groups_model->get_member($this->auth->get_account_id(),$list[$i]['group_id']); 
-			if ($is_mem === -1 || $mem === -1){
+			$inv = $this->groups_model->is_invited($this->auth->get_account_id(),$list[$i]['group_id']); 
+			if ($is_mem === -1 || $mem === -1 || $inv === -1){
 				$this->auth->set_query_error();
 				return;	
-			} else if ($is_mem) {
+			} else if ($is_mem === TRUE) {
 				$member[$i]['is'] = TRUE; 
 				$member[$i]['perm'] = $mem['permissions'];
+			} else if($inv === TRUE){
+				$member[$i]['is'] = 'invited'; 
+				$member[$i]['perm'] = NULL;
 			} else {
 				$member[$i]['is'] = FALSE; 
 				$member[$i]['perm'] = NULL;
@@ -530,6 +540,34 @@ class Groups extends Controller {
 		
 		$this->db->trans_complete();
 	}
+	
+	/**
+	 * List My Invitations
+	 * tested.
+	 * */
+	function _lists_invites(){
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}
+		
+		$this->db->trans_start();
+		
+		$list = $this->groups_model->list_my_invites($this->auth->get_account_id());
+		if ($list === -1){
+			$this->auth->set_query_error();
+			return;
+		}
+		$member='';
+		for ($i = 0; $i < count($list); $i++) {
+			$member[$i]['perm'] = NULL;
+			$member[$i]['is'] = FALSE;
+		}
+		$this->ui->set(array($this->load->view('mainpane/lists/groups', array('list_name'=> 'My Group Invitations',
+												'group_list' => $list, 'member' => $member), TRUE)));
+		
+		$this->db->trans_complete();
+	}
+	
 	
 	/**
 	 * Edit an Existing Group
@@ -593,7 +631,7 @@ class Groups extends Controller {
 		}
 		
  		$this->ui->set_message("You have successfully edited the group: $name");
- 		$this->ui->set(array($this->lists('mine')));
+		$this->lists('mine');
 	}
 	
 	/**
