@@ -9,7 +9,7 @@ $this->load->helper('table_result');
  * 		$perm	 		Boolean
  * */
 
-//echo '<h2>'.$list_name.'</h2>';
+echo '<h2>'.$list_name.'</h2>';
 
 // Id of the table
 $table['table-name'] = 'my-groups-table';
@@ -28,16 +28,20 @@ $table['tuples'] = $mem_list;
 // Attributes to display
 $table['attr'] = array('account_id', 'group_id','first_name','last_name','actions');
 
-if($perm['permissions'] == '0')
-	$actions = array('request-conn');  
-else if ($perm['permissions'] == '1')
-	$actions = array('request-conn');  
-else if ($perm['permissions'] == '2')
-	$actions = array('request-conn', 'delete-member','edit-mem');  
-else if ($perm['permissions'] == '3')
-	$actions = array('request-conn', 'delete-member','edit-mem');  
-
 for ($i = 0; $i < count($table['tuples']); $i++) {
+
+	if($perm['permissions'] == '0' || $perm['permissions'] == '1' ){
+		if($info[$i]['connected'] === TRUE)
+			$actions = array('profile');
+		else if ($info[$i]['connected'] === FALSE)
+			$actions = array('request-conn');
+		else if ($info[$i]['connected'] === 'pending')
+			$actions = '';
+	} else if ($perm['permissions'] == '2' || $perm['permissions'] == '3'){
+		if($info[$i]['connected'] === TRUE)
+			$actions = array('profile','delete-member','edit-mem');
+		else $actions = array('request-conn','delete-member','edit-mem');
+	}  
 	
 	$table['tuples'][$i]['first_name'] = $info[$i]['first_name'];
 	$table['tuples'][$i]['last_name'] = $info[$i]['last_name'];
