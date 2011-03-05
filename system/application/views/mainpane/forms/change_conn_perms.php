@@ -19,25 +19,31 @@ echo '<h2>'.$list_name.'</h2>';
 $table['table-name'] = 'medical_records-table';
 
 // Names of the headers in the table
-$table['th'] = array('Medical Record Id', 'Patient', 'Created By', 'Issue', 'Info', 'Actions');
+$table['th'] = array('Medical Record Id', 'Patient', 'Created By', 'Issue', 'Info', 'Actions'/*, 'Type'*/);
 
 // Classes for columns (order matters)
-$table['th_class'] = array('id_keeper', '', '', '', '', 'checkbox');
-$table['td_class'] = array('id_keeper', '', '', '', '', 'checkbox');
+$table['th_class'] = array('id_keeper', '', '', '', '', 'checkbox'/*, ''*/);
+$table['td_class'] = array('id_keeper', '', '', '', '', 'checkbox'/*, ''*/);
 
 // All the results from the database
 $table['tuples'] = $list;
 $table['hcptuples'] = $list2;
 
 // Attributes to display
-$table['attr'] = array('medical_rec_id', 'pat_first_name', 'first_name', 'issue', 'suplementary_info', 'actions');
+$table['attr'] = array('medical_rec_id', 'pat_first_name', 'first_name', 'issue', 'suplementary_info', 'actions'/*, 'type'*/);
 
 
 for ($i = 0; $i < count($table['tuples']); $i++) {
 	$isit = FALSE;
+	//$type1 = 'checked="checked"';
+	//$type2 = '';
 	for($j = 0; $j < count($table['hcptuples']); $j++ ){
-		if( $table['tuples'][$i]['medical_rec_id'] === $table['hcptuples'][$j]['medical_rec_id'] ){
+		if ($table['tuples'][$i]['medical_rec_id'] === $table['hcptuples'][$j]['medical_rec_id']) {
 			$isit = true;
+			//if ($table['hcptuples'][$j]['type'] != '0') {
+			//	$type1 = '';
+			//	$type2 = 'checked="checked"';
+			//}
 			break;
 		}
 	}
@@ -52,9 +58,12 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 													name="box[]" 
 													value=" '.$table['tuples'][$i]['medical_rec_id'].'"/>';
 	}
+	//$table['tuples'][$i]['type'] =
+	//	'<input type="radio" name="type'.$table['tuples'][$i]['medical_rec_id'].'" '.$type1.' /> download only
+	//	<br /><input type="radio" name="type'.$table['tuples'][$i]['medical_rec_id'].'" '.$type2.' /> delete also';
 }
 
-echo '<form method="post" action="/connections/change_permissions_do/'.$aid.'" id="change_perm">';
+echo '<form method="post" action="/connections/permissions_do/'.$aid.'" id="change_perm">';
 view_table($table);
 
 echo	'<div class="checkAll"><input type="checkbox" name="checkAll" /> Check/Uncheck All</div>';
