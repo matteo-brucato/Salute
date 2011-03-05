@@ -9,8 +9,7 @@
 			</tr>
 			<tr>
 				<td><label for="description-input">Description</label></td>
-				<td><textarea name="description" cols="50" rows="5" wrap="hard">
-								<?php echo $curr_info['description'];?></textarea><br /></td>
+				<td><textarea name="description" cols="50" rows="5" wrap="hard"><?php echo $curr_info['description'];?></textarea><br /></td>
 			</tr>
 		</table>
 		<p>

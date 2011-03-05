@@ -83,8 +83,8 @@ GROUPS
 <<- Should a hcp be able to see "patient only" groups in the group listing?
   (similarly, should a patient be able to see "hcps only" ones?)>>
 
-- Edit group does not work well... I change something and it says "all fields mandatory"
-- Also, it has that strange behaviour in dislpaying the description...
+<<- Edit group does not work well... I change something and it says "all fields mandatory">>
+<<- Also, it has that strange behaviour in dislpaying the description...>>
 
 - Bugs:
 ---- I can join a private group just with the URL...
