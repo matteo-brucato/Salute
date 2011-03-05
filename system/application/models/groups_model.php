@@ -57,7 +57,7 @@ class Groups_model extends Model {
 	 * */
 	function edit_group($inputs){
 		$sql = "UPDATE groups
-				SET name = ?,  description = ?, public_private = ?, group_type = ?
+				SET name = ?,  description = ?
 				WHERE group_id = ?";
 		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)

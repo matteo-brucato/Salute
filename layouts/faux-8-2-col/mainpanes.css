@@ -78,15 +78,15 @@ td.tables-1-selected-tds {
 	border: 1px solid #ABBEBE;
 	position: relative;
 }
-.message_body a, .error_body a {
-	//display: block;
+.message_a {
 	position: absolute;
 	right: 10px;
 	bottom: 10px;
-	//float: right;
 	vertical-align: middle;
 }
-.message_body h4 {}
+.message_body h4, .error_body h4 {
+	width: 95%;
+}
 .error_body {
 	border: 1px solid red;
 }

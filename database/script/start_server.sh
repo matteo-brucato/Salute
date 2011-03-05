@@ -9,3 +9,12 @@
 
 ## Run Postgres server as deamon
 (postgres -p $(< dbport) -D $(< dbfolder) >logfile 2>&1 </dev/null &)
+
+while true; do
+	sleep 1
+	l=`cat logfile | wc -l`
+	if [ $l -gt 2 ]; then
+		cat logfile
+		exit
+	fi
+done

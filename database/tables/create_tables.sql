@@ -30,6 +30,7 @@ CREATE TABLE accounts(
 	email VARCHAR(40) NOT NULL,
 	password VARCHAR(15) NOT NULL,
 	active BOOLEAN DEFAULT TRUE,
+	private BOOLEAN DEFAULT FALSE NOT NULL,
 	UNIQUE(email),
 	PRIMARY KEY(account_id)
 );

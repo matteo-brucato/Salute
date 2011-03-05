@@ -576,30 +576,24 @@ class Groups extends Controller {
 		
 		$name = $this->input->post('name');
 		$description = $this->input->post('description');
-		$public_private = $this->input->post('public_private');
-		$group_type = $this->input->post('group_type');
 		
 		// Form Checking will replace this
-		if($name == NULL || $description == NULL || $public_private == NULL || $group_type == NULL )	{
+		if($name == NULL || $description == NULL )	{
 			$this->ui->set_error('All Fields are Mandatory.','Missing Arguments'); 
 			return;
 		}
-		
+			
 		$this->db->trans_start();
-		$result = $this->groups_model->edit_group(array(
-													$name, 
-													$description, 
-													$public_private,
-													$group_type,
-													$group_id
-												)); 
+		$result = $this->groups_model->edit_group(array($name, $description,$group_id));
  		$this->db->trans_complete();		
+
 		if($result === -1){
 			$this->ui->set_query_error(); 
 			return;
 		}
 		
- 		$this->ui->set(array("You have successfully edited the group: $name"));
+ 		$this->ui->set_message("You have successfully edited the group: $name");
+ 		$this->ui->set(array($this->lists('mine')));
 	}
 	
 	/**
