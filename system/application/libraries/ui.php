@@ -37,7 +37,9 @@ class Ui {
 		
 		// The actual layout to use can be set differently, for
 		// instance, reading it from a cookie or a global variable
-		$this->CI->layout->set('faux-8-2-col');
+		if ($this->CI->auth->get_type() === 'hcp') {
+			$this->CI->layout->set(0);
+		}
 
 		// Create curr_url string
 		if ($this->CI->uri->segment(1) != '') {

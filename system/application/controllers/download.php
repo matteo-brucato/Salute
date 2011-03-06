@@ -85,19 +85,14 @@ class Download extends Controller {
 	function account_picture($aid = NULL) {
 		$check = $this->auth->check(array(
 			auth::CurrLOG,
-			auth::CurrIS_or_CONN, $aid	// current must be either the account $aid or connected with $aid
+			auth::ACCOUNT, $aid // $aid must refer to an account
 		));
 		if ($check !== TRUE) return;
 		
-		
 		$filepath = 'resources/images/account_pictures/'.$aid.'.jpg';
 		
-		//$this->ui->disable();
-		//echo $filepath;
-		//$filepath = 'resources/images/account_pictures/1.jpg';
-		
 		// Select default image if file does not exist
-		if (! is_file($filepath)) {
+		if ((! is_file($filepath)) || ($this->auth->check(array(auth::CurrIS_or_CONN, $aid)) !== TRUE)) {
 			if ($this->auth->check(array(auth::PAT, $aid)) === TRUE) {
 				$type = 'patient';
 			} else {
@@ -108,7 +103,8 @@ class Download extends Controller {
 		
 		$data = file_get_contents($filepath);
 		$this->ui->disable();
-		header('Content-type: image/jpg');
+		header('Content-type: image/jpeg');
+		header('Cache-Control: no-cache');
 		echo $data;
 	}
 }

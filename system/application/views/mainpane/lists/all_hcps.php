@@ -28,13 +28,15 @@ if ($this->auth->get_type() == 'patient') {
 			<ul>
 				<li><a href="/profile/user/'.$table['tuples'][$i]['account_id'].'" class="ajax">See Profile</a></li>
 				<li><a href="/messages/compose/'.$table['tuples'][$i]['account_id'].'">Send Email</a></li>
-				<li><a href="/connections/destroy/'.$table['tuples'][$i]['account_id'].'">Delete Connection</a></li>
-				<li><a href="/appointment/request/'.$table['tuples'][$i]['account_id'].'">Request Appointment</a></li>
+				<li><a href="/connections/destroy/'.$table['tuples'][$i]['account_id'].'" class="confirm">Delete Connection</a></li>
+				<li><a href="/appointments/request/'.$table['tuples'][$i]['account_id'].'">Request Appointment</a></li>
 			</ul>';
 		} else {
-			$table['tuples'][$i]['*actions'] = '<a href="/connections/request/'.
-			$table['tuples'][$i]['account_id'].
-			'" class="confirm ajax">Request connection</a>';
+			$table['tuples'][$i]['*actions'] = '
+			<ul>
+				<li><a href="/profile/user/'.$table['tuples'][$i]['account_id'].'">See Profile</a></li>
+				<li><a href="/connections/request/'.$table['tuples'][$i]['account_id'].'" class="confirm">Request Connection</a></li>
+			</ul>';
 		}
 	}
 } else {
@@ -42,13 +44,16 @@ if ($this->auth->get_type() == 'patient') {
 		if ($table['tuples'][$i]['connected']) {
 			$table['tuples'][$i]['*actions'] = '
 			<ul>
+				<li><a href="/profile/user/'.$table['tuples'][$i]['account_id'].'">See Profile</a></li>
 				<li><a href="/messages/compose/'.$table['tuples'][$i]['account_id'].'">Send Email</a></li>
-				<li><a href="/connections/destroy/'.$table['tuples'][$i]['account_id'].'">Delete Connection</a></li>
+				<li><a href="/connections/destroy/'.$table['tuples'][$i]['account_id'].'" class="confirm">Delete Connection</a></li>
 			</ul>';
 		} else {
-			$table['tuples'][$i]['*actions'] = '<a href="/connections/request/'.
-			$table['tuples'][$i]['account_id'].
-			'" class="confirm ajax">Request connection</a>';
+			$table['tuples'][$i]['*actions'] = '
+			<ul>
+				<li><a href="/profile/user/'.$table['tuples'][$i]['account_id'].'">See Profile</a></li>
+				<li><a href="/connections/request/'.$table['tuples'][$i]['account_id'].'" class="confirm">Request Connection</a></li>
+			</ul>';
 		}
 	}
 }
