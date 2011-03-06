@@ -546,14 +546,14 @@ class Connections extends Controller {
 		));
 		if ($check !== TRUE) return;
 		
-		$con_level = $this->connections_model->get_level(array($aid, $this->auth->get_account_id()));
+		$con_level = $this->connections_model->get_connection($aid, $this->auth->get_account_id());
 		
 		// Switch the response from the model, to select the correct view
 		switch ($con_level) {
 			case -1:
 				$this->ui->set_query_error();
 				break;
-			case -2:
+			case NULL:
 				$this->ui->set_error('Connection does not exist.', 'Permission Denied');
 				break;
 			default:

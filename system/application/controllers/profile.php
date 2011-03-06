@@ -370,7 +370,7 @@ class Profile extends Controller {
          if( $id_type === 'hcp' ){
            //not connected & HCP
            //show picture and info
-           $mainview .= $this->load->view('mainpane/personal_hcp_profile',
+           $mainview .= $this->load->view('mainpane/hcp_public_profile',
                array('info' => $info[0], 'picture' => $picture), TRUE); 
            $this->ui->set(array($mainview));           
          }
@@ -390,12 +390,10 @@ class Profile extends Controller {
            else{
              //not connected and public patient
              //show picture and name              
-			$mainview .= $this->load->view('mainpane/personal_patient_profile',
+			$mainview .= $this->load->view('mainpane/patient_public_profile',
 				array('info' => $info[0], 'picture' => $picture), TRUE); 
 			$this->ui->set(array($mainview));    
            }
-        
-           
          }
        }
        else{
@@ -405,23 +403,103 @@ class Profile extends Controller {
            //connected & HCP
            if( $this->auth->get_type() === 'patient' ){
              //connected & patient- >HCP
+			//show picture
+			//show person info
+			//show appointments together
+			//show show bills together
+			//show medical records shared
+            $mainview .= $this->load->view('mainpane/personal_hcp_profile',
+               array('info' => $info[0], 'picture' => $picture), TRUE);
+			
+			$appts= $this->appointments_model->view_recent_five_between(array('account_id' => $this->auth->get_account_id(),'hcp_id' => $id,
+														'type' => $this->auth->get_type()));
+			if( $appts === -1 ){
+				$this->auth->set_query_error();
+				return;
+			}
+			$mainview .= $this->load->view('mainpane/lists/appointments',
+										array('list' => $appts, 'list_name' => 'Shared appointments'), TRUE);
+			$mainview .= '<a href="/appointments/all">View all appointments</a>';
+			
+			$bills= $this->bills_model->view_top_five_between(array($this->auth->get_account_id(), $this->auth->get_type(), $id));														
+			if( $bills === -1 ){
+				$this->auth->set_query_error();
+				return;
+			}
+			$mainview .= $this->load->view('mainpane/lists/bills',
+										array('list' => $bills, 'list_name' => 'Shared Bills'), TRUE);
+			$mainview .= '<a href="/bills/all">View all bills</a>';
+			$this->ui->set(array($mainview));
+			
+			$meds= $this->medical_records_model->get_patient_records_top_five(array($this->auth->get_account_id(), $id));														
+			if( $meds === -1 ){
+				$this->auth->set_query_error();
+				return;
+			}
+			$mainview .= $this->load->view('mainpane/lists/medical_records',
+										array('list' => $meds, 'list_name' => 'Shared Medical Records'), TRUE);
+			$mainview .= '<a href="/medical_records/myrecs">View all medical records</a>';
+			$this->ui->set(array($mainview));
+			return;
+			
+			
+			
+			//end connected & patient- >HCP
            }
            else{
              //connected & HCP- >HCP
-           }
-           
+             $mainview .= $this->load->view('mainpane/personal_hcp_profile',
+               array('info' => $info[0], 'picture' => $picture), TRUE);
+               $this->ui->set(array($mainview));
+               return;
+           }          
          }
          else if( $id_type === 'patient' ){
            $my_info = $this->patient_model->get_patient(array($this->auth->get_account_id()));
            //connected & patient
            if( $this->auth->get_type() === 'patient' ){
              //connected & patient- >patient
+             $mainview .= $this->load->view('mainpane/personal_patient_profile',
+               array('info' => $info[0], 'picture' => $picture), TRUE);
+			$this->ui->set(array($mainview));
+			return;
            }
            else{
              //connected & hcp- >patient
+             $mainview .= $this->load->view('mainpane/personal_patient_profile',
+            array('info' => $info[0], 'picture' => $picture), TRUE);
+               			$appts= $this->appointments_model->view_recent_five_between(array('account_id' => $this->auth->get_account_id(),'patient_id' => $id,
+														'type' => $this->auth->get_type()));
+			if( $appts === -1 ){
+				$this->auth->set_query_error();
+				return;
+			}
+			$mainview .= $this->load->view('mainpane/lists/appointments',
+										array('list' => $appts, 'list_name' => 'Shared appointments'), TRUE);
+			$mainview .= '<a href="/appointments/all">View all appointments</a>';
+			
+			$bills= $this->bills_model->view_top_five_between(array($this->auth->get_account_id(), $this->auth->get_type(), $id));														
+			if( $bills === -1 ){
+				$this->auth->set_query_error();
+				return;
+			}
+			$mainview .= $this->load->view('mainpane/lists/bills',
+										array('list' => $bills, 'list_name' => 'Shared Bills'), TRUE);
+			$mainview .= '<a href="/bills/all">View all bills</a>';
+			
+			
+			$meds= $this->medical_records_model->get_patient_records_top_five(array($id, $this->auth->get_account_id()));														
+			if( $meds === -1 ){
+				$this->auth->set_query_error();
+				return;
+			}
+			$mainview .= $this->load->view('mainpane/lists/medical_records',
+										array('list' => $meds, 'list_name' => 'Shared Medical Records'), TRUE);
+			$mainview .= '<a href="/medical_records/myrecs">View all medical records</a>';
+			$this->ui->set(array($mainview));
+			return;
            }
          }
-         
        }
 			
 		/*		
