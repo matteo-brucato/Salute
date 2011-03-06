@@ -1,0 +1,203 @@
+########################################################################
+##########################   TEST FILE   ###############################
+########################################################################
+#                                                                      #
+# Use this syntax:                                                     #
+#   <url>   <expected_result_string>   [ "|" <curl_extra_options> ]    #
+#                                                                      #
+# Examples:                                                            #
+#   /home/sitemap    ALL_OK                                            #
+#   /profile         ALL_OK      | -b cookie_file                      #
+#                                                                      #
+########################################################################
+
+#Groups Controller
+
+# Now, try to login in and save the cookie in a local file
+
+#Patient 1
+/home/login					REDIRECTED		| -F "email=patient1@email.com" -F "password=pat1" -c cookie_p1
+
+#Patient 2,3 connected with Patient 1
+/home/login					REDIRECTED		| -F "email=patient2@email.com" -F "password=pat2" -c cookie_p2
+/home/login					REDIRECTED		| -F "email=patient3@email.com" -F "password=pat3" -c cookie_p3
+
+#Patient 10 not connected with Patient 1
+/home/login					REDIRECTED		| -F "email=patient10@email.com" -F "password=pat10" -c cookie_p10
+
+#HCP 51,52 connected with Patient 1
+/home/login					REDIRECTED		| -F "email=doctor51@email.com" -F "password=doc51" -c cookie_h51
+/home/login					REDIRECTED		| -F "email=doctor52@email.com" -F "password=doc52" -c cookie_h52
+
+#HCP 56 not connected with Patient 1
+/home/login					REDIRECTED		| -F "email=doctor56@email.com" -F "password=doc56" -c cookie_h56
+
+# Invalid login
+# wrong password
+/home/login					CTR_ERROR		| -F "email=patient1@email.com" -F "password=camera" -c cookie_p1_2
+# wrong email
+/home/login					CTR_ERROR		| -F "email=patient1@yahoo.com" -F "password=pat1" -c cookie_p1_3
+
+# Errors if not logged in
+/groups						CTR_ERROR
+/groups/lists				CTR_ERROR
+/groups/lists/all			CTR_ERROR
+/groups/lists/mine			CTR_ERROR
+/groups/lists/invites		CTR_ERROR
+/groups/create				CTR_ERROR
+/groups/delete				CTR_ERROR
+/groups/edit				CTR_ERROR
+/groups/members				CTR_ERROR
+/groups/members/list		CTR_ERROR
+/groups/members/edit		CTR_ERROR
+/groups/members/join		CTR_ERROR
+/groups/members/leave		CTR_ERROR
+/groups/members/delete		CTR_ERROR
+/groups/members/invite		CTR_ERROR
+
+
+# if logged in 
+/groups						ALL_OK			| -b cookie_p1 -c cookie_p1
+/groups/lists				ALL_OK			| -b cookie_p1 -c cookie_p1
+/groups/lists/all			ALL_OK			| -b cookie_p1 -c cookie_p1
+/groups/lists/mine			ALL_OK			| -b cookie_p1 -c cookie_p1
+/groups/lists/invites		ALL_OK			| -b cookie_p1 -c cookie_p1
+
+######################################## GROUP MEMBERS ##############################################
+
+# Fails. expects a fn and a group id. 
+/groups/members				CTR_ERROR		| -b cookie_p1 -c cookie_p1 
+
+### LISTING GROUP MEMBERS ###
+# Listing group members of a group you are in
+/groups/members/list/40		ALL_OK			| -b cookie_p1 -c cookie_p1
+
+# Listing group members of a group you are not in
+/groups/members/list/43		CTR_ERROR		| -b cookie_p1 -c cookie_p1
+
+### EDITING GROUP MEMBERS ###
+# edit a member of a group you are in, given you have permissions
+#/groups/members/edit_do/40/2		ALL_OK		| -b cookie_p1 -c cookie_p1
+
+# edit a member of a group you are in, when you dont have permissions 
+#/groups/members/edit_do/40/2		CTR_ERROR	| -b cookie_p10 -c cookie_p10
+
+# Try to edit a person who is not in the group
+#/groups/members/edit_do/40/63		CTR_ERROR	| -b cookie_p1 -c cookie_p1
+
+
+### JOINING A GROUP ###
+
+# Correct input
+# Try joining a patient only public group as a patient
+/groups/members/join/20			ALL_OK		| -b cookie_p1 -c cookie_p1
+
+# Try joining a hcp only public group as a hcp
+/groups/members/join/37			ALL_OK		| -b cookie_h51 -c cookie_h51
+
+# Try joining a mixed public group as a patient 
+/groups/members/join/38			ALL_OK		| -b cookie_p1 -c cookie_p1
+
+# Try joining a mixed public group as a hcp
+/groups/members/join/38			ALL_OK		| -b cookie_h51 -c cookie_h51
+
+# Incorrect input
+# Try joining a group you already are a member of
+/groups/members/join/1			CTR_ERROR	| -b cookie_p1 -c cookie_p1
+
+# Try joining a patient only public group as an hcp 
+/groups/members/join/1			CTR_ERROR	| -b cookie_h51 -c cookie_h51
+
+# Try joining a hcp only public group as an patient 
+/groups/members/join/21			CTR_ERROR	| -b cookie_p1 -c cookie_p1
+
+# Try joining a group that doesn't exist
+/groups/members/join/1089		CTR_ERROR	| -b cookie_p1 -c cookie_p1
+
+### LEAVING A GROUP ###
+
+# leave a group you are in
+/groups/members/leave/1			ALL_OK		| -b cookie_p1 -c cookie_p1
+
+# leave a group  you are not in
+/groups/members/leave/21 		CTR_ERROR	| -b cookie_p1 -c cookie_p1
+
+# leave a group that does not exist 
+/groups/members/leave/1089		CTR_ERROR	| -b cookie_p1 -c cookie_p1
+
+### DELETING A GROUP ###
+
+# delete a group i am in and i have permission to delete
+/groups/delete/1			ALL_OK		| -b cookie_p3 -c cookie_p3
+
+# delete a group i am in and i dont have permission to delete
+/groups/delete/1			CTR_ERROR	| -b cookie_p10 -c cookie_p10
+
+# delete a group that i am not in
+/groups/delete/43			CTR_ERROR		| -b cookie_p1 -c cookie_p1
+
+# delete a group that does not exist 
+/groups/delete/9890			CTR_ERROR		| -b cookie_p1 -c cookie_p1
+
+### CREATING A GROUP ###
+
+# create a group with all information
+/groups/create_do/ 			ALL_OK			| -b cookie_p1 -c cookie_p1 -F "name=TestGroup" -F "description=TestDescrip" -F "public_private=0" -F "group_type=2"
+
+# create a patient only group with an hcp account
+/groups/create_do/ 			CTR_ERROR		| -b cookie_h51 -c cookie_h51 -F "name=TestGroup2" -F "description=TestDescrip2" -F "public_private=0" -F "group_type=0"
+
+# create a hcp only group with an patient account
+/groups/create_do/ 			CTR_ERROR		| -b cookie_p1 -c cookie_p1 -F "name=TestGroup3" -F "description=TestDescrip3" -F "public_private=0" -F "group_type=1"
+
+# create a group with no information
+/groups/create_do/ 			CTR_ERROR		| -b cookie_p1 -c cookie_p1 -F "name=" -F "description=" -F "public_private=" -F "group_type="
+
+# create a group with some information
+/groups/create_do/ 			CTR_ERROR		| -b cookie_p1 -c cookie_p1 -F "name=" -F "description=" -F "public_private=0" -F "group_type=1"
+
+### EDIT A GROUP ###
+# edit group i am a member of and have permission with all info
+/groups/edit_do/2			ALL_OK		| -b cookie_p2 -c cookie_p2 -F "name=NameChange" -F "description=DescripChange"
+
+# edit group i am a member of and have permission with no posts
+/groups/edit_do/2			CTR_ERROR	| -b cookie_p2 -c cookie_p2 -F "name=" -F "description="
+
+# edit group i am a member of but dont have permission
+/groups/edit_do/1			CTR_ERROR	| -b cookie_p10 -c cookie_p10 -F "name=NameChange2" -F "description=DescripChange2"
+
+# edit group i am not a member of
+/groups/edit_do/43			CTR_ERROR	| -b cookie_p1 -c cookie_p1 -F "name=NameChange3" -F "description=DescripChange3"
+
+### DELETE A GROUP MEMBER ###
+
+# delete a member of the group, given you have permission
+/groups/members/delete/2/9		ALL_OK		| -b cookie_p2 -c cookie_p2
+
+# delete a member of the group, if you dont have permission
+/groups/members/delete/1/9		CTR_ERROR		| -b cookie_p10 -c cookie_p10
+
+# delete a member of a group that you are not in
+/groups/members/delete/20/9		CTR_ERROR		| -b cookie_p1 -c cookie_p1
+
+
+### INVITATIONS TO A GROUP ###
+
+# Inviting a connected friend to a private group that I am in. 
+/groups/members/invite_do/40		ALL_OK		| -b cookie_p1 -c cookie_p1 -F "ids[0]=3;"
+
+# Inviting a non-connected user to a private group that I am in. 
+/groups/members/invite_do/40		CTR_ERROR	| -b cookie_p1 -c cookie_p1 -F "ids=10"
+
+# Inviting an hcp to a patient only private group that I am in
+/groups/members/invite_do/40		CTR_ERROR	| -b cookie_p1 -c cookie_p1 -F "ids=51"
+
+# Inviting an patient to a hcp only private group that I am in
+/groups/members/invite_do/64		CTR_ERROR	| -b cookie_h51 -c cookie_h51 -F "ids=1"
+
+# Inviting a user to a private group that i'm not in.
+/groups/members/invite_do/64		CTR_ERROR	| -b cookie_p1 -c cookie_p1 -F "ids=2"
+
+########################################################################################
+
+

@@ -20,6 +20,7 @@ class Ui {
 	private $panels; // array of UI panels
 	private $redirect = '';
 	private $curr_url;
+	private $disable = false;
 	
 	/**
 	 * Status code that the UI returns to the client if this class is
@@ -82,6 +83,7 @@ class Ui {
 	 * */
 	function __destruct() {
 		if (TESTING_ON) die($this->status_code);
+		if ($this->disable) return;
 		
 		if (IS_AJAX) {
 			// Slow down the server
@@ -108,6 +110,10 @@ class Ui {
 				echo $this->CI->layout->get($this->panels);
 			}
 		}
+	}
+	
+	function disable() {
+		$this->disable = true;
 	}
 	
 	/**

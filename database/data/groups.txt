@@ -1,7 +1,96 @@
 1;Cancer Survivors;For people who have survived cancer;0;0
-2;Heart Association;For Hcps striving to research heart disease;0;1
+2;group2;public & pats only;0;0
+3;group3;public & pats only;0;0
+4;group4;public & pats only;0;0
+5;group5;public & pats only;0;0
+6;group6;public & pats only;0;0
+7;group7;public & pats only;0;0
+8;group8;public & pats only;0;0
+9;group9;public & pats only;0;0
+10;group10;public & pats only;0;0
+11;group11;public & pats only;0;0
+12;group12;public & pats only;0;0
+13;group13;public & pats only;0;0
+14;group14;public & pats only;0;0
+15;group15;public & pats only;0;0
+16;group16;public & pats only;0;0
+17;group17;public & pats only;0;0
+18;group18;public & pats only;0;0
+19;group19;public & pats only;0;0
+20;group20;public & pats only;0;0
+50;Heart Association;For Hcps striving to research heart disease;0;1
+51;group21;public & docs only;0;1
+52;group22;public & docs only;0;1
+53;group23;public & docs only;0;1
+54;group24;public & docs only;0;1
+55;group25;public & docs only;0;1
+56;group26;public & docs only;0;1
+57;group27;public & docs only;0;1
+58;group28;public & docs only;0;1
+59;group29;public & docs only;0;1
+60;group30;public & docs only;0;1
+61;group31;public & docs only;0;1
+62;group32;public & docs only;0;1
+63;group33;public & docs only;0;1
+64;group34;public & docs only;0;1
+65;group35;public & docs only;0;1
+66;group36;public & docs only;0;1
 3;Nutrition;For people to share their learnings on food nutrition;0;2
+4;group37;public mixed group;0;2
+5;group38;public mixed group;0;2
+6;group39;public mixed group;0;2
+7;group40;public mixed group;0;2
+8;group41;public mixed group;0;2
+9;group42;public mixed group;0;2
+10;group43;public mixed group;0;2
+11;group44;public mixed group;0;2
+12;group45;public mixed group;0;2
+50;group46;public mixed group;0;2
+51;group47;public mixed group;0;2
+52;group48;public mixed group;0;2
+53;group49;public mixed group;0;2
+54;group50;public mixed group;0;2
+55;group51;public mixed group;0;2
+56;group52;public mixed group;0;2
+57;group53;public mixed group;0;2
+58;group54;public mixed group;0;2
 4;Drug Rehab;For people trying to overcome their drug addictions;1;0
-5;Cool Doctors;For cool doctors only;1;1
+5;group55;private pats only;1;0
+6;group56;private pats only;1;0
+7;group57;private pats only;1;0
+8;group58;private pats only;1;0
+9;group59;private pats only;1;0
+10;group60;private pats only;1;0
+51;Cool Doctors;For cool doctors only;1;1
+52;group61;private docs only;1;1
+53;group62;private docs only;1;1
+54;group63;private docs only;1;1
+55;group64;private docs only;1;1
+56;group65;private docs only;1;1
+57;group66;private docs only;1;1
+58;group67;private docs only;1;1
+59;group68;private docs only;1;1
+60;group69;private docs only;1;1
+61;group70;private docs only;1;1
+62;group71;private docs only;1;1
 52;Diabetes Support Group;Support group for my diabetes patients;1;2
+53;group71;private mixed;1;2
+54;group72;private mixed;1;2
+55;group73;private mixed;1;2
+56;group74;private mixed;1;2
+57;group75;private mixed;1;2
+58;group76;private mixed;1;2
+59;group77;private mixed;1;2
+60;group78;private mixed;1;2
+61;group79;private mixed;1;2
+62;group80;private mixed;1;2
+63;group81;private mixed;1;2
+64;group82;private mixed;1;2
+65;group83;private mixed;1;2
+66;group84;private mixed;1;2
+67;group85;private mixed;1;2
+68;group86;private mixed;1;2
+69;group87;private mixed;1;2
+70;group88;private mixed;1;2
+71;group89;private mixed;1;2
 \.

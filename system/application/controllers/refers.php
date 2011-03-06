@@ -257,6 +257,9 @@
 			  case -2:
 				  $this->ui->set_error('Referal ID does not exist');
 				  return;
+			  case -3:
+				  $this->ui->set_error('This referral has already been accepted. Either manually or automatically.');
+				  return;
 			  default:
 				  break;
 		  }

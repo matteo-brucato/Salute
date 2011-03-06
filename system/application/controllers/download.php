@@ -75,7 +75,41 @@ class Download extends Controller {
 		
 		// Read the file's contents and download it
 		$data = file_get_contents($filepath);
-		force_download($filepath, $data);
+		$this->ui->disable();
+		header('Content-type: application/pdf');
+		header('Content-Disposition: attachment; filename="'.$get[0]['file_name'].'"');
+		echo $data;
+		//force_download($filepath, $data);
+	}
+	
+	function account_picture($aid = NULL) {
+		$check = $this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrIS_or_CONN, $aid	// current must be either the account $aid or connected with $aid
+		));
+		if ($check !== TRUE) return;
+		
+		
+		$filepath = 'resources/images/account_pictures/'.$aid.'.jpg';
+		
+		//$this->ui->disable();
+		//echo $filepath;
+		//$filepath = 'resources/images/account_pictures/1.jpg';
+		
+		// Select default image if file does not exist
+		if (! is_file($filepath)) {
+			if ($this->auth->check(array(auth::PAT, $aid)) === TRUE) {
+				$type = 'patient';
+			} else {
+				$type = 'hcp';
+			}
+			$filepath = 'resources/images/account_pictures/default_'.$type.'.jpg';
+		}
+		
+		$data = file_get_contents($filepath);
+		$this->ui->disable();
+		header('Content-type: image/jpg');
+		echo $data;
 	}
 }
 /**@}*/
