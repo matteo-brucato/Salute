@@ -73,7 +73,7 @@ class Profile extends Controller {
 										
 							
 			$mainview .= $this->load->view('mainpane/personal_patient_profile',
-				array('info' => $patient_info[0], 'aid' => $this->auth->get_account_id()), TRUE);
+				array('info' => $patient_info[0], 'picture' => $picture), TRUE);
 			$mainview .= '<a href="/profile/edit">Edit</a><br>';
 			$mainview .= '<a href="/connections/myhcps">View all my HCPS</a><br>';
 			$mainview .= '<a href="/connections/mypatients">View all my patient friends</a><br>';
@@ -166,7 +166,7 @@ class Profile extends Controller {
 			//$mainview .= $this->load->view('mainpane/personal_hcp_profile',
 			//							array('info' => $hcp_info[0]), TRUE);
 			$mainview .= $this->load->view('mainpane/personal_hcp_profile',
-				array('info' => $hcp_info[0], 'aid' => $this->auth->get_account_id()), TRUE);
+				array('info' => $hcp_info[0], 'picture' => $picture), TRUE);
 			$mainview .= '<a href="/profile/edit">Edit</a><br>';
 			$mainview .= '<a href="/connections/myhcps">View all my HCPS</a><br>';
 			$mainview .= '<a href="/connections/mypatients">View all my patients</a><br>';
@@ -317,13 +317,9 @@ class Profile extends Controller {
 	 * */
 	function user($id = NULL) {
 		//$this->auth->check_logged_in();
-		if ($this->auth->check(array(
-			auth::CurrLOG,
-			auth::ACCOUNT,$id,
-			auth::CurrCONN,$id)) !== TRUE) {
+		if ($this->auth->check(array(auth::CurrLOG,auth::ACCOUNT,$id)) !== TRUE) {
 			return;
 		}
-		
 		/**if ($id == NULL) {
 			$this->ui->set_redirect('/profile');
 			//$this->ui->show_app_error();
@@ -355,7 +351,7 @@ class Profile extends Controller {
 			return;
 		}
 		else{
-			$id_type = 'patient';
+			$id_type = 'patient';	
 		}
 		// Check if there is a picture, otherwise set the default one
        if (is_file('/resources/images/account_pictures/'.$id.'.jpg')) {
@@ -412,7 +408,7 @@ class Profile extends Controller {
 			//show appointments together
 			//show show bills together
 			//show medical records shared
-            $mainview .= $this->load->view('mainpane/personal_hcp_profile',
+            $mainview .= $this->load->view('mainpane/other_hcp_profile',
                array('info' => $info[0], 'picture' => $picture), TRUE);
 			
 			$appts= $this->appointments_model->view_recent_five_between(array('account_id' => $this->auth->get_account_id(),'hcp_id' => $id,
@@ -452,7 +448,7 @@ class Profile extends Controller {
            }
            else{
              //connected & HCP- >HCP
-             $mainview .= $this->load->view('mainpane/personal_hcp_profile',
+             $mainview .= $this->load->view('mainpane/other_hcp_profile',
                array('info' => $info[0], 'picture' => $picture), TRUE);
                $this->ui->set(array($mainview));
                return;
@@ -463,14 +459,14 @@ class Profile extends Controller {
            //connected & patient
            if( $this->auth->get_type() === 'patient' ){
              //connected & patient- >patient
-             $mainview .= $this->load->view('mainpane/personal_patient_profile',
+             $mainview .= $this->load->view('mainpane/other_patient_profile',
                array('info' => $info[0], 'picture' => $picture), TRUE);
 			$this->ui->set(array($mainview));
 			return;
            }
            else{
              //connected & hcp- >patient
-             $mainview .= $this->load->view('mainpane/personal_patient_profile',
+             $mainview .= $this->load->view('mainpane/other_patient_profile',
             array('info' => $info[0], 'picture' => $picture), TRUE);
                			$appts= $this->appointments_model->view_recent_five_between(array('account_id' => $this->auth->get_account_id(),'patient_id' => $id,
 														'type' => $this->auth->get_type()));
