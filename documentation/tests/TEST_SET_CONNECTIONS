@@ -1,0 +1,113 @@
+########################################################################
+##########################   TEST FILE   ###############################
+########################################################################
+#                                                                      #
+# Use this syntax:                                                     #
+#   <url>   <expected_result_string>   [ "|" <curl_extra_options> ]    #
+#                                                                      #
+# Examples:                                                            #
+#   /home/sitemap    ALL_OK                                            #
+#   /profile         ALL_OK      | -b cookie_file                      #
+#                                                                      #
+########################################################################
+
+# Log in as patient 1
+/home/login					REDIRECTED		| -F "email=patient1@email.com" -F "password=pat1" -c cookie_pat_1
+# Log in as patient 2
+/home/login					REDIRECTED		| -F "email=patient2@email.com" -F "password=pat2" -c cookie_pat_2
+# Log in as patient 3
+/home/login					REDIRECTED		| -F "email=patient3@email.com" -F "password=pat3" -c cookie_pat_3
+# Log in as patient 4
+/home/login					REDIRECTED		| -F "email=patient4@email.com" -F "password=pat4" -c cookie_pat_4
+# Log in as patient 5
+/home/login					REDIRECTED		| -F "email=patient5@email.com" -F "password=pat5" -c cookie_pat_5
+# Log in as patient 10
+/home/login					REDIRECTED		| -F "email=patient10@email.com" -F "password=pat10" -c cookie_pat_10
+# Log in as hcp 51
+/home/login					REDIRECTED		| -F "email=doctor51@email.com" -F "password=doc51" -c cookie_doc_51
+# Log in as hcp 52
+/home/login					REDIRECTED		| -F "email=doctor52@email.com" -F "password=doc52" -c cookie_doc_52
+# Log in as hcp 53
+/home/login					REDIRECTED		| -F "email=doctor53@email.com" -F "password=doc53" -c cookie_doc_53
+# Log in as hcp 54
+/home/login					REDIRECTED		| -F "email=doctor54@email.com" -F "password=doc54" -c cookie_doc_54
+# Log in as hcp 55
+/home/login					REDIRECTED		| -F "email=doctor55@email.com" -F "password=doc55" -c cookie_doc_55
+# Log in as hcp 60
+/home/login					REDIRECTED		| -F "email=doctor60@email.com" -F "password=doc60" -c cookie_doc_60
+
+################ VIEW CONNECTED AND UNCONNECTED PROFILES ###############
+# Patient 1 is connected with pats 2, 3, 4 and 5
+/profile/user/2				ALL_OK			| -b cookie_pat_1
+/profile/user/1				ALL_OK			| -b cookie_pat_2
+
+/profile/user/4				ALL_OK			| -b cookie_pat_1
+/profile/user/1				ALL_OK			| -b cookie_pat_4
+
+# Patient 1 is connected with docs 51, 52, 53, 54
+/profile/user/51			ALL_OK			| -b cookie_pat_1
+/profile/user/1				ALL_OK			| -b cookie_doc_51
+/profile/user/52			ALL_OK			| -b cookie_pat_1
+/profile/user/1				ALL_OK			| -b cookie_doc_52
+/profile/user/53			ALL_OK			| -b cookie_pat_1
+/profile/user/1				ALL_OK			| -b cookie_doc_53
+/profile/user/54			ALL_OK			| -b cookie_pat_1
+/profile/user/1				ALL_OK			| -b cookie_doc_54
+/profile/user/55			ALL_OK			| -b cookie_pat_1
+/profile/user/1				ALL_OK			| -b cookie_doc_55
+
+# Try to see not connected profiles
+/profile/user/6				CTR_ERROR		| -b cookie_pat_1
+/profile/user/7				CTR_ERROR		| -b cookie_pat_1
+/profile/user/8				CTR_ERROR		| -b cookie_pat_1
+/profile/user/9				CTR_ERROR		| -b cookie_pat_1
+/profile/user/10			CTR_ERROR		| -b cookie_pat_1
+/profile/user/56			CTR_ERROR		| -b cookie_pat_1
+/profile/user/57			CTR_ERROR		| -b cookie_pat_1
+/profile/user/58			CTR_ERROR		| -b cookie_pat_1
+/profile/user/59			CTR_ERROR		| -b cookie_pat_1
+/profile/user/60			CTR_ERROR		| -b cookie_pat_1
+
+################### CREATE NEW CONNECTIONS #############################
+# Patient 1 asks for a new connection to hcp 60
+/connections/request/60		OK_MESSAGE		| -b cookie_pat_1
+# Then hcp 60 accets it
+/connections/accept/1		OK_MESSAGE		| -b cookie_doc_60
+
+# Patient 1 asks for a new connection to patient 10
+/connections/request/10		OK_MESSAGE		| -b cookie_pat_1
+# Then patient 10 accets it
+/connections/accept/1		OK_MESSAGE		| -b cookie_pat_10
+
+# Patient 1 asks the same connections again
+/connections/request/60		CTR_ERROR		| -b cookie_pat_1
+connections/request/10		CTR_ERROR		| -b cookie_pat_1
+
+# And the others accept again
+/connections/accept/1		CTR_ERROR		| -b cookie_doc_60
+/connections/accept/1		CTR_ERROR		| -b cookie_pat_10
+
+# Now a doctor tries to request a connection to another doctor
+/connections/request/60		OK_MESSAGE		| -b cookie_doc_51
+
+# And then, to a patient
+/connections/request/10		CTR_ERROR		| -b cookie_doc_51
+
+# Now, two accounts try to accept connection not for them
+/connections/accept/51		CTR_ERROR		| -b cookie_doc_52
+/connections/accept/51		CTR_ERROR		| -b cookie_pat_1
+
+# And finally 60 accepts his request
+/connections/accept/51		OK_MESSAGE		| -b cookie_doc_60
+
+# Try to cancel a connection already accepted
+/connections/cancel/60		CTR_ERROR		| -b cookie_doc_51
+
+# Try to reject a connection already accepted
+/connections/reject/51		CTR_ERROR		| -b cookie_doc_60
+
+# Try to legally destroy a connection
+/connections/destroy/51		OK_MESSAGE		| -b cookie_doc_60
+
+# Now the other tries to destroy it again
+/connections/destroy/60		CTR_ERROR		| -b cookie_doc_51

@@ -505,7 +505,7 @@ class Profile extends Controller {
 			}
 			$mainview .= $this->load->view('mainpane/lists/medical_records',
 										array('list' => $meds, 'list_name' => 'Shared Medical Records'), TRUE);
-			$mainview .= '<a href="/medical_records/myrecs">View all medical records</a>';
+			$mainview .= '<a href="/medical_records/patient/'.$id.'">View all medical records</a>';
 			$this->ui->set(array($mainview));
 			return;
            }
