@@ -84,15 +84,12 @@ GROUPS:
 //- Edit group does not work well... I change something and it says "all fields mandatory"
 //- Also, it has that strange behaviour in dislpaying the description...
 
-- create error message for when an ivitation is received twice
+// create error message for when an ivitation is received twice
 
-- bug: lets me invite a member who is already invited 
-	 (sortof...doesnt give me error message...) 
-	 it shouldnt even list him in the possible invitees
 //- create invitation list
-- bug: doesnt correctly display member permission
-- fix sample data...
-- create test set  ##NADA##
+// bug: doesnt correctly display member permission
+// fix sample data...
+// create test set  ##NADA##
 
 ============================================================================================================================================
 

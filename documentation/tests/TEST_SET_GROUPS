@@ -77,13 +77,13 @@
 
 ### EDITING GROUP MEMBERS ###
 # edit a member of a group you are in, given you have permissions
-#/groups/members/edit_do/40/2		ALL_OK		| -b cookie_p1 -c cookie_p1
+/groups/members/edit_do/40/2		ALL_OK		| -b cookie_p1 -c cookie_p1 -F "permissions=1"
 
 # edit a member of a group you are in, when you dont have permissions 
-#/groups/members/edit_do/40/2		CTR_ERROR	| -b cookie_p10 -c cookie_p10
+/groups/members/edit_do/41/2		CTR_ERROR	| -b cookie_p10 -c cookie_p10 -F "permissions=1"
 
 # Try to edit a person who is not in the group
-#/groups/members/edit_do/40/63		CTR_ERROR	| -b cookie_p1 -c cookie_p1
+/groups/members/edit_do/40/63		CTR_ERROR	| -b cookie_p2 -c cookie_p2 -F "permissions=2"
 
 
 ### JOINING A GROUP ###
@@ -182,21 +182,21 @@
 
 
 ### INVITATIONS TO A GROUP ###
-
+## NOTE: curl seems to not support array form posts ... ids is an array of ids..."##
 # Inviting a connected friend to a private group that I am in. 
-/groups/members/invite_do/40		ALL_OK		| -b cookie_p1 -c cookie_p1 -F "ids[0]=3;"
+#/groups/members/invite_do/40		ALL_OK		| -b cookie_p1 -c cookie_p1 -F "ids=3"
 
 # Inviting a non-connected user to a private group that I am in. 
-/groups/members/invite_do/40		CTR_ERROR	| -b cookie_p1 -c cookie_p1 -F "ids=10"
+#/groups/members/invite_do/40		CTR_ERROR	| -b cookie_p1 -c cookie_p1 -F "ids=10"
 
 # Inviting an hcp to a patient only private group that I am in
-/groups/members/invite_do/40		CTR_ERROR	| -b cookie_p1 -c cookie_p1 -F "ids=51"
+#/groups/members/invite_do/40		CTR_ERROR	| -b cookie_p1 -c cookie_p1 -F "ids=51"
 
 # Inviting an patient to a hcp only private group that I am in
-/groups/members/invite_do/64		CTR_ERROR	| -b cookie_h51 -c cookie_h51 -F "ids=1"
+#/groups/members/invite_do/64		CTR_ERROR	| -b cookie_h51 -c cookie_h51 -F "ids=1"
 
 # Inviting a user to a private group that i'm not in.
-/groups/members/invite_do/64		CTR_ERROR	| -b cookie_p1 -c cookie_p1 -F "ids=2"
+#/groups/members/invite_do/64		CTR_ERROR	| -b cookie_p1 -c cookie_p1 -F "ids=2"
 
 ########################################################################################
 

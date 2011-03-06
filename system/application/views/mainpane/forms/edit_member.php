@@ -10,7 +10,7 @@
 				<input type="radio" name="permissions" value="2"
 					<?php if($curr_info['permissions'] == '2') echo 'checked="checked"';?> />Request Connection, Invite, Edit Members, and Delete Members<br>
 				<input type="radio" name="permissions" value="3"
-					<?php if($curr_info['permissions'] == '3') echo 'checked="checked"';?> />Request Connection, Invite, Edit Members,Delete Members, Edit Group, Delete Group<br>
+					<?php if($curr_info['permissions'] ==  '3') echo 'checked="checked"';?> />Request Connection, Invite, Edit Members,Delete Members, Edit Group, Delete Group<br>
 			</td>
 		</tr>
 		<p>

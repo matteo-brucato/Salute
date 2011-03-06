@@ -379,15 +379,14 @@ class Groups extends Controller {
 			auth::CurrGRPMEM, $gid		// current must be member of group gid
 		)) !== TRUE) return;
 		
-		
 		// Get the group tuple
 		$group = $this->groups_model->get_group($gid);
 		if ($group === -1) {$this->ui->set_query_error(); return;}
 		if ($group === NULL) {$this->ui->set_error('Group not found'); return;}
-		
+
 		// Get POST variables (an array of ids to invite to gid group)
 		$invite_ids = $this->input->post('ids');
-		
+
 		// Form input check
 		if ($invite_ids == NULL) {
 			$this->ui->set_error('No input', 'Form input missing');
@@ -404,18 +403,18 @@ class Groups extends Controller {
 				$alert .= 'Ignoring id '.$iid.'<br />';
 				continue;
 			}
-
 			$is_inv = $this->groups_model->is_invited($iid,$gid);
 			if($is_inv === -1){
 				$this->ui->set_query_error();
 				return;
 			}else if ($is_inv === TRUE){
 				$this->ui->set_message('This user has already been invited to the group.');
-				$this->ui->set($this->list('mine'));
+				$this->lists('mine');
+				return;
 			}
 			
 			$alert .= 'Inviting id '.$iid.'... ';
-
+			echo $alert;
 			$invitation = $this->groups_model->invite($this->auth->get_account_id(),$iid,$gid);
 			if ($invitation === -1){
 				$this->ui->set_query_error();
@@ -443,9 +442,8 @@ class Groups extends Controller {
 			
 			$alert .= 'email invitation sent!<br />';
 		}
-		
 		$this->ui->set_message($alert);
-		$this->ui->set($this->lists('mine'));
+		$this->lists('mine');
 	}
 	
 	/*function members_invite_hcps_do($gid = NULL) {
@@ -606,7 +604,6 @@ class Groups extends Controller {
 	}
 	
 	
-	// @bug does not change database
 	function edit_do($group_id = NULL){
 		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id)) !== TRUE) {
 			return;
@@ -717,19 +714,23 @@ class Groups extends Controller {
 			return;
 		}
 		$this->db->trans_start();
-		
-		$curr_info = $this->groups_model->get_member($this->auth->get_account_id(),$group_id);
-		if ($curr_info === -1){
+		$perm = $this->groups_model->get_member($this->auth->get_account_id(),$group_id);
+		if ($perm === -1){
 			$this->ui->set_query_error();
 			return;
-		} else if ($curr_info === NULL) {
+		} else if ($perm === NULL) {
 			$this->ui->set_error('You are no longer a member of this group.');
 			return;
-		} else if ($curr_info['permissions'] != '2' && $curr_info['permissions'] != '3' ){
+		} else if ($perm['permissions'] != '2' && $perm['permissions'] != '3' ){
 			$this->ui->set_error('You do not have permission to edit this member.');
 			return;
 		}
-
+		$curr_info = $this->groups_model->get_member($account_id,$group_id);
+		if ($curr_info === -1){
+			$this->ui->set_query_error();
+			return;
+		}
+		
 		$this->ui->set(array($this->load->view('mainpane/forms/edit_member',array(
 																			'curr_info' => $curr_info, 
 																			'group_id' => $group_id, 
@@ -744,9 +745,18 @@ class Groups extends Controller {
 		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id)) !== TRUE) {
 			return;
 		}
-		$perm = $this->input->post('permissions');
+
+		$mem = $this->groups_model->is_member($account_id,$group_id);
+		if ($mem === -1){
+			$this->ui->set_query_error(); 
+			return;
+		} else if ($mem === FALSE){
+			$this->ui->set_error('This account_id is not a member of this group.','Invalid Input');
+			return;
+		}
 		
-		// Form Checking will replace this
+		$perm = $this->input->post('permissions');
+
 		if($perm == NULL)	{
 			$this->ui->set_error('All Fields are Mandatory.','Missing Arguments'); 
 			return;
@@ -761,7 +771,6 @@ class Groups extends Controller {
 			$this->ui->set_query_error(); 
 			return;
 		}
-
 		$this->ui->set_message('You have successfully edited the member','Confirmation');
 		$this->members('list', $group_id);
 	}
