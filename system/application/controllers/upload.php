@@ -133,6 +133,47 @@ class Upload extends Controller {
 		$this->db->trans_complete();
 		$this->ui->set_message('Medical record uploaded successfully!', 'Confirmation');
 	}
+	
+	function account_picture($aid = NULL) {
+		if ($this->auth->check(array(
+			auth::CurrLOG,				// current must be logged in
+			auth::ACCOUNT, $aid
+		)) !== TRUE) return;
+		
+		if ($aid !== $this->auth->get_account_id()) {
+			$this->ui->set_error('Only the owner can upload his/her account picture');
+			return;
+		}
+		
+		// Set the new file options
+		$config['upload_path'] = './resources/images/account_pictures/';
+		$config['file_name'] = $aid.'.jpg';
+		$config['allowed_types'] = 'jpg';
+		$config['max_size']	= '50';
+		$config['max_width']  = '240';
+		$config['max_height']  = '180';
+		
+		if (file_exists($config['upload_path'].$config['file_name'])) {
+			unlink($config['upload_path'].$config['file_name']);
+		}
+		
+		// Load upload library
+		$this->load->library('upload', $config);
+		
+		// Try to upload the file
+		if (! $this->upload->do_upload()) {
+			//$error = array('error' => $this->upload->display_errors());
+			//$mainview = $this->load->view('upload_form', $error);
+			$this->ui->set_error($this->upload->display_errors());
+			/*foreach($this->upload->data() as $item => $value) {
+				echo $item.': '.$value.'<br>';
+			}*/
+			return;
+		}
+		
+		// File uploaded!
+		$this->ui->set_message('Account picture successfully uploaded!', 'Confirmation');
+	}
 }
 /**@}*/
 ?>

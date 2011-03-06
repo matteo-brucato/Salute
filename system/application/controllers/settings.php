@@ -245,6 +245,59 @@ class Settings extends Controller {
 			$this->ui->set(array($this->load->view('mainpane/forms/change_privacy', array( 'privacy' => $privacy), TRUE)));		
 	}
 	
+	/**
+	 * Loads the view to change the picture of an account
+	 * 
+	 * @param $inputs
+	 *   Is of the form:
+	 * @return
+	 *	 Loads the view
+	 * */
+	function change_picture() {
+		
+		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) {
+			return;
+		}
+		
+		$this->ui->set(array($this->load->view('mainpane/forms/change_picture', '', TRUE)));
+	}
+	
+	/**
+	 * Loads the view to change the picture of an account
+	 * 
+	 * @param $inputs
+	 *   Is of the form:
+	 * @return
+	 *	 Loads the view
+	 * */
+	function remove_picture($aid = NULL) {
+		
+		if ($this->auth->check(array(
+			auth::CurrLOG,
+			auth::ACCOUNT, $aid)) !== TRUE) {
+			return;
+		}
+		
+		if ($aid !== $this->auth->get_account_id()) {
+			$this->ui->set_error('Only the owner can remove his/her account picture');
+			return;
+		}
+		
+		$filepath = './resources/images/account_pictures/'.$aid.'.jpg';
+		
+		if (! is_file($filepath)) {
+			$this->ui->set_error('There is no picture available to remove', 'Error');
+			return;
+		}
+		
+		$unlink = unlink($filepath);
+		if ($unlink === FALSE) {
+			$this->ui->set_error('Cannot remove the picture', 'Server error');
+			return;
+		}
+		
+		$this->ui->set_message('Picture successfully removed', 'Confirmation');
+	}
 	
 	/**
 	 * Changes the privacy level of an account with another account
