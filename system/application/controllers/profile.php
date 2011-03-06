@@ -21,6 +21,7 @@ class Profile extends Controller {
 		$this->load->model('bills_model');
 		$this->load->model('connections_model');
 		$this->load->model('referal_model');
+		$this->load->model('groups_model');
 		//$this->load->view('other_patient_profile');
 		//$this->load->view('');
 		//$this->load->view('');
@@ -119,9 +120,26 @@ class Profile extends Controller {
 			}
 			$mainview .= $this->load->view('mainpane/lists/patients',
 			array('list_name' => 'Incoming requests from patients', 'list' => $conns, 'status' => 'pending') , TRUE);
-			
-			
 			$mainview .= '<a href="/connections/pending/in">View all incoming requests</a>';
+			
+			
+			$groupi= $this->groups_model->list_my_invites_top_five($this->auth->get_account_id());
+			if( $groupi === -1 ){
+				$this->auth->set_query_error();
+				return;
+			}
+	
+															
+			$member='';
+			for ($i = 0; $i < count($groupi); $i++) {
+				$member[$i]['perm'] = NULL;
+				$member[$i]['is'] = FALSE;
+			}									
+			$mainview .= $this->load->view('mainpane/lists/groups',
+			array('list_name' => 'My Group Invitations', 'group_list' => $groupi, 'member' => $member) , TRUE);
+			$mainview .= '<a href="/groups/lists/myinvites">View all incoming requests</a>';
+			
+			
 			
 			$this->ui->set(array($mainview));
 		}
@@ -198,7 +216,6 @@ class Profile extends Controller {
 			
 			
 			$mainview .= '<a href="/connections/pending/in">View all incoming requests</a>';
-	
 
 			$connp= $this->connections_model->pending_incoming_hcps_top_five(array($this->auth->get_account_id()));
 			if( $connp === -1 ){
@@ -207,9 +224,21 @@ class Profile extends Controller {
 			}
 			$mainview .= $this->load->view('mainpane/lists/hcps',
 			array('list_name' => 'Incoming requests from HCPs', 'list' => $connp, 'status' => 'pending') , TRUE);
+			$mainview .= '<a href="/groups/lists/myinvites">View all incoming requests</a>';
 			
-			
-			$mainview .= '<a href="/connections/pending/in">View all incoming requests</a>';
+			$groupi= $this->groups_model->list_my_invites_top_five($this->auth->get_account_id());
+			if( $groupi === -1 ){
+				$this->auth->set_query_error();
+				return;
+			}												
+			$member='';
+			for ($i = 0; $i < count($groupi); $i++) {
+				$member[$i]['perm'] = NULL;
+				$member[$i]['is'] = FALSE;
+			}									
+			$mainview .= $this->load->view('mainpane/lists/groups',
+			array('list_name' => 'My Group Invitations', 'group_list' => $groupi, 'member' => $member) , TRUE);
+			$mainview .= '<a href="/groups/lists/myinvites">View all incoming requests</a>';
 
 			
 			$this->ui->set(array($mainview));
@@ -361,7 +390,9 @@ class Profile extends Controller {
            else{
              //not connected and public patient
              //show picture and name              
-
+			$mainview .= $this->load->view('mainpane/personal_patient_profile',
+				array('info' => $info[0], 'picture' => $picture), TRUE); 
+			$this->ui->set(array($mainview));    
            }
         
            

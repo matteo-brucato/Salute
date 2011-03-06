@@ -276,6 +276,22 @@ class Groups_model extends Model {
 		
 		return array();
 	}
+	function list_my_invites_top_five($invitee_id){
+	
+		$sql = "SELECT * FROM groups WHERE group_id IN (SELECT group_id FROM invite WHERE invitee_id = ? )
+				ORDER BY name
+				LIMIT 5";
+		
+		$query = $this->db->query($sql,array($invitee_id));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+			
+		if ($query->num_rows() > 0)
+			return $query->result_array();
+		
+		return array();
+	}
 	
 	function is_member($account_id,$group_id){
 	
