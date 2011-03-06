@@ -92,10 +92,6 @@ class Download extends Controller {
 		
 		$filepath = 'resources/images/account_pictures/'.$aid.'.jpg';
 		
-		//$this->ui->disable();
-		//echo $filepath;
-		//$filepath = 'resources/images/account_pictures/1.jpg';
-		
 		// Select default image if file does not exist
 		if (! is_file($filepath)) {
 			if ($this->auth->check(array(auth::PAT, $aid)) === TRUE) {
@@ -108,7 +104,8 @@ class Download extends Controller {
 		
 		$data = file_get_contents($filepath);
 		$this->ui->disable();
-		header('Content-type: image/jpg');
+		header('Content-type: image/jpeg');
+		header('Cache-Control: no-cache');
 		echo $data;
 	}
 }

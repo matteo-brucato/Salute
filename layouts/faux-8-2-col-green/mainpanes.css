@@ -107,4 +107,7 @@ td.radio {
 img.profile-picture {
 	width: 240px;
 	height: 180px;
+	border: 1px solid black;
+	padding: 3px;
+	background-color: white;
 }

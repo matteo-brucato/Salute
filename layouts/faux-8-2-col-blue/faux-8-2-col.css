@@ -14,6 +14,7 @@
 body {
  font-family: Arial, Helvetica, sans-serif;
  font-size: 13px;
+ background-color: #FDFEFB;
 }
 #wrapper { 
  margin: 0 auto;
@@ -41,8 +42,7 @@ body {
  color: #333;
  padding: 10px;
  margin: 0px 0px 5px 0px;
- /*background: #ABBEBE;*/
- background: #ACD0A0;
+ background: #ABBEBE;
 }
 #rightcolumn { 
  display: inline;
@@ -65,8 +65,7 @@ body {
  width: 902px;
  clear: both;
  color: #333;
- /*background: #ABBEBE;*/
- background: #ACD0A0;
+ background: #ABBEBE;
  margin: 0px 0px 10px 0px;
  padding: 10px;
 }

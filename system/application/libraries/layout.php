@@ -16,12 +16,13 @@
 
 class Layout {
 	private $defined_layouts = array (
-		'faux-8-2-col.xhtml'
+		'faux-8-2-col-blue.xhtml',
+		'faux-8-2-col-green.xhtml'
 	);
-	const default_layout = 0;
+	const default_layout = 1;
 	
 	// The layout set dinamically by the controller, using set()
-	private $active_layout = self::default_layout;
+	private $active_layout = layout::default_layout;
 	
 	/**
 	 * Sets the layout to use in the future calls of view()
@@ -30,12 +31,13 @@ class Layout {
 	 * @param	string
 	 * @return	void
 	 */
-	function set($layout_name = '') {
-		foreach($this->defined_layouts as $val => $string) {
+	function set($layout = self::default_layout) {
+		/*foreach ($this->defined_layouts as $val => $string) {
 			if ($string == $layout_name) {
 				$this->active_layout = $val;
 			}
-		}
+		}*/
+		$this->active_layout = $layout;
 	}
 	
 	/**
@@ -54,6 +56,7 @@ class Layout {
 		
 		switch ($this->active_layout) {
 			case 0:								// faux-8-2-col.xhtml
+			case 1:								// faux-8-2-col.xhtml
 				$data = array (
 					'mainpane'			=> $panels[0],
 					'sidepane'			=> $panels[1],

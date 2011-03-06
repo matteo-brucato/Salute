@@ -1,0 +1,111 @@
+/* Styles needed by the application */
+
+#email-input, #password-input {
+	width: 150px;
+}
+
+#submit-button {
+	padding: 1px 10px;
+	text-align: center;
+	display: block;
+	margin: 10px auto 0 auto;
+}
+
+/* Registration */
+#registration-patient-fieldset, #registration-hcp-fieldset {
+	display: none;
+}
+
+/* Tables */
+table.tables-1, .tables-1 th, .tables-1 td {
+	border: 1px solid black;
+}
+table.tables-1 {
+	width: 100%;
+	border-collapse: collapse;
+}
+.tables-1 th {
+	height: 18px;
+	background-color: #abbebe;
+	color: black;
+	padding: 2px 4px;
+	margin: 0;
+}
+.tables-1 td
+{
+	height: 20px;
+	vertical-align: middle;
+	padding: 2px 5px;
+	margin: 0;
+	background-color: #ffffff;
+}
+td.tables-1-selected-tds {
+	background-color: #aabbcc;
+	/*cursor: pointer;*/
+}
+.tables-1 ul {
+	margin-left: 15px;
+	padding: 0;
+}
+
+
+.id_keeper {
+	display: none;
+}
+
+
+#message {
+	display: none;
+}
+.message_hdr, .error_type {
+	/*margin-bottom: 20px;*/
+	float: left;
+	vertical-align: top;
+	margin: 0 5px;
+}
+.message_hdr, .error_hdr {
+	display: none;
+	/*font-weight: bold;
+	font-size: 1.2em;*/
+}
+.message_body, .error_body {
+	display: block;
+	background-color: #D1DBDB;
+	font-style: italic;
+	padding: 10px;
+	border: 1px solid #ABBEBE;
+	position: relative;
+}
+.message_a {
+	position: absolute;
+	right: 10px;
+	bottom: 10px;
+	vertical-align: middle;
+}
+.message_body h4, .error_body h4 {
+	width: 95%;
+}
+.error_body {
+	border: 1px solid red;
+}
+
+.checkAll {
+	display: block;
+	float: right;
+}
+
+td.checkbox {
+	text-align: center;
+}
+
+td.radio {
+	text-align: center;
+}
+
+img.profile-picture {
+	width: 240px;
+	height: 180px;
+	border: 1px solid black;
+	padding: 3px;
+	background-color: white;
+}
