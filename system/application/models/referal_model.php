@@ -310,7 +310,8 @@ class Referal_model extends Model {
 	 *   Is of the form: array(referal_id)
 	 * @return
 	 *  -1 in case of error in a query
-	 *  -2 if referal_id does not exist
+	 *  -2 if referral_id does not exist
+	 *  -3 if the referral has already been accepted
 	 *   0 if everything goes fine approved status is changed to TRUE
 	 * */
 	function approve($inputs){
@@ -327,6 +328,9 @@ class Referal_model extends Model {
 			return -2;
 		
 		$result = $query->result_array();
+	
+		if ( $result[0]['status'] === 't')
+			return -3;
 		
 		//if a low level referal comes in firts, and then its follewed by a high level referal,
 		//  set the low level referal status to true (meaning) request sent
