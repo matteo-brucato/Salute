@@ -23,8 +23,8 @@ function get_action_strings($actions, $tuple) {
 			case 'request-app':
 				$str .= '<li><a href="/appointments/request/'.$tuple['account_id'].'">Request Appointment</a></li>';
 				break;	
-			case 'cancel-app':
-				$str .= '<li><a href="/appointments/cancel/'.$tuple['appointment_id'].'" class="confirm">Cancel</a></li>';
+			case 'delete-app':
+				$str .= '<li><a href="/appointments/delete/'.$tuple['appointment_id'].'" class="confirm">Delete</a></li>';
 				break;
 			case 'reschedule-app':
 				$str .= '<li><a href="/appointments/reschedule/'.$tuple['appointment_id'].'">Reschedule</a></li>';

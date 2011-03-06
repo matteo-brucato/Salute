@@ -72,7 +72,7 @@ class Profile extends Controller {
 										
 							
 			$mainview .= $this->load->view('mainpane/personal_patient_profile',
-				array('info' => $patient_info[0], 'picture' => $picture), TRUE);
+				array('info' => $patient_info[0], 'aid' => $this->auth->get_account_id()), TRUE);
 			$mainview .= '<a href="/profile/edit">Edit</a><br>';
 			$mainview .= '<a href="/connections/myhcps">View all my HCPS</a><br>';
 			$mainview .= '<a href="/connections/mypatients">View all my patient friends</a><br>';
@@ -148,7 +148,7 @@ class Profile extends Controller {
 			//$mainview .= $this->load->view('mainpane/personal_hcp_profile',
 			//							array('info' => $hcp_info[0]), TRUE);
 			$mainview .= $this->load->view('mainpane/personal_hcp_profile',
-				array('info' => $hcp_info[0], 'picture' => $picture), TRUE);
+				array('info' => $hcp_info[0], 'aid' => $this->auth->get_account_id()), TRUE);
 			$mainview .= '<a href="/profile/edit">Edit</a><br>';
 			$mainview .= '<a href="/connections/myhcps">View all my HCPS</a><br>';
 			$mainview .= '<a href="/connections/mypatients">View all my patients</a><br>';
@@ -288,9 +288,13 @@ class Profile extends Controller {
 	 * */
 	function user($id = NULL) {
 		//$this->auth->check_logged_in();
-		if ($this->auth->check(array(auth::CurrLOG,auth::ACCOUNT,$id,auth::CurrCONN,$id)) !== TRUE) {
+		if ($this->auth->check(array(
+			auth::CurrLOG,
+			auth::ACCOUNT,$id,
+			auth::CurrCONN,$id)) !== TRUE) {
 			return;
 		}
+		
 		/**if ($id == NULL) {
 			$this->ui->set_redirect('/profile');
 			//$this->ui->show_app_error();
@@ -322,9 +326,9 @@ class Profile extends Controller {
 			return;
 		}
 		else{
-			$id_type = 'patient';	
+			$id_type = 'patient';
 		}
-			
+		
 		/*		
 		// Checks the user_id, if passes, get their info 
 		if ($this->hcp_model->is_hcp(array($id))) {
@@ -376,7 +380,7 @@ class Profile extends Controller {
 				return;
 		}
 		* */
-
+		
 		if ($id_type == 'hcp') {
 			$this->ui->set(array(
 				$this->load->view('mainpane/other_hcp_profile',
@@ -402,7 +406,7 @@ class Profile extends Controller {
 			));
 		}*/ else {
 			$this->ui->set_error('Internal Logic Error.','server');
-			return;			
+			return;
 		}
 	}
 

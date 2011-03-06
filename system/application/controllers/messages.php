@@ -16,6 +16,9 @@ class Messages extends Controller {
 		parent::Controller();
 		$this->load->library('ui');	
 		$this->load->library('auth');
+		$this->load->model('account_model');
+		$this->load->model('patient_model');
+		$this->load->model('hcp_model');
 		// $this->type = $this->session->userdata('type');	
 	}
 
@@ -60,10 +63,11 @@ class Messages extends Controller {
 	 * @param the account_id of the recipient
 	 * */
 	function compose($account_id) {
-		$this->auth->check_logged_in();
-		$this->load->model('account_model');
-		$this->load->model('patient_model');
-		$this->load->model('hcp_model');
+		if ($this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrCONN, $account_id
+		)) !== TRUE) return;
+		
 		$is_patient= $this->patient_model->is_patient(array($account_id));
 		$is_hcp = $this->hcp_model->is_hcp(array($account_id));
 		
@@ -94,8 +98,10 @@ class Messages extends Controller {
 	 * @return error || confirmation 
 	**/
 	function send($to) {
-		$this->auth->check_logged_in();
-		$this->load->model('account_model');
+		if ($this->auth->check(array(
+			auth::CurrLOG,
+			auth::CurrCONN, $account_id
+		)) !== TRUE) return;
 		
 		$acc = $this->account_model->get_account_email(array($to));
 		if($acc === -1){
