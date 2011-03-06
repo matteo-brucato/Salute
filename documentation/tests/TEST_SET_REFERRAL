@@ -1,0 +1,104 @@
+########################################################################
+##########################   TEST FILE   ###############################
+########################################################################
+#                                                                      #
+# Use this syntax:                                                     #
+#   <url>   <expected_result_string>   [ "|" <curl_extra_options> ]    #
+#                                                                      #
+# Examples:                                                            #
+#   /home/sitemap    ALL_OK                                            #
+#   /profile         ALL_OK      | -b cookie_file                      #
+#                                                                      #
+########################################################################
+
+######################################################  LOG IN  ################################################################
+
+#LOG IN FOR PATIENT
+/home/login					                  REDIRECTED		| -F "email=patient1@email.com" -F "password=pat1" -c cookie_pat_1
+/home/login					                  REDIRECTED		| -F "email=patient2@email.com" -F "password=pat2" -c cookie_pat_2
+
+#LOG IN FOR DOCTOR
+/home/login					                  REDIRECTED		| -F "email=doctor51@email.com" -F "password=doc51" -c cookie_doc_51
+/home/login					                  REDIRECTED		| -F "email=doctor52@email.com" -F "password=doc52" -c cookie_doc_52
+/home/login					                  REDIRECTED		| -F "email=doctor53@email.com" -F "password=doc53" -c cookie_doc_53
+/home/login					                  REDIRECTED		| -F "email=doctor54@email.com" -F "password=doc54" -c cookie_doc_54
+/home/login					                  REDIRECTED		| -F "email=doctor55@email.com" -F "password=doc55" -c cookie_doc_55
+/home/login					                  REDIRECTED		| -F "email=doctor56@email.com" -F "password=doc56" -c cookie_doc_56
+/home/login					                  REDIRECTED		| -F "email=doctor57@email.com" -F "password=doc57" -c cookie_doc_57
+
+#connect to hcp 56, they will is_referred_hcp
+/connections/request/56      	              OK_MESSAGE        | -b cookie_doc_51
+/connections/request/56      	              OK_MESSAGE        | -b cookie_doc_52
+/connections/request/57      	              OK_MESSAGE        | -b cookie_doc_53 
+/connections/request/57      	              OK_MESSAGE        | -b cookie_doc_54
+/connections/request/57      	              OK_MESSAGE        | -b cookie_doc_55 
+
+#accept connection request
+/connections/accept/51		 	              OK_MESSAGE        | -b cookie_doc_56           
+/connections/accept/52		 	              OK_MESSAGE        | -b cookie_doc_56
+/connections/accept/53		 	              OK_MESSAGE        | -b cookie_doc_57
+/connections/accept/54		 	              OK_MESSAGE        | -b cookie_doc_57
+/connections/accept/55		 	              OK_MESSAGE        | -b cookie_doc_57
+
+#set connection level between pat_id 2 and hcp_id 55 to high
+/connections/change_level_do/55               OK_MESSAGE        | -F "level=3" -b cookie_pat_2
+
+
+################################################  CREATE REFERALS  ############################################################
+#create two valid referrals for the same patient and the same hcp form different doctors
+/refers/create_referral_do2/56           OK_MESSAGE        | -F "patient_id=1" -b cookie_doc_51
+/refers/create_referral_do2/56           OK_MESSAGE        | -F "patient_id=1" -b cookie_doc_52
+/refers/create_referral_do2/57           OK_MESSAGE        | -F "patient_id=2" -b cookie_doc_53
+/refers/create_referral_do2/57           OK_MESSAGE        | -F "patient_id=2" -b cookie_doc_54
+
+#high level doctor creating the referral
+/refers/create_referral_do2/57           OK_MESSAGE        | -F "patient_id=2" -b cookie_doc_55
+
+#create same referral again
+/refers/create_referral_do2/56           CTR_ERROR         | -F "patient_id=1" -b cookie_doc_51
+
+#create referral for patient not connected
+/refers/create_referral_do2/56           CTR_ERROR         | -F "patient_id=45" -b cookie_doc_51
+
+#create referral for hcp not connected
+/refers/create_referral_do2/100          CTR_ERROR         | -F "patient_id=1" -b cookie_doc_51
+
+#create referral for patient and hcp not connected
+/refers/create_referral_do2/100          CTR_ERROR         | -F "patient_id=45" -b cookie_doc_51
+
+#create referral for not valid patient id
+/refers/create_referral_do2/56           CTR_ERROR         | -F "patient_id=123" -b cookie_doc_51
+
+#create referral for not valid hcp id
+/refers/create_referral_do2/123          CTR_ERROR         | -F "patient_id=1" -b cookie_doc_51
+
+#patient creates a referral
+/refers/create_referral_do2/51           CTR_ERROR         | -F "patient_id=2" -b cookie_pat_1
+
+
+################################################  ACCEPT REFERALS  ############################################################
+#accept a referral
+/refers/accept_referal/86                OK_MESSAGE        | -b cookie_pat_1
+
+#accept a referal that has already been accepted
+/refers/accept_referal/88                CTR_ERROR        | -b cookie_pat_2
+/refers/accept_referal/89                CTR_ERROR        | -b cookie_pat_2
+/refers/accept_referal/90                CTR_ERROR        | -b cookie_pat_2
+
+#accept referral thats not mine
+/refers/accept_referal/50                CTR_ERROR         | -b cookie_pat_1
+
+#accpt referral that does not exist
+/refers/accept_referal/200               CTR_ERROR         | -b cookie_pat_1
+
+#hcp accepts the referral
+/refers/accept_referal/86                CTR_ERROR         | -b cookie_doc_51
+
+
+
+
+
+
+
+
+

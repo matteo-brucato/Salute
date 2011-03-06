@@ -634,8 +634,7 @@ class Connections extends Controller {
 				$this->medical_records_model->give_all_ones_medrec_to($this->auth->get_account_id(), $connection['sender_id']);
 			}
 		}
-		
-		$this->change_level($aid);
+		//$this->change_level($aid);
 	}
 }
 /** @} */
