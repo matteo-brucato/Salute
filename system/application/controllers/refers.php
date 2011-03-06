@@ -192,16 +192,16 @@
 		}
 			
 		//check level. if its 2 or 3 patient accepts connection automatically
-		$level = $this->connections_model->get_level(array($patient_id, $this->auth->get_account_id()));
+		$level = $this->connections_model->get_connection($patient_id, $this->auth->get_account_id());
 		switch ($level) {
 			case -1:
 				$this->ui->set_query_error();
 				return;
-			case -2:
+			case NULL:
 				$this->ui->set_error('Connection does not exist!', 'Permission Denied');
 				return;
 			default:
-				if ($level[0]['sender_level'] === '2' or $level[0]['sender_level'] === '3'){
+				if ($level['sender_level'] === '2' or $level['sender_level'] === '3'){
 					
 					$approve = $this->referal_model->approve(array($referal_id));
 					switch ($approve) {

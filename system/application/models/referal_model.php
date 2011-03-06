@@ -104,8 +104,8 @@ class Referal_model extends Model {
 		//check if the doctor has already created the referal
 		$sql = "SELECT *
 			FROM refers R
-			WHERE R.refering_id = ? AND R.patient_id = ?";
-		$query = $this->db->query($sql, array($inputs[0], $inputs[2]));
+			WHERE R.refering_id = ? AND R.is_refered_id = ? AND R.patient_id = ?";
+		$query = $this->db->query($sql, $inputs);
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 		if ($query->num_rows() > 0)

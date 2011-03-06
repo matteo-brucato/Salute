@@ -226,9 +226,11 @@ class Medical_records_model extends Model {
 		if ($query->num_rows() <= 0) return;
 		$meds = $query->result_array();
 		foreach ($meds as $m) {
+			$this->db->trans_start();
 			$sql = "INSERT INTO permission (medical_rec_id, account_id, date_created)
 				VALUES (?, ?, current_date)";
 			$query = $this->db->query($sql, array((int)$m['medical_rec_id'], (int)$to_id));
+			$this->db->trans_complete();
 		}
 	}
 	
