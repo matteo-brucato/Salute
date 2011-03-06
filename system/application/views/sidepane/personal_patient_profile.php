@@ -43,7 +43,7 @@
 
 	<li><a href="/groups/lists/mine" class="ajax">My Groups</a></li>
 		<ul>
-			<li><a href="/groups/lists/myinvites" class="ajax">My Group Invitations</a></li>
+			<li><a href="/groups/lists/invites" class="ajax">My Group Invitations</a></li>
 			<li><a href="/groups/create" class="ajax">Create a New Group</a></li>
 			<li><a href="/groups/lists/all" class="ajax">All Groups</a>
 		</ul>
