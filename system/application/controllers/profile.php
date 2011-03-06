@@ -371,8 +371,10 @@ class Profile extends Controller {
            //not connected & HCP
            //show picture and info
            $mainview .= $this->load->view('mainpane/hcp_public_profile',
-               array('info' => $info[0], 'aid' => $this->auth->get_account_id()), TRUE); 
-           $this->ui->set(array($mainview));           
+               array('info' => $info[0], 'aid' => $id), TRUE); 
+           $mainview .= '<a href="/connections/request/'.$id.'">Request Connection</a>';  
+           $this->ui->set(array($mainview));    
+           return;     
          }
          else if( $id_type === 'patient' ){
            //not connected and patient
@@ -391,8 +393,12 @@ class Profile extends Controller {
              //not connected and public patient
              //show picture and name              
 			$mainview .= $this->load->view('mainpane/patient_public_profile',
-				array('info' => $info[0], 'aid' => $this->auth->get_account_id()), TRUE); 
-			$this->ui->set(array($mainview));    
+				array('info' => $info[0], 'aid' => $id), TRUE); 
+			
+			if( $this->auth->get_type() === 'patient' )
+				$mainview .= '<a href="/connections/request/'.$id.'">Request Connection</a>';
+			$this->ui->set(array($mainview));
+			 
            }
          }
        }
