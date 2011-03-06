@@ -59,7 +59,7 @@ class Search extends Controller {
 	 * 
 	 * @todo Not implemented yet
 	 * */
-	function patients(){ 
+	function patients() {
 		if ($this->auth->check(array(auth::CurrLOG)) !== TRUE) return;
 		
 		/** @todo Change this with the actual search! */
