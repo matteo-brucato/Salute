@@ -371,7 +371,7 @@ class Profile extends Controller {
            //not connected & HCP
            //show picture and info
            $mainview .= $this->load->view('mainpane/hcp_public_profile',
-               array('info' => $info[0], 'picture' => $picture), TRUE); 
+               array('info' => $info[0], 'aid' => $this->auth->get_account_id()), TRUE); 
            $this->ui->set(array($mainview));           
          }
          else if( $id_type === 'patient' ){
@@ -391,7 +391,7 @@ class Profile extends Controller {
              //not connected and public patient
              //show picture and name              
 			$mainview .= $this->load->view('mainpane/patient_public_profile',
-				array('info' => $info[0], 'picture' => $picture), TRUE); 
+				array('info' => $info[0], 'aid' => $this->auth->get_account_id()), TRUE); 
 			$this->ui->set(array($mainview));    
            }
          }
@@ -461,6 +461,16 @@ class Profile extends Controller {
              //connected & patient- >patient
              $mainview .= $this->load->view('mainpane/other_patient_profile',
                array('info' => $info[0], 'aid' => $id), TRUE);
+			$meds= $this->medical_records_model->get_patient_records_top_five(array($this->auth->get_account_id(), $id));														
+			if( $meds === -1 ){
+				$this->auth->set_query_error();
+				return;
+			}
+			$mainview .= $this->load->view('mainpane/lists/medical_records',
+										array('list' => $meds, 'list_name' => 'Shared Medical Records'), TRUE);
+			$mainview .= '<a href="/medical_records/myrecs">View all medical records</a>';               
+               
+               
 			$this->ui->set(array($mainview));
 			return;
            }
