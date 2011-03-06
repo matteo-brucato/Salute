@@ -137,7 +137,7 @@ class Profile extends Controller {
 			}									
 			$mainview .= $this->load->view('mainpane/lists/groups',
 			array('list_name' => 'My Group Invitations', 'group_list' => $groupi, 'member' => $member) , TRUE);
-			$mainview .= '<a href="/groups/lists/myinvites">View all incoming requests</a>';
+			$mainview .= '<a href="/groups/lists/invites">View all incoming requests</a>';
 			
 			
 			
@@ -212,9 +212,7 @@ class Profile extends Controller {
 				return;
 			}
 			$mainview .= $this->load->view('mainpane/lists/patients',
-			array('list_name' => 'Incoming requests from patients', 'list' => $conns, 'status' => 'pending') , TRUE);
-			
-			
+			array('list_name' => 'Incoming requests from patients', 'list' => $conns, 'status' => 'pending') , TRUE);	
 			$mainview .= '<a href="/connections/pending/in">View all incoming requests</a>';
 
 			$connp= $this->connections_model->pending_incoming_hcps_top_five(array($this->auth->get_account_id()));
@@ -224,7 +222,7 @@ class Profile extends Controller {
 			}
 			$mainview .= $this->load->view('mainpane/lists/hcps',
 			array('list_name' => 'Incoming requests from HCPs', 'list' => $connp, 'status' => 'pending') , TRUE);
-			$mainview .= '<a href="/groups/lists/myinvites">View all incoming requests</a>';
+			$mainview .= '<a href="/connections/pending/in">View all incoming requests</a>';
 			
 			$groupi= $this->groups_model->list_my_invites_top_five($this->auth->get_account_id());
 			if( $groupi === -1 ){
@@ -238,7 +236,7 @@ class Profile extends Controller {
 			}									
 			$mainview .= $this->load->view('mainpane/lists/groups',
 			array('list_name' => 'My Group Invitations', 'group_list' => $groupi, 'member' => $member) , TRUE);
-			$mainview .= '<a href="/groups/lists/myinvites">View all incoming requests</a>';
+			$mainview .= '<a href="/groups/lists/invites">View all incoming group requests</a>';
 
 			
 			$this->ui->set(array($mainview));
@@ -425,7 +423,9 @@ class Profile extends Controller {
 			}
 			$mainview .= $this->load->view('mainpane/lists/appointments',
 										array('list' => $appts, 'list_name' => 'Shared appointments'), TRUE);
+			$mainview .= '<a href="/appointments/request/'.$id.'">Request Appointment</a><br>';
 			$mainview .= '<a href="/appointments/all">View all appointments</a>';
+			
 			
 			$bills= $this->bills_model->view_top_five_between(array($this->auth->get_account_id(), $this->auth->get_type(), $id));														
 			if( $bills === -1 ){
@@ -444,7 +444,8 @@ class Profile extends Controller {
 			}
 			$mainview .= $this->load->view('mainpane/lists/medical_records',
 										array('list' => $meds, 'list_name' => 'Shared Medical Records'), TRUE);
-			$mainview .= '<a href="/medical_records/myrecs">View all medical records</a>';
+			$mainview .= '<a href="/connections/permissions/'.$id.'">Change permissions</a><br>';
+			$mainview .= '<a href="/medical_records/myrecs">View all my medical records</a>';
 			$this->ui->set(array($mainview));
 			return;
 			
@@ -474,7 +475,8 @@ class Profile extends Controller {
 			}
 			$mainview .= $this->load->view('mainpane/lists/medical_records',
 										array('list' => $meds, 'list_name' => 'Shared Medical Records'), TRUE);
-			$mainview .= '<a href="/medical_records/myrecs">View all medical records</a>';               
+			$mainview .= '<a href="/connections/permissions/'.$id.'">Change permissions</a><br>';
+			$mainview .= '<a href="/medical_records/myrecs/">View all medical records</a>';               
                
                
 			$this->ui->set(array($mainview));
@@ -501,6 +503,7 @@ class Profile extends Controller {
 			}
 			$mainview .= $this->load->view('mainpane/lists/bills',
 										array('list' => $bills, 'list_name' => 'Shared Bills'), TRUE);
+			$mainview .= '<a href="/bills/issue/'.$id.'">Issue a bill to this patient</a><br>';
 			$mainview .= '<a href="/bills/all">View all bills</a>';
 			
 			
@@ -511,6 +514,7 @@ class Profile extends Controller {
 			}
 			$mainview .= $this->load->view('mainpane/lists/medical_records',
 										array('list' => $meds, 'list_name' => 'Shared Medical Records'), TRUE);
+			$mainview .= '<a href="/medical_records/upload/'.$id.'">Upload a medical record for this patient</a><br>';
 			$mainview .= '<a href="/medical_records/patient/'.$id.'">View all medical records</a>';
 			$this->ui->set(array($mainview));
 			return;
