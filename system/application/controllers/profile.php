@@ -121,7 +121,7 @@ class Profile extends Controller {
 			array('list_name' => 'Incoming requests from patients', 'list' => $conns, 'status' => 'pending') , TRUE);
 			
 			
-			$mainview .= '<a href="/connections/pending/in">View all incoming requests from patients</a>';
+			$mainview .= '<a href="/connections/pending/in">View all incoming requests</a>';
 			
 			$this->ui->set(array($mainview));
 		}
@@ -183,7 +183,7 @@ class Profile extends Controller {
 				return;
 			}
 			$mainview .= $this->load->view('mainpane/lists/referals',
-										array('list' => $refs, 'list_name' => 'Incoming Referals'), TRUE);
+										array('list' => $refs, 'list_name' => 'Referals'), TRUE);
 			$mainview .= '<a href="/refers">View all referals</a>';
 			
 			
@@ -197,7 +197,7 @@ class Profile extends Controller {
 			array('list_name' => 'Incoming requests from patients', 'list' => $conns, 'status' => 'pending') , TRUE);
 			
 			
-			$mainview .= '<a href="/connections/pending/in">View all incoming requests from patients</a>';
+			$mainview .= '<a href="/connections/pending/in">View all incoming requests</a>';
 	
 
 			$connp= $this->connections_model->pending_incoming_hcps_top_five(array($this->auth->get_account_id()));
@@ -209,7 +209,7 @@ class Profile extends Controller {
 			array('list_name' => 'Incoming requests from HCPs', 'list' => $connp, 'status' => 'pending') , TRUE);
 			
 			
-			$mainview .= '<a href="/connections/pending/in">View all incoming requests from patients</a>';
+			$mainview .= '<a href="/connections/pending/in">View all incoming requests</a>';
 
 			
 			$this->ui->set(array($mainview));
@@ -288,7 +288,7 @@ class Profile extends Controller {
 	 * */
 	function user($id = NULL) {
 		//$this->auth->check_logged_in();
-		if ($this->auth->check(array(auth::CurrLOG,auth::ACCOUNT,$id,auth::CurrCONN,$id)) !== TRUE) {
+		if ($this->auth->check(array(auth::CurrLOG,auth::ACCOUNT,$id)) !== TRUE) {
 			return;
 		}
 		/**if ($id == NULL) {
@@ -324,6 +324,74 @@ class Profile extends Controller {
 		else{
 			$id_type = 'patient';	
 		}
+		// Check if there is a picture, otherwise set the default one
+       if (is_file('/resources/images/account_pictures/'.$id.'.jpg')) {
+         $picture = '/resources/images/account_pictures/'.$id;
+       } else {
+         $picture = '/resources/images/account_pictures/default_'.$id_type;
+       }
+		$mainview = '';
+       $is_con = $this->connections_model->is_connected_with($id, $this->auth->get_account_id() );
+       if( $is_con === -1 ){
+         $this->auth->set_query_error();
+         return;
+       }
+       else if( $is_con === FALSE ){
+         //not connected
+         if( $id_type === 'hcp' ){
+           //not connected & HCP
+           //show picture and info
+           $mainview .= $this->load->view('mainpane/personal_hcp_profile',
+               array('info' => $info[0], 'picture' => $picture), TRUE); 
+           $this->ui->set(array($mainview));           
+         }
+         else if( $id_type === 'patient' ){
+           //not connected and patient
+           $is_pub = $this->account_model->is_public( array($id) );
+           if( $is_pub === -1 ){
+             $this->auth->set_query_error();
+             return;
+           }
+           else if( $is_pub === false ){
+             //not connected and not public patient
+             //show error
+             $this->ui->set_error('This account is private.','Permission Denied');
+             return;
+           }
+           else{
+             //not connected and public patient
+             //show picture and name              
+
+           }
+        
+           
+         }
+       }
+       else{
+         //connected
+         if( $id_type === 'hcp' ){
+           $my_info = $this->hcp_model->get_hcp(array($this->auth->get_account_id()));
+           //connected & HCP
+           if( $this->auth->get_type() === 'patient' ){
+             //connected & patient- >HCP
+           }
+           else{
+             //connected & HCP- >HCP
+           }
+           
+         }
+         else if( $id_type === 'patient' ){
+           $my_info = $this->patient_model->get_patient(array($this->auth->get_account_id()));
+           //connected & patient
+           if( $this->auth->get_type() === 'patient' ){
+             //connected & patient- >patient
+           }
+           else{
+             //connected & hcp- >patient
+           }
+         }
+         
+       }
 			
 		/*		
 		// Checks the user_id, if passes, get their info 
@@ -376,7 +444,7 @@ class Profile extends Controller {
 				return;
 		}
 		* */
-
+/*
 		if ($id_type == 'hcp') {
 			$this->ui->set(array(
 				$this->load->view('mainpane/other_hcp_profile',
@@ -387,7 +455,7 @@ class Profile extends Controller {
 				$this->load->view('mainpane/other_patient_profile',
 					array('info' => $info[0], 'is_my_friend' => TRUE), TRUE)
 			));
-		}
+		}*/
 		
 		/* Load up the right view
 		if ($id_type == 'hcp') {
@@ -400,10 +468,10 @@ class Profile extends Controller {
 				$this->load->view('mainpane/other_patient_profile',
 					array('info' => $info[0], 'is_my_friend' => $is_my_friend), TRUE)
 			));
-		}*/ else {
+		}*/ /*else {
 			$this->ui->set_error('Internal Logic Error.','server');
 			return;			
-		}
+		}*/
 	}
 
 	/*
