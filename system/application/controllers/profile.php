@@ -73,7 +73,7 @@ class Profile extends Controller {
 										
 							
 			$mainview .= $this->load->view('mainpane/personal_patient_profile',
-				array('info' => $patient_info[0], 'picture' => $picture), TRUE);
+				array('info' => $patient_info[0], 'aid' => $this->auth->get_account_id()), TRUE);
 			$mainview .= '<a href="/profile/edit">Edit</a><br>';
 			$mainview .= '<a href="/connections/myhcps">View all my HCPS</a><br>';
 			$mainview .= '<a href="/connections/mypatients">View all my patient friends</a><br>';
@@ -166,7 +166,7 @@ class Profile extends Controller {
 			//$mainview .= $this->load->view('mainpane/personal_hcp_profile',
 			//							array('info' => $hcp_info[0]), TRUE);
 			$mainview .= $this->load->view('mainpane/personal_hcp_profile',
-				array('info' => $hcp_info[0], 'picture' => $picture), TRUE);
+				array('info' => $hcp_info[0], 'aid' => $this->auth->get_account_id()), TRUE);
 			$mainview .= '<a href="/profile/edit">Edit</a><br>';
 			$mainview .= '<a href="/connections/myhcps">View all my HCPS</a><br>';
 			$mainview .= '<a href="/connections/mypatients">View all my patients</a><br>';
@@ -409,7 +409,7 @@ class Profile extends Controller {
 			//show show bills together
 			//show medical records shared
             $mainview .= $this->load->view('mainpane/other_hcp_profile',
-               array('info' => $info[0], 'picture' => $picture), TRUE);
+               array('info' => $info[0], 'aid' => $id), TRUE);
 			
 			$appts= $this->appointments_model->view_recent_five_between(array('account_id' => $this->auth->get_account_id(),'hcp_id' => $id,
 														'type' => $this->auth->get_type()));
@@ -449,7 +449,7 @@ class Profile extends Controller {
            else{
              //connected & HCP- >HCP
              $mainview .= $this->load->view('mainpane/other_hcp_profile',
-               array('info' => $info[0], 'picture' => $picture), TRUE);
+               array('info' => $info[0], 'aid' => $id), TRUE);
                $this->ui->set(array($mainview));
                return;
            }          
@@ -460,14 +460,14 @@ class Profile extends Controller {
            if( $this->auth->get_type() === 'patient' ){
              //connected & patient- >patient
              $mainview .= $this->load->view('mainpane/other_patient_profile',
-               array('info' => $info[0], 'picture' => $picture), TRUE);
+               array('info' => $info[0], 'aid' => $id), TRUE);
 			$this->ui->set(array($mainview));
 			return;
            }
            else{
              //connected & hcp- >patient
              $mainview .= $this->load->view('mainpane/other_patient_profile',
-            array('info' => $info[0], 'picture' => $picture), TRUE);
+            array('info' => $info[0], 'aid' => $id), TRUE);
                			$appts= $this->appointments_model->view_recent_five_between(array('account_id' => $this->auth->get_account_id(),'patient_id' => $id,
 														'type' => $this->auth->get_type()));
 			if( $appts === -1 ){
