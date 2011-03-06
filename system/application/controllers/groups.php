@@ -413,7 +413,6 @@ class Groups extends Controller {
 				$this->ui->set_message('This user has already been invited to the group.');
 				$this->ui->set($this->list('mine'));
 			}
-			echo 'hi';			
 			
 			$alert .= 'Inviting id '.$iid.'... ';
 
