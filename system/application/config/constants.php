@@ -41,8 +41,8 @@ define('IS_AJAX', isset($_SERVER['HTTP_X_REQUESTED_WITH'])
 
 define('SITENAME', "Salute");
 
-define('DEBUG', TRUE);
-define('TESTING_ON',TRUE);
+define('DEBUG', FALSE);
+define('TESTING_ON',FALSE);
 
 // Result constants for application testing when TESTING_ON = true
 define('CI_ERROR', 'CI_ERROR'); // code igniter error
