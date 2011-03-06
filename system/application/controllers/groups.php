@@ -395,8 +395,8 @@ class Groups extends Controller {
 		}
 		
 		$alert = '';
+		
 		foreach ($invite_ids as $iid) {
-			
 			// Current must be connected with it
 			if ($this->auth->check(array(
 				auth::CurrCONN, $iid
@@ -404,16 +404,16 @@ class Groups extends Controller {
 				$alert .= 'Ignoring id '.$iid.'<br />';
 				continue;
 			}
-			
+
 			$is_inv = $this->groups_model->is_invited($iid,$gid);
 			if($is_inv === -1){
 				$this->ui->set_query_error();
 				return;
-			}else if ($is_inv){
+			}else if ($is_inv === TRUE){
 				$this->ui->set_message('This user has already been invited to the group.');
 				$this->ui->set($this->list('mine'));
 			}
-			
+			echo 'hi';			
 			
 			$alert .= 'Inviting id '.$iid.'... ';
 
@@ -444,6 +444,7 @@ class Groups extends Controller {
 			
 			$alert .= 'email invitation sent!<br />';
 		}
+		
 		$this->ui->set_message($alert);
 		$this->ui->set($this->lists('mine'));
 	}
