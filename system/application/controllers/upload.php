@@ -75,9 +75,9 @@ class Upload extends Controller {
 			//$error = array('error' => $this->upload->display_errors());
 			//$mainview = $this->load->view('upload_form', $error);
 			$this->ui->set_error($this->upload->display_errors());
-			foreach($this->upload->data() as $item => $value) {
+			/*foreach($this->upload->data() as $item => $value) {
 				echo $item.': '.$value.'<br>';
-			}
+			}*/
 			return;
 		}
 		

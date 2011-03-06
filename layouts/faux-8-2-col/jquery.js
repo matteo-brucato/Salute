@@ -1,6 +1,6 @@
 /* Functions needed by the application */
 
-var AJAX_ACTIVE = false;
+var AJAX_ACTIVE = true;
 
 const HISTORY_MAX = 30;
 var hist = new Array(HISTORY_MAX);

@@ -2,24 +2,18 @@ Use this file as a list for simple things to do
 -----------------------------------------------
 
 GENERAL:
-- It shouldn't be:
-     $this->ui->set($this->members('list', $group_id));
-  but simply
-     $this->members('list', $group_id);
-  and the same in all other cases. The idea is that you call the controller
-  method and then it will load the main panel, eventually.
+//- It shouldn't be:
+//     $this->ui->set($this->members('list', $group_id));
+//  but simply
+//     $this->members('list', $group_id);
+//  and the same in all other cases. The idea is that you call the controller
+//  method and then it will load the main panel, eventually.
 
 ============================================================================================================================================
 
-Public/Private Accounts:
-- ONLY applicable to patients, NOT hcps 
+Public/Private 
 //- fix patient / hcp search list (take into account private/public setting in accounts table)
-- Patient's who have a private profile are in summary: users who only want to send requests themselves, they cannot
-  receive connection requests. They can receive referals and group invitations ONLY becasue they are received from their
-  connected friends/hcps. If private patient joins a group, they will be listed in the group members list; this is because
-  if they want to be part of the group, they only want to be public in that group.
-//- change connection requests: deny if the receiver account is private ## MATTEO ##
-- 
+//- change connection requests: deny if the receiver account is private ## 
 
 ============================================================================================================================================
 
@@ -104,6 +98,14 @@ GROUPS:
 
 DOCUMENTATION: ## LAST THING SINCE ITS NOT DUE TILL 15th ##
 - add a glossary in the documentation
+- explain PUBLIC/PRIVATE accounts:
+    - ONLY applicable to patients, NOT hcps 
+    - Patient's who have a private profile are in summary: users who only want to send requests themselves, they cannot
+	  receive connection requests. They can receive referals and group invitations ONLY becasue they are received from their
+	  connected friends/hcps. If private patient joins a group, they will be listed in the group members list; this is because
+	  if they want to be part of the group, they only want to be public in that group.
+- describle protection of /resource folder: .htaccess to deny access to all resources inside, then the 'download' controller that reads
+  files in a php file and gives a response to the client setting the mime type. this is for medical records and account images for now
 - describe bettere how MVC has been implemented (structure of folders and files)
 - mention about test performance (CodeIgniter is very fast and each controller has a streightforward flow)
 - add a (possibly big) list with all the possible changes that we anticipate.

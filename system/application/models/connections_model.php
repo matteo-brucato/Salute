@@ -442,6 +442,7 @@ class Connections_model extends Model {
 		$sql = "(SELECT *
 			FROM connections DD
 			WHERE
+				DD.accepted = false AND
 				((DD.sender_id = ? AND DD.receiver_id = ?)
 				OR (DD.receiver_id = ? AND DD.sender_id = ?)))";
 				
@@ -794,7 +795,7 @@ class Connections_model extends Model {
 	 *   Is of the form: array(A_id, B_id)
 	 * @return
 	 *  -1 in case of error in a query
-	 *  -2 if the connection does not exist
+	 *  -2 if the connection does not exist or not pending
 	 *   0 if everything goes fine and the connection from the P_D_Connection table is removed
 	 * */
 	function remove_pending($a_id, $b_id) {
@@ -805,7 +806,7 @@ class Connections_model extends Model {
 		
 		// Now, delete the connection
 		$sql = "DELETE FROM connections
-				WHERE (sender_id = ? AND receiver_id = ?) OR (receiver_id = ? AND sender_id = ?)";
+				WHERE ((sender_id = ? AND receiver_id = ?) OR (receiver_id = ? AND sender_id = ?))";
 		$query = $this->db->query($sql, array($a_id, $b_id, $a_id, $b_id));
 		
 		//$sql = "DELETE FROM p_d_connection

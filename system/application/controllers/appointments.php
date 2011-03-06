@@ -66,8 +66,6 @@ class Appointments extends Controller {
 	 * fn upcoming 
 	 * lists all upcoming appointments of the logged in user
 	 * @todo: need a view to list appointments: Date Time Descrip Doctor Name Actions(Reschedule,Cancel)
-	 * @MATEO:
-	 * 	I ASSUME THE VIEW NAME WILL BE list_appointments	
 	 * */
 	function upcoming() {
 		
@@ -136,33 +134,32 @@ class Appointments extends Controller {
 	}
 
 	/**
-	 * fn cancel 
-	 * cancel an existing appointment
+	 * delete an existing appointment
 	 * @param apt_id, the appointment id number to delete from database
 	 * @return redirect to list of upcoming appointments || error(not their appointment)
 	 * @todo: pop up-- are you sure you want to cancel appointment?
 	 * */
-	function cancel($apt_id = NULL) {
+	function delete($apt_id = NULL) {
 		
 		$check = $this->auth->check(array(
 			auth::CurrLOG,
 			auth::APPT_MINE, $apt_id));
-			
+		
 		if ($check !== TRUE) return;
-			
+		
 		$results = $this->appointments_model->cancel(array($apt_id));
-								
-			switch ($results) {
-				case -1:
-					$this->ui->set_query_error();
-					return;
-				case -5:
-					$this->ui->set_error('Appointment does not exist!');
-					return;
-				default:
-					$this->ui->set_message('The appointment was successfully canceled.','Confirmation');
-					return;
-			}
+		
+		switch ($results) {
+			case -1:
+				$this->ui->set_query_error();
+				return;
+			case -5:
+				$this->ui->set_error('Appointment does not exist!');
+				return;
+		}
+		
+		$this->ui->set_message('The appointment was successfully canceled.','Confirmation');
+		$this->all();
 	}
 	
 	/**
