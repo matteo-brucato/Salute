@@ -513,6 +513,30 @@ class Medical_records_model extends Model {
 
 		return array();	
 	}
+	/*
+	function get_records_top_five($inputs) {
+		$sql = "((SELECT M.*, P.first_name AS pat_first_name, P.last_name AS pat_last_name, A.*, H.first_name, H.last_name, PR.type
+			FROM patient_account P, accounts A, hcp_account H, medical_record M, permission PR
+			WHERE M.patient_id = ? AND P.account_id = M.patient_id AND M.medical_rec_id = PR.medical_rec_id 
+			  AND PR.account_id = ? AND M.account_id = A.account_id AND A.account_id = H.account_id)
+			UNION
+			(SELECT M.*, P.first_name AS pat_first_name, P.last_name AS pat_last_name, A.*, P2.first_name, P2.last_name, PR.type
+			FROM patient_account P, accounts A, hcp_account H, medical_record M, permission PR, patient_account P2
+			WHERE M.patient_id = ? AND M.patient_id = P.account_id AND M.medical_rec_id = PR.medical_rec_id
+			  AND PR.account_id = ? AND M.account_id = A.account_id AND A.account_id = P2.account_id))
+			  ORDER BY date_created desc
+			  LIMIT 5";
+			
+		$query = $this->db->query($sql, array($inputs[0], $inputs[1]));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		
+		if ($query->num_rows() > 0)
+			return $query->result_array();
+
+		return array();	
+	}*/
 }
 /** @} */
 ?>

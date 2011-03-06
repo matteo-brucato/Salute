@@ -234,9 +234,9 @@ class Appointments_model extends Model {
 	
 		//lists all appointments a patient has ever had
 		if( $inputs['type'] === 'patient'){
-			$sql = "Select A.appointment_id, H2.first_name, H2.last_name, A.descryption, A.date_time, A.approved
-				FROM appointments A, hcp_account H, hcp_account H2
-				WHERE A.hcp_id = H.account_id AND A.patient_id = ? AND A.patient_id = H2.account_id AND A.hcp_id = ?
+			$sql = "Select *
+				FROM appointments A, hcp_account H
+				WHERE A.patient_id = ? AND A.hcp_id = ? AND A.hcp_id = H.account_id
 				ORDER BY A.date_time desc
 				LIMIT 5";
 			$query = $this->db->query($sql, array($inputs['account_id'], $inputs['hcp_id']));
@@ -249,9 +249,9 @@ class Appointments_model extends Model {
 		}
 
 		//lists all appointments a hcp has issued
-		$sql = "Select A.appointment_id, P2.first_name, P2.last_name, A.descryption, A.date_time, A.approved
-			FROM appointments A, patient_account P, patient_account P2
-			WHERE A.patient_id = P.account_id AND A.hcp_id = ? AND A.patient_id = P2.account_id AND A.patient_id = ?
+		$sql = "Select *
+			FROM appointments A, patient_account P
+			WHERE A.hcp_id = ? AND A.patient_id = ? AND A.patient_id = P.account_id
 			ORDER BY A.date_time desc
 			LIMIT 5";
 		$query = $this->db->query($sql, array($inputs['account_id'], $inputs['patient_id']));
