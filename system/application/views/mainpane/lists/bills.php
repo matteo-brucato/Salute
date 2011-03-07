@@ -67,6 +67,7 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 		}
 		else if( $table['tuples'][$i]['cleared'] === 'f' ){
 					$table['tuples'][$i]['cleared'] = 'unpaid';
+					$total += $table['tuples'][$i]['amount'];
 					$actions = array('delete-bill');
 		}
 	}
@@ -77,7 +78,7 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 }	
 view_table($table);
 if( $show_total === TRUE ){
-	echo 'Total due: $'.$total;
+	echo '<br /><div style="font-size: 1.1em;"><b>Total due:</b> $'.$total.'</div>';
 }
 	
 

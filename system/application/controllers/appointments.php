@@ -218,6 +218,16 @@ class Appointments extends Controller {
 		$new_time = $this->input->post('time');
 		
 		if ($new_time !== FALSE && $new_time !== ''){
+			if (strlen($new_time) < 19) {
+				$this->ui->set_error('Please insert a valid date AND time');
+				return;
+			}
+			
+			if (strtotime($new_time) <= time()) {
+				$this->ui->set_error('Cannot schedule an appointment in the past');
+				return;
+			}
+			
 			$results = $this->appointments_model->reschedule(array('appointment_id' => $apt_id, 'date_time' => $new_time )); 
 			switch ($results) {
 				case -1:
@@ -294,6 +304,16 @@ class Appointments extends Controller {
 		
 		//test to see if the time and description are TRUE and not NULL
 		if( $desc !== FALSE && $desc !== '' && $time !== FALSE && $time !== '') {
+			if (strlen($time) < 19) {
+				$this->ui->set_error('Please insert a valid date AND time');
+				return;
+			}
+			
+			if (strtotime($time) <= time()) {
+				$this->ui->set_error('Cannot schedule an appointment in the past');
+				return;
+			}
+			
 			$results = $this->appointments_model->request(array(
 				$this->auth->get_account_id(), 
 				$account_id, 

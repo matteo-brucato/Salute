@@ -20,17 +20,17 @@ echo '<h2 class="table-header">'.$list_name.'</h2>';
 $table['table-name'] = 'medical_records-table';
 
 // Names of the headers in the table
-$table['th'] = array('Medical Record Id', 'Patient', 'Created By', 'Issue', 'Info', 'Actions');
+$table['th'] = array('Medical Record Id', 'Patient', 'Created By', 'Issue', 'Date Created', 'Info', 'Actions');
 
 // Classes for columns (order matters)
-$table['th_class'] = array('id_keeper', '', '', '', '', '');
-$table['td_class'] = array('id_keeper', '', '', '', '', '');
+$table['th_class'] = array('id_keeper', '', '', '', '', '', '');
+$table['td_class'] = array('id_keeper', '', '', '', '', '', '');
 
 // All the results from the database
 $table['tuples'] = $list;
 
 // Attributes to display
-$table['attr'] = array('medical_rec_id', 'pat_first_name', 'first_name', 'issue', 'suplementary_info', 'actions');
+$table['attr'] = array('medical_rec_id', 'pat_first_name', 'first_name', 'issue', 'date_created', 'suplementary_info', 'actions');
 
 // Special values for file downloading
 if ($this->auth->get_type() === 'patient') {
