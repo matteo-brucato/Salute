@@ -82,6 +82,23 @@ class Groups_model extends Model {
 			return -1;
 		return 1;
 	}
+	
+	/**
+	 * Delete an invitation
+	 * 
+	 * @param $group_id
+	 *   Is of the form: invitee id, group id
+	 * @return
+	 *   1 if group was properly deleted
+	 * */
+	function delete_invitation($invitee, $gid) {
+		$sql = "DELETE FROM invite
+				WHERE group_id = ? AND invitee_id = ?";
+		$query = $this->db->query($sql, array($gid, $invitee));
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		return 1;
+	}
 
 	
 	/**

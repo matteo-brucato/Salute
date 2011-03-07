@@ -79,7 +79,7 @@ function get_action_strings($actions, $tuple) {
 				break;
 			
 			case 'see-perms':
-				$str .= '<li><a href="/medical_records/permissions/'.$tuple['medical_rec_id'].'">Permission</a></li>';
+				$str .= '<li><a href="/medical_records/permissions/'.$tuple['medical_rec_id'].'">Permissions</a></li>';
 				break;
 			/*case 'delete-perm':
 				$str .= '<li><a href="/medical_records/remove_permission/'.$tuple['medical_rec_id'].'/'.$tuple['account_id'].'" class="confirm">Remove permission</a></li>';
@@ -107,7 +107,7 @@ function get_action_strings($actions, $tuple) {
 				$str .= '<li><a href="/groups/members/invite/'.$tuple['group_id'].'">Invite a Member</a></li>';
 				break;
 			case 'edit-mem':
-				$str .= '<li><a href="/groups/members/edit/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Change Permissions</a></li>';
+				$str .= '<li><a href="/groups/members/edit/'.$tuple['group_id'].'/'.$tuple['account_id'].'">Edit Member Permissions</a></li>';
 				break;
 			
 			case 'list-mems':

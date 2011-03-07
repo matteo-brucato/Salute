@@ -109,3 +109,11 @@ img.profile-picture {
 	padding: 3px;
 	background-color: white;
 }
+
+.submit-button {
+	margin-bottom: 20px;
+}
+
+.table-header {
+	margin-top: 20px;
+}

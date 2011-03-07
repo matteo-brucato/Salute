@@ -202,7 +202,7 @@ class Groups extends Controller {
 		if($mem === -1 || $group === -1){
 			$this->ui->set_query_error();
 			return;
-		} else if ($mem){ 
+		} else if ($mem === TRUE){ 
 			$this->ui->set_error('You are already a member of this group.','notice');
 			return;
 		} else if ($mem === FALSE){
@@ -227,6 +227,7 @@ class Groups extends Controller {
 		}
 		
 		// if its a private group, check that they have an invitation
+		$invited = false;
 		if($group['public_private'] === '1'){
 			$invited = $this->groups_model->is_invited($this->auth->get_account_id(),$group_id);
 			if ($invited === -1){
@@ -237,12 +238,21 @@ class Groups extends Controller {
 				$this->ui->set_error('You must be invited to join this private group.','Permission Denied');
 				return;
 			}
+			$invited = true;
 		}
 		
 		$check = $this->groups_model->join($this->auth->get_account_id(),$group_id);
 		if ($check === -1){
 			$this->ui->set_query_error();
 			return;	
+		}
+		
+		if ($invited) {
+			$delinv = $this->groups_model->delete_invitation($this->auth->get_account_id(),$group_id);
+			if ($delinv === -1) {
+				$this->ui->set_query_error();
+				return;	
+			}
 		}
 		
 		$this->db->trans_complete();
@@ -278,6 +288,20 @@ class Groups extends Controller {
 			$this->ui->set_query_error();
 			return;
 		} else if ($mem){
+			$group = $this->groups_model->get_group($group_id);
+			if ($group === -1){
+				$this->ui->set_query_error();
+				return;
+			}
+			else if ($group === NULL){
+				$this->ui->set_error('No such group');
+				return;
+			}
+			if ($group['account_id'] === $this->auth->get_account_id()){
+				$this->ui->set_error('You are the creator of the group, you cannot leave.','Permission Denied');
+				return;
+			}
+			
 			$check = $this->groups_model->remove($this->auth->get_account_id(),$group_id);
 			if ($check === -1){
 				$this->ui->set_query_error();
@@ -379,15 +403,14 @@ class Groups extends Controller {
 			auth::CurrGRPMEM, $gid		// current must be member of group gid
 		)) !== TRUE) return;
 		
-		
 		// Get the group tuple
 		$group = $this->groups_model->get_group($gid);
 		if ($group === -1) {$this->ui->set_query_error(); return;}
 		if ($group === NULL) {$this->ui->set_error('Group not found'); return;}
-		
+
 		// Get POST variables (an array of ids to invite to gid group)
 		$invite_ids = $this->input->post('ids');
-		
+
 		// Form input check
 		if ($invite_ids == NULL) {
 			$this->ui->set_error('No input', 'Form input missing');
@@ -404,18 +427,27 @@ class Groups extends Controller {
 				$alert .= 'Ignoring id '.$iid.'<br />';
 				continue;
 			}
-
+			
+			$alert .= 'Inviting id '.$iid.'... ';
+			
+			$is_mem = $this->groups_model->is_member($iid,$gid);
+			if($is_mem === -1){
+				$this->ui->set_query_error();
+				return;
+			}else if ($is_mem === TRUE){
+				$alert .= 'This user is already a member in the group.<br />';
+				continue;
+			}
+			
 			$is_inv = $this->groups_model->is_invited($iid,$gid);
 			if($is_inv === -1){
 				$this->ui->set_query_error();
 				return;
 			}else if ($is_inv === TRUE){
-				$this->ui->set_message('This user has already been invited to the group.');
-				$this->ui->set($this->list('mine'));
+				$alert .= 'This user has already been invited to the group.<br />';
+				continue;
 			}
 			
-			$alert .= 'Inviting id '.$iid.'... ';
-
 			$invitation = $this->groups_model->invite($this->auth->get_account_id(),$iid,$gid);
 			if ($invitation === -1){
 				$this->ui->set_query_error();
@@ -428,24 +460,38 @@ class Groups extends Controller {
 				$alert .= 'error, could not send invitation email<br />';
 				continue;
 			}
+			if(count($email) <= 0) {
+				$alert .= 'error, account id does not exist<br />';
+				continue;
+			}
+			
 			$message_body = 'Hello Salute member,<br /><br />'.
 				$this->auth->get_first_name().' '.$this->auth->get_last_name().
 				' invited you to join group '.$group['name'].'!<br />'.
 				'Click <a href="/grups/members/join/'.$gid.'">here</a> to join the group.';
-			$this->load->library('email');
+			
+			// Everything's fine
+			$this->load->helper('email');
+			send_email(
+				$this->auth->get_email(),
+				$email[0]['email'],
+				'Salute - Group Invitation',
+				$message_body
+			);
+			
+			/*$this->load->library('email');
 			$config['mailtype'] = 'html';
 			$this->email->initialize($config);
 			$this->email->from($this->auth->get_email());
 			$this->email->to($email[0]['email']);
 			$this->email->subject('Salute - Group Invitation');
 			$this->email->message($message_body);
-			$this->email->send();
+			$this->email->send();*/
 			
 			$alert .= 'email invitation sent!<br />';
 		}
-		
 		$this->ui->set_message($alert);
-		$this->ui->set($this->lists('mine'));
+		$this->lists('mine');
 	}
 	
 	/*function members_invite_hcps_do($gid = NULL) {
@@ -606,7 +652,6 @@ class Groups extends Controller {
 	}
 	
 	
-	// @bug does not change database
 	function edit_do($group_id = NULL){
 		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id)) !== TRUE) {
 			return;
@@ -717,22 +762,36 @@ class Groups extends Controller {
 			return;
 		}
 		$this->db->trans_start();
-		
-		$curr_info = $this->groups_model->get_member($this->auth->get_account_id(),$group_id);
-		if ($curr_info === -1){
+		$perm = $this->groups_model->get_member($this->auth->get_account_id(),$group_id);
+		if ($perm === -1){
 			$this->ui->set_query_error();
 			return;
-		} else if ($curr_info === NULL) {
+		} else if ($perm === NULL) {
 			$this->ui->set_error('You are no longer a member of this group.');
 			return;
-		} else if ($curr_info['permissions'] != '2' && $curr_info['permissions'] != '3' ){
+		} else if ($perm['permissions'] != '2' && $perm['permissions'] != '3' ){
 			$this->ui->set_error('You do not have permission to edit this member.');
 			return;
 		}
-
+		$curr_info = $this->groups_model->get_member($account_id,$group_id);
+		if ($curr_info === -1){
+			$this->ui->set_query_error();
+			return;
+		}
+		
+		$group = $this->groups_model->get_group($group_id);
+		if ($group === -1){
+			$this->ui->set_query_error();
+			return;
+		}
+		else if ($group === NULL){
+			$this->ui->set_error('No such group');
+			return;
+		}
+		
 		$this->ui->set(array($this->load->view('mainpane/forms/edit_member',array(
 																			'curr_info' => $curr_info, 
-																			'group_id' => $group_id, 
+																			'group' => $group, 
 																			'account_id' => $account_id),
 																			 TRUE)));
 
@@ -744,11 +803,43 @@ class Groups extends Controller {
 		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id,auth::CurrGRPMEM,$group_id)) !== TRUE) {
 			return;
 		}
-		$perm = $this->input->post('permissions');
+
+		$mem = $this->groups_model->is_member($account_id,$group_id);
+		if ($mem === -1){
+			$this->ui->set_query_error(); 
+			return;
+		} else if ($mem === FALSE){
+			$this->ui->set_error('This account_id is not a member of this group.','Invalid Input');
+			return;
+		}
 		
-		// Form Checking will replace this
+		$perm = $this->input->post('permissions');
 		if($perm == NULL)	{
 			$this->ui->set_error('All Fields are Mandatory.','Missing Arguments'); 
+			return;
+		}
+
+		$me = $this->groups_model->get_member($this->auth->get_account_id(),$group_id);
+		if($me === -1){
+			$this->ui->set_query_error();
+			return;	
+		}
+		if($perm > $me['permissions']){
+			$this->ui->set_error('You cannot set a member\'s permission to a level higher than yours.','Invalid Input'); 
+			return;
+		}
+
+		$group = $this->groups_model->get_group($group_id);
+		if ($group === -1){
+			$this->ui->set_query_error();
+			return;
+		}
+		else if ($group === NULL){
+			$this->ui->set_error('No such group');
+			return;
+		}
+		if ($group['account_id'] === $account_id){
+			$this->ui->set_error('You cannot change the permission level of the creator of the group.');
 			return;
 		}
 
@@ -761,7 +852,6 @@ class Groups extends Controller {
 			$this->ui->set_query_error(); 
 			return;
 		}
-
 		$this->ui->set_message('You have successfully edited the member','Confirmation');
 		$this->members('list', $group_id);
 	}

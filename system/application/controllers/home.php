@@ -105,8 +105,13 @@ class Home extends Controller {
 				$this->ui->set_error('Sorry! That account does not exist.'); 
 				return;
 			} else if ( !$active_status ){
-				$this->ui->set_redirect('/settings/activate/'.$results[1]["account_id"]); 
-				return;
+				//$this->ui->set_redirect('/settings/activate/'.$results[1]["account_id"]);
+				
+				$reactive = $this->account_model->activate(array($account_id));
+				if ($reactive === -1) {
+					$this->ui->set_query_error();
+					return;
+				}
 			}
 			$login_data = array(
 				'account_id' => $results[1]["account_id"],
@@ -163,7 +168,15 @@ class Home extends Controller {
 		}
 		$password = $result[0]['password'];
 		
-		$this->load->library('email');
+		$this->load->helper('email');
+		send_email(
+			'salute-noreply@salute.com',
+			$result[0]['email'],
+			'Password Retrieval',
+			'You have requested for retrieval of your password. Your password is:'.$password.' '.
+			'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.'
+		);
+		/*$this->load->library('email');
 		$config['mailtype'] = 'html';
 		$this->email->initialize($config);
 		$this->email->from('salute-noreply@salute.com');
@@ -173,7 +186,7 @@ class Home extends Controller {
 			'You have requested for retrieval of your password. Your password is:'.$password.' '.
 			'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
 
-		$this->email->send();
+		$this->email->send();*/
 		$this->ui->set_message('Your password has been emailed to you.','Confirmation');
 	}
 
@@ -182,11 +195,6 @@ class Home extends Controller {
 	 * */
 	function register()
 	{
-		if ($this->auth->check(auth::CurrLOG) === TRUE) {
-			$this->ui->set_message('You are already logged in');
-			return;
-		}
-		
 		$this->ui->set(array($this->load->view('mainpane/forms/registration', '', TRUE)));
 	}
 
@@ -287,7 +295,15 @@ class Home extends Controller {
 			return;
 		}
 		else {
-			$this->load->library('email');
+			$this->load->helper('email');
+			send_email(
+				'salute-noreply@salute.com',
+				$email,
+				'Registration Confirmation',
+				'You have successfully registered with Salute!'.' '.
+				'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.'
+			);
+			/*$this->load->library('email');
 			$config['mailtype'] = 'html';
 			$this->email->initialize($config);
 			$this->email->from('salute-noreply@salute.com');
@@ -296,8 +312,7 @@ class Home extends Controller {
 			$this->email->message(
 				'You have successfully registered with Salute!'.' '.
 				'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
-
-			$this->email->send();
+			$this->email->send();*/
 			$this->ui->set_message('Congratulations, you are now registered. A confirmation email has been sent to you.'.
 			' Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.', 'Confirmation');
 		}

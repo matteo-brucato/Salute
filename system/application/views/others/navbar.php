@@ -10,4 +10,13 @@
 			echo '<a href="/home">Home</a>';
 		?>
 	</li>
+	<div class="welcome-message"><?php
+	
+	if ($this->auth->is_logged_in()) {
+		echo 'Welcome, '.$this->auth->get_first_name().' '.$this->auth->get_last_name();
+	} else {
+		echo 'Welcome to Salute!';
+	}
+	
+	?></div>
 </ul>

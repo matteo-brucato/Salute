@@ -164,8 +164,18 @@ class Referal_model extends Model {
 			if ($this->db->trans_status() === FALSE)
 				return -1;
 		}
-				
-		return $referal_id;
+		
+		$sql = "SELECT *
+			FROM refers R
+			WHERE R.referal_id = ?";
+		$query = $this->db->query($sql, array($referal_id));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		
+		if ($query->num_rows() < 1) return -2;
+		
+		return $query->result_array();
 	}
 	
 	

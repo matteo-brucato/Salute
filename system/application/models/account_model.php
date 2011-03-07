@@ -256,6 +256,37 @@ class Account_model extends Model {
 			return array();	 	
 
 		return $query->result_array();
+	}
+	
+	/**
+	 * Gets the password of the account
+	 * 
+	 * @param $inputs
+	 *   Is of the form: id
+	 * @return
+	 *  -1 in case of error in a query
+	 *   Complete tuple for account id
+	 *   NULL if the account id does not exist
+	 * */
+	 function get_account_info($aid) {
+	 	$sql = "
+			(SELECT P.first_name, P.last_name
+			FROM accounts A, patient_account P
+			WHERE A.account_id = ? AND A.account_id = P.account_id)
+		UNION
+			(SELECT P.first_name, P.last_name
+			FROM accounts A, hcp_account P
+			WHERE A.account_id = ? AND A.account_id = P.account_id)";
+	 	$query = $this->db->query($sql, array($aid, $aid));
+		
+		if ($this->db->trans_status() === FALSE)
+			return -1;
+		if( $query->num_rows() < 1)
+			return NULL;
+		
+		$res = $query->result_array();
+		
+		return $res[0];
 	 }
 	 
 	/**

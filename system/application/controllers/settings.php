@@ -14,7 +14,7 @@ class Settings extends Controller {
 		parent::Controller();
 		$this->load->library('ui');
 		$this->load->library('auth');
-		$this->load->model('account_model');		
+		$this->load->model('account_model');
 	}
 
 	/**
@@ -70,19 +70,17 @@ class Settings extends Controller {
 			return;
 		}
 		
-		$this->load->library('email');
-		$config['mailtype'] = 'html';
-		$this->email->initialize($config);
-		$this->email->from('salute-noreply@salute.com');
-		$this->email->to($this->auth->get_email());
-		$this->email->subject('Your password has been changed.');
-		$this->email->message(
+		$this->load->helper('email');
+		send_email(
+			'salute-noreply@salute.com',
+			$this->auth->get_email(),
+			'Your password has been changed',
 			'Your password has been successfully changed. It is now: '.$password.'. '.
-			'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
-		$this->email->send();
-								
+				'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.'
+		);
+		
 		$msg = 'Your password has been changed. A confirmation email has been sent for your records.';
-		$this->ui->set_message($msg,'Confirmation');	
+		$this->ui->set_message($msg,'Confirmation');
 	}
 
 	/**
@@ -132,17 +130,15 @@ class Settings extends Controller {
 			$this->ui->set_error('Account does not exist!');
 			return;
 		}
-			
-		$this->load->library('email');
-		$config['mailtype'] = 'html';
-		$this->email->initialize($config);
-		$this->email->from('salute-noreply@salute.com');
-		$this->email->to($email);
-		$this->email->subject('Your email has been changed.');
-		$this->email->message(
+		
+		$this->load->helper('email');
+		send_email(
+			'salute-noreply@salute.com',
+			$email,
+			'Your email has been changed.',
 			'Your email has been successfully changed. It is now: '.$email.'. '.
-			'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
-		$this->email->send();
+				'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.'
+		);
 		
 		// Update session cookie
 		$this->session->set_userdata(array('email' => $email));
@@ -171,14 +167,22 @@ class Settings extends Controller {
 			return;
 		}
 		
-		$this->load->library('email');
+		$this->load->helper('email');
+		send_email(
+			'salute-noreply@salute.com',
+			$this->auth->get_email(),
+			'Account Deactivated.',
+			'Your Account has been deactivated.'
+		);
+		
+		/*$this->load->library('email');
 		$config['mailtype'] = 'html';
 		$this->email->initialize($config);
 		$this->email->from('salute-noreply@salute.com');
 		$this->email->to($this->auth->get_email());
 		$this->email->subject('Account Deactivated.');
 		$this->email->message('Your Account has been deactivated.');
-		$this->email->send();
+		$this->email->send();*/
 		
 		$this->ui->set_message('Your account has been deactivated.','Confirmation');
 		$this->session->sess_destroy();
@@ -189,15 +193,14 @@ class Settings extends Controller {
 	 * loads a statement that user is deactive. Link to reactivate
 	 * @param account_id -- the account_id of the user who tried to login but is deactive
 	 * @todo popup: are you sure?
-	 **/ 
-	function activate($account_id){
+	 **
+	function activate($account_id = NULL){
 		if ($this->auth->check(array(auth::ACCOUNT,$account_id)) !== TRUE) {
 			return;
 		}	
 	
-		$msg = 'Your Account is de-active.'.	
-		'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/settings/activate_do/'.$account_id.
-		'/ ">here</a> to reactivate.';
+		$msg = 'Your Account is de-active. '.
+		'Click <a href="/settings/activate_do/'.$account_id.'">here</a> to reactivate.';
 		$this->ui->set_message($msg);
 	}
 	
@@ -205,19 +208,21 @@ class Settings extends Controller {
 	 * Activate Account
 	 * @param account_id -- the account_id of the user who tried to login but is deactive
 	 * @return error || Confirmation statement + Link to login. 
-	 **/ 
-	function activate_do($account_id){
+	 **
+	function activate_do($account_id = NULL){
+		$this->ui->set_message('k','Confirmation');
+		return;
 		if ($this->auth->check(array(auth::ACCOUNT,$account_id)) !== TRUE) {
 			return;
-		}		
+		}
 		$results = $this->account_model->activate(array($account_id));
 		if ($results === -1){
 			$this->ui->set_query_error();
 			return;
 		}
-		$msg = 'Your Account has been reactivated. Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.';
-		$this->ui->set_message($msg,'Confirmation');		
-	}
+		$msg = 'Your Account has been reactivated. Click <a href="/home">here</a> to login.';
+		$this->ui->set_message($msg,'Confirmation');
+	}*/
 	
 	
 	/**

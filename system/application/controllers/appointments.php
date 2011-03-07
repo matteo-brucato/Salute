@@ -158,6 +158,9 @@ class Appointments extends Controller {
 				return;
 		}
 		
+		// Send email to patient
+		
+		
 		$this->ui->set_message('The appointment was successfully canceled.','Confirmation');
 		$this->all();
 	}
@@ -335,6 +338,8 @@ class Appointments extends Controller {
 		}
 		
 		$this->ui->set_message('The appointment has been successfully approved.','Confirmation');
+		
+		$this->upcoming();
 	}
 }
 /** @} */

@@ -14,7 +14,7 @@ $this->load->helper('table_result');
  * ALL the tuples are of the same status.
  * */
 
-echo '<h2>'.$list_name.'</h2>';
+echo '<h2 class="table-header">'.$list_name.'</h2>';
 
 // Id of the table
 $table['table-name'] = 'mybills-table';

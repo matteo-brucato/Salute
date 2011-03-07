@@ -80,8 +80,8 @@ class Hcp_model extends Model {
 	 *   empty array() if there are not any hcps in the database
 	 * */
 	function get_hcps() {
-		$sql = "SELECT * FROM hcp_account";
-		$query = $this->db->query($sql);
+		$sql = "SELECT * FROM hcp_account WHERE account_id != ? ORDER BY first_name, last_name ASC";
+		$query = $this->db->query($sql, array($this->auth->get_account_id()));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;

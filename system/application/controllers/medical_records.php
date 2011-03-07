@@ -253,9 +253,20 @@ class Medical_records extends Controller {
 			return;
 		}
 		
+		// Get medical record tuple
+		$med = $this->medical_records_model->get_medicalrecord(array($mid));
+		if ($med === -1) {
+			$this->ui->set_query_error();
+			return;
+		}
+		if (count($med) <= 0) {
+			$this->ui->set_error('Medial record does not exist');
+			return;
+		}
+		
 		$main = $this->load->view('mainpane/forms/medical_record_hcps_perms',
 			array(
-				'list_name' => 'My HCPs',
+				'list_name' => 'My HCPs for Medical Record "'.$med[0]['issue'].'"',
 				'list' => $res1,
 				'list2' => $perm1,
 				'form_action' => '/medical_records/permissions_do/'.$mid
@@ -264,7 +275,7 @@ class Medical_records extends Controller {
 		
 		$main .= $this->load->view('mainpane/forms/medical_record_patients_perms',
 			array(
-				'list_name' => 'My Patient Friends',
+				'list_name' => 'My Patient Friends for Medical Record "'.$med[0]['issue'].'"',
 				'list' => $res2,
 				'list2' => $perm2,
 				'form_action' => '/medical_records/permissions_do/'.$mid

@@ -1,4 +1,4 @@
-<h2>Salute Doctors</h2>
+<h2>Salute Patients</h2>
 
 <?php
 $this->load->helper('actions');
