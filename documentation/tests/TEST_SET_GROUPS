@@ -116,8 +116,11 @@
 
 ### LEAVING A GROUP ###
 
-# leave a group you are in
-/groups/members/leave/1			ALL_OK		| -b cookie_p1 -c cookie_p1
+# leave a group you are in 
+/groups/members/leave/2			ALL_OK		| -b cookie_p1 -c cookie_p1
+
+# leave a group you are a creator of
+/groups/members/leave/1			CTR_ERROR	| -b cookie_p1 -c cookie_p1
 
 # leave a group  you are not in
 /groups/members/leave/21 		CTR_ERROR	| -b cookie_p1 -c cookie_p1
