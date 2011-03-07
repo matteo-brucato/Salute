@@ -22,13 +22,13 @@
 /home/login					CTR_ERROR
 
 # Now, try to login in and save the cookie in a local file
-/home/login					REDIRECTED		| -F "email=patient1@yahoo.com" -F "password=cameraman" -c cookie
+/home/login					REDIRECTED		| -F "email=patient1@email.com" -F "password=pat1" -c cookie
 
 # Then, use this cookie to access restricted areas of the website
 /profile					ALL_OK			| -b cookie -c cookie
 
 # Invalid login
-/home/login					CTR_ERROR		| -F "email=patient1@yahoo.com" -F "password=camera" -c cookie
+/home/login					CTR_ERROR		| -F "email=patient1@email.com" -F "password=pat11" -c cookie
 
 # Other fuzz tests
 sjgjfsgbfgb					CI_404_ERROR

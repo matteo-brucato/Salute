@@ -57,31 +57,41 @@
 /profile/user/1				ALL_OK			| -b cookie_doc_55
 
 # Try to see not connected profiles
-/profile/user/6				CTR_ERROR		| -b cookie_pat_1
-/profile/user/7				CTR_ERROR		| -b cookie_pat_1
-/profile/user/8				CTR_ERROR		| -b cookie_pat_1
-/profile/user/9				CTR_ERROR		| -b cookie_pat_1
+/profile/user/6				ALL_OK			| -b cookie_pat_1
+/profile/user/7				ALL_OK			| -b cookie_pat_1
+/profile/user/8				ALL_OK			| -b cookie_pat_1
+/profile/user/9				ALL_OK			| -b cookie_pat_1
+/profile/user/10			ALL_OK			| -b cookie_pat_1
+/profile/user/56			ALL_OK			| -b cookie_pat_1
+/profile/user/57			ALL_OK			| -b cookie_pat_1
+/profile/user/58			ALL_OK			| -b cookie_pat_1
+/profile/user/59			ALL_OK			| -b cookie_pat_1
+/profile/user/60			ALL_OK			| -b cookie_pat_1
+
+# Try to change account type to private of pat 6
+/settings/change_privacy_do	OK_MESSAGE		| -F "level=1" -b cookie_pat_10
+
+# Try to see his profile
 /profile/user/10			CTR_ERROR		| -b cookie_pat_1
-/profile/user/56			CTR_ERROR		| -b cookie_pat_1
-/profile/user/57			CTR_ERROR		| -b cookie_pat_1
-/profile/user/58			CTR_ERROR		| -b cookie_pat_1
-/profile/user/59			CTR_ERROR		| -b cookie_pat_1
-/profile/user/60			CTR_ERROR		| -b cookie_pat_1
+/profile/user/10			CTR_ERROR		| -b cookie_hcp_51
+
+# Restore previous privacy for pat 10
+/settings/change_privacy_do	OK_MESSAGE		| -F "level=0" -b cookie_pat_10
 
 ################### CREATE NEW CONNECTIONS #############################
 # Patient 1 asks for a new connection to hcp 60
 /connections/request/60		OK_MESSAGE		| -b cookie_pat_1
 # Then hcp 60 accets it
-/connections/accept/1		OK_MESSAGE		| -b cookie_doc_60
+/connections/accept/1		ALL_OK			| -b cookie_doc_60
 
 # Patient 1 asks for a new connection to patient 10
 /connections/request/10		OK_MESSAGE		| -b cookie_pat_1
 # Then patient 10 accets it
-/connections/accept/1		OK_MESSAGE		| -b cookie_pat_10
+/connections/accept/1		ALL_OK		| -b cookie_pat_10
 
 # Patient 1 asks the same connections again
 /connections/request/60		CTR_ERROR		| -b cookie_pat_1
-connections/request/10		CTR_ERROR		| -b cookie_pat_1
+/connections/request/10		CTR_ERROR		| -b cookie_pat_1
 
 # And the others accept again
 /connections/accept/1		CTR_ERROR		| -b cookie_doc_60
@@ -98,16 +108,25 @@ connections/request/10		CTR_ERROR		| -b cookie_pat_1
 /connections/accept/51		CTR_ERROR		| -b cookie_pat_1
 
 # And finally 60 accepts his request
-/connections/accept/51		OK_MESSAGE		| -b cookie_doc_60
+/connections/accept/51		ALL_OK			| -b cookie_doc_60
 
 # Try to cancel a connection already accepted
-/connections/cancel/60		CTR_ERROR		| -b cookie_doc_51
+/connections/cancel/60		ALL_OK			| -b cookie_doc_51
 
 # Try to reject a connection already accepted
 /connections/reject/51		CTR_ERROR		| -b cookie_doc_60
 
 # Try to legally destroy a connection
-/connections/destroy/51		OK_MESSAGE		| -b cookie_doc_60
+/connections/destroy/51		ALL_OK			| -b cookie_doc_60
 
 # Now the other tries to destroy it again
 /connections/destroy/60		CTR_ERROR		| -b cookie_doc_51
+
+# Restore previous privacy for pat 10
+/settings/change_privacy_do	OK_MESSAGE		| -F "level=0" -b cookie_pat_10
+
+# Try to request a connection to pat 6 who is private
+/connections/request/10		CTR_ERROR		| -b cookie_pat_1
+
+# Restore previous privacy for pat 10
+/settings/change_privacy_do	OK_MESSAGE		| -F "level=0" -b cookie_pat_10
