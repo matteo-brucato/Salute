@@ -95,7 +95,7 @@ class Profile extends Controller {
 				return;
 			}
 			$mainview .= $this->load->view('mainpane/lists/bills',
-										array('list' => $bills, 'list_name' => 'My Bills'), TRUE);
+										array('list' => $bills, 'list_name' => 'My Bills', 'show_total' => FALSE), TRUE);
 			$mainview .= '<a href="/bills/all">View all bills</a>';
 			
 
@@ -188,7 +188,7 @@ class Profile extends Controller {
 				return;
 			}
 			$mainview .= $this->load->view('mainpane/lists/bills',
-										array('list' => $bills, 'list_name' => 'My Bills'), TRUE);
+										array('list' => $bills, 'list_name' => 'My Bills', 'show_total' => FALSE), TRUE);
 			$mainview .= '<a href="/bills/all">View all bills</a>';
 			
 
@@ -441,7 +441,7 @@ class Profile extends Controller {
 				return;
 			}
 			$mainview .= $this->load->view('mainpane/lists/bills',
-										array('list' => $bills, 'list_name' => 'Shared Bills'), TRUE);
+										array('list' => $bills, 'list_name' => 'Shared Bills', 'show_total' => FALSE), TRUE);
 			$mainview .= '<a href="/bills/all">View all bills</a>';
 			$this->ui->set(array($mainview));
 			
@@ -510,7 +510,7 @@ class Profile extends Controller {
 				return;
 			}
 			$mainview .= $this->load->view('mainpane/lists/bills',
-										array('list' => $bills, 'list_name' => 'Shared Bills'), TRUE);
+										array('list' => $bills, 'list_name' => 'Shared Bills', 'show_total' => FALSE), TRUE);
 			$mainview .= '<a href="/bills/issue/'.$id.'">Issue a bill to this patient</a><br>';
 			$mainview .= '<a href="/bills/all">View all bills</a>';
 			

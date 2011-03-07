@@ -52,7 +52,7 @@ class Bills extends Controller {
 			return;
 		}
 		$mainview = $this->load->view('mainpane/lists/bills',
-					array('list_name' => 'My Bills', 'list' => $results) , TRUE);
+					array('list_name' => 'My Bills', 'list' => $results, 'show_total' => TRUE) , TRUE);
 				
 		$this->ui->set(array($mainview));
 	}
@@ -81,7 +81,7 @@ class Bills extends Controller {
 			$this->ui->set_query_error(); 
 			return;
 		}	
-		$mainview = $this->load->view('mainpane/lists/bills', array('list_name' => 'My Current Bills', 'list' => $results) , TRUE);
+		$mainview = $this->load->view('mainpane/lists/bills', array('list_name' => 'My Current Bills', 'list' => $results, 'show_total' => FALSE) , TRUE);
 		$this->ui->set(array($mainview));
 	}
 
@@ -109,7 +109,7 @@ class Bills extends Controller {
 			$this->ui->set_query_error(); 
 			return;
 		}
-		$mainview = $this->load->view('mainpane/lists/bills', array('list_name' => 'My Past Bills', 'list' => $results) , TRUE);
+		$mainview = $this->load->view('mainpane/lists/bills', array('list_name' => 'My Past Bills', 'list' => $results, 'show_total' => FALSE) , TRUE);
 		$this->ui->set(array($mainview));
 	}
 
