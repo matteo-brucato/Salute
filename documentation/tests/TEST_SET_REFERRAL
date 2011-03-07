@@ -34,11 +34,11 @@
 /connections/request/57      	              OK_MESSAGE        | -b cookie_doc_55 
 
 #accept connection request
-/connections/accept/51		 	              OK_MESSAGE        | -b cookie_doc_56           
-/connections/accept/52		 	              OK_MESSAGE        | -b cookie_doc_56
-/connections/accept/53		 	              OK_MESSAGE        | -b cookie_doc_57
-/connections/accept/54		 	              OK_MESSAGE        | -b cookie_doc_57
-/connections/accept/55		 	              OK_MESSAGE        | -b cookie_doc_57
+/connections/accept/51		 	              ALL_OK	        | -b cookie_doc_56           
+/connections/accept/52		 	              ALL_OK	        | -b cookie_doc_56
+/connections/accept/53		 	              ALL_OK	        | -b cookie_doc_57
+/connections/accept/54		 	              ALL_OK	        | -b cookie_doc_57
+/connections/accept/55		 	              ALL_OK	        | -b cookie_doc_57
 
 #set connection level between pat_id 2 and hcp_id 55 to high
 /connections/change_level_do/55               OK_MESSAGE        | -F "level=3" -b cookie_pat_2
@@ -46,13 +46,13 @@
 
 ################################################  CREATE REFERALS  ############################################################
 #create two valid referrals for the same patient and the same hcp form different doctors
-/refers/create_referral_do2/56           OK_MESSAGE        | -F "patient_id=1" -b cookie_doc_51
-/refers/create_referral_do2/56           OK_MESSAGE        | -F "patient_id=1" -b cookie_doc_52
-/refers/create_referral_do2/57           OK_MESSAGE        | -F "patient_id=2" -b cookie_doc_53
-/refers/create_referral_do2/57           OK_MESSAGE        | -F "patient_id=2" -b cookie_doc_54
+/refers/create_referral_do2/56           ALL_OK		       | -F "patient_id=1" -b cookie_doc_51
+/refers/create_referral_do2/56           ALL_OK		       | -F "patient_id=1" -b cookie_doc_52
+/refers/create_referral_do2/57           ALL_OK			   | -F "patient_id=2" -b cookie_doc_53
+/refers/create_referral_do2/57           ALL_OK		       | -F "patient_id=2" -b cookie_doc_54
 
 #high level doctor creating the referral
-/refers/create_referral_do2/57           OK_MESSAGE        | -F "patient_id=2" -b cookie_doc_55
+/refers/create_referral_do2/57           ALL_OK		       | -F "patient_id=2" -b cookie_doc_55
 
 #create same referral again
 /refers/create_referral_do2/56           CTR_ERROR         | -F "patient_id=1" -b cookie_doc_51
@@ -78,7 +78,7 @@
 
 ################################################  ACCEPT REFERALS  ############################################################
 #accept a referral
-/refers/accept_referal/86                OK_MESSAGE        | -b cookie_pat_1
+/refers/accept_referal/86                ALL_OK		      | -b cookie_pat_1
 
 #accept a referal that has already been accepted
 /refers/accept_referal/88                CTR_ERROR        | -b cookie_pat_2
