@@ -9,7 +9,7 @@ $this->load->helper('table_result');
  * 		$member 		Boolean
  * */
 
-echo '<h2>'.$list_name.'</h2>';
+echo '<h2 class="table-header">'.$list_name.'</h2>';
 
 // Id of the table
 $table['table-name'] = 'groups-table';
@@ -37,8 +37,11 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 	else {
 		if($member[$i]['perm'] === '0')
 			$actions = array('list-mems','leave-group');
-		else if ($member[$i]['perm'] === '3')
+		else if ($member[$i]['perm'] === '3'){
 			$actions = array('list-mems', 'invite-to-group','leave-group', 'edit-group','delete-group');
+			if($this->auth->get_account_id() == $group_list[$i]['account_id'])
+				$actions = 	array('list-mems', 'invite-to-group', 'edit-group','delete-group');
+		}
 		else if($member[$i]['perm'] !== '0' && $member[$i]['perm'] !== NULL)
 			$actions = array('list-mems','invite-to-group','leave-group'); 
 		else

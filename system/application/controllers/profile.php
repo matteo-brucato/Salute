@@ -318,6 +318,13 @@ class Profile extends Controller {
 		if ($this->auth->check(array(auth::CurrLOG,auth::ACCOUNT,$id)) !== TRUE) {
 			return;
 		}
+		
+		// If you are trying to view yourself, go to index
+		if ($this->auth->get_account_id() === $id) {
+			$this->index();
+			return;
+		}
+		
 		/**if ($id == NULL) {
 			$this->ui->set_redirect('/profile');
 			//$this->ui->show_app_error();
@@ -370,7 +377,7 @@ class Profile extends Controller {
            //show picture and info
            $mainview .= $this->load->view('mainpane/hcp_public_profile',
                array('info' => $info[0], 'aid' => $id), TRUE); 
-           $mainview .= '<a href="/connections/request/'.$id.'">Request Connection</a>';  
+           $mainview .= '<a href="/connections/request/'.$id.'" class="confirm">Request Connection</a>';  
            $this->ui->set(array($mainview));    
            return;     
          }
@@ -394,7 +401,7 @@ class Profile extends Controller {
 				array('info' => $info[0], 'aid' => $id), TRUE); 
 			
 			if( $this->auth->get_type() === 'patient' )
-				$mainview .= '<a href="/connections/request/'.$id.'">Request Connection</a>';
+				$mainview .= '<a href="/connections/request/'.$id.'" class="confirm">Request Connection</a>';
 			$this->ui->set(array($mainview));
 			 
            }
@@ -475,8 +482,8 @@ class Profile extends Controller {
 			}
 			$mainview .= $this->load->view('mainpane/lists/medical_records',
 										array('list' => $meds, 'list_name' => 'Shared Medical Records'), TRUE);
-			$mainview .= '<a href="/connections/permissions/'.$id.'">Change permissions</a><br>';
-			$mainview .= '<a href="/medical_records/myrecs/">View all medical records</a>';               
+			$mainview .= '<a href="/connections/permissions/'.$id.'">Change Medical Record Permissions</a><br>';
+			//$mainview .= '<a href="/medical_records/myrecs/">View all my medical records</a>';               
                
                
 			$this->ui->set(array($mainview));

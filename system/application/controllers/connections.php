@@ -23,6 +23,7 @@ class Connections extends Controller {
 		$this->load->model('connections_model');
 		$this->load->model('medical_records_model');
 		$this->load->model('hcp_model');
+		$this->load->model('account_model');
 	}
 
 	/**
@@ -202,12 +203,23 @@ class Connections extends Controller {
 		
 		// Then, get all the records of the current user (must be a patient)
 		$allrecs = $this->medical_records_model->list_my_records(array($this->auth->get_account_id()));
-		//$hcpsrecs = $this->medical_records_model->list_my_records(array($this->auth->get_account_id()));
+		
+		// Get tuple for $aid
+		$info = $this->account_model->get_account_info($aid);
+		if ($info === -1) {
+			$this->ui->set_query_error();
+			return;
+		}
+		if ($info === NULL) {
+			$this->ui->set_error('No such account');
+			return;
+		}
+
 		// All ok
 		$this->ui->set(array(
 			$this->load->view('mainpane/forms/change_conn_perms',
 				array(
-				'list_name' => 'Select medical records to share',
+				'list_name' => 'Select medical records to share with '.$info['first_name'].' '.$info['last_name'],
 				'list' => $allrecs,
 				'list2'=>$allowedrecs,
 				'aid'=>$aid), TRUE)
@@ -300,6 +312,12 @@ class Connections extends Controller {
 		));
 		if ($check !== TRUE) return;
 		
+		// Cannot request connection to yourself
+		if ($this->auth->get_account_id() === $receiver_id) {
+			$this->ui->set_error('Cannot request connection with yourself');
+			return;
+		}
+		
 		// If current user is a hcp
 		if ($this->auth->get_type() === 'hcp') {
 			// An HCP can request connection only to other HCPs
@@ -326,8 +344,31 @@ class Connections extends Controller {
 			return;
 		}
 		
+		// Get the email of id_refered doctor
+		$result = $this->account_model->get_account_email(array($receiver_id));
+		if ($result === -1) {
+			$this->ui->set_query_error();
+			return;
+		}
+		elseif (count($result) <= 0) {
+			$this->ui->set_error('No account found');
+			return;
+		}
+		
 		// Everything's fine
-		$this->load->library('email');
+		$body = 'You have a new connection request from '.
+			$this->auth->get_first_name().' '.$this->auth->get_last_name().
+			'. Click <a href="https://'.$_SERVER['SERVER_NAME'].'/connections/accept/'.$this->auth->get_account_id().'">here</a> to accept.';
+		
+		$this->load->helper('email');
+		send_email(
+			'salute-noreply@salute.com',
+			$result[0]['email'],
+			'New Connection Request',
+			$body
+		);
+		
+		/*$this->load->library('email');
 		$config['mailtype'] = 'html';
 		$this->email->initialize($config);
 		//$this->email->from($this->auth->get_email());
@@ -340,8 +381,7 @@ class Connections extends Controller {
 			'You have a new connection request from '.
 			$this->auth->get_first_name().' '.$this->auth->get_last_name().
 			'. Click <a href="https://'.$_SERVER['SERVER_NAME'].'/connections/accept/'.$this->auth->get_account_id().'/'.$receiver_id.'">here</a> to accept.');
-		
-		$this->email->send();
+		$this->email->send();*/
 		
 		// Give results to the client
 		$this->ui->set_message('Your request has been submitted.', 'Confirmation');
@@ -387,6 +427,8 @@ class Connections extends Controller {
 				$this->ui->set_message('You have been disconnected from that health account', 'Confirmation');
 				break;
 		}
+		
+		$this->ui->set(array(''));
 	}
 
 	/** 
@@ -434,6 +476,7 @@ class Connections extends Controller {
 				break;
 			default:
 				$this->ui->set_message('You have accepted the connection.','Confirmation');
+				$this->_pending_in();
 				return;
 		}
 
@@ -482,6 +525,8 @@ class Connections extends Controller {
 				$this->ui->set_message('Your connection request has been canceled', 'Confirmation');
 				break;
 		}
+		
+		$this->_pending_out();
 	}
 	
 	/**

@@ -32,8 +32,8 @@ class Patient_model extends Model {
 	function get_patients() {
 		$sql = "SELECT * 
 			FROM patient_account P, accounts A
-			WHERE P.account_id = A.account_id and A.private = false;";
-		$query = $this->db->query($sql);
+			WHERE P.account_id = A.account_id and A.private = false AND A.account_id != ? ORDER BY P.first_name, P.last_name ASC";
+		$query = $this->db->query($sql, array($this->auth->get_account_id()));
 		
 		if ($this->db->trans_status() === FALSE)
 			return -1;

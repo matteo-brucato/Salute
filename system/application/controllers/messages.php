@@ -100,7 +100,7 @@ class Messages extends Controller {
 	function send($to) {
 		if ($this->auth->check(array(
 			auth::CurrLOG,
-			auth::CurrCONN, $account_id
+			auth::CurrCONN, $to
 		)) !== TRUE) return;
 		
 		$acc = $this->account_model->get_account_email(array($to));

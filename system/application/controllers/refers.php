@@ -242,31 +242,31 @@
 	  * */
 	  function accept_referal($referal_id = NULL){
 			
-		  $check = $this->auth->check(array(
+		$check = $this->auth->check(array(
 			auth::CurrLOG,
 			auth::CurrPAT,
 			auth::CurrREFOWN, $referal_id));
-		  if ($check !== TRUE) return;
-		  
-		  //set referal status to true
-		  $res = $this->referal_model->approve(array($referal_id));
-		  switch ($res) {
-			  case -1:
+		if ($check !== TRUE) return;
+		
+		//set referal status to true
+		$res = $this->referal_model->approve(array($referal_id));
+		switch ($res) {
+			case -1:
 		          $this->ui->set_query_error();
 				  return;
-			  case -2:
+			case -2:
 				  $this->ui->set_error('Referal ID does not exist');
 				  return;
-			  case -3:
+			case -3:
 				  $this->ui->set_error('This referral has already been accepted. Either manually or automatically.');
 				  return;
-			  default:
+			default:
 				  break;
-		  }
-		  
-		  //get all of the info regarding the referal
-		  $referal_info = $this->referal_model->get_referal(array($referal_id));
-		  switch ($referal_info) {
+		}
+		
+		//get all of the info regarding the referal
+		$referal_info = $this->referal_model->get_referal(array($referal_id));
+		switch ($referal_info) {
 			  case -1:
 		          $this->ui->set_query_error();
 				  return;
@@ -275,49 +275,84 @@
 				  return;
 			  default:
 				  break;
-		  }
-		  
-		  //create connection
-		  $res = $this->connections_model->add_connection(array($this->auth->get_account_id(), $referal_info[0]['is_refered_id']));
-			switch ($res) {
-				case -1:
-				    $this->ui->set_query_error();
-					return;
-				case -3:
-					$this->ui->set_error('This connection has been already requested');
-					return;
-				default:
-					$this->load->library('email');
-					$config['mailtype'] = 'html';
-					$this->email->initialize($config);
-					//$this->email->from($this->auth->get_email());
-					$this->email->from('salute-noreply@salute.com');
-					//$this->email->to($results['email']);
-					$this->email->to('mattfeel@gmail.com');
-					$this->email->subject('New Connection Request');
-					
-					//get the name of the patient to put in the email
-					$patient_name = $this->patient_model->get_patient($referal_info[0]['patient_id']);
-					if ($patient_name  === -1){
-						$this->ui->set_query_error();
-						return -1;
-					}
-					elseif ( count($patient_name) <= 0 ){
-						$this->ui->set_error('Patient does not exist');
-						return;
-					}
-					else{					
-						$this->email->message(
-							'You have a new connection request from '.
-							$patient_name[0]['first_name'].' '.$patient_name[0]['last_name'].
-							'. Click <a href="https://'.$_SERVER['SERVER_NAME'].'/connections/accept/'.$referal_info[0]['patient_id'].'/'.$referal_info[0]['is_refered_id'].'">here</a> to accept.');
-						
-						$this->email->send();
-						break;
-					}
-			}
-			
-			$this->ui->set_message('Your request has been submitted','Confirmation');
+		}
+		
+		//create connection
+		$res = $this->connections_model->add_connection(array($this->auth->get_account_id(), $referal_info[0]['is_refered_id']));
+		switch ($res) {
+			case -1:
+				$this->ui->set_query_error();
+				return;
+			case -3:
+				$this->ui->set_error('This connection has been already requested');
+				return;
+		}
+		
+		/*$this->load->library('email');
+		$config['mailtype'] = 'html';
+		$this->email->initialize($config);
+		//$this->email->from($this->auth->get_email());
+		$this->email->from('salute-noreply@salute.com');
+		//$this->email->to($results['email']);
+		$this->email->to('mattfeel@gmail.com');
+		$this->email->subject('New Connection Request');*/
+		
+		//get the name of the patient to put in the email
+		$patient_name = $this->patient_model->get_patient($referal_info[0]['patient_id']);
+		if ($patient_name  === -1){
+			$this->ui->set_query_error();
+			return -1;
+		}
+		elseif ( count($patient_name) <= 0 ){
+			$this->ui->set_error('Patient does not exist');
+			return;
+		}
+		
+		//get the name of the doctor to put in the email
+		$refering_name = $this->patient_model->get_patient($referal_info[0]['refering_id']);
+		if ($refering_name  === -1){
+			$this->ui->set_query_error();
+			return -1;
+		}
+		elseif ( count($refering_name) <= 0 ){
+			$this->ui->set_error('HCP id does not exist');
+			return;
+		}
+		
+		// Get the email of id_refered doctor
+		$refered_email = $this->account_model->get_account_email(array($referal_info[0]['is_refered_id']));
+		if ($refered_email === -1) {
+			$this->ui->set_query_error();
+			return;
+		}
+		elseif (count($refered_email) <= 0) {
+			$this->ui->set_error('No account found');
+			return;
+		}
+		
+		// Send the email to the is_refered doctor
+		$this->load->helper('email');
+		send_email(
+			'salute-noreply@salute.com',
+			$refered_email[0]['email'],
+			'Referral Acceptance',
+			'You have a new connection request from '.
+			$patient_name[0]['first_name'].' '.$patient_name[0]['last_name'].
+			', that came from a referral. The refering HCP is '.
+			$refering_name[0]['first_name'].' '.$refering_name[0]['last_name'].
+			' Click <a href="https://'.$_SERVER['SERVER_NAME'].'/connections/accept/'.
+			$referal_info[0]['patient_id'].'">here</a> to accept.'
+		);
+		
+		
+		/*$this->email->message(
+			'You have a new connection request from '.
+			$patient_name[0]['first_name'].' '.$patient_name[0]['last_name'].
+			'. Click <a href="https://'.$_SERVER['SERVER_NAME'].'/connections/accept/'.$referal_info[0]['patient_id'].'/'.$referal_info[0]['is_refered_id'].'">here</a> to accept.');
+		
+		$this->email->send();*/
+		
+		$this->ui->set_message('Your request has been submitted','Confirmation');
 	 }
 	
 	

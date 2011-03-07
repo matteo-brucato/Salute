@@ -202,7 +202,7 @@ class Groups extends Controller {
 		if($mem === -1 || $group === -1){
 			$this->ui->set_query_error();
 			return;
-		} else if ($mem){ 
+		} else if ($mem === TRUE){ 
 			$this->ui->set_error('You are already a member of this group.','notice');
 			return;
 		} else if ($mem === FALSE){
@@ -227,6 +227,7 @@ class Groups extends Controller {
 		}
 		
 		// if its a private group, check that they have an invitation
+		$invited = false;
 		if($group['public_private'] === '1'){
 			$invited = $this->groups_model->is_invited($this->auth->get_account_id(),$group_id);
 			if ($invited === -1){
@@ -237,12 +238,21 @@ class Groups extends Controller {
 				$this->ui->set_error('You must be invited to join this private group.','Permission Denied');
 				return;
 			}
+			$invited = true;
 		}
 		
 		$check = $this->groups_model->join($this->auth->get_account_id(),$group_id);
 		if ($check === -1){
 			$this->ui->set_query_error();
 			return;	
+		}
+		
+		if ($invited) {
+			$delinv = $this->groups_model->delete_invitation($this->auth->get_account_id(),$group_id);
+			if ($delinv === -1) {
+				$this->ui->set_query_error();
+				return;	
+			}
 		}
 		
 		$this->db->trans_complete();
@@ -278,6 +288,20 @@ class Groups extends Controller {
 			$this->ui->set_query_error();
 			return;
 		} else if ($mem){
+			$group = $this->groups_model->get_group($group_id);
+			if ($group === -1){
+				$this->ui->set_query_error();
+				return;
+			}
+			else if ($group === NULL){
+				$this->ui->set_error('No such group');
+				return;
+			}
+			if ($group['account_id'] === $this->auth->get_account_id()){
+				$this->ui->set_error('You are the creator of the group, you cannot leave.','Permission Denied');
+				return;
+			}
+			
 			$check = $this->groups_model->remove($this->auth->get_account_id(),$group_id);
 			if ($check === -1){
 				$this->ui->set_query_error();
@@ -403,18 +427,27 @@ class Groups extends Controller {
 				$alert .= 'Ignoring id '.$iid.'<br />';
 				continue;
 			}
+			
+			$alert .= 'Inviting id '.$iid.'... ';
+			
+			$is_mem = $this->groups_model->is_member($iid,$gid);
+			if($is_mem === -1){
+				$this->ui->set_query_error();
+				return;
+			}else if ($is_mem === TRUE){
+				$alert .= 'This user is already a member in the group.<br />';
+				continue;
+			}
+			
 			$is_inv = $this->groups_model->is_invited($iid,$gid);
 			if($is_inv === -1){
 				$this->ui->set_query_error();
 				return;
 			}else if ($is_inv === TRUE){
-				$this->ui->set_message('This user has already been invited to the group.');
-				$this->lists('mine');
-				return;
+				$alert .= 'This user has already been invited to the group.<br />';
+				continue;
 			}
 			
-			$alert .= 'Inviting id '.$iid.'... ';
-			echo $alert;
 			$invitation = $this->groups_model->invite($this->auth->get_account_id(),$iid,$gid);
 			if ($invitation === -1){
 				$this->ui->set_query_error();
@@ -427,18 +460,33 @@ class Groups extends Controller {
 				$alert .= 'error, could not send invitation email<br />';
 				continue;
 			}
+			if(count($email) <= 0) {
+				$alert .= 'error, account id does not exist<br />';
+				continue;
+			}
+			
 			$message_body = 'Hello Salute member,<br /><br />'.
 				$this->auth->get_first_name().' '.$this->auth->get_last_name().
 				' invited you to join group '.$group['name'].'!<br />'.
 				'Click <a href="/grups/members/join/'.$gid.'">here</a> to join the group.';
-			$this->load->library('email');
+			
+			// Everything's fine
+			$this->load->helper('email');
+			send_email(
+				$this->auth->get_email(),
+				$email[0]['email'],
+				'Salute - Group Invitation',
+				$message_body
+			);
+			
+			/*$this->load->library('email');
 			$config['mailtype'] = 'html';
 			$this->email->initialize($config);
 			$this->email->from($this->auth->get_email());
 			$this->email->to($email[0]['email']);
 			$this->email->subject('Salute - Group Invitation');
 			$this->email->message($message_body);
-			$this->email->send();
+			$this->email->send();*/
 			
 			$alert .= 'email invitation sent!<br />';
 		}
@@ -731,9 +779,19 @@ class Groups extends Controller {
 			return;
 		}
 		
+		$group = $this->groups_model->get_group($group_id);
+		if ($group === -1){
+			$this->ui->set_query_error();
+			return;
+		}
+		else if ($group === NULL){
+			$this->ui->set_error('No such group');
+			return;
+		}
+		
 		$this->ui->set(array($this->load->view('mainpane/forms/edit_member',array(
 																			'curr_info' => $curr_info, 
-																			'group_id' => $group_id, 
+																			'group' => $group, 
 																			'account_id' => $account_id),
 																			 TRUE)));
 
@@ -756,9 +814,32 @@ class Groups extends Controller {
 		}
 		
 		$perm = $this->input->post('permissions');
-
 		if($perm == NULL)	{
 			$this->ui->set_error('All Fields are Mandatory.','Missing Arguments'); 
+			return;
+		}
+
+		$me = $this->groups_model->get_member($this->auth->get_account_id(),$group_id);
+		if($me === -1){
+			$this->ui->set_query_error();
+			return;	
+		}
+		if($perm > $me['permissions']){
+			$this->ui->set_error('You cannot set a member\'s permission to a level higher than yours.','Invalid Input'); 
+			return;
+		}
+
+		$group = $this->groups_model->get_group($group_id);
+		if ($group === -1){
+			$this->ui->set_query_error();
+			return;
+		}
+		else if ($group === NULL){
+			$this->ui->set_error('No such group');
+			return;
+		}
+		if ($group['account_id'] === $account_id){
+			$this->ui->set_error('You cannot change the permission level of the creator of the group.');
 			return;
 		}
 

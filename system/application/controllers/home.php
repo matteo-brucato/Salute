@@ -163,7 +163,15 @@ class Home extends Controller {
 		}
 		$password = $result[0]['password'];
 		
-		$this->load->library('email');
+		$this->load->helper('email');
+		send_email(
+			'salute-noreply@salute.com',
+			$result[0]['email'],
+			'Password Retrieval',
+			'You have requested for retrieval of your password. Your password is:'.$password.' '.
+			'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.'
+		);
+		/*$this->load->library('email');
 		$config['mailtype'] = 'html';
 		$this->email->initialize($config);
 		$this->email->from('salute-noreply@salute.com');
@@ -173,7 +181,7 @@ class Home extends Controller {
 			'You have requested for retrieval of your password. Your password is:'.$password.' '.
 			'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
 
-		$this->email->send();
+		$this->email->send();*/
 		$this->ui->set_message('Your password has been emailed to you.','Confirmation');
 	}
 
@@ -287,7 +295,15 @@ class Home extends Controller {
 			return;
 		}
 		else {
-			$this->load->library('email');
+			$this->load->helper('email');
+			send_email(
+				'salute-noreply@salute.com',
+				$email,
+				'Registration Confirmation',
+				'You have successfully registered with Salute!'.' '.
+				'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.'
+			);
+			/*$this->load->library('email');
 			$config['mailtype'] = 'html';
 			$this->email->initialize($config);
 			$this->email->from('salute-noreply@salute.com');
@@ -296,8 +312,7 @@ class Home extends Controller {
 			$this->email->message(
 				'You have successfully registered with Salute!'.' '.
 				'Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.');
-
-			$this->email->send();
+			$this->email->send();*/
 			$this->ui->set_message('Congratulations, you are now registered. A confirmation email has been sent to you.'.
 			' Click <a href="https://'.$_SERVER['SERVER_NAME'].'/">here</a> to login.', 'Confirmation');
 		}
