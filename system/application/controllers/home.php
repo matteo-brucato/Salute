@@ -105,8 +105,13 @@ class Home extends Controller {
 				$this->ui->set_error('Sorry! That account does not exist.'); 
 				return;
 			} else if ( !$active_status ){
-				$this->ui->set_redirect('/settings/activate/'.$results[1]["account_id"]); 
-				return;
+				//$this->ui->set_redirect('/settings/activate/'.$results[1]["account_id"]);
+				
+				$reactive = $this->account_model->activate(array($account_id));
+				if ($reactive === -1) {
+					$this->ui->set_query_error();
+					return;
+				}
 			}
 			$login_data = array(
 				'account_id' => $results[1]["account_id"],
@@ -190,11 +195,6 @@ class Home extends Controller {
 	 * */
 	function register()
 	{
-		if ($this->auth->check(auth::CurrLOG) === TRUE) {
-			$this->ui->set_message('You are already logged in');
-			return;
-		}
-		
 		$this->ui->set(array($this->load->view('mainpane/forms/registration', '', TRUE)));
 	}
 

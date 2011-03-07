@@ -392,6 +392,7 @@ class Profile extends Controller {
              //not connected and not public patient
              //show error
              $this->ui->set_error('This account is private.','Permission Denied');
+             $this->ui->set(array(''));
              return;
            }
            else{

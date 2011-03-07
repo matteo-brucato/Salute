@@ -16,7 +16,9 @@
 			$this->load->library('auth');
 			$this->load->model('referal_model');
 			$this->load->model('connections_model');
+			$this->load->model('account_model');
 			$this->load->model('patient_model');
+			$this->load->model('hcp_model');
 	  }
 		
 	
@@ -203,7 +205,7 @@
 			default:
 				if ($level['sender_level'] === '2' or $level['sender_level'] === '3'){
 					
-					$approve = $this->referal_model->approve(array($referal_id));
+					$approve = $this->referal_model->approve(array($referal_id[0]['referal_id']));
 					switch ($approve) {
 						case -1:
 							$this->ui->set_query_error();
@@ -222,7 +224,7 @@
 									$this->ui->set_error('This connection has been already requested');
 									return;
 								default:
-									//send email
+									$this->_send_refer_email($referal_id);
 									break;
 							}
 					}
@@ -230,6 +232,7 @@
 		}
 		
 		$this->ui->set_message('Your referral was successfully created!', 'Confirmation');
+		$this->my_referals();
 	}
 	
 	 
@@ -288,15 +291,13 @@
 				return;
 		}
 		
-		/*$this->load->library('email');
-		$config['mailtype'] = 'html';
-		$this->email->initialize($config);
-		//$this->email->from($this->auth->get_email());
-		$this->email->from('salute-noreply@salute.com');
-		//$this->email->to($results['email']);
-		$this->email->to('mattfeel@gmail.com');
-		$this->email->subject('New Connection Request');*/
+		$this->_send_refer_email($referal_info);
 		
+		$this->ui->set_message('Your request has been submitted','Confirmation');
+		$this->my_referals();
+	 }
+	
+	function _send_refer_email($referal_info) {
 		//get the name of the patient to put in the email
 		$patient_name = $this->patient_model->get_patient($referal_info[0]['patient_id']);
 		if ($patient_name  === -1){
@@ -309,7 +310,7 @@
 		}
 		
 		//get the name of the doctor to put in the email
-		$refering_name = $this->patient_model->get_patient($referal_info[0]['refering_id']);
+		$refering_name = $this->hcp_model->get_hcp($referal_info[0]['refering_id']);
 		if ($refering_name  === -1){
 			$this->ui->set_query_error();
 			return -1;
@@ -343,18 +344,7 @@
 			' Click <a href="https://'.$_SERVER['SERVER_NAME'].'/connections/accept/'.
 			$referal_info[0]['patient_id'].'">here</a> to accept.'
 		);
-		
-		
-		/*$this->email->message(
-			'You have a new connection request from '.
-			$patient_name[0]['first_name'].' '.$patient_name[0]['last_name'].
-			'. Click <a href="https://'.$_SERVER['SERVER_NAME'].'/connections/accept/'.$referal_info[0]['patient_id'].'/'.$referal_info[0]['is_refered_id'].'">here</a> to accept.');
-		
-		$this->email->send();*/
-		
-		$this->ui->set_message('Your request has been submitted','Confirmation');
-	 }
-	
+	}
 	
 	/**
 	 * Allows a patient or hcp to delete a referal
@@ -381,9 +371,10 @@
 				return;
 			default:
 				$this->ui->set_message('The referal was successfully deleted.','Confirmation');
+				$this->my_referals();
 				return;
 		}
-	}	 
+	}
  }
  /** @} */
 ?>
