@@ -14,6 +14,7 @@ $this->load->helper('table_result');
  * ALL the tuples are of the same status.
  * */
 
+
 echo '<h2 class="table-header">'.$list_name.'</h2>';
 
 // Id of the table
@@ -31,7 +32,7 @@ $table['tuples'] = $list;
 
 // Attributes to display
 $table['attr'] = array( 'first_name', 'last_name', 'amount', 'descryption', 'due_date','creation_date', 'cleared', 'actions');
-
+$total = 0;
 
 for ($i = 0; $i < count($table['tuples']); $i++) {
 	
@@ -49,6 +50,7 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 		else if( $table['tuples'][$i]['cleared'] === 'f' &&
 				$table['tuples'][$i]['hcp_kept'] === 't' ){
 					$table['tuples'][$i]['cleared'] = 'unpaid';
+					$total += $table['tuples'][$i]['amount'];
 					$actions = array('pay-bill');
 				
 		}
@@ -69,14 +71,19 @@ for ($i = 0; $i < count($table['tuples']); $i++) {
 		}
 	}
 		
-
 	$table['tuples'][$i]['actions'] = '<ul>';
 	$table['tuples'][$i]['actions'] .= get_action_strings($actions, $list[$i]);
 	$table['tuples'][$i]['actions'] .= '<ul>';
 }	
-
-
-
 view_table($table);
+if( $show_total === TRUE ){
+	echo 'Total due: $'.$total;
+}
+	
+
+
+
+
+
 ?>
 
