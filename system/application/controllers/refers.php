@@ -80,7 +80,9 @@
 			auth::CurrHCP));
 		if ($check !== TRUE) return;
 		
+		$this->db->trans_start();
 		$results = $this->connections_model->list_hcps_connected_with($this->auth->get_account_id()); 
+		$this->db->trans_complete();
 		
 		if ($results === -1) {
 			$this->ui->set_query_error();
@@ -251,6 +253,8 @@
 			auth::CurrREFOWN, $referal_id));
 		if ($check !== TRUE) return;
 		
+		$this->db->trans_start();
+		
 		//set referal status to true
 		$res = $this->referal_model->approve(array($referal_id));
 		switch ($res) {
@@ -290,6 +294,7 @@
 				$this->ui->set_error('This connection has been already requested');
 				return;
 		}
+		$this->db->trans_complete();
 		
 		$this->_send_refer_email($referal_info);
 		
@@ -360,8 +365,10 @@
 		//echo $check;
 		if ($check !== TRUE) return;
 		
+		$this->db->trans_start();
 		$results = $this->referal_model->delete(array($ref_id));
-							
+		$this->db->trans_complete();
+		
 		switch ($results) {
 			case -1:
 				$this->ui->set_query_error();
