@@ -129,7 +129,7 @@ DOCUMENTATION: ## LAST THING SINCE ITS NOT DUE TILL 15th ##
 
 - add how-to's for patient to patient stuff and group stuff
 			
-- add a glossary in the documentation
+//- add a glossary in the documentation
 - explain PUBLIC/PRIVATE accounts:
     - ONLY applicable to patients, NOT hcps 
     - Patient's who have a private profile are in summary: users who only want to send requests themselves, they cannot
