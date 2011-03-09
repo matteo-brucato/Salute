@@ -94,6 +94,23 @@ GROUPS:
 ============================================================================================================================================
 
 DOCUMENTATION: ## LAST THING SINCE ITS NOT DUE TILL 15th ##
+//- added documentation for database test data
+
+//- added documentation for USER MANUAL:
+//	-HCP user manual:
+//		-Using the side pannel
+//			-Added: My Groups, My group invitations, Create a new group, All groups; My referrals, Create referral
+//		-How-to's
+//			-Added: Create a referral; Delete a referal; Change picture; Delete picture
+
+//	-PATIENT user manual:
+//		-Using the side pannel
+//			- My referrals, under My HCPs; My Patient Friends, Pending incoming, Pending outgoing; My Groups, My group invitations, Create a new group, All groups
+//		-How-to's
+//			-Added: Accept a referral, Delete a referral, Change privacy level, Change picture, Delete picture
+
+
+			
 - add a glossary in the documentation
 - explain PUBLIC/PRIVATE accounts:
     - ONLY applicable to patients, NOT hcps 
