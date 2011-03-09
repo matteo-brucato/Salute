@@ -99,17 +99,35 @@ DOCUMENTATION: ## LAST THING SINCE ITS NOT DUE TILL 15th ##
 //- added documentation for USER MANUAL:
 //	-HCP user manual:
 //		-Using the side pannel
-//			-Added: My Groups, My group invitations, Create a new group, All groups; My referrals, Create referral
+//			-Added: My Groups, My group invitations, Create a new group, All groups; 
+//                  My referrals, Create referral
 //		-How-to's
-//			-Added: Create a referral; Delete a referal; Change picture; Delete picture
+//			-Added: Create a referral; 
+//                  Delete a referal;
+//                  Change picture; 
+//                  Delete picture;
+//                  List all patient/hcps
+
+-add how-to's for group stuff
 
 //	-PATIENT user manual:
 //		-Using the side pannel
-//			- My referrals, under My HCPs; My Patient Friends, Pending incoming, Pending outgoing; My Groups, My group invitations, Create a new group, All groups
+//			- Added: My referrals, under My HCPs; 
+//                   My Patient Friends, Pending incoming, Pending outgoing; 
+//                   My Groups, My group invitations, Create a new group, All groups
 //		-How-to's
-//			-Added: Accept a referral, Delete a referral, Change privacy level, Change picture, Delete picture
+//			-Added: Request an appointment
+//                  Change\view shared medical records per hcp;
+//                  Change\view shared medical records per medical record;
+//                  Change connection level;
+//                  Accept a referral;
+//                  Delete a referral;
+//                  Change privacy level;
+//                  Change picture;
+//                  Delete picture;
+//                  List all patient/hcps
 
-
+- add how-to's for patient to patient stuff and group stuff
 			
 - add a glossary in the documentation
 - explain PUBLIC/PRIVATE accounts:
@@ -132,4 +150,4 @@ DOCUMENTATION: ## LAST THING SINCE ITS NOT DUE TILL 15th ##
 ============================================================================================================================================
 
 PRESENTATION:
-- Prepare a list of actions to perform during the presentation (we all need to do that, I think)
+//- Prepare a list of actions to perform during the presentation (we all need to do that, I think)
