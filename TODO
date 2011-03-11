@@ -146,7 +146,7 @@ DOCUMENTATION: ## LAST THING SINCE ITS NOT DUE TILL 15th ##
     - fix the bug
     - report the bug in the documentation
 - FUTURE FEATURE: 'type' in permissions table: 0 is download only 1 is also delete
-
+- Section 2 Requirements: the last 2 bullets in 1.2.1's list of patient-to-HCP connection actions dont make sense
 ============================================================================================================================================
 
 PRESENTATION:

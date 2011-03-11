@@ -7,17 +7,18 @@ The user requirements presented by the client can be categorized into general, p
 \item Accounts should be protected by a username and password combination
 \item Depending on the type of user account, each user will have a unique user profile within the system
 \item Depending on the type of user account, one of three social networking connection options are available. When requesting a social network connection, proper confirmation is required.  Upon forming a social network connection, the patient and provider will be listed in each other's respective list of contacts.
+\item Accounts can be private or public. Currently, the feature is only implemented to affect the patients privacy. If private, the account will not be in the public listing of accounts. A \emph{Salute} member cannot request a connection with a private account. Private accounts only allow outgoing connection requests. 
 \end{itemize} 
 
 \section{Connections}
-A Salute member can make a social network connection with other Salute members. There are three types of connections: Patient to Doctor, Doctor to Doctor, and Patient to Patient. 
+A Salute member can make a social network connection with other Salute members. There are three types of connections: patient-to-HCP, HCP-to-HCP, and patient-to-patient. 
 
 \subsection{Connection Level}
-Every connection has a level associated with it, that describes the level of trust between the two parties. For the time being, this level is only used to describe patient-to-patient and patient-to-HCP connections and can only be changed by a patient.
+Every connection has a level associated with it, that describes the level of trust between the two parties. For the time being, this level is only used to describe patient-to-patient and patient-to-HCP connections and can only be changed by the patient.
 
 In a patient-to-HCP connection, a patient can:
 \begin{itemize}
-\item Decide to grant access to all its current and future medical records, to a specific HCP, automatically
+\item Decide to grant access to all its current and future medical records to a specific HCP, automatically
 \item Decide to auto-accept referrals received by a specific HCP
 \item Decide to give both of the previous permissions to a specific HCP
 \item Decide to remove both of the previous permissions to a specific HCP
@@ -26,7 +27,7 @@ In a patient-to-HCP connection, a patient can:
 In a patient-to-patient connection, both patients can:
 \begin{itemize}
 \item Decide to share all their current and future medical records, automatically
-\item Decide to share medical records only manually
+\item Decide to share medical records manually only 
 \end{itemize}
 
 \subsection{Patient-Doctor Connections}
@@ -37,15 +38,16 @@ This type of connection can only be requested by a patient and represents the ``
 %\item Upon request, the patient can specify which level of trust he/she would like to establish with the healthcare provider. There are two levels: standard, high. The standard level of trust gives by default permissions to none of the patient's medical records, and referrals to other doctors must be accepted by the patient. The high level of trust gives by default permissions to all of the patient's medical records and automatically accepts healthcare provider connections by referral. (See Referral's Section). 
 \item Under each user's account, the list of their current contacts will be readily available and linked to their respective profile pages.
 \item Medical records may be uploaded by the healthcare provider to their patient's account. 
-\item A patient may set permissions to hide or allow all or individual medical records from their connected healthcare provider. 
-\item A healthcare provider can refer their connected patient to another healthcare provider. (See Section on Referrals)
+\item Medical records may be uploaded by the patient to their account.
+\item A patient may set permissions to hide or allow all or individual medical records from their connected HCP. 
+\item A HCP can refer their connected patient to another HCP. (See Section on Referrals)
 \end{itemize} 
 
 \subsection{Doctor-Doctor Connections}
-This relationship only exists between healthcare providers and represents the providers network of health care professionals.
+This relationship only exists between healthcare providers and represents the providers network of healthcare professionals.
 \begin{itemize}
-\item A healthcare provider can request a connection with another healthcare provider. 
-\item A healthcare provider may refer their patients to their connected healthcare provider collegues. 
+\item A HCP can request a connection with another HCP. 
+\item A HCP may refer their patients to their connected HCP collegues. 
 \end{itemize} 
 
 \subsection{Patient-Patient Connections}
