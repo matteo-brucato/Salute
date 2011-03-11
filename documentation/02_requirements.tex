@@ -7,7 +7,7 @@ The user requirements presented by the client can be categorized into general, p
 \item Accounts should be protected by a username and password combination
 \item Depending on the type of user account, each user will have a unique user profile within the system
 \item Depending on the type of user account, one of three social networking connection options are available. When requesting a social network connection, proper confirmation is required.  Upon forming a social network connection, the patient and provider will be listed in each other's respective list of contacts.
-\item Accounts can be private or public. Currently, the feature is only implemented to affect the patients privacy. If private, the account will not be in the public listing of accounts. A \emph{Salute} member cannot request a connection with a private account. Private accounts only allow outgoing connection requests. 
+\item Accounts can be private or public. Currently, the feature is only implemented to affect the patients privacy. If private, the account will not be in the public listing of accounts. A \emph{Salute} member cannot request a connection with a private account. Private accounts only allow outgoing connection requests. Private accounts are still listed in the members listings of groups they are members of. 
 \end{itemize} 
 
 \section{Connections}
@@ -62,25 +62,26 @@ This relationship allows patients to share resources with other patients. It can
 A referral may be done by a healthcare provider or a patient.
 
 \begin{itemize}
-\item (Referral by Healthcare Provider) Referrals allow healthcare providers to refer their patients to connect with another healthcare provider that he/she is connected with. If the patient has a high level of trust with the healthcare provider, when the healthcare provider refers the patient to his/her connected healthcare provider, the patient will automatically send a connection request to the refered healthcare provider. If the level of trust is standard between the patient and healthcare provider, the patient must accept the pending referred connection. The permissions of the patient's medical records that the original healthcare provider has, will be transfered over to the referred healthcare provider. 
-\item (Referral by Patient) A patient can also refer their connected healthcare provider to their connected peers(patients). This serves to faciliate patients to suggest their trusted healthcare providers to their friends(connected peers/patients).
+\item (Referral by Healthcare Provider) Referrals allow healthcare providers to refer their patients to connect with another healthcare provider that he/she is connected with. If the patient has a high (connection) level of trust with the HCP, when the HCP refers the patient to his/her collegue (connected HCP), the patient will automatically send a connection request to the refered HCP. If the (connection) level of trust is standard between the patient and HCP, the patient must accept the pending referred connection. The permissions of the patient's medical records that the referred HCP has, will mirror the original HCP's permissions.
+
+\item (Referral by Patient) A patient can also refer their connected HCPs to their connected peers(patients). This serves to faciliate patients to suggest their trusted hcps to their peers(connected patients).
 \end{itemize} 
 
 \section{Groups}
 \begin{itemize}
 \item A group may be created, modified, or deleted by patients or healthcare providers.
 \item A group may be a public or private group. 
-\item (Public Group)Only public groups will be visible in the 'Groups Listing' on Salute. From the 'Group Listing', a Salute member can request to join the group.
-\item (Private Groups) The private group will be listed under 'My Groups', for all members of the private group.The only way for a Salute member to join a private group is by invitation. The invitation may only be sent from an administrator of the group.
-\item There are three group categories: patient-patient, healthcare provider-healthcare provider, patient-healthcare provider.
-\item Each group member can have one of 4 different permissions: (1) post to the group only, (2) post to the group and invite other Salute members to the group, (3) post to the group, invite other Salute members to the group, and delete existing group members from the group, (4) post to the group, invite other Salute members, delete existing group members from the group, and modify or delete the group.
+\item (Public Group)Only public groups will be visible in the 'Groups Listing' on \emph{Salute}. From the 'Group Listing', a Salute member can request to join the group.
+\item (Private Groups) The private group will be listed under 'My Groups', for all \emph{Salute} members that are already in the private group.The only way for a Salute member to join a private group is by invitation. The invitation may only be sent from a member of the group.
+\item There are three group categories: patient-patient, healthcare provider-healthcare provider, patient-healthcare provider. An HCP may not join a patient-patient group. A patient may not join a hcp-hcp group. 
+\item Each group member can have one of 4 different permissions: (1) request connections to other members in the group, (2) request connections to other members in the group and invite their connections to the group, (3) request connections to other members in the group and invite their connections to the group, modify members' permission levels, and delete existing group members from the group, (4) request connections to other members in the group and invite their connections to the group,  modify members' permission levels, delete existing group members from the group, and modify or delete the group.
 \item By default, the creator of the group gets the 4th type of permission(see above bullet point). 
 \end{itemize} 
 
 \section{Patient Accounts}
 \begin{itemize}
 \item Patient accounts are exclusively for the use of patients
-\item Patient information is only available to healthcare providers to which the patient is connected with, and to patients/peers to which the patient is connected with.
+\item Patient information is only available to HCPs to which the patient is connected with, and to patients/peers to which the patient is connected with.
 \item May add, organize, and delete their medical records
 \item May manage their privacy settings for connections and medical records
 \item May connect, message, and interact with their connected Salute members

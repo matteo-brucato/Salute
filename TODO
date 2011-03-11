@@ -130,12 +130,13 @@ DOCUMENTATION: ## LAST THING SINCE ITS NOT DUE TILL 15th ##
 - add how-to's for patient to patient stuff and group stuff
 			
 //- add a glossary in the documentation
-- explain PUBLIC/PRIVATE accounts:
+/* - explain PUBLIC/PRIVATE accounts:
     - ONLY applicable to patients, NOT hcps 
     - Patient's who have a private profile are in summary: users who only want to send requests themselves, they cannot
 	  receive connection requests. They can receive referals and group invitations ONLY becasue they are received from their
 	  connected friends/hcps. If private patient joins a group, they will be listed in the group members list; this is because
 	  if they want to be part of the group, they only want to be public in that group.
+*/
 - describle protection of /resource folder: .htaccess to deny access to all resources inside, then the 'download' controller that reads
   files in a php file and gives a response to the client setting the mime type. this is for medical records and account images for now
 - describe bettere how MVC has been implemented (structure of folders and files)
@@ -147,6 +148,9 @@ DOCUMENTATION: ## LAST THING SINCE ITS NOT DUE TILL 15th ##
     - report the bug in the documentation
 - FUTURE FEATURE: 'type' in permissions table: 0 is download only 1 is also delete
 - Section 2 Requirements: the last 2 bullets in 1.2.1's list of patient-to-HCP connection actions dont make sense
+- Question: Given a high connection level b/w a patient and doctor, and the doctor refers to another doctor, the new
+			doctor receives the same permissions to the files that the 1st doctor has. This mirroring effect only occurs
+			at the time of accepting the refferral request, correct?
 ============================================================================================================================================
 
 PRESENTATION:
