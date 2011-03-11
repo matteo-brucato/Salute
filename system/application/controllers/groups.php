@@ -188,9 +188,15 @@ class Groups extends Controller {
 	}
 	
 	/**
-	 * Join an Existing Group
-	 * functionality tested.
-	 * @bug does not check if you have permission to join ( e.g. pats only, docs only )
+	 * Join a Group
+	 * @pre-cond	user logged in, group exists. 	
+	 * @input		group_id
+	 * @return		Error -- if :
+	 * 					logged in user is already a member of the group
+	 * 					logged in user is not the correct type (patient/hcp)
+	 * 					(if private group) logged in user is not invited to the group
+	 * 					query error
+	 * 				Message Confirmation, Reload My Groups
 	 * */
 	function _members_join($group_id = NULL){
 		if ($this->auth->check(array(auth::CurrLOG,auth::GRP,$group_id )) !== TRUE) return;
@@ -261,7 +267,7 @@ class Groups extends Controller {
 		if ($this->auth->check(array(auth::CurrGRPMEM,$group_id)) === TRUE){
 			$this->ui->set_message('You have successfully joined the group.','Confirmation');
 		} else {
-			$this->ui->set_error('Internal Server Error4','server');
+			$this->ui->set_error('Internal Server Error','server');
 			return;
 		}
 		$this->ui->set($this->lists('mine'));
@@ -478,15 +484,6 @@ class Groups extends Controller {
 				'Salute - Group Invitation',
 				$message_body
 			);
-			
-			/*$this->load->library('email');
-			$config['mailtype'] = 'html';
-			$this->email->initialize($config);
-			$this->email->from($this->auth->get_email());
-			$this->email->to($email[0]['email']);
-			$this->email->subject('Salute - Group Invitation');
-			$this->email->message($message_body);
-			$this->email->send();*/
 			
 			$alert .= 'email invitation sent!<br />';
 		}
