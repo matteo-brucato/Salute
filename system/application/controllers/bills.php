@@ -126,7 +126,7 @@ class Bills extends Controller {
 	 * 		error upon database query errors
 	 * 		success: redirect to a form page for HCP to input bill data
 	**/
-	function issue($patient_id){
+	function issue($patient_id = NULL){
 		$this->load->model('patient_model');
 		$check = $this->auth->check(array(auth::CurrLOG, auth::CurrHCP, auth::PAT, $patient_id, auth::CurrCONN, $patient_id ));
 		if ($check !== TRUE) return;
@@ -264,7 +264,7 @@ class Bills extends Controller {
 	 * 		error upon database query errors
 	 * 		success: redirect to a success page message
 	**/
-	function delete($bill_id) {
+	function delete($bill_id = NULL) {
 		$check = $this->auth->check(array(
 			auth::CurrLOG,
 			auth::BILL_DELC, $bill_id));
@@ -303,7 +303,7 @@ class Bills extends Controller {
 	 * 		error upon database query errors
 	 * 		success: changes attribute 'cleared' of type bool from false to true
 	**/
-	function pay($bill_id) {
+	function pay($bill_id = NULL) {
 		//logged in, currPAT, bill exists, is my bill, is active 
 		$check = $this->auth->check(array(auth::CurrLOG, auth::CurrPAT, auth::BILL_PAYC, $bill_id ));
 		if ($check !== TRUE) return;

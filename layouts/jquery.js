@@ -167,7 +167,7 @@ function execute_ajax(href, postdata) {
 		$.post(href, postdata, function(data, status, request) {
 			
 			if (data.redirect != "") {
-				// data.redirect contains the string URL to redirect to
+				// data.redirect contains the URL string to redirect to
 				window.location.href = data.redirect;
 				return;
 			}

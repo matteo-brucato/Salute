@@ -253,7 +253,7 @@ class Medical_records_model extends Model {
 		}
 		
 		$sql = "SELECT * FROM connections WHERE receiver_id = ? AND (receiver_id = '1' OR receiver_id = '3')";
-		$query = $this->db->query($sql, array($pid));
+		$query = $this->db->query($sql, array((int)$pid));
 		if ($this->db->trans_status() === FALSE)
 			return -1;
 		if ($query->num_rows() > 0) {

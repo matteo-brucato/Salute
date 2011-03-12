@@ -831,23 +831,20 @@ class Connections_model extends Model {
 	 * */
 	 function update_connection_level($inputs) {
 		
-		if ($inputs[2] === 'sender')
-		{
+		if ($inputs[2] === 'sender') {
 			$sql = "UPDATE connections
 				SET sender_level = ?
 				WHERE connection_id = ?";
-			$query = $this->db->query($sql, array($inputs[1], $inputs[0]));
-			if ($this->db->trans_status() === FALSE)
-				return -1;
 		}
 		else {
 			$sql = "UPDATE connections
 				SET receiver_level = ?
 				WHERE connection_id = ?";
-			$query = $this->db->query($sql, array($inputs[1], $inputs[0]));
-			if ($this->db->trans_status() === FALSE)
-				return -1;
 		}
+		
+		$query = $this->db->query($sql, array($inputs[1], $inputs[0]));
+		if ($this->db->trans_status() === FALSE)
+			return -1;
 		
 		return 0;
 	}

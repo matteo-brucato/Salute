@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
 			}
 			cout << "   obtained = " << curl_result << endl;
 			
-			// Check if expected result match with actual result
+			// Check if expected result matches actual result
 			if (curl_result != exp) {
 				cerr << "====================================" << endl
 				     << "   ERROR!                           " << endl
