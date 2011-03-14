@@ -109,18 +109,22 @@ The GUI is composed by:
 \item a footer
 \item a side panel to display additional information about the main content
 \item a main panel to display the main content of the page
+\item a space for messages
+\item a space for the current location in the website
 \end{itemize}
 The header simply contains the branding. The navigation bar allows a user to navigate between all the \emph{public} resources of the entire application and the footer has an extra set of public resources, not directly related to the use of the Web site.
 
 The main panel contains the actual information for the user, i.e. the response to the a specific request. The side panel is used to show additional information regarding the current resource displayed.
+
+There is also a special space to possibly display messages, like error messages or simply communications. A space for the current location is also available.
 
 All these panels are \emph{dynamic}, in the sense that their content depends on the current resource the user is accessing on a particular moment. They change during the application use, request after request.
 
 \subsection{Ajax}
 Our system is capable to do every request using the famous technology Ajax. To be more precise, using requests to server called XMLHTTPRequest. Our interface is configurable, in the sense that it can use Ajax or the classic http request. Both the client and the server are aware of this and whenever the server receives an XHR request, its answer will contain only the new views for some of the dynamic panels. Whereas, if the request is a normal HTTP request, it will provide the whole interface to the client. We will discuss later how we implemented it.
 
-\subsection{Layout}
-It's really hard to set a limit between content and presentation in an environment governed by HTML, but something can be done. We created all our views regardless of presentation aspects, focusing only on the most simple aspects of HTML. Our purpose is to separate this two concerns and leave to CSS the task to add colours, change positions of the elements and so forth. Doing so we also provided the possibility to change the layout in the future, or even dynamically.
+\subsection{Layouts}
+It's really hard to set a limit between content and presentation in an environment governed by HTML, but something can be done. We created all our views regardless of presentation aspects, focusing only on the most simple aspects of HTML. Our purpose is to separate this two concerns and leave to CSS the task to add colours, change positions of the elements and so forth. Doing so we also provided the possibility to change the layout in the future, or even dynamically. As for now, there are two layouts, one for patients and one for HCPs.
 
 
 
@@ -304,9 +308,51 @@ Holds all of the information to be able to determine which account gets invited 
 \subsubsection{Scripts to start the server and load the data}
 We used many scripts to create the database described above.  First of all we have a bash script called start\_everything.sh which as its name implies, starts everything.  It starts the PostgreSQL server, creates a PostgreSQL database, and then it uses an sql file called create\_tables.sql to create all of the tables described in the ER diagram.  It then calls the file load\_data.sql which loads all of the tables with test data.  In case we want to drop all of the test data we have an sql file called drop.sql.  In case we wanted to delete everything and start over, we have a bash script called delete\_everything.sh. 
 
+
+
+
+
+
 \section{MVC implementation}
 \label{sec:mvcimplement}
 In this section we will provide detailed, low-level information about the MVC that we implemented. Secondly, we list all the important assumptions that we made, that are fundamental for the understanding of the system.
+
+
+\subsection{Controllers}
+In $/system/application/controllers$ are placed all the controller classes. Each file defines a class. This is a list of all the controller classes that we implemented. Please, remember that in CodeIgniter each URL of the form $/ctr/fn/arg1/arg2/.../argn$ is ``mapped'' into one single controller function in one single class, precisely into the function/method $fn$ inside the controller class $ctr$, passing arguments $arg1, arg2, ..., agrn$.
+
+\begin{itemize}
+\item appointments
+\item bills
+\item connections
+\item download
+\item groups
+\item home
+\item medical\_records
+\item messages
+\item profile
+\item refers
+\item search
+\item settings
+\item upload
+\end{itemize}
+
+\subsection{Models}
+This is a list of all the model classes that we implemented, that are located at $/system/application/models$.
+
+\begin{itemize}
+\item account\_model
+\item appointments\_model
+\item bills\_model
+\item connections\_model
+\item groups\_model
+\item hcp\_model
+\item login\_model
+\item medical\_records\_model
+\item messages\_model
+\item patient\_model
+\item referal\_model
+\end{itemize}
 
 \subsection{Doxygen documentation}
 All the models, views and controllers have been implemented incorporated into the CodeIgniter framework in Php. We used the Doxygen\footnote{www.doxygen.org} comment format to be able to create a complete and organized implementation documentation out of the comments. This documentation is in a separate document called \emph{Salute - MVC Implementation}. There, one can find all the necessary details, together with a list of ``todo's'', ``tests'' and  ``bugs''.
@@ -333,16 +379,16 @@ A layout, as we believe, is just a way to reorganize spatially the content of a 
 Then, we used CSS to provide more presentational aspects to a layout. We also used some JavaScript when we wanted to add some other features to that layout. For example, you can see that every page is showed gradually and smoothly when loaded.
 
 \paragraph{Layout XHTML files}
-Our implementation does not force us to use only one, predefined layout. On the contrary, we could define a set of different layout, each of one locates the UI panels in different ways on the screen. Then, the server will decide which one of them to load, and this choice could even be done dynamically.
+Our implementation does not force us to use only one, predefined layout. On the contrary, we could define a set of different layout, each of one locates the UI panels in different ways on the screen. Then, the server will decide which one of them to load, and this choice would even be done dynamically.
 
 For each layout there must be a specific XHTML template file that organize the five components of the interface into an XML tree. These files are contained into the folder
 \begin{verbatim}
 /system/application/views/layouts
 \end{verbatim}
-Every template file contains the five interface components: 'header', 'navbar', 'mainpane', 'sidepane' and 'footer'. We decided to use the template parser provided by CodeIgniter, so that the XHTML contains only references to these components. Thanks to the parser, all the content decided by the controllers will be automatically placed into the XHTML hierarchy.
+Every template file contains the seven interface components: `header', `navbar', `mainpane', `sidepane', `footer', `curr\_location' and `message'. We decided to use the template parser provided by CodeIgniter, so that the XHTML contains only references to these components. Thanks to the parser, all the content decided by the controllers will be automatically placed into the XHTML hierarchy.
 
 \paragraph{Layout style folder}
-All layouts styles (CSS and Javascript) are contained into the folder /layouts. This folder has a specific folder for each specific layout (for each XHTML layout that we discussed previously). At this moment of implementation we have one layout called ''faux-8-2-col''\footnote{We used a free css layout from http://www.code-sucks.com/css\%20layouts/}. Inside its folder you can see all the .css and .js files necessary to describe \emph{position}, \emph{color}, \emph{size} and so forth, of every object in the XHTML page. It's also the layout that decides whether using Ajax or not, because we believe that the XHR functionality is a layout matter\footnote{We anticipate that the server will automatically behave accordingly to the request that it receives from the client, so that if it is Ajax, it will answer with a JSon array, otherwise it will provide the full UI.}.
+All layouts styles (CSS and Javascript) are contained into the folder /layouts. It has a specific sub-folder for each specific layout (for each XHTML layout that we discussed previously). At this moment of implementation we have two layouts called ``faux-8-2-col-green'' and ``faux-8-2-col-blue''\footnote{We used a free css layout from http://www.code-sucks.com/css\%20layouts/ for the blue version and edited it to get the green version. We used the banner from http://www.msaucr.com/ after getting permission}. Inside these folders you can see all the .css and .js files necessary to describe \emph{position}, \emph{color}, \emph{size} and so forth, of every object in the XHTML page. It's also the layout that decides whether using Ajax or not, because we believe that the XHR functionality is a layout matter\footnote{We anticipate that the server will automatically behave accordingly to the request that it receives from the client, so that if it is Ajax, it will answer with a JSon array, otherwise it will provide the full UI.}.
 
 \paragraph{Server Layout management}
 On the server side, all the logic for the layout has been implemented in the class \begin{verbatim}/system/application/libraries/layout.php
@@ -386,13 +432,36 @@ After the cookie will be created, the client will send it to the user in each ht
 \end{verbatim}
 An instance of this class is created automatically at the instantiation of each controller class. Its constructor will read the session cookie and store its content for future, rapid access by the controller.
 
+
+
+
+\section{Resource Protection}
+Our website is meant to provide resource storing and retrieving functionalities. We provide this service in terms of download and upload and only for patient's \emph{medical records} and account \emph{pictures}. We believe that all these resources must be protected from unauthorized access. We provide this protection on the server side, at the very beginning of every HTTP request.
+
+\subsection{.htaccess}
+We defined a rule in Apache to forbid access to all request made from clients towards the folder $/resources$ and all its sub-folders. We obtain this behaviour putting a file named $.htaccess$ inside this directory. The file contains:
+\begin{verbatim}
+DENY FROM ALL 
+\end{verbatim}
+which prevent access to every file in every sub-folder. By doing so, the only way to put or get anything from and into it, is via Php code, which means via a controller function.
+
+\subsection{Upload and Download}
+Two controllers have been implemented, one to handle upload requests, the other for downloads. Our application can upload medical records and user pictures, so the \emph{upload} controller class defines two methods, one for records and one for pictures. They perform authorization checks as usual and then, if every check is passed, they upload the file in the correct destination folder in the subtree of $/resources$. The actual upload is performed using a CodeIgniter library, for the sake of convenience. The downloading procedure is similar.
+
+\paragraph{Medical record folder}
+All medical records are stored in a folder named after the patient's ID who owns them. These folders are all contained in $/resources/medical_records$. For example, if patient $12$ uploads (or one of his doctors uploads) a new medical record, it will be stored in the folder $/resources/medical_records/12$. As we already said, there is no way to download it using a direct http request to it. The only way is calling the download method via the url $/download/medical_record/<pid>/<mid>$ where $<pid>$ is the patient ID of the owner of the medical record and $<mid>$ is the medical record ID to download\footnote{Note that this method will set the http content-type (also called mime type) as ``application/pdf'', so to tell the browser that the sequence of bytes corresponds to a pdf file.}. This method obviously checks for authorization first.
+
+\paragraph{Account pictures}
+All account pictures are stored in $/resources/images/account_pictures$. Every image gets a name in this form: $<account{\_}ID>.jpg$. For example, if user with account ID $99$ uploads a new account picture, it will be stored as $/resources/images/account_pictures/99.jpg$, possibly replacing the previous one. If users want to see any other account pictures (even theirs), they have to call a controller method at this URL $/download/account_picture/<aid>$ where $<aid>$ is the account ID of the account picture to download\footnote{Note that this method will set the http content-type (also called mime type) as ``image/jpeg'', so to tell the browser that the sequence of bytes corresponds to an image.}.
+
+
 \section{Referrals}
-\paragraph{}   A referral is a simple way to have the patient of an hcp (referring hcp) connect with a collegue of that same hcp (is referred hcp).  If the connection level\footnote{Connection levels can only be set for patient to patient and patient to hcp connections.  For patient to patient connections either patient can set the connection level they want with the other patient.  For patient to hcp connections the patients are the only ones that can set the connection level between them and the hcps.} between the patient and the ``referring hcp'' is 2 or 3\footnote{\begin{itemize} \item Level 0: Accept referrals manually, give permisssion to medical records manually.  \item Level 1: Accept referrals manually, give permisssion to medical records automatically.  \item Level 2: Accept referrals automatically, give permisssion to medical records manually.  \item Level 3: Accept referrals automatically, give permisssion to medical records automatically.\end{itemize} }, the referral is accepted automatically by the patient account and a connection request is automatically sent to the ``is referred hcp''.  If the connection level between the patient and the ``referring hcp'' is 0 or 1, the referral has to be manually accepted by the patient.  Once the patient manually accepts the referral, a connection request is automatically sent to the ``is referred hcp''.  Once the ``is referred hcp'' accepts the connection request, if the connection level between the patient and the ``referring hcp'' is 1 or 3, the ``is referred hcp'' will have permission to all of the medical records that the ``referring hcp'' had permissions too.
+A referral is a simple way to have the patient of an hcp (referring hcp) connect with a collegue of that same hcp (is referred hcp).  If the connection level\footnote{Connection levels can only be set for patient to patient and patient to hcp connections.  For patient to patient connections either patient can set the connection level they want with the other patient.  For patient to hcp connections the patients are the only ones that can set the connection level between them and the hcps.} between the patient and the ``referring hcp'' is 2 or 3\footnote{ Level 0: Accept referrals manually, give permisssion to medical records manually. Level 1: Accept referrals manually, give permisssion to medical records automatically. Level 2: Accept referrals automatically, give permisssion to medical records manually. Level 3: Accept referrals automatically, give permisssion to medical records automatically.}, the referral is accepted automatically by the patient account and a connection request is automatically sent to the ``is referred hcp''.  If the connection level between the patient and the ``referring hcp'' is 0 or 1, the referral has to be manually accepted by the patient.  Once the patient manually accepts the referral, a connection request is automatically sent to the ``is referred hcp''.  Once the ``is referred hcp'' accepts the connection request, if the connection level between the patient and the ``referring hcp'' is 1 or 3, the ``is referred hcp'' will have permission to all of the medical records that the ``referring hcp'' had permissions too.
 
-\paragraph{}   If a patient receives multiple referrals from different ``referring hcps'' for the same ``is referred hcp'' a couple of things could happen depending on the order in which they arrive to the patient. First of all, if a patient receives multiple referrals from ``referring hcps'' with whom they have a connection level of 0 or 1, once one of them is accepted, all of the same referrals will have their status changed from ``pending'' to ``request sent''.  Once the ``is referred hcp'' accpets the connection request, the ``is referred hcp'' will have permissions to all fo the medical records from ``referring hcps'' that made the same referral and have a connection level of 1 with the patient.
+If a patient receives multiple referrals from different ``referring hcps'' for the same ``is referred hcp'' a couple of things could happen depending on the order in which they arrive to the patient. First of all, if a patient receives multiple referrals from ``referring hcps'' with whom they have a connection level of 0 or 1, once one of them is accepted, all of the same referrals will have their status changed from ``pending'' to ``request sent''.  Once the ``is referred hcp'' accpets the connection request, the ``is referred hcp'' will have permissions to all fo the medical records from ``referring hcps'' that made the same referral and have a connection level of 1 with the patient.
 
-\paragraph{}   If a patient receives multiple referrals from ``referring hcps'' with whom they have a connection level of 0 or 1, and then a referral comes from a ``referring hcp'' with whom they have a connection level of 2 or 3, the referral is accepted automatically.  Once the referral is accepted automatically, all of the same referrals will have their status changed from ``pending'' to ``request sent''.  Once the ``is referred hcp'' accpets the connection request, the ``is referred hcp'' will have permissions to all fo the medical records from ``referring hcps'' that made the same referral and have a connection level of 1 or 3 with the patient.
+If a patient receives multiple referrals from ``referring hcps'' with whom they have a connection level of 0 or 1, and then a referral comes from a ``referring hcp'' with whom they have a connection level of 2 or 3, the referral is accepted automatically.  Once the referral is accepted automatically, all of the same referrals will have their status changed from ``pending'' to ``request sent''.  Once the ``is referred hcp'' accpets the connection request, the ``is referred hcp'' will have permissions to all fo the medical records from ``referring hcps'' that made the same referral and have a connection level of 1 or 3 with the patient.
 
-\paragraph{}   If a patient receives a referral from a ``referring hcps'' with whom they have a connection level of 2 or 3, and then a referral comes from a ``referring hcp'' with whom they have a connection level of 0,1,2 or 3 the status of those new referrals is automatically set to ``request sent''.  They are set to ``request sent'' because the referral that came from the connection with level 2 or 3 already automatically accepted that same referral and automatically sent the connection request.  Once the ``is referred hcp'' accpets the connection request, the ``is referred hcp'' will have permissions to all fo the medical records from ``referring hcps'' that made the same referral and have a connection level of 1 or 3.
+If a patient receives a referral from a ``referring hcps'' with whom they have a connection level of 2 or 3, and then a referral comes from a ``referring hcp'' with whom they have a connection level of 0,1,2 or 3 the status of those new referrals is automatically set to ``request sent''.  They are set to ``request sent'' because the referral that came from the connection with level 2 or 3 already automatically accepted that same referral and automatically sent the connection request.  Once the ``is referred hcp'' accpets the connection request, the ``is referred hcp'' will have permissions to all fo the medical records from ``referring hcps'' that made the same referral and have a connection level of 1 or 3.
 
-\paragraph{}   If the ``is referred hcp'' accpets the referral and then another hcp tries to create that same referral, then they will get an error message stating that that particular patient and ``is referred hcp'' are already connected.
+If the ``is referred hcp'' accpets the referral and then another hcp tries to create that same referral, then they will get an error message stating that that particular patient and ``is referred hcp'' are already connected.

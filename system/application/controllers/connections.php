@@ -12,7 +12,6 @@
  * Class Controller Connections
  * 
  * @test The whole class has been succesfully tested.
- * @bug No known bugs reported
  * */
 class Connections extends Controller {
 
@@ -302,7 +301,6 @@ class Connections extends Controller {
 	 *   Can be called by both patients and hcps, but a 
 	 * hcp can only request for another hcp.
 	 * 
-	 * @bug You can still request connection to yourself
 	 * */
 	function request($receiver_id = NULL)
 	{

@@ -108,25 +108,29 @@ A referral may be done by a healthcare provider or a patient.
 
 
 \chapter{System Requirements}
-The system requirements are as follows:
+We distinguish between client, server and developer requirements.
 
 \section{Client Requirements}
-
+\begin{itemize}
+\item The user will interact with the server through a web browser. Any existing web browser would work, since we use libraries and tools that make our website ``cross-browsers''. We even tested our website with the terminal browser \emph{Elinks}, that obviously does not have Javascript and Ajax, and everything worked fine. The only special requirements are as follows.
+\item The browser must be able to handle communication with the webserver using https (secure http)
+\item The browser must be able to execute Javascript code if the user wants to see graphical effects and perform Ajax requests. It's presence is not mandatory.
+\end{itemize}
 
 \section{Server Requirements}
-
-\section{Developer Requirements}
-
 \begin{itemize}
 \item The server will be web-based, using an appropriately selected web server to handle communication requests.
-\item The user will interact with the server through a web browser
-\item The browser must be able to handle communication with the webserver using https (secure http)
 \item The server will only communicate with the client interface over https.  All other connections will be automatically switched to https.
 \item The server will maintain a list of contacts for each user
 \item The server must be able to receive copies of the patients medical records
 \item All necessary system data will be stored in an appropriately selected and designed database, capable of interacting with the server.
 \item The user interface must be able to upload files to the server
 \end{itemize}
+
+\section{Developer Requirements}
+As for now, a developer that would like to join us should have \emph{git}, to clone our repository. He/she should set up a local, working Apache server (any other server would also work, but we prefer to use all the same one), with Php, ModRewrite and ModSsl.
+
+
 
 \chapter{Current Status and Future Work}
 

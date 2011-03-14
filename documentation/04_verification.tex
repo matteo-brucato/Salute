@@ -1,4 +1,6 @@
 \chapter{Tests}
+This chapter shows what we have done in terms of software verification. We performed all our tests using two different methods: via the UI and using an automated test tool from a terminal, by means of predefined test cases.
+
 
 \section{Controller Tests}
 \label{subsec:controllertests}
@@ -8,7 +10,7 @@ Verification of controllers is the most important part, since all the logics and
 Our tests take into account the way we implemented all the controller tasks, so they can be considered \emph{white-box testing}. 
 
 \subsection{CodeIgniter}
-As we already said previously, we used a well-known MVC framework named \emph{Code Igniter}. It provides a set of functionalities that we did not need to test. For example, the URL mapping into controller functions, or the PHP database interactions, or even more sophisticated tools to parse template files, to perform form input checks and so forth. This framework has been tested by its developers, so we simply rely on it. All we need to test is our code, that is, all the controllers, models and views.
+As we already said previously, we used a well-known MVC framework named \emph{Code Igniter}. It provides a set of functionalities that we did not need to test. For example, the URL mapping into controller functions, or the PHP database interactions, or even more sophisticated tools to parse template files, to perform form input checks and so forth. This framework has been tested by its developers, so we simply rely on it. It has also been tested in terms of speed, so that we don't worry too much about this kind of performance. All we need to test is our code, that is, all the controllers, models and views.
 
 \paragraph{URL mapping}
 In Code Igniter every URL is mapped to a single function, inside a single controller class. This creates a 1-1 correspondence between URL's and controller functions. As Code Igniter has been implemented, a URL that does not correspond to any function, will generate an error.
@@ -37,7 +39,7 @@ All our test exploit the previous schema and a special function that we designed
 \item Calls to models, UI or else, as before.
 \end{enumerate}
 
-\paragraph{Tests based on the check function}
+\paragraph{Test cases based on the check function}
 An example of a call to \emph{check} is the following:
 \begin{verbatim}
 $check = $this->auth->check(array(
@@ -59,8 +61,13 @@ This gives us a very simple way of implementing our test sets. For the previous 
 \end{enumerate}
 We would expect a success message only for the last test. Whereas, we expect an error in all the other cases. Now we address the problem of making automated tests.
 
+\paragraph{Tests via the UI}
+We believe that using the UI, which means using the browser interface, is a very important way to test a web application such ours. We performed all possible paths that a user could go through, using our website. Sometimes, when possible, we forces some path using the location bar directly, which means putting a specific URL in the browser, instead of using links in the web page. We based our test cases on what we discussed previously and also on our knowledge of all the requirements (in terms of expected behaviours/results).
+
 \paragraph{Automated tests}
-We wanted to create a framework to make automated tests possible. We based our design on the Unix function \emph{curl}, that can be used to make an http request to a server and get the response back from it. It is a very complete tool, in the sense that it also provides the use of POST variables, cookies, SSL connections and so forth.
+We also wanted to create a framework to make automated tests possible. We realized that the only way to test unauthorized paths and requests was hard-coding URL's. An automated test framework can help us runs tens of test cases all at once. It is also a good tool for debugging, since it helps us to identify unexpected results easily.
+
+We based our design on the Unix function \emph{curl}, that can be used to make an http request to a server and get the response back from it. It is a very complete tool, in the sense that it also provides the use of POST variables, cookies, SSL connections and so forth.
 
 To make everything possible, we needed to define a special ``test mode'' for the UI. Activating the test mode, the UI does not behave as usual. Instead, it always answers with a special ``result string''. These are all the possible results:
 \begin{description}
@@ -104,13 +111,471 @@ sjgjfsgbfgb					CI_404_ERROR
 \end{verbatim}
 As you can see, it is also possible to use cookies and POST variables. We believe that this tool is very powerful and combined with the way we implemented all the controllers, it provides a good verification of our entire project, via testing.
 
+\paragraph{Test files}
+Here we show our test files for connections, groups and referrals.
+
+\begin{verbatim}
+########################################################################
+###################   TEST FILE FOR CONNECTIONS   ######################
+########################################################################
+#                                                                      #
+# Use this syntax:                                                     #
+#   <url>   <expected_result_string>   [ "|" <curl_extra_options> ]    #
+#                                                                      #
+# Examples:                                                            #
+#   /home/sitemap    ALL_OK                                            #
+#   /profile         ALL_OK      | -b cookie_file                      #
+#                                                                      #
+########################################################################
+
+# Log in as patient 1
+/home/login					REDIRECTED		| -F "email=patient1@email.com" -F "password=pat1" -c cookie_pat_1
+# Log in as patient 2
+/home/login					REDIRECTED		| -F "email=patient2@email.com" -F "password=pat2" -c cookie_pat_2
+# Log in as patient 3
+/home/login					REDIRECTED		| -F "email=patient3@email.com" -F "password=pat3" -c cookie_pat_3
+# Log in as patient 4
+/home/login					REDIRECTED		| -F "email=patient4@email.com" -F "password=pat4" -c cookie_pat_4
+# Log in as patient 5
+/home/login					REDIRECTED		| -F "email=patient5@email.com" -F "password=pat5" -c cookie_pat_5
+# Log in as patient 10
+/home/login					REDIRECTED		| -F "email=patient10@email.com" -F "password=pat10" -c cookie_pat_10
+# Log in as hcp 51
+/home/login					REDIRECTED		| -F "email=doctor51@email.com" -F "password=doc51" -c cookie_doc_51
+# Log in as hcp 52
+/home/login					REDIRECTED		| -F "email=doctor52@email.com" -F "password=doc52" -c cookie_doc_52
+# Log in as hcp 53
+/home/login					REDIRECTED		| -F "email=doctor53@email.com" -F "password=doc53" -c cookie_doc_53
+# Log in as hcp 54
+/home/login					REDIRECTED		| -F "email=doctor54@email.com" -F "password=doc54" -c cookie_doc_54
+# Log in as hcp 55
+/home/login					REDIRECTED		| -F "email=doctor55@email.com" -F "password=doc55" -c cookie_doc_55
+# Log in as hcp 60
+/home/login					REDIRECTED		| -F "email=doctor60@email.com" -F "password=doc60" -c cookie_doc_60
+
+################ VIEW CONNECTED AND UNCONNECTED PROFILES ###############
+# Patient 1 is connected with pats 2, 3, 4 and 5
+/profile/user/2				ALL_OK			| -b cookie_pat_1
+/profile/user/1				ALL_OK			| -b cookie_pat_2
+
+/profile/user/4				ALL_OK			| -b cookie_pat_1
+/profile/user/1				ALL_OK			| -b cookie_pat_4
+
+# Patient 1 is connected with docs 51, 52, 53, 54
+/profile/user/51			ALL_OK			| -b cookie_pat_1
+/profile/user/1				ALL_OK			| -b cookie_doc_51
+/profile/user/52			ALL_OK			| -b cookie_pat_1
+/profile/user/1				ALL_OK			| -b cookie_doc_52
+/profile/user/53			ALL_OK			| -b cookie_pat_1
+/profile/user/1				ALL_OK			| -b cookie_doc_53
+/profile/user/54			ALL_OK			| -b cookie_pat_1
+/profile/user/1				ALL_OK			| -b cookie_doc_54
+/profile/user/55			ALL_OK			| -b cookie_pat_1
+/profile/user/1				ALL_OK			| -b cookie_doc_55
+
+# Try to see not connected profiles
+/profile/user/6				ALL_OK			| -b cookie_pat_1
+/profile/user/7				ALL_OK			| -b cookie_pat_1
+/profile/user/8				ALL_OK			| -b cookie_pat_1
+/profile/user/9				ALL_OK			| -b cookie_pat_1
+/profile/user/10			ALL_OK			| -b cookie_pat_1
+/profile/user/56			ALL_OK			| -b cookie_pat_1
+/profile/user/57			ALL_OK			| -b cookie_pat_1
+/profile/user/58			ALL_OK			| -b cookie_pat_1
+/profile/user/59			ALL_OK			| -b cookie_pat_1
+/profile/user/60			ALL_OK			| -b cookie_pat_1
+
+# Try to change account type to private of pat 6
+/settings/change_privacy_do	OK_MESSAGE		| -F "level=1" -b cookie_pat_10
+
+# Try to see his profile
+/profile/user/10			CTR_ERROR		| -b cookie_pat_1
+/profile/user/10			CTR_ERROR		| -b cookie_hcp_51
+
+# Restore previous privacy for pat 10
+/settings/change_privacy_do	OK_MESSAGE		| -F "level=0" -b cookie_pat_10
+
+################### CREATE NEW CONNECTIONS #############################
+# Patient 1 asks for a new connection to hcp 60
+/connections/request/60		OK_MESSAGE		| -b cookie_pat_1
+# Then hcp 60 accets it
+/connections/accept/1		ALL_OK			| -b cookie_doc_60
+
+# Patient 1 asks for a new connection to patient 10
+/connections/request/10		OK_MESSAGE		| -b cookie_pat_1
+# Then patient 10 accets it
+/connections/accept/1		ALL_OK		| -b cookie_pat_10
+
+# Patient 1 asks the same connections again
+/connections/request/60		CTR_ERROR		| -b cookie_pat_1
+/connections/request/10		CTR_ERROR		| -b cookie_pat_1
+
+# And the others accept again
+/connections/accept/1		CTR_ERROR		| -b cookie_doc_60
+/connections/accept/1		CTR_ERROR		| -b cookie_pat_10
+
+# Now a doctor tries to request a connection to another doctor
+/connections/request/60		OK_MESSAGE		| -b cookie_doc_51
+
+# And then, to a patient
+/connections/request/10		CTR_ERROR		| -b cookie_doc_51
+
+# Now, two accounts try to accept connection not for them
+/connections/accept/51		CTR_ERROR		| -b cookie_doc_52
+/connections/accept/51		CTR_ERROR		| -b cookie_pat_1
+
+# And finally 60 accepts his request
+/connections/accept/51		ALL_OK			| -b cookie_doc_60
+
+# Try to cancel a connection already accepted
+/connections/cancel/60		ALL_OK			| -b cookie_doc_51
+
+# Try to reject a connection already accepted
+/connections/reject/51		CTR_ERROR		| -b cookie_doc_60
+
+# Try to legally destroy a connection
+/connections/destroy/51		ALL_OK			| -b cookie_doc_60
+
+# Now the other tries to destroy it again
+/connections/destroy/60		CTR_ERROR		| -b cookie_doc_51
+
+# Restore previous privacy for pat 10
+/settings/change_privacy_do	OK_MESSAGE		| -F "level=0" -b cookie_pat_10
+
+# Try to request a connection to pat 6 who is private
+/connections/request/10		CTR_ERROR		| -b cookie_pat_1
+
+# Restore previous privacy for pat 10
+/settings/change_privacy_do	OK_MESSAGE		| -F "level=0" -b cookie_pat_10
+\end{verbatim}
+
+\begin{verbatim}
+########################################################################
+#####################   TEST FILE FOR GROUPS   #########################
+########################################################################
+#                                                                      #
+# Use this syntax:                                                     #
+#   <url>   <expected_result_string>   [ "|" <curl_extra_options> ]    #
+#                                                                      #
+# Examples:                                                            #
+#   /home/sitemap    ALL_OK                                            #
+#   /profile         ALL_OK      | -b cookie_file                      #
+#                                                                      #
+########################################################################
+
+#Groups Controller
+
+# Now, try to login in and save the cookie in a local file
+
+#Patient 1
+/home/login					REDIRECTED		| -F "email=patient1@email.com" -F "password=pat1" -c cookie_p1
+
+#Patient 2,3 connected with Patient 1
+/home/login					REDIRECTED		| -F "email=patient2@email.com" -F "password=pat2" -c cookie_p2
+/home/login					REDIRECTED		| -F "email=patient3@email.com" -F "password=pat3" -c cookie_p3
+
+#Patient 10 not connected with Patient 1
+/home/login					REDIRECTED		| -F "email=patient10@email.com" -F "password=pat10" -c cookie_p10
+
+#HCP 51,52 connected with Patient 1
+/home/login					REDIRECTED		| -F "email=doctor51@email.com" -F "password=doc51" -c cookie_h51
+/home/login					REDIRECTED		| -F "email=doctor52@email.com" -F "password=doc52" -c cookie_h52
+
+#HCP 56 not connected with Patient 1
+/home/login					REDIRECTED		| -F "email=doctor56@email.com" -F "password=doc56" -c cookie_h56
+
+# Invalid login
+# wrong password
+/home/login					CTR_ERROR		| -F "email=patient1@email.com" -F "password=camera" -c cookie_p1_2
+# wrong email
+/home/login					CTR_ERROR		| -F "email=patient1@yahoo.com" -F "password=pat1" -c cookie_p1_3
+
+# Errors if not logged in
+/groups						CTR_ERROR
+/groups/lists				CTR_ERROR
+/groups/lists/all			CTR_ERROR
+/groups/lists/mine			CTR_ERROR
+/groups/lists/invites		CTR_ERROR
+/groups/create				CTR_ERROR
+/groups/delete				CTR_ERROR
+/groups/edit				CTR_ERROR
+/groups/members				CTR_ERROR
+/groups/members/list		CTR_ERROR
+/groups/members/edit		CTR_ERROR
+/groups/members/join		CTR_ERROR
+/groups/members/leave		CTR_ERROR
+/groups/members/delete		CTR_ERROR
+/groups/members/invite		CTR_ERROR
+
+
+# if logged in 
+/groups						ALL_OK			| -b cookie_p1 -c cookie_p1
+/groups/lists				ALL_OK			| -b cookie_p1 -c cookie_p1
+/groups/lists/all			ALL_OK			| -b cookie_p1 -c cookie_p1
+/groups/lists/mine			ALL_OK			| -b cookie_p1 -c cookie_p1
+/groups/lists/invites		ALL_OK			| -b cookie_p1 -c cookie_p1
+
+######################## GROUP MEMBERS ########################
+
+# Fails. expects a fn and a group id. 
+/groups/members				CTR_ERROR		| -b cookie_p1 -c cookie_p1 
+
+### LISTING GROUP MEMBERS ###
+# Listing group members of a group you are in
+/groups/members/list/40		ALL_OK			| -b cookie_p1 -c cookie_p1
+
+# Listing group members of a group you are not in
+/groups/members/list/43		CTR_ERROR		| -b cookie_p1 -c cookie_p1
+
+### EDITING GROUP MEMBERS ###
+# edit a member of a group you are in, given you have permissions
+/groups/members/edit_do/40/2		ALL_OK		| -b cookie_p1 -c cookie_p1 -F "permissions=1"
+
+# edit a member of a group you are in, when you dont have permissions 
+/groups/members/edit_do/41/2		CTR_ERROR	| -b cookie_p10 -c cookie_p10 -F "permissions=1"
+
+# Try to edit a person who is not in the group
+/groups/members/edit_do/40/63		CTR_ERROR	| -b cookie_p2 -c cookie_p2 -F "permissions=2"
+
+
+### JOINING A GROUP ###
+
+# Correct input
+# Try joining a patient only public group as a patient
+/groups/members/join/20			ALL_OK		| -b cookie_p1 -c cookie_p1
+
+# Try joining a hcp only public group as a hcp
+/groups/members/join/37			ALL_OK		| -b cookie_h51 -c cookie_h51
+
+# Try joining a mixed public group as a patient 
+/groups/members/join/38			ALL_OK		| -b cookie_p1 -c cookie_p1
+
+# Try joining a mixed public group as a hcp
+/groups/members/join/38			ALL_OK		| -b cookie_h51 -c cookie_h51
+
+# Incorrect input
+# Try joining a group you already are a member of
+/groups/members/join/1			CTR_ERROR	| -b cookie_p1 -c cookie_p1
+
+# Try joining a patient only public group as an hcp 
+/groups/members/join/1			CTR_ERROR	| -b cookie_h51 -c cookie_h51
+
+# Try joining a hcp only public group as an patient 
+/groups/members/join/21			CTR_ERROR	| -b cookie_p1 -c cookie_p1
+
+# Try joining a group that doesn't exist
+/groups/members/join/1089		CTR_ERROR	| -b cookie_p1 -c cookie_p1
+
+### LEAVING A GROUP ###
+
+# leave a group you are in 
+/groups/members/leave/2			ALL_OK		| -b cookie_p1 -c cookie_p1
+
+# leave a group you are a creator of
+/groups/members/leave/1			CTR_ERROR	| -b cookie_p1 -c cookie_p1
+
+# leave a group  you are not in
+/groups/members/leave/21 		CTR_ERROR	| -b cookie_p1 -c cookie_p1
+
+# leave a group that does not exist 
+/groups/members/leave/1089		CTR_ERROR	| -b cookie_p1 -c cookie_p1
+
+### DELETING A GROUP ###
+
+# delete a group i am in and i have permission to delete
+/groups/delete/1			ALL_OK		| -b cookie_p3 -c cookie_p3
+
+# delete a group i am in and i dont have permission to delete
+/groups/delete/1			CTR_ERROR	| -b cookie_p10 -c cookie_p10
+
+# delete a group that i am not in
+/groups/delete/43			CTR_ERROR		| -b cookie_p1 -c cookie_p1
+
+# delete a group that does not exist 
+/groups/delete/9890			CTR_ERROR		| -b cookie_p1 -c cookie_p1
+
+### CREATING A GROUP ###
+
+# create a group with all information
+/groups/create_do/ 			ALL_OK			| -b cookie_p1 -c cookie_p1 
+                                              -F "name=TestGroup" 
+                                              -F "description=TestDescrip"
+                                              -F "public_private=0" -F "group_type=2"
+
+# create a patient only group with an hcp account
+/groups/create_do/ 			CTR_ERROR		| -b cookie_h51 -c cookie_h51 
+                                              -F "name=TestGroup2" 
+                                              -F "description=TestDescrip2" 
+                                              -F "public_private=0" -F "group_type=0"
+
+# create a hcp only group with an patient account
+/groups/create_do/ 			CTR_ERROR		| -b cookie_p1 -c cookie_p1 
+                                              -F "name=TestGroup3" 
+                                              -F "description=TestDescrip3" 
+                                              -F "public_private=0" -F "group_type=1"
+
+# create a group with no information
+/groups/create_do/ 			CTR_ERROR		| -b cookie_p1 -c cookie_p1 
+                                              -F "name=" -F "description=" 
+                                              -F "public_private=" -F "group_type="
+
+# create a group with some information
+/groups/create_do/ 			CTR_ERROR		| -b cookie_p1 -c cookie_p1 
+                                              -F "name=" -F "description=" 
+                                              -F "public_private=0" -F "group_type=1"
+
+### EDIT A GROUP ###
+# edit group i am a member of and have permission with all info
+/groups/edit_do/2			ALL_OK		| -b cookie_p2 -c cookie_p2 
+                                              -F "name=NameChange" -F "description=DescripChange"
+
+# edit group i am a member of and have permission with no posts
+/groups/edit_do/2			CTR_ERROR	| -b cookie_p2 -c cookie_p2 
+                                              -F "name=" -F "description="
+
+# edit group i am a member of but dont have permission
+/groups/edit_do/1			CTR_ERROR	| -b cookie_p10 -c cookie_p10 
+                                              -F "name=NameChange2" -F "description=DescripChange2"
+
+# edit group i am not a member of
+/groups/edit_do/43			CTR_ERROR	| -b cookie_p1 -c cookie_p1 
+                                              -F "name=NameChange3" -F "description=DescripChange3"
+
+### DELETE A GROUP MEMBER ###
+
+# delete a member of the group, given you have permission
+/groups/members/delete/2/9		ALL_OK		| -b cookie_p2 -c cookie_p2
+
+# delete a member of the group, if you dont have permission
+/groups/members/delete/1/9		CTR_ERROR		| -b cookie_p10 -c cookie_p10
+
+# delete a member of a group that you are not in
+/groups/members/delete/20/9		CTR_ERROR		| -b cookie_p1 -c cookie_p1
+
+
+### INVITATIONS TO A GROUP ###
+## NOTE: curl seems to not support array form posts ... ids is an array of ids..."##
+# Inviting a connected friend to a private group that I am in. 
+#/groups/members/invite_do/40		ALL_OK		| -b cookie_p1 -c cookie_p1 -F "ids=3"
+
+# Inviting a non-connected user to a private group that I am in. 
+#/groups/members/invite_do/40		CTR_ERROR	| -b cookie_p1 -c cookie_p1 -F "ids=10"
+
+# Inviting an hcp to a patient only private group that I am in
+#/groups/members/invite_do/40		CTR_ERROR	| -b cookie_p1 -c cookie_p1 -F "ids=51"
+
+# Inviting an patient to a hcp only private group that I am in
+#/groups/members/invite_do/64		CTR_ERROR	| -b cookie_h51 -c cookie_h51 -F "ids=1"
+
+# Inviting a user to a private group that i'm not in.
+#/groups/members/invite_do/64		CTR_ERROR	| -b cookie_p1 -c cookie_p1 -F "ids=2"
+
+########################################################################
+\end{verbatim}
+
+\begin{verbatim}
+########################################################################
+####################   TEST FILE FOR REFERRAL   ########################
+########################################################################
+#                                                                      #
+# Use this syntax:                                                     #
+#   <url>   <expected_result_string>   [ "|" <curl_extra_options> ]    #
+#                                                                      #
+# Examples:                                                            #
+#   /home/sitemap    ALL_OK                                            #
+#   /profile         ALL_OK      | -b cookie_file                      #
+#                                                                      #
+########################################################################
+
+######################  LOG IN  ###########################
+
+#LOG IN FOR PATIENT
+/home/login REDIRECTED		| -F "email=patient1@email.com" -F "password=pat1" -c cookie_pat_1
+/home/login	REDIRECTED		| -F "email=patient2@email.com" -F "password=pat2" -c cookie_pat_2
+
+#LOG IN FOR DOCTOR
+/home/login	REDIRECTED		| -F "email=doctor51@email.com" -F "password=doc51" -c cookie_doc_51
+/home/login	REDIRECTED		| -F "email=doctor52@email.com" -F "password=doc52" -c cookie_doc_52
+/home/login	REDIRECTED		| -F "email=doctor53@email.com" -F "password=doc53" -c cookie_doc_53
+/home/login	REDIRECTED		| -F "email=doctor54@email.com" -F "password=doc54" -c cookie_doc_54
+/home/login REDIRECTED		| -F "email=doctor55@email.com" -F "password=doc55" -c cookie_doc_55
+/home/login	REDIRECTED		| -F "email=doctor56@email.com" -F "password=doc56" -c cookie_doc_56
+/home/login	REDIRECTED		| -F "email=doctor57@email.com" -F "password=doc57" -c cookie_doc_57
+
+#connect to hcp 56, they will is_referred_hcp
+/connections/request/56      	              OK_MESSAGE        | -b cookie_doc_51
+/connections/request/56      	              OK_MESSAGE        | -b cookie_doc_52
+/connections/request/57      	              OK_MESSAGE        | -b cookie_doc_53 
+/connections/request/57      	              OK_MESSAGE        | -b cookie_doc_54
+/connections/request/57      	              OK_MESSAGE        | -b cookie_doc_55 
+
+#accept connection request
+/connections/accept/51		 	              ALL_OK	        | -b cookie_doc_56           
+/connections/accept/52		 	              ALL_OK	        | -b cookie_doc_56
+/connections/accept/53		 	              ALL_OK	        | -b cookie_doc_57
+/connections/accept/54		 	              ALL_OK	        | -b cookie_doc_57
+/connections/accept/55		 	              ALL_OK	        | -b cookie_doc_57
+
+#set connection level between pat_id 2 and hcp_id 55 to high
+/connections/change_level_do/55               OK_MESSAGE        | -F "level=3" -b cookie_pat_2
+
+
+######################  CREATE REFERALS  #######################
+#create two valid referrals for the same patient and the same hcp form different doctors
+/refers/create_referral_do2/56           ALL_OK		       | -F "patient_id=1" -b cookie_doc_51
+/refers/create_referral_do2/56           ALL_OK		       | -F "patient_id=1" -b cookie_doc_52
+/refers/create_referral_do2/57           ALL_OK			   | -F "patient_id=2" -b cookie_doc_53
+/refers/create_referral_do2/57           ALL_OK		       | -F "patient_id=2" -b cookie_doc_54
+
+#high level doctor creating the referral
+/refers/create_referral_do2/57           ALL_OK		       | -F "patient_id=2" -b cookie_doc_55
+
+#create same referral again
+/refers/create_referral_do2/56           CTR_ERROR         | -F "patient_id=1" -b cookie_doc_51
+
+#create referral for patient not connected
+/refers/create_referral_do2/56           CTR_ERROR         | -F "patient_id=45" -b cookie_doc_51
+
+#create referral for hcp not connected
+/refers/create_referral_do2/100          CTR_ERROR         | -F "patient_id=1" -b cookie_doc_51
+
+#create referral for patient and hcp not connected
+/refers/create_referral_do2/100          CTR_ERROR         | -F "patient_id=45" -b cookie_doc_51
+
+#create referral for not valid patient id
+/refers/create_referral_do2/56           CTR_ERROR         | -F "patient_id=123" -b cookie_doc_51
+
+#create referral for not valid hcp id
+/refers/create_referral_do2/123          CTR_ERROR         | -F "patient_id=1" -b cookie_doc_51
+
+#patient creates a referral
+/refers/create_referral_do2/51           CTR_ERROR         | -F "patient_id=2" -b cookie_pat_1
+
+
+##############  ACCEPT REFERALS  ############################
+#accept a referral
+/refers/accept_referal/86                ALL_OK		      | -b cookie_pat_1
+
+#accept a referal that has already been accepted
+/refers/accept_referal/88                CTR_ERROR        | -b cookie_pat_2
+/refers/accept_referal/89                CTR_ERROR        | -b cookie_pat_2
+/refers/accept_referal/90                CTR_ERROR        | -b cookie_pat_2
+
+#accept referral thats not mine
+/refers/accept_referal/50                CTR_ERROR         | -b cookie_pat_1
+
+#accpt referral that does not exist
+/refers/accept_referal/200               CTR_ERROR         | -b cookie_pat_1
+
+#hcp accepts the referral
+/refers/accept_referal/86                CTR_ERROR         | -b cookie_doc_51
+\end{verbatim}
 
 
 
 
 
-
-\section{...}
+\subsection{Test cases}
 
 Each controller's functions were tested in several ways to anticipate possible user's actions. In general, they were tested for:
 \begin{itemize}
@@ -210,3 +675,4 @@ example:
 \end{verbatim}
 
 \chapter{Analysis}
+All we did was an informal analysis, suck as code inspections of each other's code. We would like to perform some other, more formal, software analysis in the future.
