@@ -427,19 +427,19 @@ Here we show our test files for connections, groups and referrals.
 ### EDIT A GROUP ###
 # edit group i am a member of and have permission with all info
 /groups/edit_do/2			ALL_OK		| -b cookie_p2 -c cookie_p2 
-                                              -F "name=NameChange" -F "description=DescripChange"
+                                  -F "name=NameChange" -F "description=DescripChange"
 
 # edit group i am a member of and have permission with no posts
 /groups/edit_do/2			CTR_ERROR	| -b cookie_p2 -c cookie_p2 
-                                              -F "name=" -F "description="
+                                  -F "name=" -F "description="
 
 # edit group i am a member of but dont have permission
 /groups/edit_do/1			CTR_ERROR	| -b cookie_p10 -c cookie_p10 
-                                              -F "name=NameChange2" -F "description=DescripChange2"
+                                  -F "name=NameChange2" -F "description=DescripChange2"
 
 # edit group i am not a member of
 /groups/edit_do/43			CTR_ERROR	| -b cookie_p1 -c cookie_p1 
-                                              -F "name=NameChange3" -F "description=DescripChange3"
+                                  -F "name=NameChange3" -F "description=DescripChange3"
 
 ### DELETE A GROUP MEMBER ###
 
@@ -517,7 +517,7 @@ Here we show our test files for connections, groups and referrals.
 /connections/accept/55		 	              ALL_OK	        | -b cookie_doc_57
 
 #set connection level between pat_id 2 and hcp_id 55 to high
-/connections/change_level_do/55               OK_MESSAGE        | -F "level=3" -b cookie_pat_2
+/connections/change_level_do/55     OK_MESSAGE   | -F "level=3" -b cookie_pat_2
 
 
 ######################  CREATE REFERALS  #######################
@@ -531,25 +531,25 @@ Here we show our test files for connections, groups and referrals.
 /refers/create_referral_do2/57           ALL_OK		       | -F "patient_id=2" -b cookie_doc_55
 
 #create same referral again
-/refers/create_referral_do2/56           CTR_ERROR         | -F "patient_id=1" -b cookie_doc_51
+/refers/create_referral_do2/56    CTR_ERROR   | -F "patient_id=1" -b cookie_doc_51
 
 #create referral for patient not connected
-/refers/create_referral_do2/56           CTR_ERROR         | -F "patient_id=45" -b cookie_doc_51
+/refers/create_referral_do2/56    CTR_ERROR   | -F "patient_id=45" -b cookie_doc_51
 
 #create referral for hcp not connected
-/refers/create_referral_do2/100          CTR_ERROR         | -F "patient_id=1" -b cookie_doc_51
+/refers/create_referral_do2/100   CTR_ERROR   | -F "patient_id=1" -b cookie_doc_51
 
 #create referral for patient and hcp not connected
-/refers/create_referral_do2/100          CTR_ERROR         | -F "patient_id=45" -b cookie_doc_51
+/refers/create_referral_do2/100   CTR_ERROR   | -F "patient_id=45" -b cookie_doc_51
 
 #create referral for not valid patient id
-/refers/create_referral_do2/56           CTR_ERROR         | -F "patient_id=123" -b cookie_doc_51
+/refers/create_referral_do2/56    CTR_ERROR   | -F "patient_id=123" -b cookie_doc_51
 
 #create referral for not valid hcp id
-/refers/create_referral_do2/123          CTR_ERROR         | -F "patient_id=1" -b cookie_doc_51
+/refers/create_referral_do2/123   CTR_ERROR   | -F "patient_id=1" -b cookie_doc_51
 
 #patient creates a referral
-/refers/create_referral_do2/51           CTR_ERROR         | -F "patient_id=2" -b cookie_pat_1
+/refers/create_referral_do2/51    CTR_ERROR   | -F "patient_id=2" -b cookie_pat_1
 
 
 ##############  ACCEPT REFERALS  ############################
